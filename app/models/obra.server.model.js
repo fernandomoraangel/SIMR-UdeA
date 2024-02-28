@@ -121,36 +121,30 @@ var generoFormaNoMusical = new Schema({
   },
 });
 
-var anotacionCartograficoTemporal=new Schema({
-  lugar:{
-
+var anotacionCartograficoTemporal = new Schema({
+  lugar: {},
+  coordenadas: {
+    type: [Number],
+    index: "2dsphere",
   },
-  coordenadas:{
-    type:[Number],
-    index:'2dsphere'
+  evento: {
+    type: String,
   },
-  evento:{
-    type: String
+  coberturaAmplitud: {},
+  fechaInicio: {
+    type: Date,
   },
-  coberturaAmplitud:{
-
+  fechaFin: {
+    type: Date,
   },
-  fechaInicio:{
-    type:Date
+  precisionInicio: {
+    type: String,
   },
-  fechaFin:{
-    type:Date
-  },
-  precisionInicio:{
-    type: String
-  },
-  precisionFin:{
-    type: String
+  precisionFin: {
+    type: String,
   },
   //fuente de los datos
-  evidencia:{
-
-  }
+  evidencia: {},
 });
 
 var descriptorLibre = new Schema({
@@ -177,12 +171,12 @@ var denominacionRegional = new Schema({
   },
 });
 
-
 var ObraSchema = new Schema({
   // Título uniforme
   titulo: {
     type: String,
     trim: true,
+    unique: true,
     required: "El título no puede estar en blanco",
   },
   //Denominación(es) regional-socio-cultural

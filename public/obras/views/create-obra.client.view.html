@@ -4,7 +4,7 @@
 </ng-include>
 <div class="jumbotron">
 	<div class="container">
-		<section data-ng-controller="ObrasController">
+		<section data-ng-controller="ObrasController" ng-show="authentication.user">
 			<!-- Ayuda al nivel de toda la página -->
 			<div>
 				<!-- Botón modal ayuda -->
@@ -33,9 +33,9 @@
 
 			<form class="form-principal" data-ng-submit="create()" novalidate>
 				<!-- Mensaje de error-->
-				<div data-ng-show="error">
+				<!-- <div data-ng-show="error">
 					<strong class="error" data-ng-bind="error"></strong>
-				</div>
+				</div> -->
 				<!-- Título -->
 
 				<div>
@@ -1101,9 +1101,9 @@
 					<!-- Fin Vínculos y archivos -->
 					<div>
 						<input type="submit" class="btn btn-primary pull-right" value="Crear">
-						<div data-ng-show="error">
+						<!-- <div data-ng-show="error">
 							<strong class="error" data-ng-bind="error"></strong>
-						</div>
+						</div> -->
 					</div>
 
 		</section>

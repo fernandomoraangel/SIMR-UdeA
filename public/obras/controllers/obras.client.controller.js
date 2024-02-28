@@ -3,6 +3,7 @@
 //Controller obras
 angular.module("obras").controller("ObrasController", [
   "$scope",
+  "$rootScope",
   "$routeParams",
   "$location",
   "Authentication",
@@ -18,6 +19,7 @@ angular.module("obras").controller("ObrasController", [
   "Diccionarios",
   function (
     $scope,
+    $rootScope,
     $routeParams,
     $location,
     Authentication,
@@ -32,6 +34,15 @@ angular.module("obras").controller("ObrasController", [
     Idiomas,
     Diccionarios
   ) {
+    // intercept the route change event
+    $scope.$on("$routeChangeStart", function (angularEvent, newUrl) {
+      // check if the custom property exist
+      if (newUrl.requireAuth && !session.user) {
+        // user isn’t authenticated
+        $location.path("/login");
+      }
+    });
+
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
     $scope.roles = roles;
@@ -1421,15 +1432,15 @@ angular.module("obras").controller("ObrasController", [
       });
       if (
         this.lugar === undefined ||
-        this.lugar === "" ||
-        this.evento === undefined ||
-        this.evento === "" ||
-        this.fechaDeInicio === undefined ||
-        this.fechaDeInicio === "" ||
-        this.fechaDeFin === undefined ||
-        this.fechaDeFin === "" ||
-        this.evidencia === undefined ||
-        this.evidencia === ""
+        this.lugar === ""
+        // this.evento === undefined ||
+        // this.evento === "" ||
+        // this.fechaDeInicio === undefined ||
+        // this.fechaDeInicio === "" ||
+        // this.fechaDeFin === undefined ||
+        // this.fechaDeFin === "" ||
+        // this.evidencia === undefined ||
+        // this.evidencia === ""
       ) {
         //Mostrar mensaje de error
         Swal.fire({

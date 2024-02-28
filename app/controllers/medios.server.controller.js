@@ -6,13 +6,27 @@ var mongoose = require("mongoose"),
 
 //Método para el manejo de errores
 var getErrorMessage = function (err) {
-  if (err.errors) {
-    for (var errName in err.errors) {
-      if (err.errors[errName].message) return err.errors[errName].message;
+  //Definir variable de error message
+  var message = "";
+  //Si ocurre un error interno de MongoDB
+  if (err.code) {
+    switch (err.code) {
+      case 11000:
+      case 11001:
+        message = "El registro ya existe";
+        break;
+      //si un error general ocurre
+      default:
+        message = "Se ha producido un error";
     }
   } else {
-    return "Error desconocido del servidor";
+    //Grabar el error en una lista de posibles errores
+    for (var errName in err.errors) {
+      if (err.errors[errName].message) message = err.errors[errName].message;
+    }
   }
+  //Devolver el mensaje de error
+  return message;
 };
 
 //Método para crear las recursos

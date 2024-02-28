@@ -1,6 +1,6 @@
 <!-- View obra-->
 <ng-include src="'example/views/example.client.view.html'" /></ng-include>
-<section data-ng-controller="ObrasController" data-ng-init="findOne()">
+<section data-ng-controller="ObrasController" data-ng-init="findOne()" ng-show="authentication.user">
 	<div class="jumbotron">
 		<div class="wrapper2">
 			<!-- Identificador de la vista -->

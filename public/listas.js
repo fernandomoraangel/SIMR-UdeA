@@ -40,6 +40,8 @@ tipoFuente = [
   "Productor",
   "Productora audiovisual",
   "Publicador",
+  "Referencia",
+  "Sello",
 ];
 
 criterio = [
@@ -51,6 +53,7 @@ criterio = [
   "Codec audio",
   "Codec vídeo",
   "Código SPARS",
+  "Tipo de grabación (analógico, digital)",
   "Compresión de archivo",
   "Dimensiones físicas (cm)",
   "Duración",
@@ -67,6 +70,8 @@ criterio = [
   "Velocidad de cinta",
   "Velocidad de rotación",
   "Tipo de grabación (profesional, casera, de campo)",
+  "Número de unidades físicas del soporte",
+  "Código de tiempo de la máquina reproductora",
 ];
 
 estados = [
@@ -92,6 +97,8 @@ estados = [
   "Soporte defectuoso",
   "Sucio",
   "Trozos faltantes",
+  "Estuche despegado",
+  "Estuche roto",
 ];
 
 disponibilidades = [
@@ -173,17 +180,46 @@ coberturas = [
 ];
 
 roles = [
+  "Actor al que se refiere la obra",
+  "Adaptación",
   "Arreglista",
+  "Arreglo",
   "Autor letra",
   "Autor música",
+  "Autor",
   "Beat maker",
   "Compilador",
   "Compositor",
+  "Coordinador",
+  "Corrector de estilo",
+  "Dedicatoria",
+  "Diagramación",
+  "Digitador (asigna digitaciones a la partitura)",
+  "Digitador de partituras",
   "Director",
+  "Director",
+  "Editor",
+  "Grabación",
+  "Guionista",
   "Ingeniero de audio",
   "Intérprete",
-  "Inverstigador",
+  "Investigador principal",
+  "Investigador",
+  "Masterización",
+  "Mezcla",
+  "Postproducción",
+  "Presentador",
+  "Producción ejecutiva",
+  "Producción",
   "Productor",
+  "Prologuista",
+  "Revisor",
   "Titular de derechos patrimoniales",
-  "Transcriptor",
+  "Traductor",
+  "Transcripcion (para determinado instrumento)",
+  "Transcripción sonora de textos",
+  "Transcripción sonora-musical",
+  "Transcripción-traducción",
+  "Transcriptor de la partitura",
+  "Versión",
 ];

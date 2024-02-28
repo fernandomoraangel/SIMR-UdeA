@@ -85,6 +85,7 @@ var ProyectoSchema = new Schema({
     type: String,
     default: "",
     trim: true,
+    unique: true,
     required: "El campo no puede estar en blanco",
   },
   investigadores: [Investigador],

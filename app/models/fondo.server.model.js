@@ -27,6 +27,7 @@ var registroOperacion = new Schema({
 var FondoSchema = new Schema({
   nombre: {
     type: String,
+    unique: true,
     required: "El campo es requerido",
   },
   tipo: {

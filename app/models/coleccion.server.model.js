@@ -26,6 +26,7 @@ var registroOperacion = new Schema({
 var ColeccionSchema = new Schema({
   nombre: {
     type: String,
+    unique: true,
     required: "El campo es requerido",
   },
   tipo: {

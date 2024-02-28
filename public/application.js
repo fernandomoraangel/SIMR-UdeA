@@ -28,6 +28,7 @@ mainApplicationModule.config([
     $locationProvider.hashPrefix("!");
   },
 ]);
+
 angular.element(document).ready(function () {
   angular.bootstrap(document, [mainApplicationModuleName]);
 });

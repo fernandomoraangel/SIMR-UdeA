@@ -4,7 +4,7 @@
 </ng-include>
 <div class="jumbotron">
 	<div class="container">
-		<section data-ng-controller="ObrasController" data-ng-init="findOne()">
+		<section data-ng-controller="ObrasController" data-ng-init="findOne()" ng-show="authentication.user">
 			<label class="tituloVista">EDITAR OBRA</label>
 			<form class="form-principal" data-ng-submit="update()" novalidate>
 				<!-- Mensaje de error-->
