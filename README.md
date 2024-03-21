@@ -1,12 +1,27 @@
 # SIMR
 El Sistema de información de músicas regionales (simr) es una aplicación CRUD elaborada para administrar el catálogo del grupo de investigación de Músicas Regionales de la Universidad de Antioquia, bajo la arquitectura MEAN stack.
 
-## Características pendientes
+## Funcionalidades por desarrollar
+1. Migración progresiva de AngularJS a Angular.
+2. Subir, descargar y visualizar archivos desde "Enlace o dirección" en cada formulario, reproducir audios y mostrar PDFs, vídeos o imágenes en una ventana nueva.
+3. Implementar búsqueda general en cualquier campo, con expresiones similares y con operadores booleanos (en cualquier parte de la base de datos). -PUede ser con https://www.fusejs.io/ y https://www.npmjs.com/package/elasticlunr).
+4. Implementar sistema de roles y permisos. Todo usuario se registar como "solo lector", el administrador puede cambiar, crear o editar  roles y permisos de cada rol.
+5. Implementar recuperación de contraseña usando Passport.
+6. Visualizar registros en Markdown -puede ser con markdown-it-
+7. Cambiar selectores por campos de texto con autocompletado y abrir automáticamente "Crear" si no se encuentran en la BD.
+8. Agregar campos a Idioma para permitir listado ISO de idiomas o lenguas locales (entidad lingüstica, familia, lengua, otras denominaciones, ubicación geográfica, variantes (con ubicación geográfica)), notas
+9. Resolver Issues
+10. Modificaciones de seguridad solicitadas por UdeA (vulnerabilidades, certificado SSL, Configurar en modo producción).
+## Funcionalidades futuras
+1.  Vista de grafo (géneros formas, materias, Medios, sistemas sonoros).-Puede ser con https://www.sigmajs.org/-
+2.  Ver anotaciones cartográfico temporales en línea de tiempo y/o en mapa.
+3.  Crear diseño Responsive.
+
+## Otros pendientes
 
 1. Incluir Campo de licenciamiento de cada obra y recurso.
 2. Ver sistemas de repositorio y qué se puede aprender de ellos.
 3. Revisar: [Directrices para repositorios institucionales de investigación del Ministerio de Ciencia, Tecnología e Innovación](https://redcol.readthedocs.io/es/latest/index.html ) 
-
 
 ## Instrucciones (En desarrollo)
 1. Instalar Mongodb, Nodejs
