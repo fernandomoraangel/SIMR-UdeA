@@ -28,7 +28,8 @@
     "node_modules/sweetalert2/src/sweetalert2.scss"
   ],
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev" : "nodemon server.js"
   },
   "description": "El Sistema de información de músicas regionales (simr) es una aplicación CRUD elaborada para administrar el catálogo del grupo de investigación de Músicas Regionales de la Universidad de Antioquia, bajo la arquitectura MEAN stack.",
   "main": "server.js",

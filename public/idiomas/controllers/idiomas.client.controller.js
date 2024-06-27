@@ -1,4 +1,4 @@
-"use scrict";
+// "use Strict";
 
 //Controller idiomas
 angular.module("idiomas").controller("IdiomasController", [
@@ -59,7 +59,7 @@ angular.module("idiomas").controller("IdiomasController", [
         },
         function (errorResponse) {
           //En caso contrario, presentar mensaje de error
-          aSwal.fire({
+          Swal.fire({
             title: "¡Error!",
             text: ($scope.error = errorResponse.data.message),
             icon: "error",
@@ -76,10 +76,16 @@ angular.module("idiomas").controller("IdiomasController", [
     };
 
     //Método controller para recuperar una única obra
+    // $scope.findOne = function () {
+    //   //Usa el método 'get' de idioma para enviar una petición GET apropiada
+    //   $scope.idioma = Idiomas.get({
+    //     idiomaId: $routeParams.idiomaId,
+    //   });
+    // };
     $scope.findOne = function () {
-      //Usa el método 'get' de idioma para enviar una petición GET apropiada
-      $scope.idioma = Idiomas.get({
-        idiomaId: $routeParams.idiomaId,
+      $scope.idioma = Idiomas.get({ idiomaId: $routeParams.idiomaId }, function (response) {
+        console.log(response); // Depuración
+        $scope.idioma = response;
       });
     };
 

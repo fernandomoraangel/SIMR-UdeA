@@ -1,4 +1,4 @@
-"use strict";
+"use Strict";
 
 //Cargar dependencias
 var mongoose = require("mongoose"),
