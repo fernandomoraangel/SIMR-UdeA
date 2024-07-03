@@ -1,135 +1,135 @@
 "use strict";
 
-//Cargar dependencias
-var mongoose = require("mongoose"),
-  Diccionario = mongoose.model("Diccionario");
+// Cargar dependencias
+const mongoose = require("mongoose");
+const Diccionario = mongoose.model("Diccionario");
 
-//Método para el manejo de errores
-var getErrorMessage = function (err) {
-  //Definir variable de error message
-  var message = "";
-  //Si ocurre un error interno de MongoDB
+// Método para el manejo de errores
+const getErrorMessage = (err) => {
+  // Definir variable de error message
+  let message = "";
+
+  // Si ocurre un error interno de MongoDB
   if (err.code) {
     switch (err.code) {
       case 11000:
       case 11001:
         message = "El registro ya existe";
         break;
-      //si un error general ocurre
+      // si un error general ocurre
       default:
         message = "Se ha producido un error";
     }
   } else {
-    //Grabar el error en una lista de posibles errores
-    for (var errName in err.errors) {
+    // Grabar el error en una lista de posibles errores
+    for (let errName in err.errors) {
       if (err.errors[errName].message) message = err.errors[errName].message;
     }
   }
-  //Devolver el mensaje de error
+  // Devolver el mensaje de error
   return message;
 };
 
-//Método para crear los idiomas
-exports.create = function (req, res) {
-  var diccionario = new Diccionario(req.body);
-  //Configurar la propiedad 'creador'
+// Método para crear los diccionarios
+exports.create = async (req, res) => {
+  const diccionario = new Diccionario(req.body);
+  // Configurar la propiedad 'creador'
   diccionario.creador = req.user;
-  //Intentar salvar
-  diccionario.save(function (err) {
-    if (err) {
-      //Si ocurre algún error enviar el mensaje
-      return res.status(400).send({
-        message: getErrorMessage(err),
-      });
-    } else {
-      //Enviar una representación JSON de la ejemplar
-      res.json(diccionario);
-    }
-  });
+  // Intentar salvar
+  try {
+    await diccionario.save();
+    // Enviar una representación JSON del ejemplar
+    res.json(diccionario);
+  } catch (err) {
+    res.status(400).send({
+      message: getErrorMessage(err),
+    });
+  }
 };
 
 // Método que recupera una lista de diccionarios
-exports.list = function (req, res) {
-  //Usa el método model 'find' para obtener una lista de diccionarios
-  Diccionario.find()
-    .sort("campo")
-    .populate("creador", "campo")
-    .exec(function (err, diccionario) {
-      //console.log("Buscando diccionarios");
-      if (err) {
-        return res.status(400).send({
-          message: getErrorMessage(err),
-        });
-      } else {
-        res.json(diccionario);
-      }
+exports.list = async (req, res) => {
+  try {
+    // Usa el método model 'find' para obtener una lista de diccionarios
+    const diccionarios = await Diccionario.find()
+      .sort("campo")
+      .populate("creador", "campo")
+      .exec();
+    res.json(diccionarios);
+  } catch (err) {
+    res.status(400).send({
+      message: getErrorMessage(err),
     });
+  }
 };
 
-//Método que devuelve una diccionario existente
-exports.read = function (req, res) {
+// Método que devuelve un diccionario existente
+exports.read = (req, res) => {
   res.json(req.diccionario);
 };
 
-//Método para actualizar un diccionario existente
-exports.update = function (req, res) {
-  //Obtiene la ejemplar usando el objeto 'request'
-  var diccionario = req.diccionario;
-  //Actualiza los campos
+// Método para actualizar un diccionario existente
+exports.update = async (req, res) => {
+  // Obtiene la ejemplar usando el objeto 'request'
+  const diccionario = req.diccionario;
+
+  // Actualiza los campos
   diccionario.tabla = req.body.tabla;
   diccionario.campo = req.body.campo;
   diccionario.definicion = req.body.definicion;
   diccionario.campoLargo = req.body.campoLargo;
 
-  //Intenta salvar
-  diccionario.save(function (err) {
-    if (err) {
-      return res.status(400).send({
-        message: getErrorMessage(err),
-      });
-    } else {
-      res.json(diccionario);
-    }
-  });
-};
-//Método para borrar
-exports.delete = function (req, res) {
-  //Obtener la ejemplar usando el objeto 'request'
-  var diccionario = req.diccionario;
-  //Usar el método model 'remove' para borrar
-  diccionario.remove(function (err) {
-    if (err) {
-      return res.status(400).send({
-        message: getErrorMessage(err),
-      });
-    } else {
-      res.json(diccionario);
-    }
-  });
-};
-//Controller middleware para recuperar diccionario existente
-exports.diccionarioByID = function (req, res, next, id) {
-  Diccionario.findById(id)
-    .populate("creador", "firstName lastName fullName")
-    .exec(function (err, diccionario) {
-      if (err) return next(err);
-      if (!diccionario)
-        return next(new Error("Fallo al cargar el diccionario" + id));
-      //Si el diccionario es encontrado, usar el objeto 'request' para pasarla al sgte middleware
-      req.diccionario = diccionario;
-      //Llamar al sgte middleware
-      next();
+  // Intenta salvar
+  try {
+    await diccionario.save();
+    res.json(diccionario);
+  } catch (err) {
+    res.status(400).send({
+      message: getErrorMessage(err),
     });
+  }
 };
 
-//Controller middleware para autorizar una operación sobre idioma
-exports.hasAuthorization = function (req, res, next) {
-  //Si el usuario actual, no es el creador, enviar el mensaje de error
+// Método para borrar
+exports.delete = async (req, res) => {
+  // Obtener el ejemplar usando el objeto 'request'
+  const diccionario = req.diccionario;
+
+  try {
+    // Usar el método model 'deleteOne' para borrar
+    await diccionario.deleteOne();
+    res.json(diccionario);
+  } catch (err) {
+    res.status(400).send({
+      message: getErrorMessage(err),
+    });
+  }
+};
+
+// Controller middleware para recuperar diccionario existente
+exports.diccionarioByID = async (req, res, next, id) => {
+  try {
+    const diccionario = await Diccionario.findById(id)
+      .populate("creador", "firstName lastName fullName")
+      .exec();
+    if (!diccionario) return next(new Error("Fallo al cargar la materia" + id));
+    // Si la materia es encontrada, usar el objeto 'request' para pasarla al sgte middleware
+    req.diccionario = diccionario;
+    // Llamar al sgte middleware
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Controller middleware para autorizar una operación sobre diccionario
+exports.hasAuthorization = (req, res, next) => {
+  // Si el usuario actual, no es el creador, enviar el mensaje de error
   if (req.diccionario.creador.id !== req.user.id) {
     return res.status(403).send({
       message: "Usuario no autorizado",
     });
   }
-  //Llamar sgte middleware
+  // Llamar sgte middleware
   next();
 };
