@@ -1,0 +1,92 @@
+<!-- View listar obras-->
+<ng-include src="'example/views/example.client.view.html'" /></ng-include>
+<section class="bodyList" data-ng-controller="ObrasController" data-ng-init="find()">
+	<label class="tituloVista">OBRAS</label>
+	<!-- <pre>Sort by = {{propertyName}}; reverse = {{reverse}}</pre> -->
+	<ul>
+		<div class="wrapper">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th> <span class="glyphicon glyphicon-filter"> </span> <input type="text" class="campoList"
+								ng-model="search">
+							<!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
+						</th>
+					</tr>
+				</thead>
+			</table>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<!-- Columna sin título -->
+						</th>
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('titulo')">TÍTULO</button>
+							<span class="sortorder" ng-show="propertyName === 'titulo'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('tipo')">TIPO</button>
+							<span class="sortorder" ng-show="propertyName === 'tipo'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('denominacionRegional')">DENOMINACION
+								REGIONAL</button>
+							<span class="sortorder" ng-show="propertyName === 'denominacionRegional'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('actores')">ACTORES</button>
+							<span class="sortorder" ng-show="propertyName === 'actores'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('generosFormas')">GÉNEROS</button>
+							<span class="sortorder" ng-show="propertyName === 'generosFormas'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('GenerosFormasNoMusicales')">GÉN. NO
+								M..</button>
+							<span class="sortorder" ng-show="propertyName === 'GenerosFormasNoMusicales'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+
+						<th>
+							<button class="btn-lg3" ng-click="sortBy('idiomas')">IDIOMA</button>
+							<span class="sortorder" ng-show="propertyName === 'idiomas'"
+								ng-class="{reverse: reverse}"></span>
+						</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr data-ng-repeat="obra in obras | orderBy:propertyName:reverse |filter:search">
+						<td>
+							<a href="/#!/obras/{{obra._id}}"><span class="glyphicon glyphicon-sunglasses"></a>
+						</td>
+						<td data-ng-bind="obra.titulo"></td>
+						<td data-ng-bind="obra.tipo"></td>
+						<td data-ng-bind="verDenominaciones(obra.denominacionRegional)"></td>
+						<td data-ng-bind="verActores(obra.actores)"></td>
+						<td data-ng-bind="verGeneros(obra.generosFormas)"></td>
+						<td data-ng-bind="verGenerosNoMusicales(obra.GenerosFormasNoMusicales)"></td>
+						<td data-ng-bind="verIdiomas(obra.idiomas)"></td>
+						<td data-ng-show="authentication.user._id == obra.creador._id">
+							<a href="/#!/obras/{{obra._id}}/edit"><span class="glyphicon glyphicon-pencil"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</div>
+	</ul>
+
+	<div data-ng-hide="!obras || obras.length">
+		<a href="/#!/obras/create"></a>
+</section>

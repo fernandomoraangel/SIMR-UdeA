@@ -1,1 +1,62 @@
-node_modules
+# Exclude node_modules directory anywhere in the project
+**/node_modules
+
+#========================================
+# [Backend]
+# Logs
+/simr-back/logs
+/simr-back/*.log
+/simr-back/npm-debug.log*
+
+# Dependency directories
+/simr-back/pids
+/simr-back/logs
+/simr-back/*.pid
+/simr-back/*.seed
+/simr-back/*.pid.lock
+
+# Environment variables
+/simr-back/.env*
+
+
+#========================================
+# [Frontend]
+# Compiled output
+/simr-front/dist
+/simr-front/tmp
+/simr-front/out-tsc
+/simr-front/bazel-out
+
+# Node
+/simr-front/npm-debug.log
+/simr-front/yarn-error.log
+
+# IDEs and editors
+/simr-front/.idea/
+/simr-front/.project
+/simr-front/.classpath
+/simr-front/.c9/
+/simr-front/*.launch
+/simr-front/.settings/
+/simr-front/*.sublime-workspace
+
+# Visual Studio Code
+/simr-front/.vscode/*
+/simr-front/!.vscode/settings.json
+/simr-front/!.vscode/tasks.json
+/simr-front/!.vscode/launch.json
+/simr-front/!.vscode/extensions.json
+/simr-front/.history/*
+
+# Miscellaneous
+/simr-front/.angular/cache
+/simr-front/.sass-cache/
+/simr-front/connect.lock
+/simr-front/coverage
+/simr-front/libpeerconnection.log
+/simr-front/testem.log
+/simr-front/typings
+
+# System files
+/simr-front/.DS_Store
+/simr-front/Thumbs.db
