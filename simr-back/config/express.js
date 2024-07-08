@@ -1,46 +1,75 @@
-//Llamada a los módulos express que se utilizarán
-var config=require('./config'),
-	express=require('express'),
-	morgan=require('morgan'),
-	compress=require('compression'),
-	bodyParser=require('body-parser'),
-	methodOverride=require('method-override'),
-	session=require('express-session'),
-	flash=require('connect-flash'),
-	passport=require('passport');
+// Llamada a los módulos express que se utilizarán
+var config = require('./config'),
+	express = require('express'),
+	morgan = require('morgan'),
+	compress = require('compression'),
+	bodyParser = require('body-parser'),
+	methodOverride = require('method-override'),
+	session = require('express-session'),
+	flash = require('connect-flash'),
+	passport = require('passport');
+const cors = require('cors');
+
+// const path = require('path');
+
 //Función para inicializar la aplicación express
-module.exports=function() {
-	//Instanciar la aplicación
-	var app=express();
-	if (process.env.NODE_ENV==='development'){
+module.exports = function () {
+	// Instanciar la aplicación
+	var app = express();
+
+	// Enable CORS
+	app.use(cors());
+	app.use((req, res, next) => {
+		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Replace 'http://localhost:4200' with the URL of your frontend
+		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+		next();
+	});
+
+	if (process.env.NODE_ENV === 'development') {
 		app.use(morgan('dev'));
-	} else if (process.env.NODE_ENV==='production'){
+	} else if (process.env.NODE_ENV === 'production') {
 		//Para subir a Heroku
 		require('dotenv').config()
 		const DB_URI = process.env.DB_URI
 		const PORT = process.env.PORT
 		app.use(compress());
 	}
-	app.use(bodyParser.urlencoded({
-		extended:true
-	}));
+
+	// app.use(bodyParser.urlencoded({
+	// 	extended: true
+	// }));
 	app.use(bodyParser.json());
 	app.use(methodOverride());
-	//Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
+
+
+	// new
+	app.use(express.json());
+	app.use(express.urlencoded({ extended: false }));
+	app.use(session({ secret: 'your secret key', resave: false, saveUninitialized: false }));
+	// app.use(passport.initialize());
+	// app.use(passport.session());
+	// end(new)
+
+	// Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
 	app.use(session({
-		saveUninitialized:true,
-		resave:true,
-		secret:config.sessionSecret
+		saveUninitialized: true,
+		resave: true,
+		secret: config.sessionSecret
 	}));
+
 	//Configurar el directorio views
-	app.set('views','./app/views');
+	app.set('views', './app/views');
+
 	// Configurar el motor de plantillas
-	app.set('view engine','ejs');
+	app.set('view engine', 'ejs');
+
 	//Registrar flash
 	app.use(flash());
+
 	//Configurar passport
 	app.use(passport.initialize());
 	app.use(passport.session());
+
 	//Requerimos su archivo de enrutamiento
 	require('../app/routes/index.server.routes.js')(app);
 	require('../app/routes/users.server.routes.js')(app);
@@ -59,9 +88,10 @@ module.exports=function() {
 	require('../app/routes/ejemplares.server.routes.js')(app);
 	require('../app/routes/idiomas.server.routes.js')(app);
 	require('../app/routes/diccionarios.server.routes.js')(app);
-	
+
 	//Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
-	app.use(express.static('./public'));
+	// app.use(express.static('./public'));
+	app.use(express.static('../simr-front/src/app/angularjs'));
 	//Devuelve la instancia de la aplicación
 	return app;
 };

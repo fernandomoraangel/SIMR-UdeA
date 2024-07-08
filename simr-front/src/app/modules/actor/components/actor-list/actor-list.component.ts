@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Actor } from '../../../../models/actor.model';
 import { ActorService } from '../../services/actor.service';
-import { Actor } from '../../models/actor.model';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-actores',
-  templateUrl: './actores.component.html',
-  styleUrl: './actores.component.css'
+  selector: 'app-actor-list',
+  templateUrl: './actor-list.component.html',
+  styleUrl: './actor-list.component.css'
 })
-export class ActoresComponent implements OnInit {
+export class ActorListComponent {
   actores: Actor[] = [];
 
   constructor(private actorService: ActorService, private router: Router) { }

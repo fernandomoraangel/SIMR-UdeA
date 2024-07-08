@@ -2,7 +2,7 @@
 **/node_modules
 
 #========================================
-# [Backend]
+# [BACKEND]
 # Logs
 /simr-back/logs
 /simr-back/*.log
@@ -20,7 +20,7 @@
 
 
 #========================================
-# [Frontend]
+# [FRONTEND]
 # Compiled output
 /simr-front/dist
 /simr-front/tmp

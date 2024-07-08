@@ -1,3 +1,4 @@
+// SEPARAR INTERFACES EN ARCHIVOS DIFERENTES
 export interface RegistroOperacion {
   tipoDeOperacion: string;
   registroBorrado?: boolean;

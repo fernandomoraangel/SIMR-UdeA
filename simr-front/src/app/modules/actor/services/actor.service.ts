@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Actor } from '../models/actor.model'; // Define your Actor model
-import { ErrorHandlerService } from './error-handler.service'; // Implement error handling
+import { Actor } from '../../../models/actor.model'; // Define your Actor model
+import { ErrorHandlerService } from '../../../services/error-handler.service'; // Implement error handling
 
 
 @Injectable({

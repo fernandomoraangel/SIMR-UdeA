@@ -1,18 +1,20 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule } from './app-routing.module'; // Debe ser incluido de último en los 'imports' del Módulo
 import { AppComponent } from './app.component';
-import { MainComponent } from './main/main.component';
+import { HomeComponent } from './pages/home/home.component';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { ActoresComponent } from './pages/actores/actores.component';
+import { ActorModule } from './modules/actor/actor.module';
+
 
 // Import the UpgradeModule from @angular/upgrade/static
 // import { UpgradeModule } from '@angular/upgrade/static';
 // import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 
-// Define your AngularJS module
+// Define your AngularJS module 
 // declare const angular: any;
 // const angularJsApp = angular.module('angularJsApp', []);
 
@@ -25,11 +27,12 @@ import { ActoresComponent } from './pages/actores/actores.component';
 @NgModule({
   declarations: [
     AppComponent,
-    MainComponent,
-    ActoresComponent
+    HomeComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
+    ActorModule,
     AppRoutingModule,
     // UpgradeModule
   ],
