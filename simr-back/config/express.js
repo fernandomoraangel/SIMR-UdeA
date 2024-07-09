@@ -1,21 +1,20 @@
-// Llamada a los módulos express que se utilizarán
-var config = require('./config'),
-	express = require('express'),
-	morgan = require('morgan'),
-	compress = require('compression'),
-	bodyParser = require('body-parser'),
-	methodOverride = require('method-override'),
-	session = require('express-session'),
-	flash = require('connect-flash'),
-	passport = require('passport');
+const config = require('./config');
+const express = require('express');
+const morgan = require('morgan');
+const compress = require('compression');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+const session = require('express-session');
+const flash = require('connect-flash');
+const passport = require('passport');
 const cors = require('cors');
 
-// const path = require('path');
 
-//Función para inicializar la aplicación express
+// Función para inicializar la aplicación express
 module.exports = function () {
+
 	// Instanciar la aplicación
-	var app = express();
+	const app = express();
 
 	// Enable CORS
 	app.use(cors());
@@ -28,27 +27,19 @@ module.exports = function () {
 	if (process.env.NODE_ENV === 'development') {
 		app.use(morgan('dev'));
 	} else if (process.env.NODE_ENV === 'production') {
-		//Para subir a Heroku
+		// Para subir a Heroku
 		require('dotenv').config()
 		const DB_URI = process.env.DB_URI
 		const PORT = process.env.PORT
 		app.use(compress());
 	}
 
-	// app.use(bodyParser.urlencoded({
-	// 	extended: true
-	// }));
+	app.use(bodyParser.urlencoded({
+		extended: true
+	}));
+
 	app.use(bodyParser.json());
 	app.use(methodOverride());
-
-
-	// new
-	app.use(express.json());
-	app.use(express.urlencoded({ extended: false }));
-	app.use(session({ secret: 'your secret key', resave: false, saveUninitialized: false }));
-	// app.use(passport.initialize());
-	// app.use(passport.session());
-	// end(new)
 
 	// Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
 	app.use(session({
@@ -57,20 +48,20 @@ module.exports = function () {
 		secret: config.sessionSecret
 	}));
 
-	//Configurar el directorio views
+	// Configurar el directorio views
 	app.set('views', './app/views');
 
 	// Configurar el motor de plantillas
 	app.set('view engine', 'ejs');
 
-	//Registrar flash
+	// Registrar flash
 	app.use(flash());
 
-	//Configurar passport
+	// Configurar passport
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	//Requerimos su archivo de enrutamiento
+	// Requerimos su archivo de enrutamiento
 	require('../app/routes/index.server.routes.js')(app);
 	require('../app/routes/users.server.routes.js')(app);
 	require('../app/routes/obras.server.routes.js')(app);
@@ -89,9 +80,10 @@ module.exports = function () {
 	require('../app/routes/idiomas.server.routes.js')(app);
 	require('../app/routes/diccionarios.server.routes.js')(app);
 
-	//Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
+	// Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
 	// app.use(express.static('./public'));
 	app.use(express.static('../simr-front/src/app/angularjs'));
-	//Devuelve la instancia de la aplicación
+
+	// Devuelve la instancia de la aplicación
 	return app;
 };
