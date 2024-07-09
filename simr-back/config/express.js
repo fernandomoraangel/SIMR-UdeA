@@ -9,10 +9,8 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const cors = require('cors');
 
-
 // Función para inicializar la aplicación express
 module.exports = function () {
-
 	// Instanciar la aplicación
 	const app = express();
 
