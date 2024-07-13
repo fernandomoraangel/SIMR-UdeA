@@ -1,15 +1,15 @@
-//Invocar el modo 'strict' de javascript
+// Invocar el modo 'strict' de javascript
 "use strict";
 
-//Cargar dependencias del módulo
+// Cargar dependencias del módulo
 var config = require("./config"),
   mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
-//Definir el método de configuración de mongoose
+// Definir el método de configuración de mongoose
 module.exports = function () {
-  //Usar Mongoose para conectar a MongoDB
+  // Usar Mongoose para conectar a MongoDB
   var db = mongoose.connect(config.db);
-  //Cargar modelos
+  // Cargar modelos
   require("../app/models/user.server.model");
   require("../app/models/actor.server.model");
   require("../app/models/obra.server.model");
@@ -27,7 +27,7 @@ module.exports = function () {
   require("../app/models/user.server.model");
   require("../app/models/idioma.server.model");
   require("../app/models/diccionario.server.model");
-  //console.log("Carga de modelos");
-  //Devolver la instancia de conexión a Mongoose
+  // console.log("Carga de modelos");
+  // Devolver la instancia de conexión a Mongoose
   return db;
 };

@@ -23,4 +23,3 @@ module.exports = function () {
 	require('./strategies/local.js')();
 	require('./strategies/google.js')();
 };
-

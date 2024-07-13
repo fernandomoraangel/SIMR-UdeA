@@ -1,14 +1,15 @@
-export class User {
-  _id?: string;
-  nombre: string;
-  categoria: string;
-  ubicacion: string;
-  precio: number;
 
-  constructor(nombre: string, categoria: string, ubicacion: string, precio: number) {
-    this.nombre = nombre;
-    this.categoria = categoria;
-    this.ubicacion = ubicacion;
-    this.precio = precio;
-  }
+export interface User {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  password?: string;
+  salt?: string;
+  provider: string;
+  providerId?: string;
+  providerData?: any;
+  created?: Date;
+  fullName?: string;
 }

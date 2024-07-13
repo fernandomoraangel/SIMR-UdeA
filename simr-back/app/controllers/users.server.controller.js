@@ -129,7 +129,7 @@ exports.renderSignup = (req, res, next) => {
       messages: req.flash("error"),
     });
   } else {
-    return res.redirect("/");
+    return res.redirect("/idiomas");
   }
 };
 
@@ -147,7 +147,7 @@ exports.signout = (req, res, next) => {
 
 // Controller para crear nuevo usuario
 exports.signup = async (req, res, next) => {
-  // Si user no est{a conectado, crear y hacer login a un nuevo usuario}
+  // Si user no esta conectado, crear y hacer login a un nuevo usuario
   if (!req.user) {
     try {
       // Crear una nueva instancia del modelo 'User'
@@ -161,7 +161,10 @@ exports.signup = async (req, res, next) => {
         // Si ocurre error de login moverse al siguiente middleware
         if (err) return next(err);
         // Redirecciona de nuevo a la página principal
-        return res.redirect("/");
+        // return res.redirect("/");
+        // return res.status(200).json({ message: 'Registro exitoso', user });
+        const { _id, username, email } = user;
+        return res.status(200).json({ message: 'Registro exitoso', user: { _id, username, email } });
       });
     } catch (err) {
       // Si ocurre un error, lo reporta usando el mensaje flash
@@ -170,17 +173,21 @@ exports.signup = async (req, res, next) => {
       // Configura los mensajes flash
       req.flash("error", message);
       // Redirecciona al usuario de vuelta a signup
-      return res.redirect("/signup");
+      // return res.redirect("/signup");
+      return res.status(500).json({ message: 'Error en el registro', err });
     }
   } else {
-    return res.redirect("/");
+    // return res.redirect("/");
+    // return res.status(200).json({ message: 'Registro exitoso', user });
+    // return res.status(200).json({ message: 'Registro exitoso', user: { id, username, email } });
+    return res.status(405).send({ message: 'Usuario ya registrado' });
   }
 };
 
 // Middleware controller para autorizar operaciones
 exports.requiresLogin = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    return res.status(302).send({
+    return res.status(401).send({
       message: "Usuario no autorizado",
       redirect: "/",
     });

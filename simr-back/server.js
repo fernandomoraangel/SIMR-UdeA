@@ -16,8 +16,10 @@ const app = express();
 var passportObj = passport();
 
 
+// Iniciar el servidor http
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+	// console.log(`Servidor ejecutandose en el puerto ${PORT}`);
 	console.log(`Servidor ejecutandose en http://localhost:${PORT}`);
 });
 

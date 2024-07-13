@@ -1,6 +1,6 @@
 module.exports={
 	db:'mongodb://localhost/simr',
-	//Si no es local mongodb://usuario:pass@hostname:puerto/basedatos
+	// Si no es local mongodb://usuario:pass@hostname:puerto/basedatos
 	sessionSecret:'developmentSessionSecret',
 	google:{
 		clientID:'424952915433-7ejq1nho03771k9nc8rmdqmasqjfsqr7.apps.googleusercontent.com',

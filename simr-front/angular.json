@@ -37,9 +37,12 @@
               }
             ],
             "styles": [
-              "./src/app/assets/styles/styles.css"
+              "./src/app/assets/styles/styles.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/bootstrap/dist/js/bootstrap.bundle.js"
+            ]
           },
           "configurations": {
             "production": {

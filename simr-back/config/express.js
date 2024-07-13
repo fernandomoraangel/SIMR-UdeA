@@ -1,26 +1,39 @@
 const config = require('./config');
 const express = require('express');
+const session = require('express-session');
 const morgan = require('morgan');
 const compress = require('compression');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const cors = require('cors');
+// const MongoStore = require('connect-mongo');
 
 // Función para inicializar la aplicación express
 module.exports = function () {
 	// Instanciar la aplicación
 	const app = express();
 
-	// Enable CORS
+	// ================== CORS ===========================
+	// Habilitar CORS - Para permitir que el frontend se comunique con el backend
 	app.use(cors());
 	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Replace 'http://localhost:4200' with the URL of your frontend
+		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar 'http://localhost:4200' con la URL del frontend
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 		next();
 	});
+
+	// const corsOptions = {
+	// 	origin: 'http://localhost:4200', // Cambia esto al origen de tu frontend
+	// 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+	// 	credentials: true,
+	// 	optionsSuccessStatus: 204
+	// };
+
+	// app.use(cors(corsOptions));
+
+	// ===================================================
 
 	if (process.env.NODE_ENV === 'development') {
 		app.use(morgan('dev'));
@@ -32,11 +45,11 @@ module.exports = function () {
 		app.use(compress());
 	}
 
+	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({
 		extended: true
 	}));
 
-	app.use(bodyParser.json());
 	app.use(methodOverride());
 
 	// Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
@@ -45,6 +58,19 @@ module.exports = function () {
 		resave: true,
 		secret: config.sessionSecret
 	}));
+
+	// app.use(session({
+	// 	secret: 'config.sessionSecret',
+	// 	resave: false,
+	// 	saveUninitialized: false,
+	// 	store: MongoStore.create({
+	// 		mongoUrl: 'config.db',
+	// 		collectionName: 'sessions'
+	// 	}),
+	// 	cookie: {
+	// 		maxAge: 1000 * 60 * 60 * 24 // 1 día
+	// 	}
+	// }));
 
 	// Configurar el directorio views
 	app.set('views', './app/views');

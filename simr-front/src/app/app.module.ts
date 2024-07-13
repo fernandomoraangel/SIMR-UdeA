@@ -3,10 +3,14 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module'; // Debe ser incluido de último en los 'imports' del Módulo
 import { AppComponent } from './app.component';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './pages/home/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { ActorModule } from './modules/actor/actor.module';
+import { SigninComponent } from './pages/signin/signin.component';
+import { SignupComponent } from './pages/signup/signup.component';
 
 
 // Import the UpgradeModule from @angular/upgrade/static
@@ -28,12 +32,16 @@ import { ActorModule } from './modules/actor/actor.module';
   declarations: [
     AppComponent,
     HomeComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    SigninComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
     ActorModule,
     AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     // UpgradeModule
   ],
   providers: [provideHttpClient()],
