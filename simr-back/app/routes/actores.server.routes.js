@@ -9,7 +9,7 @@ var users = require('../../app/controllers/users.server.controller'),
 module.exports = function (app) {
 	//Configurar ruta base a 'actores'
 	app.route('/api/actores')
-		.get(actores.list)
+		.get(users.requiresLogin, actores.list)
 		.post(users.requiresLogin, actores.create);
 
 	//Configurar las rutas a 'actores' parametrizadas

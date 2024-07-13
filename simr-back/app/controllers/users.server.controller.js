@@ -3,7 +3,7 @@
 
 // Cargar el model Mongoose 'User'
 const User = require("mongoose").model("User");
-passport = require("passport");
+const passport = require("passport");
 
 // Crear un nuevo método controler 'create'
 exports.create = async (req, res, next) => {
@@ -133,10 +133,48 @@ exports.renderSignup = (req, res, next) => {
   }
 };
 
+// Controller para signin
+exports.signin = (req, res, next) => {
+  passport.authenticate('local', (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(401).json({ message: 'Authentication failed' });
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      const safeUser = {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        // agrega otros campos que quieras exponer
+      };
+      res.json({ message: 'Authentication successful', user: safeUser });
+    });
+  })(req, res, next);
+};
+
+// {
+//   successRedirect: '/',
+//   failureRedirect: '/signin',
+//   failureFlash: true
+// }
+
+// // Ruta Protegida
+// app.get('/profile', (req, res) => {
+//   if (!req.isAuthenticated()) {
+//     return res.redirect('/login');
+//   }
+//   res.send(`Hola ${req.user.username}`);
+// });
+
 // Controller para signout
 exports.signout = (req, res, next) => {
   // Usa el método logout de passport con respectivo callback para salir
-  req.logout(function (err) {
+  req.logout((err) => {
     if (err) {
       return next(err);
     }

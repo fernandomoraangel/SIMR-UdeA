@@ -17,7 +17,22 @@ module.exports = function () {
 
 	// ================== CORS ===========================
 	// Habilitar CORS - Para permitir que el frontend se comunique con el backend
-	app.use(cors());
+	const corsOptions = {
+		origin: 'http://localhost:4200', // Reemplazar 'http://localhost:4200' con la URL del frontend
+		credentials: true, // Habilitar el envío de credenciales (cookies, cabeceras de autorización, etc.)
+	};
+
+	app.use(cors(corsOptions));
+	
+	app.use((req, res, next) => {
+		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar con la URL del frontend
+		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+		res.header('Access-Control-Allow-Credentials', 'true'); // Añadir este encabezado
+		next();
+	});
+	
+
+	
 	app.use((req, res, next) => {
 		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar 'http://localhost:4200' con la URL del frontend
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -46,6 +61,8 @@ module.exports = function () {
 	}
 
 	app.use(bodyParser.json());
+	app.use(express.urlencoded({ extended: true }));
+	
 	app.use(bodyParser.urlencoded({
 		extended: true
 	}));
@@ -53,10 +70,21 @@ module.exports = function () {
 	app.use(methodOverride());
 
 	// Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
+	// app.use(session({
+	// 	saveUninitialized: true,
+	// 	resave: true,
+	// 	secret: config.sessionSecret
+	// }));
+
 	app.use(session({
+		secret: config.sessionSecret, // Reemplaza con una clave secreta segura
+		resave: false,
 		saveUninitialized: true,
-		resave: true,
-		secret: config.sessionSecret
+		cookie: {
+			secure: false, // Establece true si estás utilizando HTTPS
+			httpOnly: true,
+			sameSite: 'None' // Asegura que la cookie se envíe en todos los contextos
+		}
 	}));
 
 	// app.use(session({

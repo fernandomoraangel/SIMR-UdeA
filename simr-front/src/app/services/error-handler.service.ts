@@ -10,12 +10,12 @@ export class ErrorHandlerService {
   constructor() { }
 
   handleError(error: HttpErrorResponse) {
-  let errorMessage = 'Ocurrió algún problema; por favor, intente de nuevo luego.';
+    let errorMessage = 'Ocurrió algún problema; por favor, intente de nuevo luego.';
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred
       console.error('An error occurred:', error.error.message);
     } else {
-      // The backend returned an unsuccessful response code
+      // // The backend returned an unsuccessful response code
       // console.error(
       //   `Backend returned code ${error.status}, ` +
       //   `body was: ${JSON.stringify(error.error)}`);
@@ -29,7 +29,7 @@ export class ErrorHandlerService {
     } else if (error.error.message) {
       errorMessage = error.error.message;
     }
-    
+
     return throwError(() => new Error(errorMessage));
   }
 }

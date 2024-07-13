@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './pages/home/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient } from '@angular/common/http';
 import { ActorModule } from './modules/actor/actor.module';
 import { SigninComponent } from './pages/signin/signin.component';
 import { SignupComponent } from './pages/signup/signup.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 
 // Import the UpgradeModule from @angular/upgrade/static
@@ -44,7 +45,10 @@ import { SignupComponent } from './pages/signup/signup.component';
     ReactiveFormsModule,
     // UpgradeModule
   ],
-  providers: [provideHttpClient()],
+  providers: [
+    provideHttpClient(),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

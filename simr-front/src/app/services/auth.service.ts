@@ -33,36 +33,60 @@ export class AuthService {
   }
 
   signin(username: string, password: string): Observable<boolean> {
-    return this.http.post<any>(this.SIGNIN_URL, { username, password })
-      .pipe(
-        tap(() => this.signedIn = true),
-        map(response => {
-          // Manejar la respuesta del servidor
-          console.log('Inicio de sesión exitoso:', response);
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            return true;
-          }
-          // return false;
-          return true;
-        }),
-        // map(() => true),
-        catchError(error => {
-          console.error('Error en el inicio de sesión:', error.error.message);
-          return of(false);
-        })
-      );
+    const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    const body = `username=${username}&password=${password}`;
+
+    // return this.http.post<any>(this.SIGNIN_URL, { username, password })
+    return this.http.post(this.SIGNIN_URL, body, { headers, withCredentials: true }).pipe(
+      tap(() => this.signedIn = true),
+      map(response => {
+        // Manejar la respuesta del servidor
+        console.log('Inicio de sesión exitoso:', response);
+        // if (response && response.token) {
+        //   localStorage.setItem('token', response.token);
+        //   return true;
+        // }
+        // return false;
+        return true;
+      }),
+      // map(() => true),
+      catchError(error => {
+        console.error('Error en el inicio de sesión:', error.error.message);
+        return of(false);
+      })
+    );
   }
 
-  signout(): void {
-    this.http.get(this.SIGNOUT_URL).subscribe(() => {
-      this.signedIn = false;
-      this.router.navigate(['/signin']);
-    });
-    localStorage.removeItem('token');
+  signout(): Observable<any> {
+    return this.http.get(this.SIGNOUT_URL, { withCredentials: true }).pipe(
+      tap(() => {
+        // Manejar la respuesta de cierre de sesión aquí
+        this.signedIn = false;
+        this.router.navigate(['/signin']);
+      })
+    );
+    // localStorage.removeItem('token');
   }
 
-  isSignedIn(): boolean {
+  // signout(): void {
+  //   this.http.get(this.SIGNOUT_URL).subscribe(() => {
+  //     this.signedIn = false;
+  //     this.router.navigate(['/signin']);
+  //   });
+  //   localStorage.removeItem('token');
+  // }
+
+  // logout(): Observable<any> {
+  //   return this.http.get(this.SIGNOUT_URL, { withCredentials: true }).pipe(
+  //     tap(response => {
+  //       // Manejar la respuesta de cierre de sesión aquí
+  //     })
+  //   );
+  // }
+
+  isAuthenticated(): boolean {
+    // Implementar lógica para verificar si el usuario está autenticado
+    // return !!localStorage.getItem('user');
     return this.signedIn;
   }
 }
