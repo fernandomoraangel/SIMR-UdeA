@@ -1,24 +1,24 @@
 // "use Strict";
 
-//Controller idiomas
-angular.module("idiomas").controller("IdiomasController", [
+//Controller pruebas
+angular.module("pruebas").controller("PruebasController", [
   "$scope",
   "$routeParams",
   "$location",
   "Authentication",
-  "Idiomas",
-  function ($scope, $routeParams, $location, Authentication, Idiomas) {
+  "Pruebas",
+  function ($scope, $routeParams, $location, Authentication, Pruebas) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
     $scope.idEstados = [];
     //Preparar datos
     $scope.actualizarTodo = function () {
-      $scope.idEstados = this.idioma.estados;
+      $scope.idEstados = this.prueba.estados;
     };
 
     // Funciones auxiliares
     //Variables globales para ordenar la vista de lista
-    $scope.propertyName = "idioma";
+    $scope.propertyName = "prueba";
     $scope.reverse = false;
 
     //Ordena la vista de lista
@@ -39,23 +39,23 @@ angular.module("idiomas").controller("IdiomasController", [
       return y;
     };
 
-    //Crear método controller para crear nuevos idiomas
+    //Crear método controller para crear nuevos pruebas
     $scope.create = function () {
       //Usar los campos form para crear un nuevo objeto $resource
-      var idioma = new Idiomas({
-        idioma: this.idioma,
+      var prueba = new Pruebas({
+        prueba: this.prueba,
       });
       //Usar el método '$save' para enviar una petición POST apropiada
-      idioma.$save(
+      prueba.$save(
         function (response) {
-          //Si el idioma fue creado de la manera correcta, redireccionar a la página del idioma
+          //Si el prueba fue creado de la manera correcta, redireccionar a la página del prueba
           Swal.fire({
             title: "¡Registro correcto!",
             text: "El registro se ha creado correctamente",
             icon: "success",
             confirmButtonText: "Cerrar",
           });
-          $location.path("idiomas/" + response._id);
+          $location.path("pruebas/" + response._id);
         },
         function (errorResponse) {
           //En caso contrario, presentar mensaje de error
@@ -71,33 +71,33 @@ angular.module("idiomas").controller("IdiomasController", [
     };
     //Método controller para recuperar la lista de registros
     $scope.find = function () {
-      //Usar el método 'querry' de idioma, para enviar una petición GET apropiada
-      $scope.idiomas = Idiomas.query();
+      //Usar el método 'querry' de prueba, para enviar una petición GET apropiada
+      $scope.pruebas = Pruebas.query();
     };
 
     //Método controller para recuperar una única obra
     // $scope.findOne = function () {
-    //   //Usa el método 'get' de idioma para enviar una petición GET apropiada
-    //   $scope.idioma = Idiomas.get({
-    //     idiomaId: $routeParams.idiomaId,
+    //   //Usa el método 'get' de prueba para enviar una petición GET apropiada
+    //   $scope.prueba = Pruebas.get({
+    //     pruebaId: $routeParams.pruebaId,
     //   });
     // };
     $scope.findOne = function () {
-      $scope.idioma = Idiomas.get({ idiomaId: $routeParams.idiomaId }, function (response) {
+      $scope.prueba = Pruebas.get({ pruebaId: $routeParams.pruebaId }, function (response) {
         console.log(response); // Depuración
-        $scope.idioma = response;
+        $scope.prueba = response;
       });
     };
 
-    //Método controller para actualizar una único idioma
+    //Método controller para actualizar una único prueba
     $scope.update = function () {
-      for (var i in $scope.idIdiomas) {
-        idioma = new Idiomas({
-          idioma: $scope.idIdiomas[i].id,
+      for (var i in $scope.idPruebas) {
+        prueba = new Pruebas({
+          prueba: $scope.idPruebas[i].id,
         });
 
         //Usar el método '$save' de actor para enviar una petición POST apropiada
-        idioma.$save(
+        prueba.$save(
           function (response) {
             //$location.path('obras/' + obraId);
           },
@@ -110,7 +110,7 @@ angular.module("idiomas").controller("IdiomasController", [
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada
-      $scope.idioma.$update(
+      $scope.prueba.$update(
         function () {
           Swal.fire({
             title: "¡Registro correcto!",
@@ -119,7 +119,7 @@ angular.module("idiomas").controller("IdiomasController", [
             confirmButtonText: "Cerrar",
           });
           //Si la actualización es correcta, redireccionar
-          $location.path("idiomas/" + $scope.idioma._id);
+          $location.path("pruebas/" + $scope.prueba._id);
         },
         function (errorResponse) {
           Swal.fire({
@@ -134,7 +134,7 @@ angular.module("idiomas").controller("IdiomasController", [
     };
 
     //Método controller para borrar una obra
-    $scope.delete = function (idioma) {
+    $scope.delete = function (prueba) {
       //Confirmación
       Swal.fire({
         title: "¡Advertencia de eliminación!",
@@ -145,28 +145,28 @@ angular.module("idiomas").controller("IdiomasController", [
         cancelButtonText: "Cancelar",
       }).then((result) => {
         if (result.isConfirmed) {
-          if (idioma) {
+          if (prueba) {
             //Borrado
             //Usar el método '$remove' del la obra para borrarla
-            idioma.$remove(function () {
+            prueba.$remove(function () {
               //Eliminar la obra de la lista
-              for (var i in $scope.idiomas) {
-                if ($scope.idiomas[i] === idioma) {
-                  $scope.idiomas.splice(i, 1);
+              for (var i in $scope.pruebas) {
+                if ($scope.pruebas[i] === prueba) {
+                  $scope.pruebas.splice(i, 1);
                 }
               }
             });
           } else {
             //En otro caso usar el método $remove para borrar
             //Borrado exitoso
-            $scope.idioma.$remove(function () {
+            $scope.prueba.$remove(function () {
               Swal.fire({
                 title: "Eliminación exitosa!",
                 text: "El registro se ha eliminado correctamente",
                 icon: "success",
                 confirmButtonText: "Cerrar",
               });
-              $location.path("idiomas");
+              $location.path("pruebas");
             });
           }
         }

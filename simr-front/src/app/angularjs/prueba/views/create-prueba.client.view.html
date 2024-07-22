@@ -2,8 +2,8 @@
 <ng-include src="'example/views/example.client.view.html'" /></ng-include>
 <div class="jumbotron">
 	<div class="container">
-		<section data-ng-controller="IdiomasController">
-			<label class="tituloVista">CREAR IDIOMA</label>
+		<section data-ng-controller="PruebasController">
+			<label class="tituloVista">CREAR PRUEBA</label>
 
 			<form class="form-principal" data-ng-submit="create()" novalidate>
 				<!-- Mensaje de error-->
@@ -12,7 +12,7 @@
 				</div>
 
 				<div>
-					<input type="text" class="form-control" ng-model="idioma" required>
+					<input type="text" class="form-control" ng-model="prueba" required>
 				</div>
 
 				<div>
@@ -25,16 +25,3 @@
 				</div>
 			</form>
 	</div>
-
-
-	<!-- *** Prueba *** -->
-	
-	<iframe src="http://localhost:4200/actores" title="Angular" width="920" height="1024">
-
-	</iframe>
-
-	<!-- <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" width="560" height="315" frameborder="0" name="video"
-		sandbox="allow-scripts allow-same-origin" allow="fullscreen">
-	</iframe> -->
-
-	<!-- *** (Fin de Prueba) *** -->

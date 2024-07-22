@@ -51,7 +51,7 @@ export class AuthService {
       }),
       // map(() => true),
       catchError(error => {
-        console.error('Error en el inicio de sesión:', error.error.message);
+        console.error('Error en el inicio de sesión !!!', error.error.message);
         return of(false);
       })
     );

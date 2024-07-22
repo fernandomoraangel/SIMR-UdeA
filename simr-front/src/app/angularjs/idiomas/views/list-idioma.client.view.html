@@ -6,8 +6,7 @@
 		<div class="wrapper">
 			<table class="table table-striped">
 				<thead>
-					<th> <span class="glyphicon glyphicon-filter"> </span> <input type="text" class="campoList"
-							ng-model="search">
+					<th> <span class="glyphicon glyphicon-filter"> </span> <input type="text" class="campoList" ng-model="search">
 						<!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
 					</th>
 				</thead>
@@ -21,8 +20,7 @@
 						</th>
 						<th>
 							<button class="btn-lg3" ng-click="sortBy('idioma')">IDIOMA</button>
-							<span class="sortorder" ng-show="propertyName === 'idioma'"
-								ng-class="{reverse: reverse}"></span>
+							<span class="sortorder" ng-show="propertyName === 'idioma'" ng-class="{reverse: reverse}"></span>
 						</th>
 					</tr>
 				</thead>
@@ -50,4 +48,10 @@
 
 	<div data-ng-hide="!idiomas || idiomas.length">
 		<a href="/#!/idiomas/create"></a>
+	</div>
+
+	<div ng-app="myApp">
+		<h1>Esto es una Prueba</h1>
+		<app-component></app-component>
+	</div>
 </section>

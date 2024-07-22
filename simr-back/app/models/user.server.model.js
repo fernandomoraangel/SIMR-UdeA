@@ -1,34 +1,34 @@
-//Invocar el modo javascript 'strict'
+// Invocar el modo javascript 'strict'
 'use strict';
 
-//Cargar dependencias de los módulos
+// Cargar dependencias de los módulos
 
 var mongoose = require('mongoose'),
 	crypto = require('crypto'),
 	Schema = mongoose.Schema;
 
-//Definir un nuevo 'UseSchema'
+// Definir un nuevo 'UseSchema'
 
 var UserSchema = new Schema({
 	firstName: String,
 	lastName: String,
 	email: {
 		type: String,
-		//Validación
+		// Validación
 		match: [/.+\@.+\..+/, "Escriba una dirección de correo válida"]
 	},
 	username: {
 		type: String,
 		required: true,
-		//Configurar un único username
+		// Configurar un único username
 		unique: true,
-		//Validar la existencia del valor 'username'
+		// Validar la existencia del valor 'username'
 		trim: true
 	},
 	password: {
 		type: String,
 		required: true,
-		//Validar el valor length de 'password'
+		// Validar el valor length de 'password'
 		validate: [
 			function (password) {
 				return password && password.length > 6;
@@ -40,18 +40,19 @@ var UserSchema = new Schema({
 	},
 	provider: {
 		type: String,
-		//Validar existencia del proveedor 'Provider'
+		// Validar existencia del proveedor 'Provider'
 		required: 'Provider is required'
 	},
 	providerId: String,
 	providerData: {},
 	created: {
 		type: Date,
-		//Crear un valor 'created' por defecto
+		// Crear un valor 'created' por defecto
 		default: Date.now
 	}
 });
-//Configurar la propiedad virtual 'fullname'
+
+// Configurar la propiedad virtual 'fullname'
 UserSchema.virtual('fullName').get(function () {
 	return this.firstName + ' ' + this.lastName;
 }).set(function (fullName) {
@@ -63,12 +64,12 @@ UserSchema.virtual('fullName').get(function () {
 
 
 
-//Usar un middleware pre-save para la contraseña
+// Usar un middleware pre-save para la contraseña
 UserSchema.pre('save', async function (next) {
 	// if (this.isModified('password') || this.isNew) {
-  //   const salt = await bcrypt.genSalt(10);
-  //   this.password = await bcrypt.hash(this.password, salt);
-  // }
+	//   const salt = await bcrypt.genSalt(10);
+	//   this.password = await bcrypt.hash(this.password, salt);
+	// }
 
 	// AngularJS
 	if (this.password) {
@@ -79,7 +80,7 @@ UserSchema.pre('save', async function (next) {
 	next();
 });
 
-//Crear un método instancia para hashing una contraseña
+// Crear un método instancia para hashing una contraseña
 UserSchema.methods.hashPassword = function (password) {
 	//console.log(crypto.pbkdf2Sync(this.password,this.salt,10000,64,'sha512').toString('base64')+" hashPassword");
 	return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('base64');

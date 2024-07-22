@@ -1,0 +1,39 @@
+<!-- View obra-->
+<ng-include src="'example/views/example.client.view.html'" /></ng-include>
+<section data-ng-controller="IdiomasController" data-ng-init="findOne()">
+	<div class="jumbotron">
+		<div class="wrapper2">
+			<!-- Identificador de la vista -->
+			<div class="idVista">
+				<em>Idioma</em>
+			</div>
+			<div class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="tituloVista" data-ng-bind="verIdioma(idioma.idioma) | uppercase"></div>
+				<!-- Mostrar los botones de edición para el creador del artículo-->
+				<div data-ng-show="authentication.user._id==idioma.creador._id">
+					<a href="/#!/idiomas/{{idioma._id}}/edit"><span class="glyphicon glyphicon-pencil"></a>
+					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove"></a>
+				</div>
+
+				<!-- Table -->
+				<table class="table table-striped">
+					<tbody>
+						<tr>
+							<td class="campo">IDIOMA</td>
+							<td data-ng-bind="idioma.idioma"></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+			<div class="creador">
+				<em>Creada en </em>
+				<em data-ng-bind="idioma.creado |date:'mediumDate'"></em>
+				<em>por</em>
+				<em data-ng-bind="idioma.creador.fullName"></em>
+			</div>
+		</div>
+	</div>
+</section>

@@ -20,6 +20,7 @@ const routes: Routes = [
   // { path: '**', component: HomeComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
+  // { path: 'prueba', loadChildren: () => import('./modules/prueba/prueba.module').then(m => m.PruebaModule), pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },
 ];
 

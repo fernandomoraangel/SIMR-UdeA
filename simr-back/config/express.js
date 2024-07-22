@@ -3,11 +3,12 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 const compress = require('compression');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const passport = require('passport');
 const cors = require('cors');
+
 // const MongoStore = require('connect-mongo');
 
 // Función para inicializar la aplicación express
@@ -33,11 +34,11 @@ module.exports = function () {
 	
 
 	
-	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar 'http://localhost:4200' con la URL del frontend
-		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-		next();
-	});
+	// app.use((req, res, next) => {
+	// 	res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar 'http://localhost:4200' con la URL del frontend
+	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	// 	next();
+	// });
 
 	// const corsOptions = {
 	// 	origin: 'http://localhost:4200', // Cambia esto al origen de tu frontend
@@ -59,33 +60,34 @@ module.exports = function () {
 		const PORT = process.env.PORT
 		app.use(compress());
 	}
-
-	app.use(bodyParser.json());
-	app.use(express.urlencoded({ extended: true }));
 	
-	app.use(bodyParser.urlencoded({
-		extended: true
-	}));
+	// app.use(bodyParser.urlencoded({
+	// 	extended: true
+	// }));
+	// app.use(bodyParser.json());
+	app.use(express.urlencoded({ extended: true }));
+	app.use(express.json());
+	
 
 	app.use(methodOverride());
 
 	// Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
-	// app.use(session({
-	// 	saveUninitialized: true,
-	// 	resave: true,
-	// 	secret: config.sessionSecret
-	// }));
-
 	app.use(session({
-		secret: config.sessionSecret, // Reemplaza con una clave secreta segura
-		resave: false,
 		saveUninitialized: true,
-		cookie: {
-			secure: false, // Establece true si estás utilizando HTTPS
-			httpOnly: true,
-			sameSite: 'None' // Asegura que la cookie se envíe en todos los contextos
-		}
+		resave: true,
+		secret: config.sessionSecret
 	}));
+
+	// app.use(session({
+	// 	secret: config.sessionSecret, // Reemplaza con una clave secreta segura
+	// 	resave: true,
+	// 	saveUninitialized: true,
+	// 	cookie: {
+	// 		secure: false, // Establece true si estás utilizando HTTPS
+	// 		httpOnly: true,
+	// 		sameSite: 'None' // Asegura que la cookie se envíe en todos los contextos
+	// 	}
+	// }));
 
 	// app.use(session({
 	// 	secret: 'config.sessionSecret',

@@ -105,8 +105,9 @@
             <li role="separator" class="divider"></li>
             <li><a href="/">Alertas</a></li>
             <li><a href="/">Reservas</a></li>
-          </ul> -->
-          </li>
+          </ul>
+          </li> -->
+
           <li class="dropdown" data-ng-show="authentication.user">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
               aria-expanded="false">Administración<span class="caret"></span></a>
@@ -126,7 +127,15 @@
             </ul>
           </li>
 
+          <li data-ng-show="authentication.user">
+            <!-- <a href="http://localhost:4200/actores">Prueba</a> -->
+            <!-- <a href="/#!/idiomas">Prueba</a> -->
+            <a href="/#!/pruebas">Prueba 2</a>
+          </li>
+
         </ul>
+
+
         <!--  <form class="navbar-form navbar-left"role="..." .col-md-1 data-ng-show="authentication.user">
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Buscar">

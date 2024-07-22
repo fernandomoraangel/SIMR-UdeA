@@ -134,6 +134,14 @@ exports.renderSignup = (req, res, next) => {
 };
 
 // Controller para signin
+// exports.signin = () => {
+//   passport.authenticate('local',{
+// 		successRedirect:'/',
+// 		failureRedirect:'/signin',
+// 		failureFlash:true
+// 	})
+// };
+
 exports.signin = (req, res, next) => {
   passport.authenticate('local', (err, user) => {
     if (err) {
@@ -150,9 +158,14 @@ exports.signin = (req, res, next) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        // agrega otros campos que quieras exponer
       };
-      res.json({ message: 'Authentication successful', user: safeUser });
+      // res.json({ message: 'Authentication successful', user: safeUser });
+      // res.status(200).json({ message: 'Authentication successful', user: safeUser });
+      res.status(200).json({
+        message: 'Authentication successful',
+        user: safeUser,
+        redirectUrl: '/home' // Cambia esta URL según sea necesario
+      });
     });
   })(req, res, next);
 };

@@ -1,3 +1,4 @@
+import { downgradeComponent } from '@angular/upgrade/static';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -15,7 +16,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 
 // Import the UpgradeModule from @angular/upgrade/static
-// import { UpgradeModule } from '@angular/upgrade/static';
+import { UpgradeModule } from '@angular/upgrade/static';
+import angular from 'angular';
+import { PruebaModule } from './modules/prueba/prueba.module';
 // import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 
@@ -35,15 +38,16 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HomeComponent,
     PageNotFoundComponent,
     SigninComponent,
-    SignupComponent
+    SignupComponent,
   ],
   imports: [
     BrowserModule,
     ActorModule,
-    AppRoutingModule,
+    PruebaModule,
     FormsModule,
     ReactiveFormsModule,
-    // UpgradeModule
+    AppRoutingModule,
+    UpgradeModule,
   ],
   providers: [
     provideHttpClient(),
@@ -51,9 +55,39 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
-  constructor() { }
+  constructor(private upgrade: UpgradeModule) { }
+  ngDoBootstrap() {
+    this.upgrade.bootstrap(document.body, ['simr'], { strictDi: true });
+  }
+  
 }
+
+
+// ============================
+
+// export class AppModule {
+// constructor() { }
+// Override the `ngDoBootstrap` method to prevent Angular from bootstrapping itself.
+// ngDoBootstrap() { }
+// }
+
+// // Downgrade the component
+// angular.module('myApp').directive(
+//   'appComponent',
+//   downgradeComponent({ component: AppComponent }) as angular.IDirectiveFactory
+// );
+
+
+// ============================
+
+// export class AppModule {
+//   constructor() { }
+// }
+
+// ============================
+
 // export class AppModule {
 //   constructor(private upgrade: UpgradeModule) {}
 

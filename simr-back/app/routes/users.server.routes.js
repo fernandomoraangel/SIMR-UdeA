@@ -18,6 +18,11 @@ module.exports = function (app) {
 	app.route('/signin')
 		.get(users.renderSignin)
 		.post(users.signin);
+		// .post(passport.authenticate('local', {
+		// 	successRedirect: '/',
+		// 	failureRedirect: '/signin',
+		// 	failureFlash: true
+		// }));
 
 	// Configurar ruta signout
 	app.get('/signout', users.signout);

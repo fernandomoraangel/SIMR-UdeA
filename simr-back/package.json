@@ -27,7 +27,9 @@
     "passport": "^0.7.0",
     "passport-google-oauth": "~2.0.0",
     "passport-local": "~1.0.0",
-    "requirejs": "^2.3.6"
+    "requirejs": "^2.3.6",
+    "sweetalert2": "^11.12.3",
+    "typescript": "^5.5.3"
   },
   "repository": {
     "type": "git",
