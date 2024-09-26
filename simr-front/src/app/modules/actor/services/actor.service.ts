@@ -5,12 +5,11 @@ import { catchError } from 'rxjs/operators';
 import { Actor } from '../../../models/actor.model'; // Define your Actor model
 import { ErrorHandlerService } from '../../../services/error-handler.service'; // Implement error handling
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class ActorService {
-  private apiUrl = 'http://localhost:3000/api/actores'; // URL of your Express.js API
+  private apiUrl = 'http://localhost:3000/api/actores';
 
   constructor(
     private http: HttpClient,

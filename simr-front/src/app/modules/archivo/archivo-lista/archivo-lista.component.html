@@ -1,0 +1,43 @@
+<div class="file-list">
+  <h2>Archivos</h2>
+  <div *ngIf="loading" class="loading">Cargando archivos...</div>
+  <div *ngIf="!loading && files.length > 0">
+    <button (click)="deleteSelectedFiles()" [disabled]="selectedFiles.size === 0" class="delete-multiple-btn">
+      Eliminar seleccionados ({{ selectedFiles.size }})
+    </button>
+    <!-- <table *ngIf="!loading && files.length > 0"> -->
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <input type="checkbox" [checked]="allSelected" (change)="toggleAllSelection()">
+          </th>
+          <th>Nombre</th>
+          <th>Tamaño</th>
+          <th>Última modificación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let file of files">
+          <td>
+            <input type="checkbox" [checked]="selectedFiles.has(file.name)" (change)="toggleFileSelection(file.name)">
+          </td>
+          <td>{{ file.name }}</td>
+          <td>{{ formatBytes(file.size) }}</td>
+          <td>{{ file.lastModified | date:'medium' }}</td>
+          <td>
+            <button (click)="downloadFile(file.name)">Descargar</button>
+            <button (click)="viewFile(file.name)" class="view-btn">Ver</button>
+            <button (click)="deleteFile(file.name)" class="delete-btn">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="!loading && files.length === 0" class="no-files">
+    No hay archivos disponibles.
+  </div>
+</div>
+
+<app-archivo-vista *ngIf="selectedFileForViewing" [filename]="selectedFileForViewing"></app-archivo-vista>

@@ -65,7 +65,7 @@ exports.userByID = async (req, res, next, id) => {
     // Usa el método static 'findOne' de 'User' para recuperar un usuario específico
     const user = await User.findOne({ _id: id });
     if (!user) {
-      return next(new Error("Failed to load user " + id));
+      return next(new Error("Error al cargar usuario " + id));
     }
     // Configura la propiedad ´req.user'
     req.user = user;
@@ -160,12 +160,12 @@ exports.signin = (req, res, next) => {
         email: user.email,
       };
       // res.json({ message: 'Authentication successful', user: safeUser });
-      // res.status(200).json({ message: 'Authentication successful', user: safeUser });
-      res.status(200).json({
-        message: 'Authentication successful',
-        user: safeUser,
-        redirectUrl: '/home' // Cambia esta URL según sea necesario
-      });
+      res.status(200).json({ message: 'Authentication successful', user: safeUser });
+      // res.status(200).json({
+      //   message: 'Authentication successful',
+      //   user: safeUser,
+      //   redirectUrl: '/home' // Cambia esta URL según sea necesario
+      // });
     });
   })(req, res, next);
 };

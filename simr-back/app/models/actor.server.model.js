@@ -73,6 +73,7 @@ var descriptorLibre = new Schema({
     require: true,
   },
 });
+
 //TODO: Campos por implementar: NombreCorporativo, Asiento ligado
 var ActorSchema = new Schema({
   nombres: {
@@ -101,6 +102,7 @@ var ActorSchema = new Schema({
   },
   registroOperacion: [registroOperacion],
 });
+
 ActorSchema.virtual("fullName")
   .get(function () {
     return this.nombres + " " + this.apellidos;

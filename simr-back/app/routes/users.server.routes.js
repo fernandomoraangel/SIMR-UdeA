@@ -17,12 +17,12 @@ module.exports = function (app) {
 	// Configurar la ruta 'signin' para manejar autenticación y respuestas JSON
 	app.route('/signin')
 		.get(users.renderSignin)
-		.post(users.signin);
-		// .post(passport.authenticate('local', {
-		// 	successRedirect: '/',
-		// 	failureRedirect: '/signin',
-		// 	failureFlash: true
-		// }));
+		// .post(users.signin);
+		.post(passport.authenticate('local', {
+			successRedirect: '/',
+			failureRedirect: '/signin',
+			failureFlash: true
+		}));
 
 	// Configurar ruta signout
 	app.get('/signout', users.signout);

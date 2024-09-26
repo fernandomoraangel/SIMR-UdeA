@@ -10,6 +10,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient } from '@angular/common/http';
 import { ActorModule } from './modules/actor/actor.module';
+import { ArchivoModule } from './modules/archivo/archivo.module'; 
 import { SigninComponent } from './pages/signin/signin.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -42,6 +43,7 @@ import { PruebaModule } from './modules/prueba/prueba.module';
   ],
   imports: [
     BrowserModule,
+    ArchivoModule,
     ActorModule,
     PruebaModule,
     FormsModule,

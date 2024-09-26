@@ -20,7 +20,6 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "idiomas",
   "diccionarios",
   "generosNoMusicales",
-  // "pruebas",
 ]);
 
 mainApplicationModule.config([

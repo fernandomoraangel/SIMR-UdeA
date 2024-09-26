@@ -1,0 +1,16 @@
+<div class="file-upload">
+  <h2>Subir archivo</h2>
+  <input type="file" (change)="onFileSelected($event)" [disabled]="uploading">
+  <button (click)="uploadFile()" [disabled]="!selectedFile || uploading">
+    {{ uploading ? 'Subiendo...' : 'Subir' }}
+  </button>
+  <div *ngIf="selectedFile">
+    Archivo seleccionado: {{ selectedFile.name }}
+  </div>
+  <div *ngIf="uploading" class="progress-bar-container">
+    <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+    <span class="progress-text">
+      {{ processingFile ? 'Procesando archivo...' : uploadProgress + '%' }}
+    </span>
+  </div>
+</div>
