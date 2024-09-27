@@ -318,9 +318,9 @@ angular.module("actores").controller("ActoresController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                this.lugar ||
+              this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                this.evento
+              this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -412,9 +412,9 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -458,9 +458,9 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -589,6 +589,56 @@ angular.module("actores").controller("ActoresController", [
     };
 
     //Menú enlaces
+    var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
+    var angularWindow;
+
+    $scope.subirArchivo = function () {
+      angularWindow = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=800,height=600');
+      // var file = this.myFile;
+      // var uploadUrl = "/upload";
+      // fileUpload.uploadFileToUrl(file, uploadUrl);
+    };
+
+    $scope.sendMessage = function (message) {
+      if (angularWindow && !angularWindow.closed) {
+        // angularWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
+        angularWindow.postMessage(message, angularAppOrigin);
+      } else {
+        console.error('La ventana de Angular no está abierta');
+      }
+    };
+
+    // $scope.sendMessage = function () {
+    //   // alert('Hola desde AngularJS');
+    //   // Enviar mensaje a la aplicación Angular
+    //   // Para ventanas abiertas con window.open
+    //   if (angularWindow) {
+    //     angularWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
+    //   }
+    //   // Para iframes
+    //   var iframe = document.getElementById('angularApp');
+    //   iframe.contentWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
+    // };
+
+    // Escuchar mensajes de la aplicación Angular
+    window.addEventListener('message', function(event) {
+      if (event.origin !== 'http://localhost:4200') return; // Origen de tu app Angular
+    
+      var fileInfo = JSON.parse(event.data);
+      console.log('Información del archivo recibida:', fileInfo);
+      // Aquí puedes manejar la información del archivo como necesites
+    }, false);
+    
+    // window.addEventListener('message', function (event) {
+    //   if (event.origin !== angularAppOrigin) return;
+
+    //   $scope.$apply(function () {
+    //     $scope.messageFromAngular = event.data;
+    //   });
+    // }, false);
+
+    $scope.messageFromAngular2 = 'Hello 2!';
+
     $scope.enlaceAdd = function () {
       existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;

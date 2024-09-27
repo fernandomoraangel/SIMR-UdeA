@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
 
 // Componentes
 import { ArchivoListaComponent } from './archivo-lista/archivo-lista.component';
@@ -8,6 +9,12 @@ import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
 
 // Servicios
 import { ArchivoService } from './services/archivo.service';
+
+// Rutas
+const routes: Routes = [
+  { path: 'files', component: ArchivoListaComponent },
+  { path: 'files/upload', component: ArchivoSubidaComponent }
+];
 
 
 @NgModule({
@@ -19,10 +26,12 @@ import { ArchivoService } from './services/archivo.service';
   exports: [
     ArchivoListaComponent,
     ArchivoSubidaComponent,
-    ArchivoVistaComponent
+    ArchivoVistaComponent,
+    RouterModule
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule.forChild(routes)
   ],
   providers: [
     ArchivoService

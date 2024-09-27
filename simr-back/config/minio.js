@@ -66,7 +66,23 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
   try {
     await minioClient.putObject(myBucketName, objectName, fileBuffer);
-    res.status(200).json({ message: 'Archivo subido con éxito' }); // Respuesta de formato JSON
+
+    // Crear el objeto de respuesta con la información requerida
+    const fileInfo = {
+      filename: req.file.filename || objectName, // Si multer no genera un filename, usamos objectName
+      originalName: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+      uploadDate: new Date().toISOString(),
+      minioObjectName: objectName
+    };
+
+    res.status(200).json({
+      message: 'Archivo subido con éxito',
+      fileInfo: fileInfo
+    });
+
+    // res.status(200).json({ message: 'Archivo subido con éxito' }); // Respuesta de formato JSON
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error al subir el archivo' }); // Respuesta de formato JSON
@@ -124,30 +140,6 @@ router.delete('/delete/:filename', async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Error al eliminar el archivo' });
   }
-
-  // ==============================
-  // const maxRetries = 3;
-  // let attempt = 0;
-
-  // async function deleteObject() {
-  //   attempt++;
-  //   try {
-  //     await minioClient.removeObject(bucketName, objectName);
-  //     return res.status(200).json({ message: 'Archivo eliminado con éxito' });
-  //   } catch (err) {
-  //     if (attempt < maxRetries) {
-  //       console.error(`Attempt ${attempt} failed: ${err.message}. Retrying...`);
-  //       setTimeout(deleteObject, Math.pow(2, attempt) * 1000); // Backoff exponencial
-  //     } else {
-  //       console.error('Max retries reached:', err);
-  //       return res.status(500).json({ message: 'Error al eliminar el archivo' });
-  //     }
-  //   }
-  // }
-
-  // deleteObject();
-  // ==============================
-
 });
 
 // *** ELIMINAR MULTIPLES ARCHIVOS ***

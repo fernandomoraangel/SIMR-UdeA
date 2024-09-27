@@ -23,7 +23,6 @@ app.use('/', minioRouter);
 // Crear instancia del objeto passport
 var passportObj = passport();
 
-
 // Iniciar el servidor http
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
@@ -32,4 +31,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-

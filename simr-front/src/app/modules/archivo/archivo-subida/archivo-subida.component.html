@@ -1,3 +1,9 @@
+<div>
+  <input type="text" placeholder="Escribe un mensaje" #myMessage>
+  <button (click)="sendMessage(myMessage.value)">Enviar mensaje a AngularJS</button>
+  <p>Mensaje de AngularJS: {{messageFromAngularJS}}</p>
+</div>
+
 <div class="file-upload">
   <h2>Subir archivo</h2>
   <input type="file" (change)="onFileSelected($event)" [disabled]="uploading">

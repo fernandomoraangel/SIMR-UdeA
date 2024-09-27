@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
-// @Injectable({
-//   providedIn: 'root'
-// })
-
-@Injectable()
+// @Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ArchivoService {
   private apiUrl = 'http://localhost:3000';
   // private fileUploadedSource = new Subject<void>();
@@ -28,20 +27,47 @@ export class ArchivoService {
     });
 
     return this.http.request(req).pipe(
-        tap(() => this.fileChangedSource.next())
-      );
-
-    // return this.http.post<{ message: string }>(`${this.apiUrl}/upload`, formData)
-    //   .pipe(
-    //     // tap(() => this.fileUploadedSource.next())
-    //     tap(() => this.fileChangedSource.next())
-    //   );
+      tap(() => this.fileChangedSource.next()),
+      map(event => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            const progress = Math.round(100 * event.loaded / (event.total || 1));
+            return { type: 'progress', progress: progress };
+          case HttpEventType.Response:
+            return { type: 'response', body: event.body };
+          default:
+            return `Unhandled event: ${event.type}`;
+        }
+      })
+    );
   }
+
+  // uploadFile(file: File): Observable<any> {
+  //   const formData = new FormData();
+  //   formData.append('file', file, file.name);
+
+  //   const req = new HttpRequest('POST', `${this.apiUrl}/upload`, formData, {
+  //     reportProgress: true,
+  //     responseType: 'json'
+  //   });
+
+  //   return this.http.request(req).pipe(
+  //     tap(() => this.fileChangedSource.next())
+  //   );
+
+  //   // return this.http.post<{ message: string }>(`${this.apiUrl}/upload`, formData)
+  //   //   .pipe(
+  //   //     // tap(() => this.fileUploadedSource.next())
+  //   //     tap(() => this.fileChangedSource.next())
+  //   //   );
+  // }
+
 
   getFiles(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/files`);
   }
 
+  
   // downloadFile(filename: string): Observable<Blob> {
   //   return this.http.get(`${this.apiUrl}/download/${filename}`, { responseType: 'blob' });
   // }
@@ -92,6 +118,7 @@ export class ArchivoService {
 
   getFileType(filename: string): string {
     const extension = filename.split('.').pop()?.toLowerCase();
+    console.log('Extension:', extension);
     if (extension && ['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
       return 'image';
     } else if (extension === 'pdf') {
