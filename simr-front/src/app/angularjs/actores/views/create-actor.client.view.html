@@ -359,31 +359,19 @@
 						</button>
 						<label class="seccion">ENLACES Y ARCHIVOS</label>
 					</div>
-					<div>
 
-					</div>
+
 					<div class="collapse" id="collapseEnlace">
-
+						<h3>Enlaces</h3>
 						<div>
 							<label class="campo">Nombre (descripción)</label>
 							<input type="text" class="form-control" ng-model="eEtiqueta" id="nombreEnlace">
 						</div>
 
 						<div>
-							<label class="campo">Enlace o dirección(descripción)</label>
+							<label class="campo">Enlace o dirección (descripción)</label>
 							<input type="text" class="form-control" id="urlEnlace" ng-blur="validarUrloRuta(eUrl,'urlEnlace')"
 								ng-model="eUrl">
-						</div>
-
-						<hr>
-
-						<div>
-							<input type="button" class="form-control" id="btnSubirArchivo" value="Subir Archivo"
-								ng-click="subirArchivo()">
-							<input type="text" class="form-control" placeholder="Escribe un mensaje" ng-model="myMessage">
-							<input type="button" class="form-control" value="Enviar mensaje a Angular"
-								ng-click="sendMessage(myMessage)">
-							<p>Mensaje de Angular: {{messageFromAngular}}</p>
 						</div>
 
 						<div>
@@ -405,6 +393,27 @@
 								ng-click="enlaceEdit(n.etiqueta,n.url);">
 							</h2>
 						</div>
+
+						<hr>
+
+						<h3>Archivos</h3>
+						<div>
+							<input type="button" class="form-control" id="btnSubirArchivo" value="Subir Archivo"
+								ng-click="subirArchivo()">
+						</div>
+
+						<div ng-model="todoerase" ng-repeat="archivo in archivosCargados track by $index" class="campo">
+							<h2 class="glyphicon glyphicon-remove" style="color:red" ng-model="archivo"
+								ng-click="archivoRemove(archivo);">
+							</h2>
+							<!-- Separar para que no se mezcle con el borrado -->
+							<em>
+								{{nombrarSi("Archivo", archivo.nombre)}}
+							</em>
+
+						</div>
+
+						<hr>
 
 					</div>
 					<!-- Fin Vínculos y archivos -->

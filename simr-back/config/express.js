@@ -18,22 +18,41 @@ module.exports = function () {
 
 	// ================== CORS ===========================
 	// Habilitar CORS - Para permitir que el frontend se comunique con el backend
-	const corsOptions = {
+	const corsOptionsAngular = {
 		origin: 'http://localhost:4200', // Reemplazar 'http://localhost:4200' con la URL del frontend
 		credentials: true, // Habilitar el envío de credenciales (cookies, cabeceras de autorización, etc.)
 	};
 
-	app.use(cors(corsOptions));
-	
+	const corsOptionsLocal = {
+		origin: 'http://localhost:3000',
+		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		allowedHeaders: ['Content-Type', 'Authorization']
+	};
+
+	app.use(cors(corsOptionsAngular));
+
+	// // Rutas para la API
+	// const apiRouter = express.Router();
+
+	// // Middleware CORS para la API
+	// apiRouter.use((req, res, next) => {
+	// 	const origin = req.headers.origin;
+	// 	if (origin === 'http://localhost:4200') {
+	// 		cors(corsOptionsAngular)(req, res, next);
+	// 	} else {
+	// 		cors(corsOptionsLocal)(req, res, next);
+	// 	}
+	// });
+
 	app.use((req, res, next) => {
 		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar con la URL del frontend
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 		res.header('Access-Control-Allow-Credentials', 'true'); // Añadir este encabezado
 		next();
 	});
-	
 
-	
+
+
 	// app.use((req, res, next) => {
 	// 	res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar 'http://localhost:4200' con la URL del frontend
 	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -60,14 +79,14 @@ module.exports = function () {
 		const PORT = process.env.PORT
 		app.use(compress());
 	}
-	
+
 	// app.use(bodyParser.urlencoded({
 	// 	extended: true
 	// }));
 	// app.use(bodyParser.json());
 	app.use(express.urlencoded({ extended: true }));
 	app.use(express.json());
-	
+
 
 	app.use(methodOverride());
 
@@ -133,6 +152,7 @@ module.exports = function () {
 	require('../app/routes/ejemplares.server.routes.js')(app);
 	require('../app/routes/idiomas.server.routes.js')(app);
 	require('../app/routes/diccionarios.server.routes.js')(app);
+	require('../app/routes/archivos.server.routes.js')(app);
 
 	// Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
 	// app.use(express.static('./public'));

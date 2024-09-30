@@ -62,6 +62,13 @@ var vinculoRelacionado = new Schema({
   url: {},
 });
 
+var archivoAdjunto = new Schema({
+  archivoId: {
+    type: Schema.ObjectId,
+    ref: "Archivo"
+  }
+});
+
 var descriptorLibre = new Schema({
   etiqueta: {
     type: String,
@@ -78,11 +85,11 @@ var descriptorLibre = new Schema({
 var ActorSchema = new Schema({
   nombres: {
     type: String,
-    //required:'El nombre no puede estar en blanco'
+    required:'El nombre no puede estar en blanco'
   },
   apellidos: {
     type: String,
-    //required:'El campo apellidos no puede estar en blanco'
+    required:'El campo apellidos no puede estar en blanco'
   },
   nombreReunion: {
     type: String,
@@ -92,6 +99,7 @@ var ActorSchema = new Schema({
   anotacionCartograficoTemporal: [anotacionCartograficoTemporal],
   descriptores: [descriptorLibre],
   vinculoRelacionado: [vinculoRelacionado],
+  archivosAdjuntos: [archivoAdjunto],
   creador: {
     type: Schema.ObjectId,
     ref: "User",

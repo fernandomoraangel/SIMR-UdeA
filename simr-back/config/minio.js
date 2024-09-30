@@ -5,6 +5,7 @@ const multer = require('multer');
 const minio = require('minio');
 const path = require('path');
 // const fs = require('fs');
+const { MongoClient } = require('mongodb');
 
 // Previsualization
 const mime = require('mime-types');
@@ -32,6 +33,15 @@ const upload = multer({ storage: multer.memoryStorage() });
 //     fileSize: 1024 * 1024 * 100 // 100 MB limit
 //   }
 // });
+
+// // Configura la conexión a MongoDB
+// const mongoUrl = 'mongodb://localhost:27017'; // Ajusta esta URL según tu configuración
+// const mongoUrl = 'mongodb://superAdmin:SOh3TbYhx8ypJPxmt1oOfL@localhost/simr'; // Ajusta esta URL según tu configuración
+const mongoUrl = process.env.MONGO_URI;
+const dbName = process.env.MONGO_DB_NAME;
+const client = new MongoClient(mongoUrl);
+const collectionName = 'archivos';
+
 
 // Función para inicializar el bucket
 const initializeBucket = async () => {
@@ -68,7 +78,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     await minioClient.putObject(myBucketName, objectName, fileBuffer);
 
     // Crear el objeto de respuesta con la información requerida
-    const fileInfo = {
+    const fileData = {
       filename: req.file.filename || objectName, // Si multer no genera un filename, usamos objectName
       originalName: req.file.originalname,
       mimetype: req.file.mimetype,
@@ -77,15 +87,43 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       minioObjectName: objectName
     };
 
+    // const uri = process.env.MONGODB_URI;
+    // const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+    // try {
+    //   await client.connect();
+    //   const database = client.db(process.env.MONGODB_DB_NAME);
+    //   const collection = database.collection('archivos');
+    //   await collection.insertOne(fileData);
+    //   console.log('File info saved to MongoDB');
+    // } catch (err) {
+    //   console.error('Error saving file info to MongoDB:', err);
+    // } finally {
+    //   await client.close();
+    // }
+
+    // Conectar a MongoDB y guardar fileData
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    
+    const result = await collection.insertOne(fileData);
+    const documentId = result.insertedId;
+    console.log(`Documento insertado con el id: ${documentId}`);
+
     res.status(200).json({
       message: 'Archivo subido con éxito',
-      fileInfo: fileInfo
+      fileData: fileData,
+      documentId: documentId
     });
 
     // res.status(200).json({ message: 'Archivo subido con éxito' }); // Respuesta de formato JSON
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error al subir el archivo' }); // Respuesta de formato JSON
+  } finally {
+    // Cerrar la conexión a MongoDB
+    await client.close();
   }
 });
 

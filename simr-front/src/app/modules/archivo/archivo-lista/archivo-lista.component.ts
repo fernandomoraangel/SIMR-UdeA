@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ArchivoService } from '../services/archivo.service';
+import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-archivo-lista',
@@ -112,44 +113,125 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   }
 
   deleteFile(filename: string): void {
-    if (confirm(`¿Estás seguro de que quieres eliminar el archivo "${filename}"?`)) {
-      this.archivoService.deleteFile(filename).subscribe({
-        next: (response) => {
-          console.log('Archivo eliminado con éxito:', response.message);
-          this.loadFiles();
-        },
-        error: (error) => {
-          console.error('Error al eliminar el archivo:', error);
-        },
-        complete: () => {
-          console.log('Eliminación completada');
-        }
-      });
-    }
+    Swal.fire({
+      title: "¡Advertencia de eliminación!",
+      text: `¿Estás seguro de que quiere eliminar el archivo "${filename}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.archivoService.deleteFile(filename).subscribe({
+          next: (response) => {
+            console.log('Archivo eliminado con éxito:', response.message);
+            this.loadFiles();
+          },
+          error: (error) => {
+            console.error('Error al eliminar el archivo:', error);
+            Swal.fire({
+              title: '¡Error al eliminar el archivo',
+              text: error,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
+          },
+          complete: () => {
+            console.log('Eliminación completada');
+            Swal.fire({
+              title: '¡Eliminado!',
+              text: 'Archivo eliminado exitosamente',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        });
+      }
+    });
+
+
+    // if (confirm(`¿Estás seguro de que quiere eliminar el archivo "${filename}"?`)) {
+    //   this.archivoService.deleteFile(filename).subscribe({
+    //     next: (response) => {
+    //       console.log('Archivo eliminado con éxito:', response.message);
+    //       this.loadFiles();
+    //     },
+    //     error: (error) => {
+    //       console.error('Error al eliminar el archivo:', error);
+    //     },
+    //     complete: () => {
+    //       console.log('Eliminación completada');
+    //     }
+    //   });
+    // }
   }
 
   deleteSelectedFiles(): void {
     if (this.selectedFiles.size === 0) {
-      alert('Por favor, selecciona al menos un archivo para eliminar.');
+      Swal.fire({
+        title: 'Advertencia',
+        text: 'Por favor, seleccione al menos un archivo para eliminar',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
 
     const filesToDelete = Array.from(this.selectedFiles);
-    if (confirm(`¿Estás seguro de que quieres eliminar ${filesToDelete.length} archivo(s)?`)) {
-      this.archivoService.deleteMultipleFiles(filesToDelete).subscribe({
-        next: (response) => {
-          console.log('Archivos eliminados con éxito:', response.message);
-          this.selectedFiles.clear();
-          this.loadFiles();
-        },
-        error: (error) => {
-          console.error('Error al eliminar los archivos:', error);
-        },
-        complete: () => {
-          console.log('Eliminación completada');
-        }
-      });
-    }
+
+    Swal.fire({
+      title: "¡Advertencia de eliminación!",
+      text: `¿Estás seguro de que quiere eliminar ${filesToDelete.length} archivo(s)?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.archivoService.deleteMultipleFiles(filesToDelete).subscribe({
+          next: (response) => {
+            console.log('Archivos eliminados con éxito:', response.message);
+            this.selectedFiles.clear();
+            this.loadFiles();
+          },
+          error: (error) => {
+            console.error('Error al eliminar los archivos:', error);
+            Swal.fire({
+              title: '¡Error al eliminar los archivos',
+              text: error,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
+          },
+          complete: () => {
+            console.log('Eliminación completada');
+            Swal.fire({
+              title: '¡Éxito!',
+              text: 'Eliminación exitosa',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        });
+      }
+    });
+
+    // if (confirm(`¿Estás seguro de que quiere eliminar ${filesToDelete.length} archivo(s)?`)) {
+    //   this.archivoService.deleteMultipleFiles(filesToDelete).subscribe({
+    //     next: (response) => {
+    //       console.log('Archivos eliminados con éxito:', response.message);
+    //       this.selectedFiles.clear();
+    //       this.loadFiles();
+    //     },
+    //     error: (error) => {
+    //       console.error('Error al eliminar los archivos:', error);
+    //     },
+    //     complete: () => {
+    //       console.log('Eliminación completada');
+    //     }
+    //   });
+    // }
+
   }
 
   viewFile(filename: string): void {

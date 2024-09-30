@@ -1,6 +1,7 @@
 import { Component, EventEmitter, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
-import { ArchivoService } from '../services/archivo.service';
+import { ArchivoService } from '../archivo.service';
 import { HttpEventType } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-archivo-subida',
@@ -19,6 +20,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   messageFromAngularJS: string = '';
   angularJSOrigin = 'http://localhost:3000'; // Dominio de la app AngularJS
   private messageListener: any;
+  private isCalledFromAngularJSOrigin: boolean = false;
 
   constructor(
     private archivoService: ArchivoService,
@@ -28,6 +30,10 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.messageListener = this.receiveMessage.bind(this);
     window.addEventListener('message', this.messageListener, false);
+    if (window.opener) {
+      this.isCalledFromAngularJSOrigin = true;
+    }
+    console.log('isCalledFromAngularJSOrigin', this.isCalledFromAngularJSOrigin);
   }
 
   ngOnDestroy() {
@@ -76,8 +82,11 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
             }
           } else if (event.type === 'response') {
             console.log('Archivo subido exitosamente:', event.body);
-            if (event.body && event.body.fileInfo) {
-              this.sendFileInfoToAngularJS(event.body.fileInfo);
+            // if (event.body && event.body.fileData) {
+            if (event.body && event.body.fileData) {
+              // this.sendFileInfoToAngularJS(event.body.fileInfo);
+              console.log('Información del archivo a enviar:', event.body);
+              this.sendFileInfoToAngularJS(event.body);
             } else {
               console.error('La respuesta del servidor no contiene la información del archivo esperada');
             }
@@ -129,23 +138,33 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
 
   sendFileInfoToAngularJS(fileInfo: any): void {
     console.log('Información del archivo a enviar:', fileInfo);
-    const fileData = {
-      filename: fileInfo.filename,
-      originalName: fileInfo.originalName,
-      mimetype: fileInfo.mimetype,
-      size: fileInfo.size,
-      uploadDate: fileInfo.uploadDate,
-      minioObjectName: fileInfo.minioObjectName
+    const selectedFileInfo = {
+      filename: fileInfo.fileData.filename,
+      originalName: fileInfo.fileData.originalName,
+      mimetype: fileInfo.fileData.mimetype,
+      size: fileInfo.fileData.size,
+      uploadDate: fileInfo.fileData.uploadDate,
+      minioObjectName: fileInfo.fileData.minioObjectName,
+      documentId: fileInfo.documentId
     };
-    console.log('Datos del archivo formateados:', fileData);
 
     if (window.opener) {
-      window.opener.postMessage(JSON.stringify(fileData), this.angularJSOrigin);
-      console.log('Mensaje enviado a AngularJS');
-      alert('¡Archivo subido exitosamente!');
+      console.log('Ventana padre encontrada');
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'Archivo subido exitosamente',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        window.opener.postMessage(JSON.stringify(selectedFileInfo), this.angularJSOrigin);
+        console.log('Mensaje enviado a AngularJS');
+        window.close();
+      });
+      // window.opener.postMessage(JSON.stringify(selectedFileInfo), this.angularJSOrigin);
+      // console.log('Mensaje enviado a AngularJS');
     } else {
       console.error('No hay ventana padre para enviar el mensaje.\nDeshaciendo operación...');
-      this.archivoService.deleteFile(fileInfo.minioObjectName).subscribe({
+      this.archivoService.deleteFile(selectedFileInfo.minioObjectName).subscribe({
         next: (response) => {
           console.log('Operación deshecha con éxito:', response.message);
         },
@@ -156,9 +175,15 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
           console.log('Operación terminada');
         }
       });
-      alert('ERROR: Se perdió la conexión con el formulario');
+      Swal.fire({
+        title: '¡Error!',
+        text: 'Se perdió la conexión con el formulario',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      window.close();
     }
-    window.close();
+    // window.close();
   }
 
 }

@@ -9,7 +9,8 @@
 
 .progress-bar {
   height: 100%;
-  background-color: #4CAF50;
+  /* background-color: #4CAF50; */
+  background-color: #3090c7;
   border-radius: 4px;
   transition: width 0.3s ease-in-out;
 }

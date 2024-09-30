@@ -8,13 +8,15 @@ angular.module("actores").controller("ActoresController", [
   "Authentication",
   "Actores",
   "Diccionarios",
+  "Archivos",
   function (
     $scope,
     $routeParams,
     $location,
     Authentication,
     Actores,
-    Diccionarios
+    Diccionarios,
+    Archivos
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -26,7 +28,22 @@ angular.module("actores").controller("ActoresController", [
     $scope.idAnotacionesCartograficoTemporales = [];
     $scope.idDescriptores = [];
     $scope.idEnlaces = [];
+    $scope.archivosCargados = [];
     $scope.actores = Actores.query();
+    // $scope.archivos = Archivos.query();
+
+    var vm = this;
+
+    vm.eliminarArchivo = function (filename) {
+      Archivos.deleteFile(filename)
+        .then(function (data) {
+          console.log('Archivo eliminado:', data.message);
+        })
+        .catch(function (error) {
+          console.error('No se pudo eliminar el archivo', error);
+        });
+    };
+
 
     var control = 0;
     // Funciones auxiliares
@@ -591,9 +608,20 @@ angular.module("actores").controller("ActoresController", [
     //Menú enlaces
     var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
     var angularWindow;
+    var fileInfo;
+    /*
+      filename,
+      originalName,
+      mimetype,
+      size,
+      uploadDate,
+      minioObjectName,
+    */
+    // $scope.fileInfo;
 
     $scope.subirArchivo = function () {
-      angularWindow = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=800,height=600');
+      this.fileInfo = null;
+      angularWindow = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
       // var file = this.myFile;
       // var uploadUrl = "/upload";
       // fileUpload.uploadFileToUrl(file, uploadUrl);
@@ -620,15 +648,24 @@ angular.module("actores").controller("ActoresController", [
     //   iframe.contentWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
     // };
 
+
+
     // Escuchar mensajes de la aplicación Angular
-    window.addEventListener('message', function(event) {
+    window.addEventListener('message', function (event) {
       if (event.origin !== 'http://localhost:4200') return; // Origen de tu app Angular
-    
-      var fileInfo = JSON.parse(event.data);
-      console.log('Información del archivo recibida:', fileInfo);
+
+      $scope.$apply(function () {
+        $scope.fileInfo2 = JSON.parse(event.data);
+        $scope.archivoAdd();
+      });
+
+      // var fileInfo = JSON.parse(event.data);
+      // this.fileInfo = JSON.parse(event.data);
+      // console.log('Información del archivo recibida:', this.fileInfo);
+      // console.log('fileInfo.originalName', this.fileInfo.originalName);
       // Aquí puedes manejar la información del archivo como necesites
     }, false);
-    
+
     // window.addEventListener('message', function (event) {
     //   if (event.origin !== angularAppOrigin) return;
 
@@ -637,7 +674,87 @@ angular.module("actores").controller("ActoresController", [
     //   });
     // }, false);
 
-    $scope.messageFromAngular2 = 'Hello 2!';
+
+    $scope.archivoAdd = function () {
+      console.log('Entró a la función de archivoAdd()');
+      console.log('fileInfo2', this.fileInfo2);
+
+      if (this.fileInfo2 === undefined || this.fileInfo2 == null) {
+        Swal.fire({
+          title: "¡Error!",
+          text: "Aún no ha subido algún archivo",
+          icon: "error",
+          confirmButtonText: "Cerrar",
+        });
+        return;
+      }
+      existe = false;
+      // const nombreArchivo = this.fileInfo2.originalName;
+      // const idArchivo = this.fileInfo2.documentId;
+      const datosArchivo = {
+        nombre: this.fileInfo2.originalName,
+        id: this.fileInfo2.documentId,
+        minioObjectName: this.fileInfo2.minioObjectName
+      }
+
+      console.log('Agregar archivo: datosArchivo', datosArchivo);
+
+      // for (var i in $scope.archivosCargados) {
+      //   if ($scope.archivosCargados[i] === nombreArchivo) {
+      //     //Mensaje de error
+      //     Swal.fire({
+      //       title: "¡Error!",
+      //       text: "El nombre del archivo se ya encuentra en la lista",
+      //       icon: "error",
+      //       confirmButtonText: "Cerrar",
+      //     });
+      //     existe = true;
+      //     return;
+      //   }
+      // }
+
+      // if (existe === false) {
+      //   $scope.archivosCargados.push(nombreArchivo);
+      //   $fileInfo2 = null;
+      // }
+
+      $scope.archivosCargados.push(datosArchivo);
+      $scope.fileInfo2 = null;
+      console.log('Agregar archivo: Entró al else');
+    };
+
+    $scope.archivoRemove = function (x) {
+      console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
+      for (var i in $scope.archivosCargados) {
+        if ($scope.archivosCargados[i].id === x.id) {
+          Swal.fire({
+            title: "¡Advertencia de eliminación!",
+            text:
+              "Va a eliminar:" +
+              $scope.archivosCargados[i].nombre,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              vm.eliminarArchivo(x.minioObjectName);
+              $scope.archivosCargados.splice(i - 1, 1);
+              // funcion propia de Angular.Js refresca mi scope y recarga mis datos
+              $scope.$apply();
+              Swal.fire(
+                "Eliminado!",
+                "El archivo ha sido eliminado.",
+                "success"
+              );
+            }
+          });
+        }
+      }
+      console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
+
+    };
+
 
     $scope.enlaceAdd = function () {
       existe = false;
@@ -689,6 +806,7 @@ angular.module("actores").controller("ActoresController", [
     };
 
     $scope.enlaceRemove = function (x) {
+      console.log('x', x);
       for (var i in $scope.idEnlaces) {
         if ($scope.idEnlaces[i].etiqueta === x) {
           Swal.fire({
@@ -737,6 +855,24 @@ angular.module("actores").controller("ActoresController", [
 
     //Crear método controller para crear nuevas Actores
     $scope.create = function () {
+      console.log('archivosCargados', $scope.archivosCargados);
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      console.log('idArchivos', idArchivos);
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+        console.log('Campo de Enlace completo');
+        console.log('idEnlaces', $scope.idEnlaces);
+      }
+
       //Usar los campos form para crear un nuevo objeto $resource actor
       var actor = new Actores({
         nombres: this.nombres,
@@ -747,7 +883,11 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales,
         descriptores: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
+        archivosAdjuntos: idArchivos
       });
+
+      console.log('actor', actor);
+
       //Usar el método '$save' de actor para enviar una petición POST apropiada
       actor.$save(
         function (response) {
@@ -771,6 +911,7 @@ angular.module("actores").controller("ActoresController", [
         }
       );
     };
+
     //Método controller para recuperar la lista de Actores
     $scope.find = function () {
       //Usar el método 'querry' de actor, para enviar una petición GET apropiada
@@ -803,6 +944,10 @@ angular.module("actores").controller("ActoresController", [
 
       if ($scope.idEnlaces.length != 0) {
         $scope.actor.vinculoRelacionado = $scope.idEnlaces;
+      }
+
+      if ($scope.archivosCargados.length != 0) {
+        $scope.actor.archivosAdjuntos = $scope.archivosCargados;
       }
 
       //Usa el método $update de actor para enviar la petición PUT adecuada

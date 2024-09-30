@@ -8,7 +8,7 @@ import { ArchivoSubidaComponent } from './archivo-subida/archivo-subida.componen
 import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
 
 // Servicios
-import { ArchivoService } from './services/archivo.service';
+import { ArchivoService } from './archivo.service';
 
 // Rutas
 const routes: Routes = [

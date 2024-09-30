@@ -27,6 +27,7 @@ module.exports = function () {
   require("../app/models/user.server.model");
   require("../app/models/idioma.server.model");
   require("../app/models/diccionario.server.model");
+  require("../app/models/archivo.server.model");
   // console.log("Carga de modelos");
   // Devolver la instancia de conexión a Mongoose
   return db;
