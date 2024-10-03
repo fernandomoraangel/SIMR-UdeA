@@ -22,4 +22,4 @@ archivoSchema.set('toJSON', {
   virtuals: true
 });
 
-mongoose.model('Archivo', archivoSchema);
+module.exports = mongoose.model('Archivo', archivoSchema);

@@ -29,20 +29,20 @@ module.exports = function () {
 		allowedHeaders: ['Content-Type', 'Authorization']
 	};
 
-	app.use(cors(corsOptionsAngular));
+	// app.use(cors(corsOptionsAngular));
 
 	// // Rutas para la API
-	// const apiRouter = express.Router();
+	const apiRouter = express.Router();
 
-	// // Middleware CORS para la API
-	// apiRouter.use((req, res, next) => {
-	// 	const origin = req.headers.origin;
-	// 	if (origin === 'http://localhost:4200') {
-	// 		cors(corsOptionsAngular)(req, res, next);
-	// 	} else {
-	// 		cors(corsOptionsLocal)(req, res, next);
-	// 	}
-	// });
+	// Middleware CORS para la API
+	apiRouter.use((req, res, next) => {
+		const origin = req.headers.origin;
+		if (origin === 'http://localhost:4200') {
+			cors(corsOptionsAngular)(req, res, next);
+		} else {
+			cors(corsOptionsLocal)(req, res, next);
+		}
+	});
 
 	app.use((req, res, next) => {
 		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar con la URL del frontend

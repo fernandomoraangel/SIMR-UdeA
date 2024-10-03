@@ -1,3 +1,19 @@
+<!-- <script>
+  function sendHeight() {
+    const height = document.body.scrollHeight;
+    parent.postMessage(height, 'http://localhost:3000');  // Cambia 'http://localhost:3000' por el dominio de tu página principal
+  }
+
+  window.onload = sendHeight;
+  window.onresize = sendHeight;
+</script> -->
+
+<div>
+  <input type="text" placeholder="Escribe un mensaje" #myMessage>
+  <button (click)="sendMessage(myMessage.value)">Enviar mensaje a AngularJS</button>
+  <p>Mensaje de AngularJS: {{documentId}}</p>
+</div>
+
 <div class="file-list">
   <h2>Archivos</h2>
   <div *ngIf="loading" class="loading">Cargando archivos...</div>

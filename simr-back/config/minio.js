@@ -5,7 +5,8 @@ const multer = require('multer');
 const minio = require('minio');
 const path = require('path');
 // const fs = require('fs');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
+const Archivo = require('../app/models/archivo.server.model');
 
 // Previsualization
 const mime = require('mime-types');
@@ -55,6 +56,158 @@ const initializeBucket = async () => {
 };
 
 // ### RUTAS ###
+
+// *** OBTENER LISTADO DE ARCHIVOS DE UNA COLECCION ***
+router.get('/document-property', async (req, res) => {
+  try {
+    const { collection, id, property } = req.query;
+
+    if (!collection || !id || !property) {
+      return res.status(400).json({ message: 'Missing required parameters' });
+    }
+
+    console.log('collection:', collection);
+    console.log('id:', id);
+    console.log('property:', property);
+
+    // await client.connect();
+    clientConnection = await client.connect();
+    console.log('Connected to MongoDB');
+
+    const database = client.db(dbName);
+    console.log('database:', database);
+    const collectionSelected = database.collection(collection);
+    // const collectionSelected = database.collection('actores');
+    console.log('collectionSelected:', collectionSelected.collectionName);
+
+    // Paso 1: Verificar la conexión listando las colecciones
+    const collections = await database.listCollections().toArray();
+    console.log('Available collections:', collections.map(c => c.name));
+
+    // Paso 2: Contar documentos en la colección
+    const count = await collectionSelected.countDocuments();
+    console.log(`Number of documents in ${collection}:`, count);
+
+    // Paso 3: Intentar encontrar el documento por ID
+    let document = await collectionSelected.findOne({ _id: new ObjectId(id) });
+    console.log('document obtained by ID:', document);
+
+    // Paso 4: Si no se encuentra, intentar buscar sin convertir a ObjectId
+    // if (!document) {
+    //   document = await collectionSelected.findOne({ _id: id });
+    //   console.log('document obtained by string ID:', document);
+    // }
+
+    // Paso 5: Si se encuentra un documento, verificar la propiedad
+    if (document) {
+      if (property in document) {
+        const propertyValues = document[property];
+        console.log('propertyValues:', propertyValues);
+
+        if (Array.isArray(propertyValues)) {
+          const archivosCollection = database.collection('archivos');
+          console.log('collectionSelected:', archivosCollection.collectionName);
+
+          const documentFiles = [];
+
+          const limit = 100; // Ajusta este límite según tus necesidades
+
+          for (let i = 0; i < Math.min(propertyValues.length, limit); i++) {
+            const fileId = propertyValues[i];
+            console.log('fileId (property values):', fileId);
+
+            try {
+              const myFile = await archivosCollection.findOne({ _id: fileId._id });
+              console.log('myFile:', myFile);
+              
+              // if (myFile && myFile.minioObjectName) {
+              //   documentFiles.push(myFile.minioObjectName);
+              // }
+
+              const myFileProcessed = {
+                name: myFile.minioObjectName,
+                size: myFile.size,
+                lastModified: myFile.uploadDate
+              }
+
+              documentFiles.push(myFileProcessed);
+
+            } catch (error) {
+              console.error(`Error processing file with id ${fileId}:`, error);
+              // Decide si quieres continuar con el siguiente archivo o lanzar el error
+            }
+          }
+
+          // propertyValues.forEach((id) = async () => {
+          //   console.log('fileId (property values):', id);
+          //   const myFile = await archivosCollection.findOne({ _id: id });
+          //   console.log('myFile:', myFile);
+
+          //   minioObjectNames.push(
+          //     // archivosCollection.findOne({ _id: ObjectId.createFromTime(fileId) }).minioObjectName
+          //   );
+          // });
+          console.log('documentFiles:', documentFiles);
+
+          // const archivos = await archivosCollection.find({ _id: { $in: propertyValues.map(id => ObjectId.createFromTime(id)) } }).toArray();
+          // // const minioObjectNames = archivos.map(archivo => archivo.minioObjectName);
+          // console.log('minioObjectNames:', minioObjectNames);
+          return res.json(documentFiles);
+        }
+
+        // return res.json(propertyValues);
+      } else {
+        return res.status(404).json({ message: 'Property not found in document' });
+      }
+    } else {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    // // const document = await coll.findOne({ _id: id });
+    // // const document = database.actores.findOne({ _id: id });
+    // // const document = await database.collectionSelected.findById({ _id: new ObjectId(id) });
+    // // const document = await Archivo.find({id: new ObjectId(id)});
+    // let document = await collectionSelected.findOne({ _id: new ObjectId(id) });
+    // console.log('document obtained by ID:', document);
+    // // const document = await collectionSelected.findOne({ _id: new ObjectId(id) });
+    // console.log('document obtained:', document);
+
+    // if (!document) {
+    //   document = await collectionSelected.findOne({ _id: id });
+    //   console.log('document obtained by string ID:', document);
+    //   // return res.status(404).json({ message: 'Document not found' });
+    // }
+
+    // if (!(property in document)) {
+    //   return res.status(404).json({ message: 'Property not found in document' });
+    // }
+
+    // const propertyIds = document[property];
+    // const minioObjectNames = [];
+
+    // if (Array.isArray(propertyIds)) {
+    //   const archivosCollection = client.db(dbName).collection("archivos");
+    //   const archivos = await archivosCollection.find({ _id: { $in: propertyIds.map(id => new ObjectId(id)) } }).toArray();
+    //   minioObjectNames.push(...archivos.map(archivo => archivo.minioObjectName));
+    // } else {
+    //   return res.status(400).json({ message: 'Property is not an array' });
+    // }
+
+    // console.log('minioObjectNames:', minioObjectNames);
+
+    // res.json(minioObjectNames);
+
+    // res.json(document[property]);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    if (clientConnection) await clientConnection.close();
+    // await client.close();
+  }
+});
+// *** (Fin de OBTENER LISTADO DE ARCHIVOS DE UNA COLECCION) ***
+
 
 // *** SUBIR ARCHIVOS ***
 // Ruta para subir archivos
@@ -106,7 +259,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    
+
     const result = await collection.insertOne(fileData);
     const documentId = result.insertedId;
     console.log(`Documento insertado con el id: ${documentId}`);

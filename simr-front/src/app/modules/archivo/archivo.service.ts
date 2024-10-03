@@ -16,6 +16,23 @@ export class ArchivoService {
   fileChanged$ = this.fileChangedSource.asObservable();
 
   constructor(private http: HttpClient) { }
+  
+
+  // getFilesByActor(actorId: string): Observable<any[]> {
+  //   return this.http.get<any>(`${this.apiUrl}/api/actores/${actorId}`).pipe(
+  //     map(actor => actor.archivosAdjuntos || [])
+  //   );
+  // }
+
+  getDocumentProperty(collectionName: string, documentId: string, propertyName: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/document-property`, {
+      params: {
+        collection: collectionName,
+        id: documentId,
+        property: propertyName
+      }
+    });
+  }
 
   uploadFile(file: File): Observable<any> {
     const formData = new FormData();
@@ -96,6 +113,10 @@ export class ArchivoService {
     document.body.removeChild(link);
   }
 
+  // deleteFile(filename: string, actorId: string): Observable<any> {
+  //   return this.http.delete(`${this.apiUrl}/files/${actorId}/${filename}`);
+  // }
+
   deleteFile(filename: string): Observable<any> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/delete/${filename}`)
       .pipe(
@@ -125,9 +146,9 @@ export class ArchivoService {
       return 'pdf';
     } else if (extension && ['txt', 'csv', 'json'].includes(extension)) {
       return 'text';
-    } else if (extension && ['mp4', 'webm', 'ogg'].includes(extension)) {
+    } else if (extension && ['mp4', 'webm'].includes(extension)) {
       return 'video';
-    } else if (extension && ['mp3', 'wav'].includes(extension)) {
+    } else if (extension && ['mp3', 'wav', 'ogg'].includes(extension)) {
       return 'audio';
     }
     return 'other';

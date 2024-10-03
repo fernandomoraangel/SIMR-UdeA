@@ -2,6 +2,7 @@ import { Component, EventEmitter, NgZone, OnDestroy, OnInit, Output } from '@ang
 import { ArchivoService } from '../archivo.service';
 import { HttpEventType } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { SharedMessageData } from '../../../models/shared-message-data.interface';
 
 @Component({
   selector: 'app-archivo-subida',
@@ -18,6 +19,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
 
   // Comunicacion con AngularJS por PostMessages
   messageFromAngularJS: string = '';
+  messageToAngularJS: SharedMessageData = { type: '', status: '', message: '' };
   angularJSOrigin = 'http://localhost:3000'; // Dominio de la app AngularJS
   private messageListener: any;
   private isCalledFromAngularJSOrigin: boolean = false;
@@ -148,6 +150,8 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
       documentId: fileInfo.documentId
     };
 
+    this.messageToAngularJS = {type: 'FILE_UPLOAD', message: JSON.stringify(selectedFileInfo)}
+
     if (window.opener) {
       console.log('Ventana padre encontrada');
       Swal.fire({
@@ -156,7 +160,8 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
         icon: 'success',
         confirmButtonText: 'Aceptar'
       }).then(() => {
-        window.opener.postMessage(JSON.stringify(selectedFileInfo), this.angularJSOrigin);
+        // window.opener.postMessage(JSON.stringify(selectedFileInfo), this.angularJSOrigin);
+        window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
         console.log('Mensaje enviado a AngularJS');
         window.close();
       });

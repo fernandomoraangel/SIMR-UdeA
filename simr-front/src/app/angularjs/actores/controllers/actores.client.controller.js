@@ -607,7 +607,8 @@ angular.module("actores").controller("ActoresController", [
 
     //Menú enlaces
     var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
-    var angularWindow;
+    var angularWindowFileUpload;
+    var angularWindowFileList
     var fileInfo;
     /*
       filename,
@@ -620,28 +621,93 @@ angular.module("actores").controller("ActoresController", [
     // $scope.fileInfo;
 
     $scope.subirArchivo = function () {
+      console.log('Subir archivo (angularWindowFileUpload)', angularWindowFileUpload);
       this.fileInfo = null;
-      angularWindow = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
-      // var file = this.myFile;
-      // var uploadUrl = "/upload";
-      // fileUpload.uploadFileToUrl(file, uploadUrl);
+      if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
+        angularWindowFileUpload.focus();
+      } else {
+        angularWindowFileUpload = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
+      }
     };
 
-    $scope.sendMessage = function (message) {
-      if (angularWindow && !angularWindow.closed) {
-        // angularWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
-        angularWindow.postMessage(message, angularAppOrigin);
+    $scope.actorMessage = "";
+
+    // (Testing)
+    $scope.myMessageToAngular;
+    $scope.sendMessageToAngular = function () {
+      // const myMessage = {type: 'FILE_LIST', message: $scope.myMessageToAngular};
+      if (angularWindowFileList && !angularWindowFileList.closed) {
+        console.log('Enviando mensaje de prueba a Angular:', $scope.myMessageToAngular);
+        $scope.sendMessage('FILE_LIST', $scope.myMessageToAngular);
       } else {
         console.error('La ventana de Angular no está abierta');
       }
     };
+    // (Fin de Testing)
+
+    $scope.mostrarArchivos = function (actorId) {
+      // if (!angularWindowFileList || angularWindowFileList.closed) {
+      if (angularWindowFileList && !angularWindowFileList.closed) {
+        angularWindowFileList.focus();
+      } else {
+        alert('Mostrar archivos del actor con ID: ' + actorId);
+        angularWindowFileList = window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+        $scope.actorMessage = actorId;
+      }
+    };
+
+    // $scope.sendMessage2 = function (message) {
+    //   var attempts = 0;
+    //   var maxAttempts = 3;
+    //   var interval = 500; // milisegundos
+
+    //   function attemptSend() {
+    //     if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
+    //       console.log('Enviando mensaje a Angular:', message);
+    //       angularWindowFileUpload.postMessage(message, angularAppOrigin);
+    //     } else if (attempts < maxAttempts) {
+    //       attempts++;
+    //       setTimeout(attemptSend, interval);
+    //     } else {
+    //       console.error('No se pudo enviar el mensaje después de varios intentos');
+    //     }
+    //   }
+    //   attemptSend();
+    // };
+
+    // (Testing)
+    // $scope.myMessageToAngular;
+    // $scope.sendMessageToAngular = function () {
+    //   try {
+    //     if (!angularWindowFileList.closed) {
+    //       console.log('angularWindowFileList:', angularWindowFileList);
+    //     }
+    //     // if (!angularWindowFileUpload.closed) {
+    //     //   console.log('angularWindowFileUpload:', angularWindowFileUpload);
+    //     // }
+
+    //     // const myMessage = 'Hola desde AngularJS';
+    //     if (angularWindowFileList && !angularWindowFileList.closed) {
+    //       console.log('Enviando mensaje a Angular:', $scope.myMessageToAngular);
+    //       // angularWindowFileUpload.postMessage('Hola desde AngularJS', angularAppOrigin);
+    //       angularWindowFileList.postMessage($scope.myMessageToAngular, angularAppOrigin);
+    //     } else {
+    //       console.error('La ventana de Angular no está abierta');
+    //     }
+
+    //   } catch (error) {
+    //     console.log('error:', error);
+    //   }
+    // };
+    // (Fin de Testing)
+
 
     // $scope.sendMessage = function () {
     //   // alert('Hola desde AngularJS');
     //   // Enviar mensaje a la aplicación Angular
     //   // Para ventanas abiertas con window.open
-    //   if (angularWindow) {
-    //     angularWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
+    //   if (angularWindowFileUpload) {
+    //     angularWindowFileUpload.postMessage('Hola desde AngularJS', angularAppOrigin);
     //   }
     //   // Para iframes
     //   var iframe = document.getElementById('angularApp');
@@ -649,22 +715,72 @@ angular.module("actores").controller("ActoresController", [
     // };
 
 
-
-    // Escuchar mensajes de la aplicación Angular
     window.addEventListener('message', function (event) {
-      if (event.origin !== 'http://localhost:4200') return; // Origen de tu app Angular
+      if (event.origin !== angularAppOrigin) return;
 
-      $scope.$apply(function () {
-        $scope.fileInfo2 = JSON.parse(event.data);
-        $scope.archivoAdd();
-      });
-
-      // var fileInfo = JSON.parse(event.data);
-      // this.fileInfo = JSON.parse(event.data);
-      // console.log('Información del archivo recibida:', this.fileInfo);
-      // console.log('fileInfo.originalName', this.fileInfo.originalName);
-      // Aquí puedes manejar la información del archivo como necesites
+      if (event.data.type === 'FILE_LIST' && event.data.status === 'READY') {
+        // Listado de Archivos
+        console.log('La aplicación Angular está lista para recibir mensajes');
+        console.log('Mensaje de Angular:', event);
+        console.log('Mensaje de Angular:', event.data);
+        $scope.sendMessage('FILE_LIST', $scope.actorMessage, 'actores');
+      } else if (event.data.type === 'FILE_UPLOAD') {
+        $scope.$apply(function () {
+          $scope.fileInfo2 = JSON.parse(event.data.message);
+          $scope.archivoAdd();
+        });
+      }
     }, false);
+
+    $scope.sendMessage = function (type, message, dbCollection) {
+      const messagePrepared = { type: type, message: message, dbCollection: dbCollection };
+      switch (type) {
+        case 'FILE_LIST':
+          if (angularWindowFileList && !angularWindowFileList.closed) {
+            console.log('Enviando mensaje a Angula(FILE_LIST):', messagePrepared);
+            angularWindowFileList.postMessage(messagePrepared, angularAppOrigin);
+          }
+          break;
+        case 'FILE_UPLOAD':
+          if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
+            console.log('Enviando mensaje a Angular(FILE_UPLOAD):', message);
+            angularWindowFileUpload.postMessage(messagePrepared, angularAppOrigin);
+          }
+          break;
+        default:
+          console.error('Tipo  no reconocido:', type);
+      }
+    }
+
+
+    // // Escuchar mensajes de la aplicación Angular
+    // window.addEventListener('message', function (event) {
+    //   if (event.origin !== angularAppOrigin) return; // Origen de tu app Angular
+
+    //   $scope.$apply(function () {
+    //     // $scope.myMessageFromAngular = JSON.parse(event.data);
+    //     $scope.myMessageFromAngular = event.data;
+    //     console.log('Mensaje de Angular:', $scope.myMessageFromAngular);
+    //   });
+
+    //   // (Working)
+    //   // // Escuchar mensajes de la aplicación Angular
+    //   // window.addEventListener('message', function (event) {
+    //   //   if (event.origin !== 'http://localhost:4200') return; // Origen de tu app Angular
+
+    //   // $scope.$apply(function () {
+    //   //   $scope.fileInfo2 = JSON.parse(event.data);
+    //   //   $scope.archivoAdd();
+    //   // });
+
+
+
+    //   // var fileInfo = JSON.parse(event.data);
+    //   // this.fileInfo = JSON.parse(event.data);
+    //   // console.log('Información del archivo recibida:', this.fileInfo);
+    //   // console.log('fileInfo.originalName', this.fileInfo.originalName);
+    //   // Aquí puedes manejar la información del archivo como necesites
+    // }, false);
 
     // window.addEventListener('message', function (event) {
     //   if (event.origin !== angularAppOrigin) return;

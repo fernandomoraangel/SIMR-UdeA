@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { SharedMessageData } from '../../../models/shared-message-data.interface';
 
 @Component({
   selector: 'app-archivo-lista',
@@ -15,15 +16,57 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   allSelected: boolean = false;
   selectedFileForViewing: string | null = null;
 
+  // actorId: string | null = null;
+  // actorId: string = "";
+  dbCollection: string = "";
+  documentId: string = "";
+
   private fileChangedSubscription: Subscription = new Subscription();
 
-  constructor(private archivoService: ArchivoService) { }
+  // Comunicacion con AngularJS por PostMessages
+  messageFromAngularJS: string = '';
+  messageToAngularJS: SharedMessageData = { type: '', status: '', message: '' };
+  angularJSOrigin = 'http://localhost:3000'; // Dominio de la app AngularJS
+  private messageListener: any;
+
+  constructor(
+    private archivoService: ArchivoService,
+    private ngZone: NgZone
+  ) {
+    // window.addEventListener('message', (event) => {
+    //   if (event.origin !== this.angularJSOrigin) return;
+
+    //   this.ngZone.run(() => {
+    //     this.messageFromAngularJS = event.data;
+    //   });
+
+    //   console.log('messageFromAngularJS:', this.messageFromAngularJS);
+    // if (event.data && event.data.type === 'FILE_LIST') {
+    //   console.log('Datos recibidos:', event.data);
+    //   this.dbCollection = event.data.dbCollection;
+    //   this.documentId = event.data.message;
+
+    //   this.getDocumentFiles('actores', this.messageFromAngularJS);
+    // }
+    // }, false);
+    // console.log('messageFromAngularJS:', this.messageFromAngularJS);
+  }
 
   ngOnInit(): void {
-    this.loadFiles();
+    this.messageListener = this.receiveMessage.bind(this);
+    window.addEventListener('message', this.messageListener, false);
+    this.messageToAngularJS = { type: 'FILE_LIST', status: 'READY', message: 'Hola desde Angular!' };
+    // this.sendMessage(this.messageToAngularJS);s
+    window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
+    // window.opener.postMessage('READY', this.angularJSOrigin);
+    // alert('messageFromAngularJS: ' + this.messageFromAngularJS);
+    console.log('messageFromAngularJS:', this.messageFromAngularJS);
+    // this.setupMessageListener();
+    // this.loadFiles();
     // this.fileUploadSubscription = this.archivoService.fileUploaded$.subscribe(() => {
     this.fileChangedSubscription = this.archivoService.fileChanged$.subscribe(() => {
-      this.loadFiles();
+      // this.loadFiles();
+      this.getDocumentFiles(this.dbCollection, this.documentId);
     });
   }
 
@@ -31,12 +74,77 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     if (this.fileChangedSubscription) {
       this.fileChangedSubscription.unsubscribe();
     }
+    window.removeEventListener('message', this.messageListener);
   }
   // ngOnDestroy(): void {
   //   if (this.fileUploadSubscription) {
   //     this.fileUploadSubscription.unsubscribe();
   //   }
   // }
+
+  receiveMessage(event: MessageEvent) {
+    // if (event.origin !== this.angularJSOrigin) return;
+    if (event.origin !== this.angularJSOrigin) {
+      alert('Origen no permitido');
+      return;
+    }
+
+    this.ngZone.run(() => {
+      this.messageFromAngularJS = event.data;
+    });
+
+    console.log('event', event);
+    console.log('event.data', event.data);
+
+    console.log('messageFromAngularJS:', this.messageFromAngularJS);
+    if (event.data && event.data.type === 'FILE_LIST') {
+      console.log('Datos recibidos:', event.data);
+      this.dbCollection = event.data.dbCollection;
+      this.documentId = event.data.message;
+
+      this.getDocumentFiles('actors', event.data.message);
+      // this.getDocumentFiles(this.dbCollection, this.documentId);
+
+      // if (event.data.db_collection === 'actores') {
+      //   this.dbCollection = event.data.db_collection;
+      //   this.documentId = event.data.message;
+      //   // this.loadFiles();
+      // } else if (event.data.db_collection === 'obras') {
+      //   console.log('DB Collection:', event.data.db_collection);
+      // }
+      // this.actorId = event.data.actorId;
+      // alert('Actor ID: ' + this.actorId);
+      // // this.loadFiles();
+    }
+  }
+
+  // setupMessageListener(): void {
+  //   // alert('Setting up message listener...');
+  //   this.messageListener = (event: MessageEvent) => {
+  //     alert('Verificando mensaje...');
+  //     if (event.data && event.data.type === 'ACTOR_ID') {
+  //       this.actorId = event.data.actorId;
+  //       alert('Actor ID: ' + this.actorId);
+  //       // this.loadFiles();
+  //     }
+  //   };
+  //   window.addEventListener('message', this.messageListener);
+  // }
+
+  sendMessage(myMessage: string | SharedMessageData): void {
+    // alert('Enviando mensaje a AngularJS...');
+    // Para ventanas emergentes
+    if (window.opener) {
+      // alert('Enviando mensaje a AngularJS desde ventana...');
+      // window.opener.postMessage('Hola desde Angular', this.angularJSOrigin);
+      window.opener.postMessage(myMessage, this.angularJSOrigin);
+    } else if (window.parent) {
+      // Para iframes
+      // alert('Enviando mensaje a AngularJS desde iFrame...');
+      // window.parent.postMessage('Hola desde Angular', this.angularJSOrigin);
+      window.parent.postMessage(myMessage, this.angularJSOrigin);
+    }
+  }
 
   toggleAllSelection(): void {
     if (this.allSelected) {
@@ -64,19 +172,22 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     this.updateAllSelected();
   }
 
-  loadFiles(): void {
-    this.loading = true;
-    this.archivoService.getFiles().subscribe({
-      next: (data) => {
-        this.files = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error al cargar archivos:', error);
-        this.loading = false;
-      }
-    });
-  }
+
+  // loadFiles(): void {
+  //   this.loading = true;
+  //   this.archivoService.getFiles().subscribe({
+  //     next: (data) => {
+  //       console.log('Todos los Datos:', data);
+  //       this.files = data;
+  //       this.loading = false;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error al cargar archivos:', error);
+  //       this.loading = false;
+  //     }
+  //   });
+  // }
+
 
   downloadFile(filename: string): void {
     this.archivoService.downloadFile(filename);
@@ -122,10 +233,11 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        // this.archivoService.deleteFile(filename, this.actorId).subscribe({
         this.archivoService.deleteFile(filename).subscribe({
           next: (response) => {
             console.log('Archivo eliminado con éxito:', response.message);
-            this.loadFiles();
+            // this.loadFiles();
           },
           error: (error) => {
             console.error('Error al eliminar el archivo:', error);
@@ -148,23 +260,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
         });
       }
     });
-
-
-    // if (confirm(`¿Estás seguro de que quiere eliminar el archivo "${filename}"?`)) {
-    //   this.archivoService.deleteFile(filename).subscribe({
-    //     next: (response) => {
-    //       console.log('Archivo eliminado con éxito:', response.message);
-    //       this.loadFiles();
-    //     },
-    //     error: (error) => {
-    //       console.error('Error al eliminar el archivo:', error);
-    //     },
-    //     complete: () => {
-    //       console.log('Eliminación completada');
-    //     }
-    //   });
-    // }
   }
+
 
   deleteSelectedFiles(): void {
     if (this.selectedFiles.size === 0) {
@@ -192,7 +289,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
           next: (response) => {
             console.log('Archivos eliminados con éxito:', response.message);
             this.selectedFiles.clear();
-            this.loadFiles();
+            // this.loadFiles();
           },
           error: (error) => {
             console.error('Error al eliminar los archivos:', error);
@@ -236,6 +333,36 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
 
   viewFile(filename: string): void {
     this.selectedFileForViewing = filename;
+  }
+
+  getDocumentFiles(collectionName: string, documentId: string): void {
+    console.log('Obteniendo archivos adjuntos...');
+    this.loading = true;
+    // this.archivoService.getFilesByActor(documentId).subscribe({
+    //   next: (data) => {
+    //     console.log('Datos obtenidos:', data);
+    //     this.files = data;
+    //     console.log('this.files', this.files);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error al obtener los archivos adjuntos:', error);
+    //   }
+    // });
+
+    this.archivoService.getDocumentProperty(collectionName, documentId, 'archivosAdjuntos')
+      .subscribe({
+        next: (data) => {
+          console.log('Datos obtenidos:', data);
+          this.files = data;
+          this.loading = false;
+          console.log('this.files', this.files);
+          // Procesa los datos como sea necesario
+        },
+        error: (error) => {
+          console.error('Error al obtener los datos:', error);
+          this.loading = false;
+        }
+      });
   }
 
 }
