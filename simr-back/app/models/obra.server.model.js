@@ -83,6 +83,13 @@ var vinculoRelacionado = new Schema({
   url: {},
 });
 
+var archivoAdjunto = new Schema({
+  archivoId: {
+    type: Schema.ObjectId,
+    ref: "Archivo"
+  }
+});
+
 var proyectoAsociado = new Schema({
   id: {
     type: Schema.ObjectId,
@@ -206,6 +213,7 @@ var ObraSchema = new Schema({
   //Proyectos relacionados
   proyectos: [proyectoAsociado],
   vinculosRelacionados: [vinculoRelacionado],
+  archivosAdjuntos: [archivoAdjunto],
   creador: {
     type: Schema.ObjectId,
     ref: "User",
@@ -221,4 +229,6 @@ ObraSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Obra", ObraSchema);
+
+// mongoose.model("Obra", ObraSchema);
+module.exports = mongoose.model("Obra", ObraSchema);

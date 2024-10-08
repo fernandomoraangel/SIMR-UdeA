@@ -17,6 +17,7 @@ angular.module("obras").controller("ObrasController", [
   "Proyectos",
   "Idiomas",
   "Diccionarios",
+  "Archivos",
   function (
     $scope,
     $rootScope,
@@ -32,7 +33,8 @@ angular.module("obras").controller("ObrasController", [
     Sistemas,
     Proyectos,
     Idiomas,
-    Diccionarios
+    Diccionarios,
+    Archivos
   ) {
     // intercept the route change event
     $scope.$on("$routeChangeStart", function (angularEvent, newUrl) {
@@ -119,6 +121,7 @@ angular.module("obras").controller("ObrasController", [
     $scope.control = 0;
     $scope.campo = "";
     var control = 0;
+    $scope.archivosCargados = [];
 
     // Funciones auxiliares
     //Cargar los campos que tienen vectores para la vista de edición
@@ -595,9 +598,9 @@ angular.module("obras").controller("ObrasController", [
           for (var i in $scope.idDenominacionesRegionales) {
             if (
               $scope.idDenominacionesRegionales[i].denominacionRegional ===
-                this.denominacionRegional &&
+              this.denominacionRegional &&
               $scope.idDenominacionesRegionales[i].fuenteDenominacion ===
-                this.fuenteDenominacion
+              this.fuenteDenominacion
             ) {
               //Mensaje de error
               Swal.fire({
@@ -790,10 +793,10 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAsientosLigados[i].id === asientoligado &&
           $scope.idAsientosLigados[i].tipoDeRelacion === tipoDeRelacion &&
           $scope.idAsientosLigados[i].direccionDeRelacion ===
-            direccionDeRelacion &&
+          direccionDeRelacion &&
           $scope.idAsientosLigados[i].fuenteAutorRelacion === fuenteRelacion &&
           $scope.idAsientosLigados[i].proyectoRelacionado ===
-            proyectoRelacion &&
+          proyectoRelacion &&
           $scope.idAsientosLigados[i].notaGeneral === notaGeneral
         ) {
           $scope.idAsientosLigados.splice(i, 1);
@@ -1454,9 +1457,9 @@ angular.module("obras").controller("ObrasController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                this.lugar ||
+              this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                this.evento
+              this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -1550,9 +1553,9 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1597,9 +1600,9 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1806,6 +1809,134 @@ angular.module("obras").controller("ObrasController", [
     };
 
     //Enlaces
+
+    // *** Archivos ***
+    var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
+    var angularWindowFileUpload;
+    var angularWindowFileList;
+
+    $scope.subirArchivo = function () {
+      console.log('Subir archivo (angularWindowFileUpload)', angularWindowFileUpload);
+      this.fileInfo = null;
+      if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
+        angularWindowFileUpload.focus();
+      } else {
+        angularWindowFileUpload = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
+      }
+    };
+
+    $scope.obraMessage = "";
+
+    $scope.mostrarArchivos = function (obraId) {
+      if (angularWindowFileList && !angularWindowFileList.closed) {
+        angularWindowFileList.focus();
+      } else {
+        angularWindowFileList = window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+        $scope.obraMessage = obraId;
+      }
+    };
+
+    window.addEventListener('message', function (event) {
+      if (event.origin !== angularAppOrigin) return;
+
+      if (event.data.type === 'FILE_LIST' && event.data.status === 'READY') {
+        // Listado de Archivos
+        console.log('La aplicación Angular está lista para recibir mensajes');
+        $scope.sendMessage('FILE_LIST', $scope.obraMessage, 'obras');
+      } else if (event.data.type === 'FILE_UPLOAD') {
+        $scope.$apply(function () {
+          $scope.fileInfo = JSON.parse(event.data.message);
+          $scope.archivoAdd();
+        });
+      }
+    }, false);
+
+    $scope.sendMessage = function (type, message, dbCollection) {
+      const messagePrepared = { type: type, message: message, dbCollection: dbCollection };
+      switch (type) {
+        case 'FILE_LIST':
+          if (angularWindowFileList && !angularWindowFileList.closed) {
+            console.log('Enviando mensaje a Angula(FILE_LIST):', messagePrepared);
+            angularWindowFileList.postMessage(messagePrepared, angularAppOrigin);
+          }
+          break;
+        case 'FILE_UPLOAD':
+          if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
+            console.log('Enviando mensaje a Angular(FILE_UPLOAD):', message);
+            angularWindowFileUpload.postMessage(messagePrepared, angularAppOrigin);
+          }
+          break;
+        default:
+          console.error('Tipo no reconocido:', type);
+      }
+    }
+
+    $scope.archivoAdd = function () {
+      if (this.fileInfo === undefined || this.fileInfo == null) {
+        Swal.fire({
+          title: "¡Error!",
+          text: "Aún no ha subido algún archivo",
+          icon: "error",
+          confirmButtonText: "Cerrar",
+        });
+        return;
+      }
+
+      const datosArchivo = {
+        nombre: this.fileInfo.originalName,
+        id: this.fileInfo.documentId,
+        minioObjectName: this.fileInfo.minioObjectName
+      }
+      $scope.archivosCargados.push(datosArchivo);
+      $scope.fileInfo = null;
+    };
+
+    $scope.archivoRemove = function (x) {
+      console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
+      for (var i in $scope.archivosCargados) {
+        if ($scope.archivosCargados[i].id === x.id) {
+          Swal.fire({
+            title: "¡Advertencia de eliminación!",
+            text:
+              "Va a eliminar:" +
+              $scope.archivosCargados[i].nombre,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              vm.eliminarArchivo(x.minioObjectName);
+              $scope.archivosCargados.splice(i - 1, 1);
+              // funcion propia de Angular.Js refresca mi scope y recarga mis datos
+              $scope.$apply();
+              Swal.fire(
+                "Eliminado!",
+                "El archivo ha sido eliminado.",
+                "success"
+              );
+            }
+          });
+        }
+      }
+      console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
+    };
+
+    var vm = this;
+
+    vm.eliminarArchivo = function (filename) {
+      Archivos.deleteFile(filename)
+        .then(function (data) {
+          console.log('Archivo eliminado:', data.message);
+        })
+        .catch(function (error) {
+          console.error('No se pudo eliminar el archivo', error);
+        });
+    };
+
+    // *** (Fin de Archivos) ***
+
+
     $scope.enlaceAdd = function () {
       existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
@@ -1908,6 +2039,20 @@ angular.module("obras").controller("ObrasController", [
 
     //Crear método controller para crear nuevos registros
     $scope.create = function () {
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+      }
+
       //Usar los campos form para crear un nuevo objeto $resource obra
       var obra = new Obras({
         titulo: this.titulo,
@@ -1929,6 +2074,7 @@ angular.module("obras").controller("ObrasController", [
         proyectos: $scope.idProyectos,
         vinculosRelacionados: $scope.idEnlaces,
         descriptores: $scope.idDescriptores,
+        archivosAdjuntos: idArchivos
       });
       //Usar el método '$save' de obra para enviar una petición POST apropiada
       obra.$save(
@@ -2024,6 +2170,10 @@ angular.module("obras").controller("ObrasController", [
 
       if ($scope.idEnlaces.length != 0) {
         $scope.obra.vinculosRelacionados = $scope.idEnlaces;
+      }
+
+      if ($scope.archivosCargados.length != 0) {
+        $scope.obra.archivosAdjuntos = $scope.archivosCargados;
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

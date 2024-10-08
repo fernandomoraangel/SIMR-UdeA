@@ -7,6 +7,8 @@ const path = require('path');
 // const fs = require('fs');
 const { MongoClient, ObjectId } = require('mongodb');
 const Archivo = require('../app/models/archivo.server.model');
+const Actor = require('../app/models/actor.server.model');
+const Obra = require('../app/models/obra.server.model');
 
 // Previsualization
 const mime = require('mime-types');
@@ -35,11 +37,10 @@ const upload = multer({ storage: multer.memoryStorage() });
 //   }
 // });
 
-// // Configura la conexión a MongoDB
-// const mongoUrl = 'mongodb://localhost:27017'; // Ajusta esta URL según tu configuración
-// const mongoUrl = 'mongodb://superAdmin:SOh3TbYhx8ypJPxmt1oOfL@localhost/simr'; // Ajusta esta URL según tu configuración
+// Configuración de conexión a MongoDB
 const mongoUrl = process.env.MONGO_URI;
 const dbName = process.env.MONGO_DB_NAME;
+// const client = new MongoClient(mongoUrl);
 const client = new MongoClient(mongoUrl);
 const collectionName = 'archivos';
 
@@ -55,58 +56,69 @@ const initializeBucket = async () => {
   }
 };
 
+
 // ### RUTAS ###
 
 // *** OBTENER LISTADO DE ARCHIVOS DE UNA COLECCION ***
-router.get('/document-property', async (req, res) => {
+router.get('/document-files', async (req, res) => {
+  let clientConnection;
   try {
-    const { collection, id, property } = req.query;
+    // const { collection, id, property } = req.query;
+    const { collection, documentId } = req.query;
 
-    if (!collection || !id || !property) {
+    const property = 'archivosAdjuntos';
+    if (!collection || !documentId) {
       return res.status(400).json({ message: 'Missing required parameters' });
     }
 
     console.log('collection:', collection);
-    console.log('id:', id);
+    console.log('documentId:', documentId);
     console.log('property:', property);
 
     // await client.connect();
     clientConnection = await client.connect();
     console.log('Connected to MongoDB');
 
-    const database = client.db(dbName);
-    console.log('database:', database);
-    const collectionSelected = database.collection(collection);
-    // const collectionSelected = database.collection('actores');
-    console.log('collectionSelected:', collectionSelected.collectionName);
+    // const database = client.db(dbName);
+    // console.log('database:', database.databaseName);
+    // const collectionSelected = database.collection(collection);
+    // console.log('collectionSelected:', collectionSelected.collectionName);
 
-    // Paso 1: Verificar la conexión listando las colecciones
-    const collections = await database.listCollections().toArray();
-    console.log('Available collections:', collections.map(c => c.name));
+    // Verificar la conexión listando las colecciones
+    // const collections = await database.listCollections().toArray();
+    // console.log('Available collections:', collections.map(c => c.name));
 
-    // Paso 2: Contar documentos en la colección
-    const count = await collectionSelected.countDocuments();
-    console.log(`Number of documents in ${collection}:`, count);
+    // Contar documentos en la colección
+    // const count = await collectionSelected.countDocuments();
+    // console.log(`Number of documents in ${collection}:`, count);
 
-    // Paso 3: Intentar encontrar el documento por ID
-    let document = await collectionSelected.findOne({ _id: new ObjectId(id) });
+    let document;
+
+    switch (collection) {
+      case 'actores':
+        document = await Actor.findById(documentId);
+        break;
+      case 'obras':
+        document = await Obra.findById(documentId);
+        break;
+      default:
+        return res.status(404).json({ message: 'Not found' });
+    }
+
+    // Intentar encontrar el documento por ID
+    // let document = await Actor.findById(documentId);
+    // let document = await collectionSelected.findOne({ _id: new ObjectId(documentId) });
     console.log('document obtained by ID:', document);
 
-    // Paso 4: Si no se encuentra, intentar buscar sin convertir a ObjectId
-    // if (!document) {
-    //   document = await collectionSelected.findOne({ _id: id });
-    //   console.log('document obtained by string ID:', document);
-    // }
-
-    // Paso 5: Si se encuentra un documento, verificar la propiedad
+    // Si se encuentra un documento, verificar la propiedad
     if (document) {
       if (property in document) {
         const propertyValues = document[property];
         console.log('propertyValues:', propertyValues);
 
         if (Array.isArray(propertyValues)) {
-          const archivosCollection = database.collection('archivos');
-          console.log('collectionSelected:', archivosCollection.collectionName);
+          // const archivosCollection = database.collection('archivos');
+          // console.log('collectionSelected:', archivosCollection.collectionName);
 
           const documentFiles = [];
 
@@ -117,9 +129,10 @@ router.get('/document-property', async (req, res) => {
             console.log('fileId (property values):', fileId);
 
             try {
-              const myFile = await archivosCollection.findOne({ _id: fileId._id });
+              // const myFile = await archivosCollection.findOne({ _id: fileId._id });
+              const myFile = await Archivo.findOne({ _id: fileId._id });
               console.log('myFile:', myFile);
-              
+
               // if (myFile && myFile.minioObjectName) {
               //   documentFiles.push(myFile.minioObjectName);
               // }

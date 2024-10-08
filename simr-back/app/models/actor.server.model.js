@@ -126,4 +126,6 @@ ActorSchema.set("toJSON", {
   virtuals: true,
 });
 
-mongoose.model("Actor", ActorSchema);
+// mongoose.model("Actor", ActorSchema);
+
+module.exports = mongoose.model("Actor", ActorSchema);

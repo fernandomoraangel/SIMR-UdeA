@@ -24,12 +24,12 @@ export class ArchivoService {
   //   );
   // }
 
-  getDocumentProperty(collectionName: string, documentId: string, propertyName: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/document-property`, {
+  // getDocumentFiles(collectionName: string, documentId: string, propertyName: string): Observable<any[]> {
+  getDocumentFiles(collection: string, documentId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/document-files`, {
       params: {
-        collection: collectionName,
-        id: documentId,
-        property: propertyName
+        collection: collection,
+        documentId: documentId
       }
     });
   }

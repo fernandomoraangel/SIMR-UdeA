@@ -102,7 +102,10 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       this.dbCollection = event.data.dbCollection;
       this.documentId = event.data.message;
 
-      this.getDocumentFiles('actors', event.data.message);
+      console.log('DB Collection:', this.dbCollection);
+      console.log('Document ID:', this.documentId);
+      this.getDocumentFiles(this.dbCollection, this.documentId);
+      // this.getDocumentFiles('actors', event.data.message);
       // this.getDocumentFiles(this.dbCollection, this.documentId);
 
       // if (event.data.db_collection === 'actores') {
@@ -335,7 +338,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     this.selectedFileForViewing = filename;
   }
 
-  getDocumentFiles(collectionName: string, documentId: string): void {
+  getDocumentFiles(collection: string, documentId: string): void {
     console.log('Obteniendo archivos adjuntos...');
     this.loading = true;
     // this.archivoService.getFilesByActor(documentId).subscribe({
@@ -349,7 +352,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     //   }
     // });
 
-    this.archivoService.getDocumentProperty(collectionName, documentId, 'archivosAdjuntos')
+    // this.archivoService.getDocumentProperty(collectionName, documentId, 'archivosAdjuntos')
+    this.archivoService.getDocumentFiles(collection, documentId)
       .subscribe({
         next: (data) => {
           console.log('Datos obtenidos:', data);
