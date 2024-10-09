@@ -1116,5 +1116,12 @@ angular.module("actores").controller("ActoresController", [
         });
       }
     };
+
+    // Limpiar el listener cuando se destruya el $scope
+    $scope.$on('$destroy', function() {
+      window.removeEventListener('message', messageListener);
+      console.log('Listener de message removido');
+    });
+    
   },
 ]);

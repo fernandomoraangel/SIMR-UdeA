@@ -17,7 +17,7 @@ angular.module("obras").controller("ObrasController", [
   "Proyectos",
   "Idiomas",
   "Diccionarios",
-  "Archivos",
+  "ArchivoService",
   function (
     $scope,
     $rootScope,
@@ -34,7 +34,7 @@ angular.module("obras").controller("ObrasController", [
     Proyectos,
     Idiomas,
     Diccionarios,
-    Archivos
+    ArchivoService
   ) {
     // intercept the route change event
     $scope.$on("$routeChangeStart", function (angularEvent, newUrl) {
@@ -1810,69 +1810,35 @@ angular.module("obras").controller("ObrasController", [
 
     //Enlaces
 
-    // *** Archivos ***
-    var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
-    var angularWindowFileUpload;
-    var angularWindowFileList;
+    // *** ARCHIVOS ***
+
+    // === EVENT LISTENER ===
+    // Agregar el listener cuando el controlador esté activo
+    ArchivoService.agregarListener();
+
+    $scope.$on('$destroy', function () {
+      // Remover el listener cuando se destruya el controlador
+      ArchivoService.removerListener();
+    });
+    // ===(Fin de EVENT LISTENER)===
+
+    
+    // (Testing)
+    $scope.pruebaArchivoService = function () {
+      ArchivoService.sayHello();
+      // ArchivoService.abrirVentanaMostrarArchivos();
+      console.log('archivosCargados', $scope.archivosCargados);
+    };
+    // (Fin de Testing)
+
 
     $scope.subirArchivo = function () {
-      console.log('Subir archivo (angularWindowFileUpload)', angularWindowFileUpload);
-      this.fileInfo = null;
-      if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
-        angularWindowFileUpload.focus();
-      } else {
-        angularWindowFileUpload = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
-      }
-    };
-
-    $scope.obraMessage = "";
-
-    $scope.mostrarArchivos = function (obraId) {
-      if (angularWindowFileList && !angularWindowFileList.closed) {
-        angularWindowFileList.focus();
-      } else {
-        angularWindowFileList = window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
-        $scope.obraMessage = obraId;
-      }
-    };
-
-    window.addEventListener('message', function (event) {
-      if (event.origin !== angularAppOrigin) return;
-
-      if (event.data.type === 'FILE_LIST' && event.data.status === 'READY') {
-        // Listado de Archivos
-        console.log('La aplicación Angular está lista para recibir mensajes');
-        $scope.sendMessage('FILE_LIST', $scope.obraMessage, 'obras');
-      } else if (event.data.type === 'FILE_UPLOAD') {
-        $scope.$apply(function () {
-          $scope.fileInfo = JSON.parse(event.data.message);
-          $scope.archivoAdd();
-        });
-      }
-    }, false);
-
-    $scope.sendMessage = function (type, message, dbCollection) {
-      const messagePrepared = { type: type, message: message, dbCollection: dbCollection };
-      switch (type) {
-        case 'FILE_LIST':
-          if (angularWindowFileList && !angularWindowFileList.closed) {
-            console.log('Enviando mensaje a Angula(FILE_LIST):', messagePrepared);
-            angularWindowFileList.postMessage(messagePrepared, angularAppOrigin);
-          }
-          break;
-        case 'FILE_UPLOAD':
-          if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
-            console.log('Enviando mensaje a Angular(FILE_UPLOAD):', message);
-            angularWindowFileUpload.postMessage(messagePrepared, angularAppOrigin);
-          }
-          break;
-        default:
-          console.error('Tipo no reconocido:', type);
-      }
+      ArchivoService.subirArchivo();
     }
 
-    $scope.archivoAdd = function () {
-      if (this.fileInfo === undefined || this.fileInfo == null) {
+    // Escuchar el evento de archivo subido
+    $scope.$on('archivoSubido', function (event, fileInfo) {
+      if (fileInfo === undefined || fileInfo == null) {
         Swal.fire({
           title: "¡Error!",
           text: "Aún no ha subido algún archivo",
@@ -1881,14 +1847,12 @@ angular.module("obras").controller("ObrasController", [
         });
         return;
       }
+      console.log('Se recibió archivo subido:', fileInfo);
+      $scope.archivosCargados.push(fileInfo);
+    });
 
-      const datosArchivo = {
-        nombre: this.fileInfo.originalName,
-        id: this.fileInfo.documentId,
-        minioObjectName: this.fileInfo.minioObjectName
-      }
-      $scope.archivosCargados.push(datosArchivo);
-      $scope.fileInfo = null;
+    $scope.mostrarArchivos = function (obraId) {
+      ArchivoService.mostrarArchivos(obraId, 'obras');
     };
 
     $scope.archivoRemove = function (x) {
@@ -1925,7 +1889,7 @@ angular.module("obras").controller("ObrasController", [
     var vm = this;
 
     vm.eliminarArchivo = function (filename) {
-      Archivos.deleteFile(filename)
+      ArchivoService.deleteFile(filename)
         .then(function (data) {
           console.log('Archivo eliminado:', data.message);
         })
