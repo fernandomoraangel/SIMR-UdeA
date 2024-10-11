@@ -6,9 +6,11 @@ const minio = require('minio');
 const path = require('path');
 // const fs = require('fs');
 const { MongoClient, ObjectId } = require('mongodb');
+// Entidades que usan archivos
 const Archivo = require('../app/models/archivo.server.model');
 const Actor = require('../app/models/actor.server.model');
 const Obra = require('../app/models/obra.server.model');
+const Proyecto = require('../app/models/proyecto.server.model');
 
 // Previsualization
 const mime = require('mime-types');
@@ -100,6 +102,9 @@ router.get('/document-files', async (req, res) => {
         break;
       case 'obras':
         document = await Obra.findById(documentId);
+        break;
+      case 'proyectos':
+        document = await Proyecto.findById(documentId);
         break;
       default:
         return res.status(404).json({ message: 'Not found' });

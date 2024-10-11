@@ -1,5 +1,8 @@
-var mongoose = require("mongoose"),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const archivoAdjunto = require('../schemas/archivo-adjunto.server.schema');
+
 
 //Auditoría (borrado o edición de algún campo o registro completo)
 var registroOperacion = new Schema({
@@ -191,6 +194,7 @@ var RecursoSchema = new Schema({
   },
   proyectos: [proyectoAsociado],
   vinculoRelacionado: [vinculoRelacionado],
+  archivosAdjuntos: [archivoAdjunto],
   descriptorLibre: [descriptorLibre],
   creador: {
     type: Schema.ObjectId,

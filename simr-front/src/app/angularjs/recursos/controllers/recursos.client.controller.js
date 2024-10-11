@@ -13,6 +13,7 @@ angular.module("recursos").controller("RecursosController", [
   "Proyectos",
   "Idiomas",
   "Diccionarios",
+  "ArchivoService",
   function (
     $scope,
     $routeParams,
@@ -24,7 +25,8 @@ angular.module("recursos").controller("RecursosController", [
     Materias,
     Proyectos,
     Idiomas,
-    Diccionarios
+    Diccionarios,
+    ArchivoService,
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -63,6 +65,7 @@ angular.module("recursos").controller("RecursosController", [
     $scope.materias = Materias.query();
     $scope.errorclass = "form-control";
     var control = 0;
+    $scope.archivosCargados = [];
     //Carga vectores
 
     $scope.cargaObrasRelacionadas = function (d) {
@@ -1756,6 +1759,88 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     //Menú enlaces
+
+    // *** ARCHIVOS ***
+
+    // === EVENT LISTENER ===
+    // Agregar el listener cuando el controlador esté activo
+    ArchivoService.agregarListener();
+
+    $scope.$on('$destroy', function () {
+      // Remover el listener cuando se destruya el controlador
+      ArchivoService.removerListener();
+    });
+    // ===(Fin de EVENT LISTENER)===
+
+       
+    $scope.subirArchivo = function () {
+      ArchivoService.subirArchivo();
+    }
+
+    // Escuchar el evento de archivo subido
+    $scope.$on('archivoSubido', function (event, fileInfo) {
+      if (fileInfo === undefined || fileInfo == null) {
+        Swal.fire({
+          title: "¡Error!",
+          text: "Aún no ha subido algún archivo",
+          icon: "error",
+          confirmButtonText: "Cerrar",
+        });
+        return;
+      }
+      console.log('Se recibió archivo subido:', fileInfo);
+      $scope.archivosCargados.push(fileInfo);
+    });
+
+    $scope.mostrarArchivos = function (recursoId) {
+      ArchivoService.mostrarArchivos(recursoId, 'recursos');
+    };
+
+    $scope.archivoRemove = function (x) {
+      console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
+      for (var i in $scope.archivosCargados) {
+        if ($scope.archivosCargados[i].id === x.id) {
+          Swal.fire({
+            title: "¡Advertencia de eliminación!",
+            text:
+              "Va a eliminar:" +
+              $scope.archivosCargados[i].nombre,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $scope.eliminarArchivo(x.minioObjectName);
+              $scope.archivosCargados.splice(i - 1, 1);
+              // funcion propia de Angular.Js refresca mi scope y recarga mis datos
+              $scope.$apply();
+              Swal.fire(
+                "Eliminado!",
+                "El archivo ha sido eliminado.",
+                "success"
+              );
+            }
+          });
+        }
+      }
+      console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
+    };
+
+    $scope.eliminarArchivo = function (filename) {
+      ArchivoService.deleteFile(filename)
+        .then(function (data) {
+          console.log('Archivo eliminado:', data.message);
+        })
+        .catch(function (error) {
+          console.error('No se pudo eliminar el archivo', error);
+        });
+    };
+
+    // *** (Fin de Archivos) ***
+
+
+
     //Los asteriscos se usan porque la url contiene ":"
     $scope.enlaceAdd = function () {
       existe = false;

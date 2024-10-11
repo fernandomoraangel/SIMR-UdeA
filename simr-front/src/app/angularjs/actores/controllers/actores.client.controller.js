@@ -1032,7 +1032,8 @@ angular.module("actores").controller("ActoresController", [
       }
 
       if ($scope.archivosCargados.length != 0) {
-        $scope.actor.archivosAdjuntos = $scope.archivosCargados;
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        $scope.actor.archivosAdjuntos = idArchivos;
       }
 
       //Usa el método $update de actor para enviar la petición PUT adecuada

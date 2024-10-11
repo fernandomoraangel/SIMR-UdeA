@@ -8,8 +8,7 @@
 			<div>
 				<!-- Botón modal ayuda -->
 				<button type="button" class="glyphicon glyphicon-eye-open" style="font-size: 16px; top:-5px"
-					ng-click="mostrarAyuda('Proyecto','Proyecto');" data-toggle="modal"
-					data-target="#ayudaTitulo"></button>
+					ng-click="mostrarAyuda('Proyecto','Proyecto');" data-toggle="modal" data-target="#ayudaTitulo"></button>
 
 				<!-- Modal Ayuda-->
 				<div style="text-align: left" class="modal fade" id="ayudaTitulo" tabindex="-1" role="dialog"
@@ -43,8 +42,8 @@
 							data-target="#ayudaNombre"></button>
 
 						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaNombre" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaNombreLabel" aria-hidden="true">
+						<div class="modal fade" id="ayudaNombre" tabindex="-1" role="dialog" aria-labelledby="ayudaNombreLabel"
+							aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -54,8 +53,7 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
@@ -77,8 +75,8 @@
 							data-target="#ayudaEstado"></button>
 
 						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaEstado" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaEstadoLabel" aria-hidden="true">
+						<div class="modal fade" id="ayudaEstado" tabindex="-1" role="dialog" aria-labelledby="ayudaEstadoLabel"
+							aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -88,8 +86,7 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
@@ -116,8 +113,8 @@
 							data-target="#ayudaActores"></button>
 
 						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaActores" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaActoresLabel" aria-hidden="true">
+						<div class="modal fade" id="ayudaActores" tabindex="-1" role="dialog" aria-labelledby="ayudaActoresLabel"
+							aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -127,21 +124,19 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseActores"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseActores" role="button"
+							aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">ACTORES</label>
 					</div>
 					<div class="collapse" id="collapseActores">
 						<div ng-model="todoInput">
 							<label class="seccion">NOMBRE/ROL</label>
-							<select id="nombreActorId" class="form-control" ng-mouseup="updateActores();"
-								ng-model="actor">
+							<select id="nombreActorId" class="form-control" ng-mouseup="updateActores();" ng-model="actor">
 								<option value="">-----</option>
 								<option ng-repeat="actor in actores track by $index" value="{{actor.id}}">
 									{{actor.fullName}}
@@ -166,8 +161,7 @@
 								actor</h2>
 						</div>
 						<div ng-model="todoerase" ng-repeat="x in idActores track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="actorRemove(x.id)"
-								style="color:red">
+							<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="actorRemove(x.id)" style="color:red">
 							</h2>
 							<em>
 								{{nombrarSi("Actor", actorAux(x.id))}};
@@ -202,14 +196,13 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseFechas"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseFechas" role="button"
+							aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">FECHAS ASOCIADAS AL PROYECTO</label>
 					</div>
 					<div class="collapse" id="collapseFechas">
@@ -230,16 +223,14 @@
 							<h2 class="glyphicon glyphicon-plus" ng-click="fechaAdd();">Agregar</h2>
 						</div>
 						<div ng-model="todoerase" ng-repeat="x in idFechas track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="fechaRemove(x.evento)"
-								style="color:red">
+							<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="fechaRemove(x.evento)" style="color:red">
 							</h2>
 							<em>
 								{{nombrarSi("Evento", x.evento)}};
 								{{nombrarSi("Fecha", formatDate(x.fecha,x.precision))}}
 							</em>
 							<!-- Agregar edición -->
-							<h2 class="glyphicon glyphicon-pencil" style="color:blue"
-								ng-click="fechaEdit(x.evento,x.fecha);">
+							<h2 class="glyphicon glyphicon-pencil" style="color:blue" ng-click="fechaEdit(x.evento,x.fecha);">
 							</h2>
 						</div>
 					</div>
@@ -263,15 +254,13 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse"
-							href="#collapseDescriptores" role="button" aria-expanded="false"
-							aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDescriptores"
+							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">DESCRIPTORES LIBRES</label>
 					</div>
 					<div class="collapse" id="collapseDescriptores">
@@ -286,8 +275,7 @@
 
 						<div>
 							<label class="campo">Contenido</label>
-							<input type="text" class="form-control" id="descContenidoId" ng-model="dContenido"
-								placeholder="">
+							<input type="text" class="form-control" id="descContenidoId" ng-model="dContenido" placeholder="">
 						</div>
 
 						<div>
@@ -295,8 +283,8 @@
 						</div>
 
 						<div ng-model="todoerase" ng-repeat="n in idDescriptores track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="n"
-								ng-click="dDescriptorRemove(n.etiqueta,n.contenido);" style="color:red">
+							<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
+								style="color:red">
 							</h2>
 							<em>
 								{{nombrarSi("Etiqueta", n.etiqueta)}}
@@ -318,8 +306,8 @@
 							data-target="#ayudaEnlaces"></button>
 
 						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaEnlaces" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaEnlacesLabel" aria-hidden="true">
+						<div class="modal fade" id="ayudaEnlaces" tabindex="-1" role="dialog" aria-labelledby="ayudaEnlacesLabel"
+							aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -329,17 +317,19 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEyA"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEyA" role="button"
+							aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">ENLACES Y ARCHIVOS</label>
 					</div>
 					<div class="collapse" id="collapseEyA">
+						
+						<h3>Enlaces</h3>
+
 						<div>
 							<label class="campo">Nombre (descripción)</label>
 							<input type="text" id="nombreEnlace" class="form-control" ng-model="eEtiqueta">
@@ -368,6 +358,16 @@
 								ng-click="enlaceEdit(n.etiqueta,n.url);">
 							</h2>
 						</div>
+
+						<hr>
+
+						<h3>Archivos</h3>
+						<archivo-manager template-type="create-view" archivos-cargados="archivosCargados" />
+
+						<button ng-click="correrPrueba($event)">Prueba</button>
+
+						<hr>
+
 					</div>
 					<!-- Vínculos y archivos -->
 					<div>

@@ -1,5 +1,8 @@
-var mongoose = require("mongoose"),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const archivoAdjunto = require('../schemas/archivo-adjunto.server.schema');
+
 
 //Auditoría (borrado o edición de algún campo o registro completo)
 var registroOperacion = new Schema({
@@ -104,6 +107,7 @@ var ProyectoSchema = new Schema({
     default: Date.now,
   },
   vinculoRelacionado: [vinculoRelacionado],
+  archivosAdjuntos: [archivoAdjunto],
   registroOperacion: [registroOperacion],
 });
 
@@ -111,4 +115,5 @@ ProyectoSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Proyecto", ProyectoSchema);
+
+module.exports = mongoose.model("Proyecto", ProyectoSchema);

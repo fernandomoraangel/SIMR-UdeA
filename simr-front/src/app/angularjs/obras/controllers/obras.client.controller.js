@@ -1822,7 +1822,7 @@ angular.module("obras").controller("ObrasController", [
     });
     // ===(Fin de EVENT LISTENER)===
 
-    
+
     // (Testing)
     $scope.pruebaArchivoService = function () {
       ArchivoService.sayHello();
@@ -1870,7 +1870,7 @@ angular.module("obras").controller("ObrasController", [
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
-              vm.eliminarArchivo(x.minioObjectName);
+              $scope.eliminarArchivo(x.minioObjectName);
               $scope.archivosCargados.splice(i - 1, 1);
               // funcion propia de Angular.Js refresca mi scope y recarga mis datos
               $scope.$apply();
@@ -1886,9 +1886,7 @@ angular.module("obras").controller("ObrasController", [
       console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
     };
 
-    var vm = this;
-
-    vm.eliminarArchivo = function (filename) {
+    $scope.eliminarArchivo = function (filename) {
       ArchivoService.deleteFile(filename)
         .then(function (data) {
           console.log('Archivo eliminado:', data.message);
@@ -2137,7 +2135,9 @@ angular.module("obras").controller("ObrasController", [
       }
 
       if ($scope.archivosCargados.length != 0) {
-        $scope.obra.archivosAdjuntos = $scope.archivosCargados;
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        // $scope.obra.archivosAdjuntos = $scope.archivosCargados;
+        $scope.obra.archivosAdjuntos = idArchivos;
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

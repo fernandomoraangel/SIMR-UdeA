@@ -43,6 +43,14 @@
 							<td class="campo">VÍNCULOS Y ARCHIVOS</td>
 							<td id="enlaces" data-ng-bind="verVinculo(proyecto.vinculoRelacionado)"></td>
 						</tr>
+
+						<tr>
+							<td class="campo">ARCHIVOS</td>
+							<td>
+								<archivo-manager template-type="detail-view" document-id="{{proyecto.id}}" db-collection="proyectos" />
+							</td>
+						</tr>
+
 					</tbody>
 
 				</table>
