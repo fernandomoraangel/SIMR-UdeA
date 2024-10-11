@@ -9,6 +9,7 @@ angular.module("proyectos").controller("ProyectosController", [
   "Proyectos",
   "Actores",
   "Diccionarios",
+  "ArchivoServiceTest",
   function (
     $scope,
     $routeParams,
@@ -16,7 +17,8 @@ angular.module("proyectos").controller("ProyectosController", [
     Authentication,
     Proyectos,
     Actores,
-    Diccionarios
+    Diccionarios,
+    ArchivoServiceTest
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -60,6 +62,7 @@ angular.module("proyectos").controller("ProyectosController", [
     $scope.idEnlaces = [];
     $scope.diccionarios = Diccionarios.query();
     var control = 0;
+    $scope.archivosCargados = [];
 
     //Preparar datos
     $scope.actualizarTodo = function () {
@@ -624,6 +627,15 @@ angular.module("proyectos").controller("ProyectosController", [
       }
     };
 
+
+
+    $scope.correrPrueba = function (event) {
+      event.preventDefault();
+      event.stopPropagation(); // Detener la propagación del evento
+      console.log('Corriendo prueba');
+      console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
+    };
+
     //Menú enlaces
     $scope.enlaceAdd = function () {
       existe = false;
@@ -726,6 +738,21 @@ angular.module("proyectos").controller("ProyectosController", [
 
     //Crear método controller para crear nuevas obras
     $scope.create = function () {
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      console.log('(Creando proyecto) idArchivos:', idArchivos);
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+      }
+
       //Usar los campos form para crear un nuevo objeto $resource obra
       var proyecto = new Proyectos({
         nombre: this.nombre,
@@ -734,6 +761,7 @@ angular.module("proyectos").controller("ProyectosController", [
         fechasAsociadas: $scope.idFechas,
         descriptoresLibres: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
+        archivosAdjuntos: idArchivos
       });
       //Usar el método '$save' de obra para enviar una petición POST apropiada
       proyecto.$save(
@@ -753,6 +781,7 @@ angular.module("proyectos").controller("ProyectosController", [
         }
       );
     };
+
     //Método controller para recuperar la lista de obras
     $scope.find = function () {
       //Usar el método 'querry' de obra, para enviar una petición GET apropiada
@@ -784,6 +813,11 @@ angular.module("proyectos").controller("ProyectosController", [
 
       if ($scope.idEnlaces.length != 0) {
         $scope.proyecto.vinculoRelacionado = $scope.idEnlaces;
+      }
+
+      if ($scope.archivosCargados.length != 0) {
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        $scope.proyecto.archivosAdjuntos = idArchivos;
       }
 
       //Usa el método $update de proyecto para enviar la petición PUT adecuada
