@@ -29,8 +29,6 @@
 							<td data-ng-bind="genero.descripcion"></td>
 						</tr>
 
-
-
 						<tr>
 							<td>Géneros relacionados</td>
 							<td data-ng-bind="verGeneros(genero.GeneroRelacionado
@@ -52,7 +50,6 @@
 							<td data-ng-bind="verMedios(genero.mediosSonoros
 					)"></td>
 						</tr>
-
 
 						<tr>
 							<td>Sistemas sonoros asociados</td>
@@ -85,8 +82,13 @@
 							<td id="enlaces" data-ng-bind="verVinculo(genero.vinculoRelacionado)"></td>
 						</tr>
 
-
-
+						<tr>
+							<td class="campo">ARCHIVOS</td>
+							<td>
+								<archivo-manager template-type="detail-view" document-id="{{genero.id}}" db-collection="generos">
+								</archivo-manager>
+							</td>
+						</tr>
 
 					</tbody>
 

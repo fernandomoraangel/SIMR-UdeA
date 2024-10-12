@@ -1,12 +1,12 @@
 angular.module('archivos')
-  .directive('archivoManager', ['ArchivoServiceTest', function (ArchivoServiceTest) {
+  .directive('archivoManager', ['ArchivoService', function (ArchivoService) {
     return {
       restrict: 'E',
       scope: {
         templateType: '@',
-        archivosCargados: '=',
-        documentId: '@',
-        dbCollection: '@'
+        archivosCargados: '=?',
+        documentId: '@?',
+        dbCollection: '@?'
       },
       template: function (element, attrs) {
         switch (attrs.templateType) {
@@ -43,14 +43,26 @@ angular.module('archivos')
       // controller: function ($scope) {
       controller: function ($scope, $element, $attrs) {
 
+        // Inicializar valores por defecto para atributos opcionales
+        $scope.templateType = $scope.templateType || 'default';
+        $scope.archivosCargados = $scope.archivosCargados || [];
+        $scope.documentId = $scope.documentId || '';
+        $scope.dbCollection = $scope.dbCollection || '';
+
         // Initialize archivosCargados if not defined
-        if (!$scope.archivosCargados) {
+        // if (!$scope.archivosCargados) {
           // $scope.archivosCargados = [];
           // $scope.archivosCargados = [{ nombre: 'archivo1' }, { nombre: 'archivo2' }];
-          console.log('archivosCargados inicializado:', $scope.archivosCargados);
+          // console.log('archivosCargados inicializado:', $scope.archivosCargados);
+        // }
+
+        // Verificar si se proporcionaron atributos "requeridos"
+        if (!$attrs.templateType) {
+          // throw new Error('archivoManager: El atributo templateType es requerido.');
+          console.warn('archivoManager: El atributo templateType no fue proporcionado. Usando valor por defecto.');
         }
 
-        ArchivoServiceTest.agregarListener();
+        ArchivoService.agregarListener();
 
         $scope.subirArchivo = function (event) {
           event.preventDefault(); // Prevenir comportamiento por defecto
@@ -58,14 +70,14 @@ angular.module('archivos')
           console.log('Subir archivo (Controlador)');
           console.log('documentId:', $scope.documentId);
           console.log('dbCollection:', $scope.dbCollection);
-          ArchivoServiceTest.subirArchivo();
+          ArchivoService.subirArchivo();
         };
 
         $scope.mostrarArchivos = function () {
           console.log('Mostrar archivos');
           console.log('documentId:', $scope.documentId);
           console.log('dbCollection:', $scope.dbCollection);
-          ArchivoServiceTest.mostrarArchivos($scope.documentId, $scope.dbCollection);
+          ArchivoService.mostrarArchivos($scope.documentId, $scope.dbCollection);
         };
 
         $scope.eliminarArchivo = function (archivo) {
@@ -82,7 +94,7 @@ angular.module('archivos')
               cancelButtonText: "Cancelar",
             }).then((result) => {
               if (result.isConfirmed) {
-                ArchivoServiceTest.deleteFile(archivo.minioObjectName)
+                ArchivoService.deleteFile(archivo.minioObjectName)
                 $scope.archivosCargados.splice(index, 1);
                 // funcion propia de Angular.Js refresca mi scope y recarga mis datos
                 $scope.$apply();
@@ -97,12 +109,30 @@ angular.module('archivos')
         };
 
         $scope.$on('archivoSubido', function (event, fileInfo) {
-          console.log('Archivo subido (directiva):', fileInfo);
-          $scope.archivosCargados.push(fileInfo);
+          console.log('Archivo subido! (Directiva):', fileInfo);
+          try {
+            $scope.archivosCargados.push(fileInfo);
+            console.log('Nuevo archivo cargado:', $scope.archivosCargados);
+            // if (!$scope.$$phase) {
+            //   $scope.$apply();
+            // }
+          } catch (error) {
+            console.error('Error al agregar archivo:', error);
+          }
         });
 
+        // $scope.$on('archivoSubido', function (event, fileInfo) {
+        //   console.log('Archivo subido! (Directiva):', fileInfo);
+        //   try {
+        //     $scope.archivosCargados.push(fileInfo);
+        //     console.log('Nuevo archivo cargado:', $scope.archivosCargados);
+        //   } catch (error) {
+        //     console.error('Error al agregar archivo:', error);
+        //   }
+        // });
+
         $scope.$on('$destroy', function () {
-          ArchivoServiceTest.removerListener();
+          ArchivoService.removerListener();
         });
       }
     };
@@ -117,7 +147,7 @@ Utilizar la directiva en los diferentes módulos:
 
 Para implementar esta solución, sigue estos pasos:
 
-1. Actualiza el ArchivoServiceTest con el código proporcionado en el primer artifact.
+1. Actualiza el ArchivoService con el código proporcionado en el primer artifact.
 2. Crea un nuevo archivo para la directiva (por ejemplo, archivoManagerDirective.js) y agrega el código del segundo artifact.
 3. Asegúrate de que ambos archivos estén incluidos en tu index.html o en el bundle de tu aplicación.
 4. Utiliza la directiva <archivo-manager> en los templates de tus módulos donde necesites manejar archivos.

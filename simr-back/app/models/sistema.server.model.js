@@ -126,4 +126,5 @@ SistemaSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Sistema", SistemaSchema);
+
+module.exports = mongoose.model("Sistema", SistemaSchema);

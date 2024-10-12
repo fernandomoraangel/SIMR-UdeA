@@ -211,4 +211,5 @@ RecursoSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Recurso", RecursoSchema);
+
+module.exports = mongoose.model("Recurso", RecursoSchema);

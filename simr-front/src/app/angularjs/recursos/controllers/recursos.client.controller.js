@@ -66,6 +66,7 @@ angular.module("recursos").controller("RecursosController", [
     $scope.errorclass = "form-control";
     var control = 0;
     $scope.archivosCargados = [];
+
     //Carga vectores
 
     $scope.cargaObrasRelacionadas = function (d) {
@@ -1410,9 +1411,9 @@ angular.module("recursos").controller("RecursosController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                this.lugar ||
+              this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                this.evento
+              this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -1504,9 +1505,9 @@ angular.module("recursos").controller("RecursosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1550,9 +1551,9 @@ angular.module("recursos").controller("RecursosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1760,87 +1761,6 @@ angular.module("recursos").controller("RecursosController", [
 
     //Menú enlaces
 
-    // *** ARCHIVOS ***
-
-    // === EVENT LISTENER ===
-    // Agregar el listener cuando el controlador esté activo
-    ArchivoService.agregarListener();
-
-    $scope.$on('$destroy', function () {
-      // Remover el listener cuando se destruya el controlador
-      ArchivoService.removerListener();
-    });
-    // ===(Fin de EVENT LISTENER)===
-
-       
-    $scope.subirArchivo = function () {
-      ArchivoService.subirArchivo();
-    }
-
-    // Escuchar el evento de archivo subido
-    $scope.$on('archivoSubido', function (event, fileInfo) {
-      if (fileInfo === undefined || fileInfo == null) {
-        Swal.fire({
-          title: "¡Error!",
-          text: "Aún no ha subido algún archivo",
-          icon: "error",
-          confirmButtonText: "Cerrar",
-        });
-        return;
-      }
-      console.log('Se recibió archivo subido:', fileInfo);
-      $scope.archivosCargados.push(fileInfo);
-    });
-
-    $scope.mostrarArchivos = function (recursoId) {
-      ArchivoService.mostrarArchivos(recursoId, 'recursos');
-    };
-
-    $scope.archivoRemove = function (x) {
-      console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
-      for (var i in $scope.archivosCargados) {
-        if ($scope.archivosCargados[i].id === x.id) {
-          Swal.fire({
-            title: "¡Advertencia de eliminación!",
-            text:
-              "Va a eliminar:" +
-              $scope.archivosCargados[i].nombre,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirmar",
-            cancelButtonText: "Cancelar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              $scope.eliminarArchivo(x.minioObjectName);
-              $scope.archivosCargados.splice(i - 1, 1);
-              // funcion propia de Angular.Js refresca mi scope y recarga mis datos
-              $scope.$apply();
-              Swal.fire(
-                "Eliminado!",
-                "El archivo ha sido eliminado.",
-                "success"
-              );
-            }
-          });
-        }
-      }
-      console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
-    };
-
-    $scope.eliminarArchivo = function (filename) {
-      ArchivoService.deleteFile(filename)
-        .then(function (data) {
-          console.log('Archivo eliminado:', data.message);
-        })
-        .catch(function (error) {
-          console.error('No se pudo eliminar el archivo', error);
-        });
-    };
-
-    // *** (Fin de Archivos) ***
-
-
-
     //Los asteriscos se usan porque la url contiene ":"
     $scope.enlaceAdd = function () {
       existe = false;
@@ -1944,6 +1864,20 @@ angular.module("recursos").controller("RecursosController", [
 
     //Crear método controller para crear nuevos registros
     $scope.create = function () {
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+      }
+
       var validar = false;
       //Usar los campos form para crear un nuevo objeto $resource obra
       var recurso = new Recursos({
@@ -1966,6 +1900,7 @@ angular.module("recursos").controller("RecursosController", [
         proyectos: $scope.idProyectos,
         vinculoRelacionado: $scope.idEnlaces,
         descriptorLibre: $scope.idDescriptores,
+        archivosAdjuntos: idArchivos
       });
 
       if (this.titulo == undefined) {
@@ -2067,6 +2002,12 @@ angular.module("recursos").controller("RecursosController", [
       if ($scope.idEnlaces.length != 0) {
         $scope.recurso.vinculoRelacionado = $scope.idEnlaces;
       }
+
+      if ($scope.archivosCargados.length != 0) {
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        $scope.actor.archivosAdjuntos = idArchivos;
+      }
+
       //Usa el método $update de recurso para enviar la petición PUT adecuada
       $scope.recurso.$update(
         function () {

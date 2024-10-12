@@ -112,4 +112,5 @@ InstrumentoSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Instrumento", InstrumentoSchema);
+
+module.exports = mongoose.model("Instrumento", InstrumentoSchema);

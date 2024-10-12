@@ -12,6 +12,7 @@ angular.module("generos").controller("GenerosController", [
   "Medios",
   "Idiomas",
   "Diccionarios",
+  "ArchivoService",
   function (
     $scope,
     $routeParams,
@@ -22,7 +23,8 @@ angular.module("generos").controller("GenerosController", [
     Sistemas,
     Medios,
     Idiomas,
-    Diccionarios
+    Diccionarios,
+    ArchivoService
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -50,6 +52,8 @@ angular.module("generos").controller("GenerosController", [
     $scope.diccionarios = Diccionarios.query();
     $scope.lugares = lugares;
     $scope.coberturas = coberturas;
+    $scope.archivosCargados = [];
+
     var control = 0;
     //Preparar datos
     $scope.actualizarTodo = function () {
@@ -1008,9 +1012,9 @@ angular.module("generos").controller("GenerosController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                this.lugar ||
+              this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                this.evento
+              this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -1104,9 +1108,9 @@ angular.module("generos").controller("GenerosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1151,9 +1155,9 @@ angular.module("generos").controller("GenerosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1385,6 +1389,20 @@ angular.module("generos").controller("GenerosController", [
 
     //Crear método controller para crear nuevos géneros
     $scope.create = function () {
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+      }
+
       //Usar los campos form para crear un nuevo objeto $resource obra
       var genero = new Generos({
         nombre: this.nombre,
@@ -1401,6 +1419,7 @@ angular.module("generos").controller("GenerosController", [
         descriptorLibre: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
         proyectosAsociados: $scope.idProyectos,
+        archivosAdjuntos: idArchivos
       });
 
       //Usar el método '$save' de obra para enviar una petición POST apropiada
@@ -1493,6 +1512,11 @@ angular.module("generos").controller("GenerosController", [
 
       if ($scope.idEnlaces.length != 0) {
         $scope.genero.vinculoRelacionado = $scope.idEnlaces;
+      }
+
+      if ($scope.archivosCargados.length != 0) {
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        $scope.actor.archivosAdjuntos = idArchivos;
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

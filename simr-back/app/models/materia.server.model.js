@@ -93,6 +93,4 @@ MateriaSchema.set('toJSON', {
   virtuals: true
 });
 
-
-	mongoose.model('Materia', MateriaSchema);
-
+module.exports = mongoose.model('Materia', MateriaSchema);

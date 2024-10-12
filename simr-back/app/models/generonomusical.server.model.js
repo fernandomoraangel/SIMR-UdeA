@@ -147,4 +147,5 @@ GeneroNoMusicalSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("GeneroNoMusical", GeneroNoMusicalSchema);
+
+module.exports = mongoose.model("GeneroNoMusical", GeneroNoMusicalSchema);

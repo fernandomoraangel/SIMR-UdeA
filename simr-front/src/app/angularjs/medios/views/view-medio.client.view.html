@@ -50,6 +50,14 @@
 							<td id="enlaces" data-ng-bind="verVinculo(medio.vinculoRelacionado)"></td>
 						</tr>
 
+						<tr>
+							<td class="campo">ARCHIVOS</td>
+							<td>
+								<archivo-manager template-type="detail-view" document-id="{{medio.id}}" db-collection="medios">
+								</archivo-manager>
+							</td>
+						</tr>
+
 
 					</tbody>
 

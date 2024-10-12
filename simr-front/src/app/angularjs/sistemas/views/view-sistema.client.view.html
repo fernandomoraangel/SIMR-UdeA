@@ -67,6 +67,13 @@
 							<td id="enlaces" data-ng-bind="verVinculo(sistema.vinculoRelacionado)"></td>
 						</tr>
 
+						<tr>
+							<td class="campo">ARCHIVOS</td>
+							<td>
+								<archivo-manager template-type="detail-view" document-id="{{sistema.id}}" db-collection="sistemas">
+								</archivo-manager>
+							</td>
+						</tr>
 
 					</tbody>
 

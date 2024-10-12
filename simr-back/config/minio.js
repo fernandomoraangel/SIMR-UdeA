@@ -11,6 +11,13 @@ const Archivo = require('../app/models/archivo.server.model');
 const Actor = require('../app/models/actor.server.model');
 const Obra = require('../app/models/obra.server.model');
 const Proyecto = require('../app/models/proyecto.server.model');
+const Recurso = require('../app/models/recurso.server.model');
+const Instrumento = require('../app/models/instrumento.server.model');
+const Medio = require('../app/models/medio.server.model');
+const Sistema = require('../app/models/sistema.server.model');
+const Materia = require('../app/models/materia.server.model');
+const Genero = require('../app/models/genero.server.model');
+const GeneroNoMusical = require('../app/models/generonomusical.server.model');
 
 // Previsualization
 const mime = require('mime-types');
@@ -105,6 +112,27 @@ router.get('/document-files', async (req, res) => {
         break;
       case 'proyectos':
         document = await Proyecto.findById(documentId);
+        break;
+      case 'recursos':
+        document = await Recurso.findById(documentId);
+        break;
+      case 'instrumentos':
+        document = await Instrumento.findById(documentId);
+        break;
+      case 'medios':
+        document = await Medio.findById(documentId);
+        break;
+      case 'sistemas':
+        document = await Sistema.findById(documentId);
+        break;
+      case 'materias':
+        document = await Materia.findById(documentId);
+        break;
+      case 'generos':
+        document = await Genero.findById(documentId);
+        break;
+      case 'generosNoMusicales':
+        document = await GeneroNoMusical.findById(documentId);
         break;
       default:
         return res.status(404).json({ message: 'Not found' });

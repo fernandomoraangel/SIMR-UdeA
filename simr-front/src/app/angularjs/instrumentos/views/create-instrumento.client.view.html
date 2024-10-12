@@ -8,8 +8,7 @@
 			<div>
 				<!-- Botón modal ayuda -->
 				<button type="button" class="glyphicon glyphicon-eye-open" style="font-size: 16px; top:-5px"
-					ng-click="mostrarAyuda('Instrumento','Instrumento');" data-toggle="modal"
-					data-target="#ayudaTitulo"></button>
+					ng-click="mostrarAyuda('Instrumento','Instrumento');" data-toggle="modal" data-target="#ayudaTitulo"></button>
 
 				<!-- Modal Ayuda-->
 				<div style="text-align: left" class="modal fade" id="ayudaTitulo" tabindex="-1" role="dialog"
@@ -53,8 +52,7 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
@@ -86,8 +84,7 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
@@ -119,8 +116,7 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
@@ -143,8 +139,7 @@
 						</div>
 
 						<div ng-model="todoerase" ng-repeat="n in idAlias track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);"
-								style="color:red">
+							<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);" style="color:red">
 							</h2>
 							<em>
 								{{n.nombre}}
@@ -170,15 +165,13 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse"
-							href="#collapseProyectosA" role="button" aria-expanded="false"
-							aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseProyectosA"
+							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">PROYECTOS ASOCIADOS</label>
 					</div>
 
@@ -194,8 +187,7 @@
 
 						<div>
 							<h2 class="glyphicon glyphicon-plus" ng-click="proyectoAdd();">Agregar</h2>
-							<h2 class="glyphicon glyphicon-modal-window"
-								ng-click="abrirVentana('/#!/proyectos/create')">
+							<h2 class="glyphicon glyphicon-modal-window" ng-click="abrirVentana('/#!/proyectos/create')">
 								Crear
 							</h2>
 
@@ -215,14 +207,12 @@
 					<div>
 						<!-- Botón modal ayuda -->
 						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','AnotacionesCartograficoTemporalesIntrumento');"
-							data-toggle="modal"
+							ng-click="mostrarAyuda('instrumento','AnotacionesCartograficoTemporalesIntrumento');" data-toggle="modal"
 							data-target="#ayudaAnotacionesCartograficoTemporalesIntrumento"></button>
 
 						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaAnotacionesCartograficoTemporalesIntrumento" tabindex="-1"
-							role="dialog" aria-labelledby="ayudaAnotacionesCartograficoTemporalesIntrumentoLabel"
-							aria-hidden="true">
+						<div class="modal fade" id="ayudaAnotacionesCartograficoTemporalesIntrumento" tabindex="-1" role="dialog"
+							aria-labelledby="ayudaAnotacionesCartograficoTemporalesIntrumentoLabel" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -232,15 +222,13 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse"
-							href="#collapseAnotacionesCT" role="button" aria-expanded="false"
-							aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAnotacionesCT"
+							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
 					</div>
 					<div>
@@ -267,8 +255,7 @@
 									ng-blur="validarFecha(fechaDeInicio,'fInicio')">
 
 								<label class="campo">Fecha de finalización</label>
-								<input class="form-control" ng-model="fechaDeFin" id="fFin"
-									ng-blur="validarFecha(fechaDeFin,'fFin')">
+								<input class="form-control" ng-model="fechaDeFin" id="fFin" ng-blur="validarFecha(fechaDeFin,'fFin')">
 								<label class="campo" for="descripcion">Evidencia</label>
 								<input id="evidenciaId" class="form-control" ng-model="evidencia">
 								<h2 class="glyphicon glyphicon-plus" ng-click="anotacionCartograficoTemporalAdd()">
@@ -315,15 +302,13 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse"
-							href="#collapseDescriptoresL" role="button" aria-expanded="false"
-							aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDescriptoresL"
+							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">DESCRIPTORES LIBRES</label>
 					</div>
 
@@ -347,8 +332,8 @@
 						</div>
 
 						<div ng-model="todoerase" ng-repeat="n in idDescriptores track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="n"
-								ng-click="dDescriptorRemove(n.etiqueta,n.contenido);" style="color:red">
+							<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
+								style="color:red">
 							</h2>
 							<em>
 								{{nombrarSi("Etiqueta", n.etiqueta)}}
@@ -382,17 +367,19 @@
 										{{campo}}
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-primary"
-											data-dismiss="modal">Cerrar</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseVyA"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
+						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseVyA" role="button"
+							aria-expanded="false" aria-controls="collapseExample"></button>
 						<label class="campo">ENLACES Y ARCHIVOS</label>
 					</div>
 					<div class="collapse" id="collapseVyA">
+
+						<h3>Enlaces</h3>
+
 						<div>
 							<label class="campo">Nombre (descripción)</label>
 							<input type="text" class="form-control" ng-model="eEtiqueta" id="nombreEnlace"">
@@ -422,6 +409,15 @@
 								ng-click="enlaceEdit(n.etiqueta,n.url);">
 							</h2>
 						</div>
+
+						<hr>
+
+						<h3>Archivos</h3>
+						<archivo-manager template-type="create-view" archivos-cargados="archivosCargados">
+						</archivo-manager>
+
+						<hr>
+
 					</div>
 					<!-- Vínculos y archivos -->
 

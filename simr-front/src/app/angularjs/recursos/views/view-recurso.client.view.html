@@ -84,15 +84,20 @@
 							<td data-ng-bind="verProyecto(recurso.proyectos)"></td>
 						</tr>
 						<tr>
+							<td class="campo">DESCRIPTORES LIBRES</td>
+							<td data-ng-bind="verDescriptor(recurso.descriptorLibre)"></td>
+						</tr>
+						<tr>
 							<!-- TODO: Difundir id="enlaces" -->
 							<td class="campo">VÍNCULOS RELACIONADOS</td>
 							<td id="enlaces" data-ng-bind="verVinculo(recurso.vinculoRelacionado)"></td>
 						</tr>
 						<tr>
-							<td class="campo">DESCRIPTORES LIBRES</td>
-							<td data-ng-bind="verDescriptor(recurso.descriptorLibre)"></td>
-
-
+							<td class="campo">ARCHIVOS</td>
+							<td>
+								<archivo-manager template-type="detail-view" document-id="{{recurso.id}}" db-collection="recursos">
+								</archivo-manager>
+							</td>
 						</tr>
 					</tbody>
 

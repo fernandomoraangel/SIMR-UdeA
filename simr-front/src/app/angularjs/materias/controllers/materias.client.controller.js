@@ -10,6 +10,7 @@ angular.module("materias").controller("MateriasController", [
   "Actores",
   "Materias",
   "Diccionarios",
+  "ArchivoService",
   function (
     $scope,
     $routeParams,
@@ -18,7 +19,8 @@ angular.module("materias").controller("MateriasController", [
     Obras,
     Actores,
     Materias,
-    Diccionarios
+    Diccionarios,
+    ArchivoService
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -39,6 +41,7 @@ angular.module("materias").controller("MateriasController", [
     $scope.materias = Materias.query();
     $scope.diccionarios = Diccionarios.query();
     $scope.actorName = [];
+    $scope.archivosCargados = [];
     var control = 0;
 
     //Preparar datos
@@ -693,6 +696,20 @@ angular.module("materias").controller("MateriasController", [
 
     //Crear método controller para crear nuevas materias
     $scope.create = function () {
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+      }
+
       //Usar los campos form para crear un nuevo objeto $resource obra
       var materia = new Materias({
         nombre: this.nombre,
@@ -703,6 +720,7 @@ angular.module("materias").controller("MateriasController", [
         descripcion: this.descripcion,
         descriptorLibre: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
+        archivosAdjuntos: idArchivos
       });
 
       //Usar el método '$save' de obra para enviar una petición POST apropiada
@@ -770,6 +788,11 @@ angular.module("materias").controller("MateriasController", [
 
       if ($scope.idEnlaces.length != 0) {
         $scope.materia.vinculoRelacionado = $scope.idEnlaces;
+      }
+
+      if ($scope.archivosCargados.length != 0) {
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        $scope.actor.archivosAdjuntos = idArchivos;
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

@@ -11,6 +11,7 @@ angular
     "GenerosNoMusicales",
     "Idiomas",
     "Diccionarios",
+    "ArchivoService",
     function (
       $scope,
       $routeParams,
@@ -18,7 +19,8 @@ angular
       Authentication,
       GenerosNoMusicales,
       Idiomas,
-      Diccionarios
+      Diccionarios,
+      ArchivoService
     ) {
       //Exponer el servicio Authentication
       $scope.authentication = Authentication;
@@ -38,7 +40,8 @@ angular
       $scope.idIdiomas = [];
       $scope.diccionarios = Diccionarios.query();
       $scope.generosNoMusicales = GenerosNoMusicales.query();
-      var generoNoMusicalId;
+      $scope.archivosCargados = [];
+
       var control = 0;
       //Preparar datos
       $scope.actualizarTodo = function () {
@@ -690,9 +693,9 @@ angular
             for (var i in $scope.idAnotacionesCartograficoTemporales) {
               if (
                 $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                  this.lugar ||
+                this.lugar ||
                 $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                  this.evento
+                this.evento
                 //TODO: Resolver comparación de fechas para usar &&
               ) {
                 //Mensaje de error
@@ -787,13 +790,13 @@ angular
             $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
             $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
             $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-              coberturaAmplitud &&
+            coberturaAmplitud &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-              fechaInicio &&
+            fechaInicio &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaFin ===
-              fechaFin &&
+            fechaFin &&
             $scope.idAnotacionesCartograficoTemporales[i].evidencia ===
-              evidencia
+            evidencia
           ) {
             //Calcular precisión de las fechas
             precisionInicio =
@@ -836,13 +839,13 @@ angular
             $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
             $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
             $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-              coberturaAmplitud &&
+            coberturaAmplitud &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-              fechaInicio &&
+            fechaInicio &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaFin ===
-              fechaFin &&
+            fechaFin &&
             $scope.idAnotacionesCartograficoTemporales[i].evidencia ===
-              evidencia
+            evidencia
           ) {
             precisionInicio =
               $scope.idAnotacionesCartograficoTemporales[i].precisionInicio;
@@ -1072,6 +1075,20 @@ angular
 
       //Crear método controller para crear nuevos géneros no musicales
       $scope.create = function () {
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+
+        // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+        // Si los tienen, los agrega al listado de enlaces
+        if (
+          this.eEtiqueta != undefined &&
+          this.eEtiqueta != "" &&
+          this.eUrl != undefined &&
+          this.eUrl != ""
+        ) {
+          const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+          $scope.idEnlaces.push(enlace);
+        }
+
         //Usar los campos form para crear un nuevo objeto $resource obra
         var generoNoMusical = new GenerosNoMusicales({
           nombre: this.nombre,
@@ -1085,6 +1102,7 @@ angular
           idioma: $scope.idIdiomas,
           descriptorLibre: $scope.idDescriptores,
           vinculoRelacionado: $scope.idEnlaces,
+          archivosAdjuntos: idArchivos
         });
 
         //Usar el método '$save' de genero no musical para enviar una petición POST apropiada
@@ -1161,6 +1179,11 @@ angular
 
         if ($scope.idEnlaces.length != 0) {
           $scope.generoNoMusical.vinculoRelacionado = $scope.idEnlaces;
+        }
+
+        if ($scope.archivosCargados.length != 0) {
+          const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+          $scope.actor.archivosAdjuntos = idArchivos;
         }
 
         //Usa el método $update de obra para enviar la petición PUT adecuada

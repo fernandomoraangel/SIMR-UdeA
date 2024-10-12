@@ -10,6 +10,7 @@ angular.module("medios").controller("MediosController", [
   "Instrumentos",
   "Proyectos",
   "Diccionarios",
+  "ArchivoService",
   function (
     $scope,
     $routeParams,
@@ -18,7 +19,8 @@ angular.module("medios").controller("MediosController", [
     Medios,
     Instrumentos,
     Proyectos,
-    Diccionarios
+    Diccionarios,
+    ArchivoService
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -47,6 +49,8 @@ angular.module("medios").controller("MediosController", [
     $scope.idAlias = [];
     $scope.idEnlaces = [];
     $scope.diccionarios = Diccionarios.query();
+    $scope.archivosCargados = [];
+
     var control = 0;
     //Preparar datos
     $scope.actualizarTodo = function () {
@@ -524,9 +528,9 @@ angular.module("medios").controller("MediosController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                this.lugar ||
+              this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                this.evento
+              this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -620,9 +624,9 @@ angular.module("medios").controller("MediosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -667,9 +671,9 @@ angular.module("medios").controller("MediosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+          coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+          fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -966,6 +970,20 @@ angular.module("medios").controller("MediosController", [
 
     //Crear método controller para crear nuevas obras
     $scope.create = function () {
+      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+
+      // Revisa si los campos de enlace (etiqueta y url) contienen datos.
+      // Si los tienen, los agrega al listado de enlaces
+      if (
+        this.eEtiqueta != undefined &&
+        this.eEtiqueta != "" &&
+        this.eUrl != undefined &&
+        this.eUrl != ""
+      ) {
+        const enlace = { etiqueta: this.eEtiqueta, url: this.eUrl };
+        $scope.idEnlaces.push(enlace);
+      }
+
       //Usar los campos form para crear un nuevo objeto $resource obra
       var medio = new Medios({
         nombre: this.nombre,
@@ -976,6 +994,7 @@ angular.module("medios").controller("MediosController", [
           $scope.idAnotacionesCartograficoTemporales,
         descriptorLibre: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
+        archivosAdjuntos: idArchivos
       });
       //Usar el método '$save' de obra para enviar una petición POST apropiada
       medio.$save(
@@ -1039,6 +1058,12 @@ angular.module("medios").controller("MediosController", [
       if ($scope.idEnlaces.length != 0) {
         $scope.medio.vinculoRelacionado = $scope.idEnlaces;
       }
+
+      if ($scope.archivosCargados.length != 0) {
+        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        $scope.actor.archivosAdjuntos = idArchivos;
+      }
+      
       //Agregar actores
       for (var i in $scope.idActores) {
         actorObra = new ActoresObras({

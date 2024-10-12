@@ -9,7 +9,7 @@ angular.module("proyectos").controller("ProyectosController", [
   "Proyectos",
   "Actores",
   "Diccionarios",
-  "ArchivoServiceTest",
+  "ArchivoService",
   function (
     $scope,
     $routeParams,
@@ -18,7 +18,7 @@ angular.module("proyectos").controller("ProyectosController", [
     Proyectos,
     Actores,
     Diccionarios,
-    ArchivoServiceTest
+    ArchivoService
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;

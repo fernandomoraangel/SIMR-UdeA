@@ -147,4 +147,5 @@ GeneroSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Genero", GeneroSchema);
+
+module.exports = mongoose.model("Genero", GeneroSchema);

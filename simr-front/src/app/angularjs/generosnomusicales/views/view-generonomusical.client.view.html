@@ -12,8 +12,8 @@
 				<div class="tituloVistaView" data-ng-bind="generoNoMusical.nombre | uppercase"></div>
 				<!-- Mostrar los botones de edición para el creador del artículo-->
 				<div data-ng-show="authentication.user._id==generoNoMusical.creador._id">
-					<a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit"><span
-							class="glyphicon glyphicon-pencil" </span></a></a>
+					<a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit"><span class="glyphicon glyphicon-pencil"
+							</span></a></a>
 					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove" </span></a>
 				</div>
 
@@ -30,7 +30,6 @@
 							<td ng-bind="verAlias(generoNoMusical.alias)"></td>
 						</tr>
 
-
 						<tr>
 							<td>Géneros relacionados</td>
 							<td ng-bind="verGeneros(generoNoMusical.generosRelacionados)"></td>
@@ -46,7 +45,6 @@
 							<td ng-bind="verGeneros(generoNoMusical.hijos)"></td>
 						</tr>
 
-
 						<tr>
 							<td>Idioma asociado al género</td>
 							<td data-ng-bind="verIdiomas(generoNoMusical.idioma)"></td>
@@ -56,7 +54,6 @@
 							<td>Anotación cartográfico-temporal</td>
 							<td data-ng-bind="verAnotacion(generoNoMusical.anotacionCartograficoTemporal)"></td>
 						</tr>
-
 
 						<tr>
 							<td>Descriptor libre</td>
@@ -68,6 +65,14 @@
 							<td id="enlaces" data-ng-bind="verVinculo(generoNoMusical.vinculoRelacionado)"></td>
 						</tr>
 					</tbody>
+
+					<tr>
+						<td class="campo">ARCHIVOS</td>
+						<td>
+							<archivo-manager template-type="detail-view" document-id="{{generoNoMusical.id}}" db-collection="generosNoMusicales">
+							</archivo-manager>
+						</td>
+					</tr>
 
 				</table>
 

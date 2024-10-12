@@ -12,15 +12,13 @@
 				<div class="tituloVistaView" data-ng-bind="instrumento.nombre | uppercase"></div>
 				<!-- Mostrar los botones de edición para el creador del artículo-->
 				<div data-ng-show="authentication.user._id==instrumento.creador._id">
-					<a href="/#!/instrumentos/{{instrumento._id}}/edit"><span
-							class="glyphicon glyphicon-pencil"></a></a>
+					<a href="/#!/instrumentos/{{instrumento._id}}/edit"><span class="glyphicon glyphicon-pencil"></a></a>
 					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove"></a>
 				</div>
 
 				<!-- Table -->
 				<table class="table table-striped text-left">
 					<tbody>
-
 
 						<tr>
 							<td class="campo">ALIAS</td>
@@ -46,15 +44,20 @@
 							<td class="campo">DESCRIPTOR LIBRE</td>
 							<td data-ng-bind="verDescriptor(instrumento.descriptorLibre)"></td>
 						</tr>
+
 						<tr>
 							<td class="campo">VÍNCULO RELACIONADO</td>
 							<td id="enlaces" data-ng-bind="verVinculo(instrumento.vinculoRelacionado)"></td>
 						</tr>
 
-
-
-
-
+						<tr>
+							<td class="campo">ARCHIVOS</td>
+							<td>
+								<archivo-manager template-type="detail-view" document-id="{{instrumento.id}}"
+									db-collection="instrumentos">
+								</archivo-manager>
+							</td>
+						</tr>
 
 					</tbody>
 

@@ -123,4 +123,5 @@ MedioSchema.set("toJSON", {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Medio", MedioSchema);
+
+module.exports = mongoose.model("Medio", MedioSchema);
