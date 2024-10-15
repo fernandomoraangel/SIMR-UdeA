@@ -97,10 +97,10 @@ angular.module('archivos')
             }).then((result) => {
               if (result.isConfirmed) {
                 // ArchivoService.deleteFile(archivo.minioObjectName)
-                ArchivoService.deleteFile(archivo.minioObjectName, archivo.id)
+                ArchivoService.deleteFile(archivo.minioObjectName, archivo.id);
                 $scope.archivosCargados.splice(index, 1);
                 // funcion propia de Angular.Js refresca mi scope y recarga mis datos
-                $scope.$apply();
+                // $scope.$apply();
                 Swal.fire(
                   "Eliminado!",
                   "El archivo ha sido eliminado.",

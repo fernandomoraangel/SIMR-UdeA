@@ -376,6 +376,7 @@ router.get('/download/:filename', async (req, res) => {
 // Ruta para eliminar un archivo
 // router.delete('/delete/:filename', async (req, res) => {
 router.delete('/:fileName', async (req, res) => {
+  console.log("Entering Delete!!!");
   try {
     console.log('entrando a delete');
     console.log('req.params:', req.params);

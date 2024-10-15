@@ -20,32 +20,6 @@ module.exports = function () {
 	const apiRouter = express.Router();
 	
 	// ================== CORS ===========================
-	// Habilitar CORS - Para permitir que el frontend se comunique con el backend
-	// const corsOptionsAngular = {
-	// 	origin: 'http://localhost:4200', // Reemplazar 'http://localhost:4200' con la URL del frontend
-	// 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
-	// 	allowedHeaders: ['Content-Type', 'Authorization'], // Especifica los encabezados permitidos
-	// 	credentials: true, // Habilitar el envío de credenciales (cookies, cabeceras de autorización, etc.)
-	// };
-
-	// const corsOptionsLocal = {
-	// 	origin: 'http://localhost:3000',
-	// 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
-	// 	allowedHeaders: ['Content-Type', 'Authorization']
-	// };
-
-	// // app.use(cors(corsOptionsAngular));
-
-	// // Middleware CORS para la API
-	// apiRouter.use((req, res, next) => {
-	// 	const origin = req.headers.origin;
-	// 	if (origin === 'http://localhost:4200') {
-	// 		cors(corsOptionsAngular)(req, res, next);
-	// 	} else {
-	// 		cors(corsOptionsLocal)(req, res, next);
-	// 	}
-	// });
-
 	
 	// // Configurando manualmente los encabezados CORS
 	// app.use((req, res, next) => {
@@ -64,24 +38,8 @@ module.exports = function () {
 		credentials: true // Permitir envío de cookies y credenciales si es necesario
 	}));
 
-
-
-	// app.use((req, res, next) => {
-	// 	res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar 'http://localhost:4200' con la URL del frontend
-	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-	// 	next();
-	// });
-
-	// const corsOptions = {
-	// 	origin: 'http://localhost:4200', // Cambia esto al origen de tu frontend
-	// 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-	// 	credentials: true,
-	// 	optionsSuccessStatus: 204
-	// };
-
-	// app.use(cors(corsOptions));
-
 	// ===================================================
+
 
 	if (process.env.NODE_ENV === 'development') {
 		app.use(morgan('dev'));

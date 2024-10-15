@@ -2,7 +2,8 @@ angular.module('archivos')
   .factory('ArchivoService', [
     '$resource', '$http', '$window', '$rootScope',
     function ($resource, $http, $window, $rootScope) {
-      var apiUrl = 'http://localhost:3000';
+      // var apiUrl = 'http://localhost:3000';
+      var apiUrl = 'http://localhost:3000/files';
       var angularAppOrigin = 'http://localhost:4200';
       var Archivo = $resource(apiUrl + '/api/archivos/:archivoId', { archivoId: '@_id' }, { update: { method: 'PUT' } });
       var angularWindowFileUpload;
@@ -115,13 +116,20 @@ angular.module('archivos')
         }
       }
 
-      function deleteFile(filename) {
-        return $http.delete(apiUrl + '/delete/' + filename)
-          .then(function (response) {
-            return response.data;
+      function deleteFile(fileName, fileId) {
+        const url = `${apiUrl}/${fileName}`;
+        const additionalFileInfo = { fileInfo: { id: fileId } };
+        const options = {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+        return $http.delete(url, angular.extend(options, { data: additionalFileInfo }))
+          .then(response => {
+            return response.data; // Devuelve el mensaje de la respuesta
           })
-          .catch(function (error) {
-            console.error('Error al eliminar el archivo:', error);
+          .catch(error => {
+            console.error('Error en la eliminación:', error);
             throw error;
           });
       }
