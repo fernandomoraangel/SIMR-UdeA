@@ -6,6 +6,9 @@ const minio = require('minio');
 const path = require('path');
 // const fs = require('fs');
 const { MongoClient, ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
+let clientConnection;
+
 // Entidades que usan archivos
 const Archivo = require('../app/models/archivo.server.model');
 const Actor = require('../app/models/actor.server.model');
@@ -51,7 +54,8 @@ const mongoUrl = process.env.MONGO_URI;
 const dbName = process.env.MONGO_DB_NAME;
 // const client = new MongoClient(mongoUrl);
 const client = new MongoClient(mongoUrl);
-const collectionName = 'archivos';
+const fileCollectionName = 'archivos';
+const filesProperty = 'archivosAdjuntos';
 
 
 // Función para inicializar el bucket
@@ -70,19 +74,18 @@ const initializeBucket = async () => {
 
 // *** OBTENER LISTADO DE ARCHIVOS DE UNA COLECCION ***
 router.get('/document-files', async (req, res) => {
-  let clientConnection;
+  // let clientConnection;
   try {
-    // const { collection, id, property } = req.query;
     const { collection, documentId } = req.query;
-
-    const property = 'archivosAdjuntos';
     if (!collection || !documentId) {
       return res.status(400).json({ message: 'Missing required parameters' });
     }
 
+    // const filesProperty = 'archivosAdjuntos';
+
     console.log('collection:', collection);
     console.log('documentId:', documentId);
-    console.log('property:', property);
+    console.log('filesProperty:', filesProperty);
 
     // await client.connect();
     clientConnection = await client.connect();
@@ -91,7 +94,7 @@ router.get('/document-files', async (req, res) => {
     // const database = client.db(dbName);
     // console.log('database:', database.databaseName);
     // const collectionSelected = database.collection(collection);
-    // console.log('collectionSelected:', collectionSelected.collectionName);
+    // console.log('collectionSelected:', collectionSelected.FileCollectionName);
 
     // Verificar la conexión listando las colecciones
     // const collections = await database.listCollections().toArray();
@@ -145,13 +148,13 @@ router.get('/document-files', async (req, res) => {
 
     // Si se encuentra un documento, verificar la propiedad
     if (document) {
-      if (property in document) {
-        const propertyValues = document[property];
+      if (filesProperty in document) {
+        const propertyValues = document[filesProperty];
         console.log('propertyValues:', propertyValues);
 
         if (Array.isArray(propertyValues)) {
           // const archivosCollection = database.collection('archivos');
-          // console.log('collectionSelected:', archivosCollection.collectionName);
+          // console.log('collectionSelected:', archivosCollection.FileCollectionName);
 
           const documentFiles = [];
 
@@ -159,7 +162,7 @@ router.get('/document-files', async (req, res) => {
 
           for (let i = 0; i < Math.min(propertyValues.length, limit); i++) {
             const fileId = propertyValues[i];
-            console.log('fileId (property values):', fileId);
+            console.log('fileId (filesProperty values):', fileId);
 
             try {
               // const myFile = await archivosCollection.findOne({ _id: fileId._id });
@@ -173,7 +176,8 @@ router.get('/document-files', async (req, res) => {
               const myFileProcessed = {
                 name: myFile.minioObjectName,
                 size: myFile.size,
-                lastModified: myFile.uploadDate
+                lastModified: myFile.uploadDate,
+                id: myFile._id
               }
 
               documentFiles.push(myFileProcessed);
@@ -185,7 +189,7 @@ router.get('/document-files', async (req, res) => {
           }
 
           // propertyValues.forEach((id) = async () => {
-          //   console.log('fileId (property values):', id);
+          //   console.log('fileId (filesProperty values):', id);
           //   const myFile = await archivosCollection.findOne({ _id: id });
           //   console.log('myFile:', myFile);
 
@@ -224,11 +228,11 @@ router.get('/document-files', async (req, res) => {
     //   // return res.status(404).json({ message: 'Document not found' });
     // }
 
-    // if (!(property in document)) {
+    // if (!(filesProperty in document)) {
     //   return res.status(404).json({ message: 'Property not found in document' });
     // }
 
-    // const propertyIds = document[property];
+    // const propertyIds = document[filesProperty];
     // const minioObjectNames = [];
 
     // if (Array.isArray(propertyIds)) {
@@ -243,7 +247,7 @@ router.get('/document-files', async (req, res) => {
 
     // res.json(minioObjectNames);
 
-    // res.json(document[property]);
+    // res.json(document[filesProperty]);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -302,12 +306,15 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     // }
 
     // Conectar a MongoDB y guardar fileData
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
+    // await client.connect();
+    // const db = client.db(dbName);
+    // const collection = db.collection(FileCollectionName);
 
-    const result = await collection.insertOne(fileData);
-    const documentId = result.insertedId;
+    // const result = await collection.insertOne(fileData);
+    const result = await Archivo.create(fileData);
+    console.log('result (server)', result);
+    const documentId = result._id;
+    // const documentId = result.insertedId;
     console.log(`Documento insertado con el id: ${documentId}`);
 
     res.status(200).json({
@@ -367,15 +374,80 @@ router.get('/download/:filename', async (req, res) => {
 
 // *** ELIMINAR ARCHIVO ***
 // Ruta para eliminar un archivo
-router.delete('/delete/:filename', async (req, res) => {
-  const objectName = req.params.filename;
-
+// router.delete('/delete/:filename', async (req, res) => {
+router.delete('/:fileName', async (req, res) => {
   try {
+    console.log('entrando a delete');
+    console.log('req.params:', req.params);
+    console.log('\n\n(delete)req.body:', req.body);
+    console.log('\n\n');
+
+    if (!req.params.fileName) {
+      return res.status(400).json({ message: 'Se requiere un nombre de archivo' });
+    }
+
+    const objectName = req.params.fileName;
     await minioClient.removeObject(myBucketName, objectName);
+
+    if (req.body.fileInfo) {
+      const { id, documentId } = req.body.fileInfo;
+      console.log('id:', id, 'documentId:', documentId);
+      clientConnection = await client.connect();
+      const db = clientConnection.db(dbName);
+      console.log('Connected to MongoDB');
+      const fileDoc = await Archivo.findOne({ _id: id });
+
+      if (!fileDoc) {
+        throw new Error('Archivo no encontrado en la base de datos');
+      }
+
+      // Eliminar el documento de la colección "archivos"
+      await Archivo.deleteOne({ _id: id });
+
+      if (id && documentId) {
+        // Actualizar todas las colecciones que tengan referencias al archivo
+        const collections = await db.listCollections().toArray();
+
+        // Convertir archivoId a ObjectId si es necesario
+        const fileObjectId = new mongoose.Types.ObjectId(id);
+
+        for (const collectionInfo of collections) {
+          const collection = db.collection(collectionInfo.name);
+          console.log('\ncollection:', collectionInfo);
+
+          if (filesProperty in collectionInfo) {
+            console.log('\n\ncollection has filesProperty:', collectionInfo.name);
+          }
+
+          // Actualizar documentos que tengan el archivo en "archivosAdjuntos"
+          try {
+            const documentosConArchivo = await collection.find({ archivosAdjuntos: fileObjectId }).toArray();
+            console.log(`Documentos con el archivo en la colección ${collectionInfo.name}:`, documentosConArchivo);
+
+            const result = await collection.updateMany(
+              { archivosAdjuntos: { $elemMatch: { _id: fileObjectId } } },  // Usar $elemMatch para encontrar el archivo en el array
+              { $pull: { archivosAdjuntos: { _id: fileObjectId } } }  // Usar $pull con el objeto completo a eliminar
+            );
+
+            console.log('result.modifiedCount:', result.modifiedCount);
+            if (result.modifiedCount > 0) {
+              console.log(`Referencias al archivo eliminadas en la colección ${collectionInfo.name}`);
+            }
+          } catch (error) {
+            console.error(`Error al actualizar la colección ${collectionInfo.name}:`, error);
+          }
+        }
+      }
+    }
+
     res.status(200).json({ message: 'Archivo eliminado con éxito' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error al eliminar el archivo' });
+
+  } catch (error) {
+    console.error('Error al eliminar el archivo y sus referencias:', error);
+    res.status(500).json({ message: 'Error al eliminar el archivo y sus referencias' });
+    throw error;
+  } finally {
+    if (clientConnection) await clientConnection.close();
   }
 });
 

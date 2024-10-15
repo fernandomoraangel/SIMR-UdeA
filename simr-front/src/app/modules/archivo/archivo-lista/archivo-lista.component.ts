@@ -3,6 +3,14 @@ import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SharedMessageData } from '../../../models/shared-message-data.interface';
+import { FileBasicInfo } from '../archivo.module';
+
+// interface file {
+//   id: string;
+//   name: string;
+//   size: number;
+//   lastModified: Date;
+// }
 
 @Component({
   selector: 'app-archivo-lista',
@@ -10,7 +18,8 @@ import { SharedMessageData } from '../../../models/shared-message-data.interface
   styleUrls: ['./archivo-lista.component.css']
 })
 export class ArchivoListaComponent implements OnInit, OnDestroy {
-  files: any[] = [];
+  // files: any[] = [];
+  files: FileBasicInfo[] = [];
   loading: boolean = false;
   selectedFiles: Set<string> = new Set();
   allSelected: boolean = false;
@@ -81,6 +90,14 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   //     this.fileUploadSubscription.unsubscribe();
   //   }
   // }
+
+
+  prueba() {
+    console.log('Prueba');
+    alert(this.documentId);
+    console.log('files prueba:', this.files);
+  }
+
 
   receiveMessage(event: MessageEvent) {
     // if (event.origin !== this.angularJSOrigin) return;
@@ -226,18 +243,22 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
-  deleteFile(filename: string): void {
+  // deleteFile(filename: string): void {
+  deleteFile(fileInfo: FileBasicInfo): void {
     Swal.fire({
       title: "¡Advertencia de eliminación!",
-      text: `¿Estás seguro de que quiere eliminar el archivo "${filename}"?`,
+      text: `¿Estás seguro de que quiere eliminar el archivo "${fileInfo.name}"?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        // const fileToBeDeleted = {name: fileInfo.name, id: fileInfo.id};
         // this.archivoService.deleteFile(filename, this.actorId).subscribe({
-        this.archivoService.deleteFile(filename).subscribe({
+        // this.archivoService.deleteFile(filename).subscribe({
+        console.log('archivo a eliminar:', fileInfo);
+        this.archivoService.deleteFile(fileInfo.name, fileInfo.id, this.documentId).subscribe({
           next: (response) => {
             console.log('Archivo eliminado con éxito:', response.message);
             // this.loadFiles();
@@ -245,7 +266,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
           error: (error) => {
             console.error('Error al eliminar el archivo:', error);
             Swal.fire({
-              title: '¡Error al eliminar el archivo',
+              title: '¡Error al eliminar el archivo!',
               text: error,
               icon: 'error',
               confirmButtonText: 'Aceptar'

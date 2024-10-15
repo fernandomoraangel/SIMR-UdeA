@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
+import { FileBasicInfo } from './archivo.module';
 
 // @Injectable()
 @Injectable({
   providedIn: 'root'
 })
 export class ArchivoService {
-  private apiUrl = 'http://localhost:3000';
+  // private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'http://localhost:3000/files';
   // private fileUploadedSource = new Subject<void>();
   private fileChangedSource = new Subject<void>();
 
@@ -16,7 +18,7 @@ export class ArchivoService {
   fileChanged$ = this.fileChangedSource.asObservable();
 
   constructor(private http: HttpClient) { }
-  
+
 
   // getFilesByActor(actorId: string): Observable<any[]> {
   //   return this.http.get<any>(`${this.apiUrl}/api/actores/${actorId}`).pipe(
@@ -84,7 +86,7 @@ export class ArchivoService {
     return this.http.get<any[]>(`${this.apiUrl}/files`);
   }
 
-  
+
   // downloadFile(filename: string): Observable<Blob> {
   //   return this.http.get(`${this.apiUrl}/download/${filename}`, { responseType: 'blob' });
   // }
@@ -117,11 +119,45 @@ export class ArchivoService {
   //   return this.http.delete(`${this.apiUrl}/files/${actorId}/${filename}`);
   // }
 
-  deleteFile(filename: string): Observable<any> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/delete/${filename}`)
+  // deleteFile(filename: string): Observable<any> {
+  // (MinIO file name, File id of Archivo collection, Document id of collection where file is attached)
+  deleteFile(fileName: string, fileId?: string, documentId?: string): Observable<any> {
+    const url = `${this.apiUrl}/${fileName}`;
+
+    // const additionalFileInfo = fileId && documentId ? { fileInfo: { id: fileId, documentId: documentId } } : {};
+    const additionalFileInfo = { fileInfo: { id: fileId, documentId: documentId } };
+
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      body: additionalFileInfo
+    };
+
+    return this.http.delete<{ message: string }>(url, options)
       .pipe(
         tap(() => this.fileChangedSource.next())
       );
+
+    // const fileInfo = {
+    //   name: fileName,
+    //   id: fileId,
+    //   documentId: documentId
+    // };
+
+    // const jsonFileInfo = JSON.stringify(fileInfo);
+    // console.log('(deleteFile - ArchivoService)JSON File Info:', jsonFileInfo);
+
+    // return this.http.delete<{ message: string }>(`${this.apiUrl}/delete/${filename}`)
+    // return this.http.request<{ message: string }>('DELETE', this.apiUrl, {
+    //   body: jsonFileInfo,
+    //   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    //   responseType: 'json',
+    //   reportProgress: true
+    // })
+    //   .pipe(
+    //     tap(() => this.fileChangedSource.next())
+    //   );
   }
 
   deleteMultipleFiles(filenames: string[]): Observable<any> {

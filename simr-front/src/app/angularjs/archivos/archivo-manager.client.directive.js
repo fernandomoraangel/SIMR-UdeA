@@ -81,6 +81,8 @@ angular.module('archivos')
         };
 
         $scope.eliminarArchivo = function (archivo) {
+          console.log('(Eliminar archivo) archivo:', archivo);
+          console.log('documentId:', $scope.documentId, 'dbCollection', $scope.dbCollection);
           var index = $scope.archivosCargados.indexOf(archivo);
           if (index > -1) {
             Swal.fire({
@@ -94,7 +96,8 @@ angular.module('archivos')
               cancelButtonText: "Cancelar",
             }).then((result) => {
               if (result.isConfirmed) {
-                ArchivoService.deleteFile(archivo.minioObjectName)
+                // ArchivoService.deleteFile(archivo.minioObjectName)
+                ArchivoService.deleteFile(archivo.minioObjectName, archivo.id)
                 $scope.archivosCargados.splice(index, 1);
                 // funcion propia de Angular.Js refresca mi scope y recarga mis datos
                 $scope.$apply();

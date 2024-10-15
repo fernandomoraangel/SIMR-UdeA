@@ -629,12 +629,12 @@ angular.module("proyectos").controller("ProyectosController", [
 
 
 
-    $scope.correrPrueba = function (event) {
-      event.preventDefault();
-      event.stopPropagation(); // Detener la propagación del evento
-      console.log('Corriendo prueba');
-      console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
-    };
+    // $scope.correrPrueba = function (event) {
+    //   event.preventDefault();
+    //   event.stopPropagation(); // Detener la propagación del evento
+    //   console.log('Corriendo prueba');
+    //   console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
+    // };
 
     //Menú enlaces
     $scope.enlaceAdd = function () {
@@ -766,12 +766,16 @@ angular.module("proyectos").controller("ProyectosController", [
       //Usar el método '$save' de obra para enviar una petición POST apropiada
       proyecto.$save(
         function (response) {
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha creado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha creado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+          } else {
+            console.error('SweetAlert2 no está definido');
+          }
           //Si la obra fue creada de la manera correcta, redireccionar a la página de la obra
           $location.path("proyectos/" + response._id);
         },

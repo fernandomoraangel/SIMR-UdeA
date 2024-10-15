@@ -16,6 +16,14 @@ const routes: Routes = [
   { path: 'files/upload', component: ArchivoSubidaComponent }
 ];
 
+// Interfaces
+export interface FileBasicInfo {
+  id: string;
+  name: string;
+  size: number;
+  lastModified: Date;
+}
+
 
 @NgModule({
   declarations: [

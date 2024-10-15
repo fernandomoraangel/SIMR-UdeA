@@ -15,41 +15,54 @@ const cors = require('cors');
 module.exports = function () {
 	// Instanciar la aplicación
 	const app = express();
-
+	
+	// Rutas para la API
+	const apiRouter = express.Router();
+	
 	// ================== CORS ===========================
 	// Habilitar CORS - Para permitir que el frontend se comunique con el backend
-	const corsOptionsAngular = {
-		origin: 'http://localhost:4200', // Reemplazar 'http://localhost:4200' con la URL del frontend
-		credentials: true, // Habilitar el envío de credenciales (cookies, cabeceras de autorización, etc.)
-	};
+	// const corsOptionsAngular = {
+	// 	origin: 'http://localhost:4200', // Reemplazar 'http://localhost:4200' con la URL del frontend
+	// 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	// 	allowedHeaders: ['Content-Type', 'Authorization'], // Especifica los encabezados permitidos
+	// 	credentials: true, // Habilitar el envío de credenciales (cookies, cabeceras de autorización, etc.)
+	// };
 
-	const corsOptionsLocal = {
-		origin: 'http://localhost:3000',
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
-		allowedHeaders: ['Content-Type', 'Authorization']
-	};
+	// const corsOptionsLocal = {
+	// 	origin: 'http://localhost:3000',
+	// 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	// 	allowedHeaders: ['Content-Type', 'Authorization']
+	// };
 
-	// app.use(cors(corsOptionsAngular));
+	// // app.use(cors(corsOptionsAngular));
 
-	// // Rutas para la API
-	const apiRouter = express.Router();
+	// // Middleware CORS para la API
+	// apiRouter.use((req, res, next) => {
+	// 	const origin = req.headers.origin;
+	// 	if (origin === 'http://localhost:4200') {
+	// 		cors(corsOptionsAngular)(req, res, next);
+	// 	} else {
+	// 		cors(corsOptionsLocal)(req, res, next);
+	// 	}
+	// });
 
-	// Middleware CORS para la API
-	apiRouter.use((req, res, next) => {
-		const origin = req.headers.origin;
-		if (origin === 'http://localhost:4200') {
-			cors(corsOptionsAngular)(req, res, next);
-		} else {
-			cors(corsOptionsLocal)(req, res, next);
-		}
-	});
+	
+	// // Configurando manualmente los encabezados CORS
+	// app.use((req, res, next) => {
+	// 	res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar con la URL del frontend
+			// res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	// 	res.header('Access-Control-Allow-Credentials', 'true'); // Añadir este encabezado
+	// 	next();
+	// });
 
-	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar con la URL del frontend
-		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-		res.header('Access-Control-Allow-Credentials', 'true'); // Añadir este encabezado
-		next();
-	});
+	// Usando el middleware CORS de Express
+	app.use(cors({
+		origin: 'http://localhost:4200',  // Permitir solicitudes solo desde http://localhost:4200
+		methods: ['GET', 'POST', 'DELETE', 'PUT'], // Permitir los métodos que necesitas
+		allowedHeaders: ['Content-Type', 'Authorization'], // Especifica los encabezados permitidos
+		credentials: true // Permitir envío de cookies y credenciales si es necesario
+	}));
 
 
 
@@ -85,7 +98,7 @@ module.exports = function () {
 	// }));
 	// app.use(bodyParser.json());
 	app.use(express.urlencoded({ extended: true }));
-	app.use(express.json());
+	app.use(express.json()); // Middleware para analizar el cuerpo JSON
 
 
 	app.use(methodOverride());

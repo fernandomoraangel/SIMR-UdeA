@@ -17,7 +17,7 @@ const app = express();
 initializeBucket().catch(console.error);
 
 // Usar las rutas de MinIO
-app.use('/', minioRouter);
+app.use('/files', minioRouter);
 // app.use('/minio', minioRouter);
 
 // Crear instancia del objeto passport

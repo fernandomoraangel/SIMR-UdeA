@@ -32,7 +32,7 @@
     "passport-local": "~1.0.0",
     "range-parser": "^1.2.1",
     "requirejs": "^2.3.6",
-    "sweetalert2": "^11.14.1",
+    "sweetalert2": "^11.14.3",
     "typescript": "^5.5.3"
   },
   "repository": {
