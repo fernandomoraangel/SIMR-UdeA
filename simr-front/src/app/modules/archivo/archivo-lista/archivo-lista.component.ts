@@ -1,4 +1,6 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ArchivoVistaComponent } from '../archivo-vista/archivo-vista.component';
 import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -39,6 +41,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   private messageListener: any;
 
   constructor(
+    private dialog: MatDialog,
     private archivoService: ArchivoService,
     private ngZone: NgZone
   ) {
@@ -91,6 +94,17 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   //   }
   // }
 
+  viewFile(fileName: string) {
+    this.dialog.open(ArchivoVistaComponent, {
+      width: '90%',
+      height: '90%',
+      data: { filename: fileName }
+    });
+  }
+
+  viewFile2(filename: string): void {
+    this.selectedFileForViewing = filename;
+  }
 
   prueba() {
     console.log('Prueba');
@@ -353,10 +367,6 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     //   });
     // }
 
-  }
-
-  viewFile(filename: string): void {
-    this.selectedFileForViewing = filename;
   }
 
   getDocumentFiles(collection: string, documentId: string): void {

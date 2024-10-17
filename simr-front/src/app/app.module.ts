@@ -15,11 +15,16 @@ import { SigninComponent } from './pages/signin/signin.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
+// Modules
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+
 
 // Import the UpgradeModule from @angular/upgrade/static
 import { UpgradeModule } from '@angular/upgrade/static';
 import angular from 'angular';
 import { PruebaModule } from './modules/prueba/prueba.module';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 // import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 
@@ -50,10 +55,13 @@ import { PruebaModule } from './modules/prueba/prueba.module';
     ReactiveFormsModule,
     AppRoutingModule,
     UpgradeModule,
+    MatDialogModule,
+    MatButtonModule
   ],
   providers: [
     provideHttpClient(),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

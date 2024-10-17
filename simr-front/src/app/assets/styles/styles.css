@@ -120,3 +120,5 @@ td input[type="checkbox"] {
 th input[type="checkbox"] {
   margin-right: 5px;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

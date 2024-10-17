@@ -129,7 +129,8 @@ angular.module('archivos', [])
         if (angularWindowFileList && !angularWindowFileList.closed) {
           angularWindowFileList.focus();
         } else {
-          angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+          // angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+          angularWindowFileList = $window.open(angularAppOrigin + '/files', '_blank');
           mensajeAEnviar = {
             type: 'FILE_LIST',
             message: documentId,

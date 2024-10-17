@@ -10,10 +10,15 @@ import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
 // Servicios
 import { ArchivoService } from './archivo.service';
 
+// Módulos
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+
 // Rutas
 const routes: Routes = [
   { path: 'files', component: ArchivoListaComponent },
-  { path: 'files/upload', component: ArchivoSubidaComponent }
+  { path: 'files/upload', component: ArchivoSubidaComponent },
+  { path: 'files/preview', component: ArchivoVistaComponent }
 ];
 
 // Interfaces
@@ -39,7 +44,9 @@ export interface FileBasicInfo {
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MatDialogModule,
+    MatButtonModule
   ],
   providers: [
     ArchivoService

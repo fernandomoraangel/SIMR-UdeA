@@ -1,6 +1,6 @@
-<!-- <div class="file-viewer" *ngIf="filename !== ''"> -->
-<div class="file-viewer" *ngIf="filename">
-  <h3>{{ filename }}</h3>
+<!-- <div class="file-viewer" *ngIf="filename"> -->
+<h2 mat-dialog-title>{{ filename }}</h2>
+<mat-dialog-content>
   <div [ngSwitch]="fileType">
     <img *ngSwitchCase="'image'" [src]="fileUrl" alt="{{ filename }}">
     <iframe *ngSwitchCase="'pdf'" [src]="safeUrl" width="100%" height="600px"></iframe>
@@ -16,4 +16,10 @@
       <a [href]="fileUrl" target="_blank">Abrir en una nueva pestaña</a>
     </div>
   </div>
-</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="openInNewTab()">Abrir en Nueva Pestaña</button>
+  <button mat-button (click)="downloadFile(filename)">Descargar</button>
+  <button mat-button (click)="closeDialog()">Cerrar</button>
+</mat-dialog-actions>
+<!-- </div> -->
