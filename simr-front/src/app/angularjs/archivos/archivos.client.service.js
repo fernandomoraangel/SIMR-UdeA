@@ -1,6 +1,9 @@
-angular.module('archivos')
+angular.module('archivos', [])
   .factory('ArchivoService', [
-    '$resource', '$http', '$window', '$rootScope',
+    '$resource',
+    '$http',
+    '$window',
+    '$rootScope',
     function ($resource, $http, $window, $rootScope) {
       // var apiUrl = 'http://localhost:3000';
       var apiUrl = 'http://localhost:3000/files';
@@ -15,6 +18,9 @@ angular.module('archivos')
         agregarListener: agregarListener,
         removerListener: removerListener,
         subirArchivo: subirArchivo,
+        correrPrueba210: correrPrueba210,
+        loadFiles: loadFiles,
+        getDocumentFiles: getDocumentFiles,
         mostrarArchivos: mostrarArchivos,
         deleteFile: deleteFile,
         getAll: function () { return Archivo.query().$promise; },
@@ -102,6 +108,23 @@ angular.module('archivos')
         }
       }
 
+      function correrPrueba210() {
+        console.log('Prueba (ArchivoService)');
+      }
+
+      function loadFiles() {
+        console.log('(ArchivoService) Cargando archivos...');
+        return [{
+          "nombre": "aurora-borealis.jpg",
+          "id": "670f51a5fb934de32915faf8",
+          "minioObjectName": "aurora-borealis-1729057188513.jpg"
+        }];
+        // ArchivoService.getAll().then(function (response) {
+        //   console.log('Archivos cargados:', response);
+        //   $scope.archivosCargados = response;
+        // });
+      }
+
       function mostrarArchivos(documentId, dbCollection) {
         if (angularWindowFileList && !angularWindowFileList.closed) {
           angularWindowFileList.focus();
@@ -132,6 +155,31 @@ angular.module('archivos')
             console.error('Error en la eliminación:', error);
             throw error;
           });
+      }
+
+      function getDocumentFiles(dbCollection, documentId) {
+        return $http({
+          method: 'GET',
+          url: apiUrl + '/document-files',
+          params: {
+            collection: dbCollection,
+            documentId: documentId
+          }
+        }).then(response => {
+          return response.data;
+        })
+        .catch(error => {
+          console.error('Error al obtener archivos:', error);
+        });
+
+        // return $http.get(`${apiUrl}/document-files/${dbCollection}/${documentId}`)
+        //   .then(response => {
+        //     return response.data;
+        //   })
+        //   .catch(error => {
+        //     console.error('Error al obtener archivos:', error);
+        //     throw error;
+        //   });
       }
 
       return service;

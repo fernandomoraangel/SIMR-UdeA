@@ -70,6 +70,7 @@ angular.module("proyectos").controller("ProyectosController", [
       $scope.idFechas = this.proyecto.fechasAsociadas;
       $scope.idDescriptores = this.proyecto.descriptoresLibres;
       $scope.idEnlaces = this.proyecto.vinculoRelacionado;
+      $scope.archivosCargados = this.proyecto.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -628,13 +629,28 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
 
+    
+    $scope.correrPrueba = function () {
+      console.log('Corriendo prueba');
+      console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
+    };
 
-    // $scope.correrPrueba = function (event) {
-    //   event.preventDefault();
-    //   event.stopPropagation(); // Detener la propagación del evento
-    //   console.log('Corriendo prueba');
-    //   console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
+    $scope.cargarArchivos = function () {
+      console.log('(Controller) Cargando archivos');
+      ArchivoService.loadFiles();
+    };
+
+    // $scope.findOne = function () {
+    //   $scope.proyecto = Proyectos.get({
+    //     proyectoId: $routeParams.proyectoId,
+    //   }, function (proyecto) {
+    //     $scope.proyectoId = proyecto._id;
+    //   });
     // };
+
+    $scope.documentId = $routeParams.proyectoId;
+
+    // $scope.proyectoId2 = $scope.proyecto;
 
     //Menú enlaces
     $scope.enlaceAdd = function () {
@@ -786,21 +802,21 @@ angular.module("proyectos").controller("ProyectosController", [
       );
     };
 
-    //Método controller para recuperar la lista de obras
+    //Método controller para recuperar la lista de proyectos
     $scope.find = function () {
-      //Usar el método 'querry' de obra, para enviar una petición GET apropiada
+      //Usar el método 'query' de proyecto, para enviar una petición GET apropiada
       $scope.proyectos = Proyectos.query();
     };
 
-    //Método controller para recuperar una única obra
+    //Método controller para recuperar una única proyectos
     $scope.findOne = function () {
-      //Usa el método 'get' de obra para enviar una petición GET apropiada
+      //Usa el método 'get' de proyecto para enviar una petición GET apropiada
       $scope.proyecto = Proyectos.get({
         proyectoId: $routeParams.proyectoId,
       });
     };
 
-    //Método controller para actualizar una única obra
+    //Método controller para actualizar una única proyectos
     $scope.update = function () {
       //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
       if ($scope.idActores.length != 0) {
@@ -820,8 +836,11 @@ angular.module("proyectos").controller("ProyectosController", [
       }
 
       if ($scope.archivosCargados.length != 0) {
+        console.log('(update) Archivos cargados:', $scope.archivosCargados);
+        console.log('(update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.proyecto.archivosAdjuntos = idArchivos;
+        console.log('(update) idArchivos:', idArchivos);
+        $scope.proyecto.archivosAdjuntos = $scope.proyecto.archivosAdjuntos.concat(idArchivos);
       }
 
       //Usa el método $update de proyecto para enviar la petición PUT adecuada

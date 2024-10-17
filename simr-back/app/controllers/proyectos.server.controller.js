@@ -79,6 +79,7 @@ exports.update = async (req, res) => {
   proyecto.estado = req.body.estado;
   proyecto.descriptoresLibres = req.body.descriptoresLibres;
   proyecto.vinculoRelacionado = req.body.vinculoRelacionado;
+  proyecto.archivosAdjuntos = req.body.archivosAdjuntos;
   // Intenta salvar
   try {
     await proyecto.save();

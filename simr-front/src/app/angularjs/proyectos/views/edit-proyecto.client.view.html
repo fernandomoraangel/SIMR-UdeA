@@ -19,8 +19,8 @@
 						data-target="#ayudaNombre"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaNombre" tabindex="-1" role="dialog"
-						aria-labelledby="ayudaNombreLabel" aria-hidden="true">
+					<div class="modal fade" id="ayudaNombre" tabindex="-1" role="dialog" aria-labelledby="ayudaNombreLabel"
+						aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -40,8 +40,7 @@
 
 
 				<div>
-					<input type="text" class="form-control" ng-model="proyecto.nombre" id="titulo" placeholder=""
-						required>
+					<input type="text" class="form-control" ng-model="proyecto.nombre" id="titulo" placeholder="" required>
 				</div>
 
 				<!-- Fin nombre del proyecto -->
@@ -53,8 +52,8 @@
 						data-target="#ayudaEstado"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaEstado" tabindex="-1" role="dialog"
-						aria-labelledby="ayudaEstadoLabel" aria-hidden="true">
+					<div class="modal fade" id="ayudaEstado" tabindex="-1" role="dialog" aria-labelledby="ayudaEstadoLabel"
+						aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -91,8 +90,8 @@
 						data-target="#ayudaActores"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaActores" tabindex="-1" role="dialog"
-						aria-labelledby="ayudaActoresLabel" aria-hidden="true">
+					<div class="modal fade" id="ayudaActores" tabindex="-1" role="dialog" aria-labelledby="ayudaActoresLabel"
+						aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -140,8 +139,7 @@
 						</h2>
 					</div>
 					<div ng-model="todoerase" ng-repeat="x in idActores track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="actorRemove(x.id)"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="actorRemove(x.id)" style="color:red">
 						</h2>
 						<em>
 							{{nombrarSi("Actor", actorAux(x.id))}};
@@ -192,8 +190,7 @@
 
 						<h2><label class="campo">FECHA</label></h2>
 
-						<input type="text" class="form-control" ng-model="fecha" id="fechaA"
-							ng-blur="validarFecha(fecha,'fechaA')">
+						<input type="text" class="form-control" ng-model="fecha" id="fechaA" ng-blur="validarFecha(fecha,'fechaA')">
 
 						<h1><label class="campo">EVENTO</label></h1>
 						<select id="eventoId" ng-model="evento" class="form-control">
@@ -205,16 +202,14 @@
 						<h2 class="glyphicon glyphicon-plus" ng-click="fechaAdd();">Agregar</h2>
 					</div>
 					<div ng-model="todoerase" ng-repeat="x in idFechas track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="fechaRemove(x.evento)"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="x" ng-click="fechaRemove(x.evento)" style="color:red">
 						</h2>
 						<em>
 							{{nombrarSi("Evento", x.evento)}};
 							{{nombrarSi("Fecha", formatDate(x.fecha,x.precision))}}
 						</em>
 						<!-- Agregar edición -->
-						<h2 class="glyphicon glyphicon-pencil" style="color:blue"
-							ng-click="fechaEditForEdit(x.evento,x.fecha);">
+						<h2 class="glyphicon glyphicon-pencil" style="color:blue" ng-click="fechaEditForEdit(x.evento,x.fecha);">
 						</h2>
 					</div>
 				</div>
@@ -260,8 +255,7 @@
 
 					<div>
 						<label class="campo">Contenido</label>
-						<input id="descContenidoId" type="text" class="form-control" ng-model="dContenido"
-							placeholder="">
+						<input id="descContenidoId" type="text" class="form-control" ng-model="dContenido" placeholder="">
 					</div>
 
 					<div>
@@ -269,8 +263,8 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idDescriptores track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n"
-							ng-click="dDescriptorRemove(n.etiqueta,n.contenido);" style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
+							style="color:red">
 						</h2>
 						<em>
 							{{nombrarSi("Etiqueta", n.etiqueta)}}
@@ -293,8 +287,8 @@
 						data-target="#ayudaEnlaces"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaEnlaces" tabindex="-1" role="dialog"
-						aria-labelledby="ayudaEnlacesLabel" aria-hidden="true">
+					<div class="modal fade" id="ayudaEnlaces" tabindex="-1" role="dialog" aria-labelledby="ayudaEnlacesLabel"
+						aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -315,6 +309,9 @@
 					<label class="campo">ENLACES Y ARCHIVOS</label>
 				</div>
 				<div class="collapse" id="collapseEyA">
+
+					<h3>Enlaces</h3>
+
 					<div>
 						<label class="campo">Nombre (descripción)</label>
 						<input type="text" id="nombreEnlace" class="form-control" ng-model="eEtiqueta" placeholder="">
@@ -322,8 +319,8 @@
 
 					<div>
 						<label class="campo">URL</label>
-						<input type="text" class="form-control" id="urlEnlace"
-							ng-blur="validarUrloRuta(eUrl,'urlEnlace')" ng-model="eUrl" placeholder="">
+						<input type="text" class="form-control" id="urlEnlace" ng-blur="validarUrloRuta(eUrl,'urlEnlace')"
+							ng-model="eUrl" placeholder="">
 					</div>
 
 					<div>
@@ -344,6 +341,20 @@
 							ng-click="enlaceEdit(n.etiqueta,n.url);">
 						</h2>
 					</div>
+
+					<hr>
+
+					<h3>Archivos</h3>
+					<archivo-manager template-type="edit-view" archivos-cargados="archivosCargados"
+						document-id="{{documentId}}" db-collection="proyectos">
+					</archivo-manager>
+
+					<div>
+						<button type="button" ng-click="loadFiles()">Prueba 2101</button>
+					</div>
+
+					<hr>
+
 				</div>
 				<!-- Vínculos y archivos -->
 				<div>

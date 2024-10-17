@@ -1,0 +1,18 @@
+<div>
+  <div>
+    <input type="button" class="form-control" id="btnMostrarArchivos" value="Modificar Archivos Actuales"
+      ng-click="mostrarArchivos()">
+  </div>
+  <div>
+    <input type="button" class="form-control" archivosCargados="archivosCargados" id="btnSubirNuevoArchivo"
+      value="Subir Nuevo Archivo" ng-click="subirArchivo()">
+  </div>
+  <div ng-model="todoerase" ng-repeat="archivo in archivosCargados track by $index" class="campo">
+    <h2 class="glyphicon glyphicon-remove" style="color:red" ng-model="archivo" ng-click="eliminarArchivo(archivo);">
+    </h2>
+    <!-- Separar para que no se mezcle con el borrado -->
+    <em>
+      {{archivo.nombre}}
+    </em>
+  </div>
+</div>

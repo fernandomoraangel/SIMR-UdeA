@@ -8,31 +8,16 @@ angular.module('archivos')
         documentId: '@?',
         dbCollection: '@?'
       },
-      template: function (element, attrs) {
+      templateUrl: function (element, attrs) {
         switch (attrs.templateType) {
           case 'create-view':
             // Add your template for 'vista-create' here
-            return `
-              <div>
-                <button archivosCargados="archivosCargados" class="form-control" ng-click="subirArchivo($event)">Subir
-                  Archivo</button>
-
-                <div ng-model="todoerase" ng-repeat="archivo in archivosCargados track by $index" class="campo">
-                  <h2 class="glyphicon glyphicon-remove" style="color:red" ng-model="archivo" ng-click="eliminarArchivo(archivo);">
-                  </h2>
-                  <!-- Separar para que no se mezcle con el borrado -->
-                  <em>
-                    {{archivo.nombre}}
-                  </em>
-                </div>
-              </div>
-            `;
+            return 'archivos/templates/create-view.html';
           case 'detail-view':
             // Add your template for 'vista-detail' here
-            return `
-              <input type="button" class="form-control" id="btnSubirArchivo" value="Mostrar Archivos"
-                ng-click="mostrarArchivos(obra.id)">
-            `;
+            return 'archivos/templates/detail-view.html';
+          case 'edit-view':
+            return 'archivos/templates/edit-view.html';
           default:
             return `
             <p>No template found ${attrs.templateType}</p>
@@ -45,15 +30,87 @@ angular.module('archivos')
 
         // Inicializar valores por defecto para atributos opcionales
         $scope.templateType = $scope.templateType || 'default';
-        $scope.archivosCargados = $scope.archivosCargados || [];
         $scope.documentId = $scope.documentId || '';
         $scope.dbCollection = $scope.dbCollection || '';
+        $scope.archivosCargados = $scope.archivosCargados || [];
+        // $scope.archivosCargados = ArchivoService.loadFiles();
+        // $scope.archivosCargados = ArchivoService.getDocumentFiles($scope.dbCollection, $scope.documentId);
+
+        // if ($attrs.templateType === 'edit-view') {
+        //   ArchivoService.getDocumentFiles($scope.dbCollection, $scope.documentId)
+        //     .then(response => {
+        //       console.log('response:', response);
+
+        //       $scope.archivosCargados = response.map(archivo => {
+        //         return {
+        //           nombre: archivo.name,
+        //           id: archivo.id,
+        //           minioObjectName: archivo.name
+        //         };
+        //       });
+
+        //       console.log('(Directive - getDocumentFiles) archivosCargados:', $scope.archivosCargados);
+
+        //       // $scope.archivosCargados = response;
+
+        //       // Usamos map para cambiar los nombres de los atributos
+
+        //       // let datos = response.map(archivo => {
+        //       //   return {
+        //       //     nombre: archivo.name,
+        //       //     id: archivo.id,
+        //       //     minioObjectName: archivo.name
+        //       //   };
+        //       // });
+        //       // console.log('datos:', datos);
+
+        //     })
+        //     .catch(error => {
+        //       console.error('Error al obtener los archivos:', error);
+        //       $scope.archivosCargados = [];
+        //     });
+        // } else {
+        //   $scope.archivosCargados = [];
+        // }
+
+        console.log('(Directiva) archivosCargados:', $scope.archivosCargados);
+        // $scope.archivosCargados = [{
+        //   "nombre": "aurora-borealis.jpg",
+        //   "id": "670f51a5fb934de32915faf8",
+        //   "minioObjectName": "aurora-borealis-1729057188513.jpg"
+        // }];
+
+        // console.log('Cargando archivos...');
+        // $scope.archivosCargados = [{
+        //   "nombre": "aurora-borealis.jpg",
+        //   "id": "670f51a5fb934de32915faf8",
+        //   "minioObjectName": "aurora-borealis-1729057188513.jpg"
+        // }];
+
+
+        console.log('documentId:', $scope.documentId);
+        console.log('dbCollection:', $scope.dbCollection);
+
+        $scope.loadFiles = function () {
+          console.log('(loadFiles) Cargando archivos...');
+          $scope.archivosCargados = [{
+            "nombre": "aurora-borealis.jpg",
+            "id": "670f51a5fb934de32915faf8",
+            "minioObjectName": "aurora-borealis-1729057188513.jpg"
+          }];
+          // $scope.$apply();
+          // ArchivoService.getAll().then(function (response) {
+          //   console.log('Archivos cargados:', response);
+          //   $scope.archivosCargados = response;
+          // });
+        };
+
 
         // Initialize archivosCargados if not defined
         // if (!$scope.archivosCargados) {
-          // $scope.archivosCargados = [];
-          // $scope.archivosCargados = [{ nombre: 'archivo1' }, { nombre: 'archivo2' }];
-          // console.log('archivosCargados inicializado:', $scope.archivosCargados);
+        // $scope.archivosCargados = [];
+        // $scope.archivosCargados = [{ nombre: 'archivo1' }, { nombre: 'archivo2' }];
+        // console.log('archivosCargados inicializado:', $scope.archivosCargados);
         // }
 
         // Verificar si se proporcionaron atributos "requeridos"
@@ -64,14 +121,17 @@ angular.module('archivos')
 
         ArchivoService.agregarListener();
 
-        $scope.subirArchivo = function (event) {
-          event.preventDefault(); // Prevenir comportamiento por defecto
-          event.stopPropagation(); // Detener la propagación del evento
+        $scope.subirArchivo = function () {
           console.log('Subir archivo (Controlador)');
           console.log('documentId:', $scope.documentId);
           console.log('dbCollection:', $scope.dbCollection);
           ArchivoService.subirArchivo();
         };
+
+        $scope.correrPrueba210 = function () {
+          console.log('Prueba (Directiva)');
+          ArchivoService.correrPrueba210();
+        }
 
         $scope.mostrarArchivos = function () {
           console.log('Mostrar archivos');
