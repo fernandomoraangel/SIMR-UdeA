@@ -127,17 +127,29 @@ angular.module('archivos', [])
 
       function mostrarArchivos(documentId, dbCollection) {
         if (angularWindowFileList && !angularWindowFileList.closed) {
-          angularWindowFileList.focus();
-        } else {
-          // angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
-          angularWindowFileList = $window.open(angularAppOrigin + '/files', '_blank');
-          mensajeAEnviar = {
-            type: 'FILE_LIST',
-            message: documentId,
-            dbCollection: dbCollection
-          };
-          console.log('Mensaje a enviar (mostrarArchivos):', mensajeAEnviar);
+          angularWindowFileList.close();
         }
+        // angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+        angularWindowFileList = $window.open(angularAppOrigin + '/files', '_blank');
+        mensajeAEnviar = {
+          type: 'FILE_LIST',
+          message: documentId,
+          dbCollection: dbCollection
+        };
+        console.log('Mensaje a enviar (mostrarArchivos):', mensajeAEnviar);
+
+        // if (angularWindowFileList && !angularWindowFileList.closed) {
+        //   // angularWindowFileList.focus();
+        // } else {
+        //   // angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+        //   angularWindowFileList = $window.open(angularAppOrigin + '/files', '_blank');
+        //   mensajeAEnviar = {
+        //     type: 'FILE_LIST',
+        //     message: documentId,
+        //     dbCollection: dbCollection
+        //   };
+        //   console.log('Mensaje a enviar (mostrarArchivos):', mensajeAEnviar);
+        // }
       }
 
       function deleteFile(fileName, fileId) {
@@ -169,9 +181,9 @@ angular.module('archivos', [])
         }).then(response => {
           return response.data;
         })
-        .catch(error => {
-          console.error('Error al obtener archivos:', error);
-        });
+          .catch(error => {
+            console.error('Error al obtener archivos:', error);
+          });
 
         // return $http.get(`${apiUrl}/document-files/${dbCollection}/${documentId}`)
         //   .then(response => {

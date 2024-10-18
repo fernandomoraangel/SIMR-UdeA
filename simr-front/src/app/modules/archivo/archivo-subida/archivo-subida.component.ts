@@ -103,6 +103,12 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
           this.uploading = false;
           this.processingFile = false;
           this.uploadProgress = 0;
+          Swal.fire({
+            title: '¡Error!',
+            text: 'Error interno del servidor... Intente de nuevo más tarde',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
       });
     }

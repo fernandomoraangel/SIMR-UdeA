@@ -85,6 +85,7 @@ exports.update = async (req, res) => {
   sistema.anotacionCartograficoTemporal =
     req.body.anotacionCartograficoTemporal;
   sistema.vinculoRelacionado = req.body.vinculoRelacionado;
+  sistema.archivosAdjuntos = req.body.archivosAdjuntos;
 
   try {
     // Intenta salvar

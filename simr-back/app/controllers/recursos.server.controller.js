@@ -97,6 +97,7 @@ exports.update = async (req, res) => {
   recurso.proyectos = req.body.proyectos;
   recurso.vinculoRelacionado = req.body.vinculoRelacionado;
   recurso.descriptorLibre = req.body.descriptorLibre;
+  recurso.archivosAdjuntos = req.body.archivosAdjuntos;
 
   // Intenta salvar
   try {

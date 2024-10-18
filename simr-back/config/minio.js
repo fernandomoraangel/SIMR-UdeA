@@ -110,6 +110,21 @@ router.get('/document-files', async (req, res) => {
       case 'actores':
         document = await Actor.findById(documentId);
         break;
+      case 'generos':
+        document = await Genero.findById(documentId);
+        break;
+      case 'generosNoMusicales':
+        document = await GeneroNoMusical.findById(documentId);
+        break;
+      case 'instrumentos':
+        document = await Instrumento.findById(documentId);
+        break;
+      case 'materias':
+        document = await Materia.findById(documentId);
+        break;
+      case 'medios':
+        document = await Medio.findById(documentId);
+        break;
       case 'obras':
         document = await Obra.findById(documentId);
         break;
@@ -119,23 +134,8 @@ router.get('/document-files', async (req, res) => {
       case 'recursos':
         document = await Recurso.findById(documentId);
         break;
-      case 'instrumentos':
-        document = await Instrumento.findById(documentId);
-        break;
-      case 'medios':
-        document = await Medio.findById(documentId);
-        break;
       case 'sistemas':
         document = await Sistema.findById(documentId);
-        break;
-      case 'materias':
-        document = await Materia.findById(documentId);
-        break;
-      case 'generos':
-        document = await Genero.findById(documentId);
-        break;
-      case 'generosNoMusicales':
-        document = await GeneroNoMusical.findById(documentId);
         break;
       default:
         return res.status(404).json({ message: 'Not found' });

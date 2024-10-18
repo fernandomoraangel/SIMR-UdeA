@@ -53,11 +53,14 @@ angular.module("generos").controller("GenerosController", [
     $scope.lugares = lugares;
     $scope.coberturas = coberturas;
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.generoId;
 
     var control = 0;
     //Preparar datos
     $scope.actualizarTodo = function () {
-      $scope.idEstados = this.ejemplar.estados;
+      // $scope.idEstados = this.ejemplar.estados;
+      $scope.idEstados = this.genero.estados;
+      $scope.archivosCargados = this.genero.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -1516,7 +1519,7 @@ angular.module("generos").controller("GenerosController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.genero.archivosAdjuntos = $scope.genero.archivosAdjuntos.concat(idArchivos);
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

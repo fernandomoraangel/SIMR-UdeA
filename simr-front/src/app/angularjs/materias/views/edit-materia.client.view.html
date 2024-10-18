@@ -13,9 +13,8 @@
 				<!-- Nombre-->
 				<div>
 					<!-- Botón modal ayuda -->
-					<button type="button" class="glyphicon glyphicon-eye-open"
-						ng-click="mostrarAyuda('materia','nombreMateria');" data-toggle="modal"
-						data-target="#ayudanombreMateria"></button>
+					<button type="button" class="glyphicon glyphicon-eye-open" ng-click="mostrarAyuda('materia','nombreMateria');"
+						data-toggle="modal" data-target="#ayudanombreMateria"></button>
 
 					<!-- Modal Ayuda-->
 					<div class="modal fade" id="ayudanombreMateria" tabindex="-1" role="dialog"
@@ -43,9 +42,8 @@
 				<div>
 					<!-- Descripción -->
 					<!-- Botón modal ayuda -->
-					<button type="button" class="glyphicon glyphicon-eye-open"
-						ng-click="mostrarAyuda('materia','descripcion');" data-toggle="modal"
-						data-target="#ayudaDescripcion"></button>
+					<button type="button" class="glyphicon glyphicon-eye-open" ng-click="mostrarAyuda('materia','descripcion');"
+						data-toggle="modal" data-target="#ayudaDescripcion"></button>
 
 					<!-- Modal Ayuda-->
 					<div class="modal fade" id="ayudaDescripcion" tabindex="-1" role="dialog"
@@ -112,8 +110,7 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idAlias track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);" style="color:red">
 						</h2>
 						<em>
 							{{n.nombre}}
@@ -145,8 +142,8 @@
 						</div>
 					</div>
 					<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseMR"
-						ng-click="cargaMateriasRelacionadas(materia.materiasRelacionadas)" role="button"
-						aria-expanded="false" aria-controls="collapseExample"></button>
+						ng-click="cargaMateriasRelacionadas(materia.materiasRelacionadas)" role="button" aria-expanded="false"
+						aria-controls="collapseExample"></button>
 					<label class="campo">MATERIAS RELACIONADAS</label>
 				</div>
 				<div class="collapse" id="collapseMR">
@@ -178,13 +175,12 @@
 				<!-- Materias padre -->
 				<div>
 					<!-- Botón modal ayuda -->
-					<button type="button" class="glyphicon glyphicon-eye-open"
-						ng-click="mostrarAyuda('materia','padre');" data-toggle="modal"
-						data-target="#ayudaPadre"></button>
+					<button type="button" class="glyphicon glyphicon-eye-open" ng-click="mostrarAyuda('materia','padre');"
+						data-toggle="modal" data-target="#ayudaPadre"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaPadre" tabindex="-1" role="dialog"
-						aria-labelledby="ayudaPadreLabel" aria-hidden="true">
+					<div class="modal fade" id="ayudaPadre" tabindex="-1" role="dialog" aria-labelledby="ayudaPadreLabel"
+						aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -221,8 +217,7 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idPadres track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="padresRemove(n.id)"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="padresRemove(n.id)" style="color:red">
 						</h2>
 						<em>
 							{{materiaAux(n.id)}}
@@ -235,13 +230,12 @@
 				<!-- Hijas -->
 				<div>
 					<!-- Botón modal ayuda -->
-					<button type="button" class="glyphicon glyphicon-eye-open"
-						ng-click="mostrarAyuda('materia','hijas');" data-toggle="modal"
-						data-target="#ayudaHijas"></button>
+					<button type="button" class="glyphicon glyphicon-eye-open" ng-click="mostrarAyuda('materia','hijas');"
+						data-toggle="modal" data-target="#ayudaHijas"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaHijas" tabindex="-1" role="dialog"
-						aria-labelledby="ayudaHijasLabel" aria-hidden="true">
+					<div class="modal fade" id="ayudaHijas" tabindex="-1" role="dialog" aria-labelledby="ayudaHijasLabel"
+						aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -275,8 +269,7 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idHijos track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="hijosRemove(n.id)"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="hijosRemove(n.id)" style="color:red">
 						</h2>
 						<em>
 							{{materiaAux(n.id)}}
@@ -328,8 +321,7 @@
 
 					<div>
 						<label class="campo">Contenido</label>
-						<input id="descContenidoId" type="text" class="form-control" ng-model="dContenido"
-							placeholder="">
+						<input id="descContenidoId" type="text" class="form-control" ng-model="dContenido" placeholder="">
 					</div>
 
 					<div>
@@ -337,8 +329,8 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idDescriptores track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n"
-							ng-click="dDescriptorRemove(n.etiqueta,n.contenido);" style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
+							style="color:red">
 						</h2>
 						<em>
 							{{nombrarSi("Etiqueta", n.etiqueta)}}
@@ -383,6 +375,9 @@
 					<label class="campo">ENLACES Y ARCHIVOS</label>
 				</div>
 				<div class="collapse" id="collapseVyA">
+
+					<h3>Enlaces</h3>
+
 					<div>
 						<label class="campo">Nombre (descripción)</label>
 						<input type="text" id="nombreEnlace" class="form-control" ng-model="eEtiqueta">
@@ -390,8 +385,8 @@
 
 					<div>
 						<label class="campo">URL</label>
-						<input type="text" class="form-control" id="urlEnlace"
-							ng-blur="validarUrloRuta(eUrl,'urlEnlace')" ng-model="eUrl">
+						<input type="text" class="form-control" id="urlEnlace" ng-blur="validarUrloRuta(eUrl,'urlEnlace')"
+							ng-model="eUrl">
 					</div>
 
 					<div>
@@ -413,6 +408,16 @@
 							ng-click="enlaceEdit(n.etiqueta,n.url);">
 						</h2>
 					</div>
+
+					<hr>
+
+					<h3>Archivos</h3>
+					<archivo-manager template-type="edit-view" archivos-cargados="archivosCargados" document-id="{{documentId}}"
+						db-collection="materias">
+					</archivo-manager>
+
+					<hr>
+
 				</div>
 				<!-- Vínculos y archivos -->
 

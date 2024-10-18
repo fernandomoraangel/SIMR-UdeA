@@ -66,6 +66,8 @@ angular.module("recursos").controller("RecursosController", [
     $scope.errorclass = "form-control";
     var control = 0;
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.recursoId;
+
 
     //Carga vectores
 
@@ -2005,7 +2007,7 @@ angular.module("recursos").controller("RecursosController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.recurso.archivosAdjuntos = $scope.recurso.archivosAdjuntos.concat(idArchivos);
       }
 
       //Usa el método $update de recurso para enviar la petición PUT adecuada

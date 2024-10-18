@@ -8,7 +8,7 @@ angular.module("actores").controller("ActoresController", [
   "Authentication",
   "Actores",
   "Diccionarios",
-  "Archivos",
+  "ArchivoService",
   function (
     $scope,
     $routeParams,
@@ -16,7 +16,7 @@ angular.module("actores").controller("ActoresController", [
     Authentication,
     Actores,
     Diccionarios,
-    Archivos
+    ArchivoService
   ) {
     //Exponer el servicio Authentication
     $scope.authentication = Authentication;
@@ -29,6 +29,7 @@ angular.module("actores").controller("ActoresController", [
     $scope.idDescriptores = [];
     $scope.idEnlaces = [];
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.actorId;
     $scope.actores = Actores.query();
     // $scope.archivos = Archivos.query();
 
@@ -131,6 +132,8 @@ angular.module("actores").controller("ActoresController", [
         this.actor.anotacionCartograficoTemporal;
       $scope.idDescriptores = this.actor.descriptores;
       $scope.idEnlaces = this.actor.vinculoRelacionado;
+      $scope.archivosCargados = this.actor.archivosAdjuntos;
+
     };
     // Ver
     $scope.verContenedores = function (x) {
@@ -1033,7 +1036,7 @@ angular.module("actores").controller("ActoresController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.actor.archivosAdjuntos = $scope.actor.archivosAdjuntos.concat(idArchivos);
       }
 
       //Usa el método $update de actor para enviar la petición PUT adecuada

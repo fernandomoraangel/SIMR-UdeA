@@ -75,6 +75,7 @@ exports.update = async (req, res) => {
   genero.anotacionCartograficoTemporal = req.body.anotacionCartograficoTemporal;
   genero.descriptorLibre = req.body.descriptorLibre;
   genero.vinculoRelacionado = req.body.vinculoRelacionado;
+  genero.archivosAdjuntos = req.body.archivosAdjuntos;
 
   try {
     const updatedGenero = await genero.save();

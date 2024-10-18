@@ -83,6 +83,7 @@ exports.update = async (req, res) => {
   obra.descriptores = req.body.descriptores;
   obra.proyectos = req.body.proyectos;
   obra.vinculosRelacionados = req.body.vinculosRelacionados;
+  obra.archivosAdjuntos = req.body.archivosAdjuntos;
 
   try {
     const updatedObra = await obra.save();

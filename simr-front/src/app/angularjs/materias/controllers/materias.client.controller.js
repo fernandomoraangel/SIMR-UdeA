@@ -42,11 +42,15 @@ angular.module("materias").controller("MateriasController", [
     $scope.diccionarios = Diccionarios.query();
     $scope.actorName = [];
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.materiaId;
+
     var control = 0;
 
     //Preparar datos
     $scope.actualizarTodo = function () {
-      $scope.idEstados = this.ejemplar.estados;
+      // $scope.idEstados = this.ejemplar.estados;
+      $scope.idEstados = this.materia.estados;
+      $scope.archivosCargados = this.materia.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -792,7 +796,7 @@ angular.module("materias").controller("MateriasController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.materia.archivosAdjuntos = $scope.materia.archivosAdjuntos.concat(idArchivos);
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

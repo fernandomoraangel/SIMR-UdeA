@@ -63,6 +63,7 @@ angular.module("proyectos").controller("ProyectosController", [
     $scope.diccionarios = Diccionarios.query();
     var control = 0;
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.proyectoId;
 
     //Preparar datos
     $scope.actualizarTodo = function () {
@@ -648,7 +649,7 @@ angular.module("proyectos").controller("ProyectosController", [
     //   });
     // };
 
-    $scope.documentId = $routeParams.proyectoId;
+    // $scope.documentId = $routeParams.proyectoId;
 
     // $scope.proyectoId2 = $scope.proyecto;
 

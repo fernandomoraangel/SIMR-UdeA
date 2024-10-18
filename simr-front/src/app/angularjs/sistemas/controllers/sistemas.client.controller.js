@@ -42,11 +42,14 @@ angular.module("sistemas").controller("SistemasController", [
     $scope.sistemas = Sistemas.query();
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.sistemaId;
+
     var control = 0;
 
     //Preparar datos
     $scope.actualizarTodo = function () {
       $scope.idEstados = this.ejemplar.estados;
+      $scope.archivosCargados = this.sistema.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -1230,9 +1233,9 @@ angular.module("sistemas").controller("SistemasController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.sistema.archivosAdjuntos = $scope.sistema.archivosAdjuntos.concat(idArchivos);
       }
-      
+
       //Usa el método $update de obra para enviar la petición PUT adecuada
       $scope.sistema.$update(
         function () {

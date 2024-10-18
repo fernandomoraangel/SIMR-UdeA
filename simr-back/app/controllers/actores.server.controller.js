@@ -81,6 +81,7 @@ exports.update = async (req, res) => {
   actor.anotacionCartograficoTemporal = req.body.anotacionCartograficoTemporal;
   actor.descriptores = req.body.descriptores;
   actor.vinculoRelacionado = req.body.vinculoRelacionado;
+  actor.archivosAdjuntos = req.body.archivosAdjuntos;
 
   // Intenta salvar
   try {

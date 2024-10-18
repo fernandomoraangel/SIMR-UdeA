@@ -117,8 +117,7 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idAlias track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);" style="color:red">
 						</h2>
 						<em>
 							{{n.nombre}}
@@ -174,8 +173,7 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="p in idProyectos track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="f" ng-click="proyectoRemove(p.proyecto)"
-							style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="f" ng-click="proyectoRemove(p.proyecto)" style="color:red">
 						</h2>
 						<em>
 							{{proyectoAux(p.proyecto)}}
@@ -187,13 +185,12 @@
 				<div>
 					<!-- Botón modal ayuda -->
 					<button type="button" class="glyphicon glyphicon-eye-open"
-						ng-click="mostrarAyuda('instrumento','AnotacionesCartograficoTemporalesIntrumento');"
-						data-toggle="modal" data-target="#ayudaAnotacionesCartograficoTemporalesIntrumento"></button>
+						ng-click="mostrarAyuda('instrumento','AnotacionesCartograficoTemporalesIntrumento');" data-toggle="modal"
+						data-target="#ayudaAnotacionesCartograficoTemporalesIntrumento"></button>
 
 					<!-- Modal Ayuda-->
-					<div class="modal fade" id="ayudaAnotacionesCartograficoTemporalesIntrumento" tabindex="-1"
-						role="dialog" aria-labelledby="ayudaAnotacionesCartograficoTemporalesIntrumentoLabel"
-						aria-hidden="true">
+					<div class="modal fade" id="ayudaAnotacionesCartograficoTemporalesIntrumento" tabindex="-1" role="dialog"
+						aria-labelledby="ayudaAnotacionesCartograficoTemporalesIntrumentoLabel" aria-hidden="true">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -209,8 +206,8 @@
 						</div>
 					</div>
 					<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAnotacionesCT"
-						ng-click="cargaAnotaciones(instrumento.anotacionCartograficoTemporal)" role="button"
-						aria-expanded="false" aria-controls="collapseExample"></button>
+						ng-click="cargaAnotaciones(instrumento.anotacionCartograficoTemporal)" role="button" aria-expanded="false"
+						aria-controls="collapseExample"></button>
 					<label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
 				</div>
 				<div>
@@ -223,8 +220,7 @@
 							<option value="">-----</option>
 						</select>
 						<labelclass="campo">Evento</label>
-							<input id="eventoId" type="text" class="form-control" placeholder=""
-								ng-model="evento"></input>
+							<input id="eventoId" type="text" class="form-control" placeholder="" ng-model="evento"></input>
 							<label class="campo">Amplitud o cobertura</label>
 							<select id="coberturaId" ng-model="coberturaAmplitud" class="form-control">
 								<option ng-repeat="cobertura in coberturas track by $index" value="{{cobertura}}">
@@ -238,18 +234,16 @@
 								ng-blur="validarFecha(fechaDeInicio,'fInicio')">
 
 							<label class="campo">Fecha de finalización</label>
-							<input class="form-control" ng-model="fechaDeFin" id="fFin"
-								ng-blur="validarFecha(fechaDeFin,'fFin')">
+							<input class="form-control" ng-model="fechaDeFin" id="fFin" ng-blur="validarFecha(fechaDeFin,'fFin')">
 							<label class="campo" for="descripcion">Evidencia</label>
 							<input id="evidenciaId" class="form-control" ng-model="evidencia">
 							<h2 class="glyphicon glyphicon-plus" ng-click="anotacionCartograficoTemporalAdd()">Agregar
 							</h2>
 					</div>
 
-					<div ng-model="todoerase" ng-repeat="c in idAnotacionesCartograficoTemporales track by $index"
-						class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="f"
-							ng-click="anotacionCartograficoTemporalRemove(c.lugar)" style="color:red">
+					<div ng-model="todoerase" ng-repeat="c in idAnotacionesCartograficoTemporales track by $index" class="campo">
+						<h2 class="glyphicon glyphicon-remove" ng-model="f" ng-click="anotacionCartograficoTemporalRemove(c.lugar)"
+							style="color:red">
 						</h2>
 						<em>
 							{{nombrarSi("Lugar", c.lugar)}};
@@ -316,8 +310,8 @@
 					</div>
 
 					<div ng-model="todoerase" ng-repeat="n in idDescriptores track by $index" class="campo">
-						<h2 class="glyphicon glyphicon-remove" ng-model="n"
-							ng-click="dDescriptorRemove(n.etiqueta,n.contenido);" style="color:red">
+						<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
+							style="color:red">
 						</h2>
 						<em>
 							{{nombrarSi("Etiqueta", n.etiqueta)}}
@@ -363,6 +357,9 @@
 					<label class="campo">ENLACES Y ARCHIVOS</label>
 				</div>
 				<div class="collapse" id="collapseVyA">
+
+					<h3>Enlaces</h3>
+
 					<div>
 						<label class="campo">Nombre (descripción)</label>
 						<input type="text" id="nombreEnlace" class="form-control" ng-model="eEtiqueta">
@@ -391,6 +388,16 @@
 							ng-click="enlaceEdit(n.etiqueta,n.url);">
 						</h2>
 					</div>
+
+					<hr>
+
+					<h3>Archivos</h3>
+					<archivo-manager template-type="edit-view" archivos-cargados="archivosCargados" document-id="{{documentId}}"
+						db-collection="instrumentos">
+					</archivo-manager>
+
+					<hr>
+
 				</div>
 				<!-- Vínculos y archivos -->
 

@@ -105,8 +105,8 @@
 						<tr>
 							<td class="campo">ARCHIVOS</td>
 							<td>
-								<input type="button" class="form-control" id="btnSubirArchivo" value="Mostrar Archivos"
-								ng-click="mostrarArchivos(obra.id)">
+								<archivo-manager template-type="detail-view" document-id="{{obra.id}}" db-collection="obras">
+								</archivo-manager>
 							</td>
 						</tr>
 

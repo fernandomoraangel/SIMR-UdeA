@@ -83,6 +83,7 @@ exports.update = async (req, res) => {
   materia.hijos = req.body.hijos;
   materia.descriptorLibre = req.body.descriptorLibre;
   materia.vinculoRelacionado = req.body.vinculoRelacionado;
+  materia.archivosAdjuntos = req.body.archivosAdjuntos;
 
   // Intenta salvar
   try {

@@ -72,6 +72,7 @@ exports.update = async (req, res) => {
   generoNoMusical.proyectosAsociados = req.body.proyectosAsociados;
   generoNoMusical.descriptorLibre = req.body.descriptorLibre;
   generoNoMusical.vinculoRelacionado = req.body.vinculoRelacionado;
+  generoNoMusical.archivosAdjuntos = req.body.archivosAdjuntos;
 
   try {
     const updatedGeneroNoMusical = await generoNoMusical.save();

@@ -40,6 +40,7 @@ angular.module("instrumentos").controller("InstrumentosController", [
     $scope.proyectos = Proyectos.query();
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.instrumentoId;
 
     var control = 0;
     //Preparar datos
@@ -50,6 +51,7 @@ angular.module("instrumentos").controller("InstrumentosController", [
       $scope.idAnotacionesCartograficoTemporales =
         this.instrumento.anotacionCartograficoTemporal;
       $scope.idAlias = this.instrumento.alias;
+      $scope.archivosCargados = this.instrumento.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -893,7 +895,7 @@ angular.module("instrumentos").controller("InstrumentosController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.instrumento.archivosAdjuntos = $scope.instrumento.archivosAdjuntos.concat(idArchivos);
       }
 
 

@@ -69,6 +69,7 @@ exports.update = async (req, res) => {
   medio.anotacionCartograficoTemporal = req.body.anotacionCartograficoTemporal;
   medio.descriptorLibre = req.body.descriptorLibre;
   medio.vinculoRelacionado = req.body.vinculoRelacionado;
+  medio.archivosAdjuntos = req.body.archivosAdjuntos;
 
   try {
     const updatedMedio = await medio.save();

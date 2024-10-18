@@ -122,6 +122,8 @@ angular.module("obras").controller("ObrasController", [
     $scope.campo = "";
     var control = 0;
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.obraId;
+
 
     // Funciones auxiliares
     //Cargar los campos que tienen vectores para la vista de edición
@@ -2136,8 +2138,7 @@ angular.module("obras").controller("ObrasController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        // $scope.obra.archivosAdjuntos = $scope.archivosCargados;
-        $scope.obra.archivosAdjuntos = idArchivos;
+        $scope.obra.archivosAdjuntos = $scope.obra.archivosAdjuntos.concat(idArchivos);
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

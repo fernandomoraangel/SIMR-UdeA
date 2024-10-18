@@ -1,6 +1,6 @@
 <div>
   <div>
-    <input type="button" class="form-control" archivosCargados="archivosCargados" id="btnSubirArchivo"
+    <input type="button" class="form-control" style="border-color: grey;" archivosCargados="archivosCargados" id="btnSubirArchivo"
       value="Subir Archivo" ng-click="subirArchivo()">
   </div>
   <div ng-model="todoerase" ng-repeat="archivo in archivosCargados track by $index" class="campo">
@@ -10,9 +10,5 @@
     <em>
       {{archivo.nombre}}
     </em>
-  </div>
-  <div>
-    <input type="button" class="form-control" archivosCargados="archivosCargados" id="btnSubirArchivo" value="Prueba"
-      ng-click="loadFiles()">
   </div>
 </div>

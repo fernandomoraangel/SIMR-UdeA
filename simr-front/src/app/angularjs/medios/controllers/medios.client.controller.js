@@ -50,11 +50,15 @@ angular.module("medios").controller("MediosController", [
     $scope.idEnlaces = [];
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
+    $scope.documentId = $routeParams.medioId;
+
 
     var control = 0;
     //Preparar datos
     $scope.actualizarTodo = function () {
-      $scope.idEstados = this.ejemplar.estados;
+      // $scope.idEstados = this.ejemplar.estados;
+      $scope.idEstados = this.medio.estados;
+      $scope.archivosCargados = this.medio.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -1061,7 +1065,7 @@ angular.module("medios").controller("MediosController", [
 
       if ($scope.archivosCargados.length != 0) {
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.actor.archivosAdjuntos = idArchivos;
+        $scope.medio.archivosAdjuntos = $scope.medio.archivosAdjuntos.concat(idArchivos);
       }
       
       //Agregar actores

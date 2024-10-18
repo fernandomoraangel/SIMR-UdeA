@@ -41,11 +41,14 @@ angular
       $scope.diccionarios = Diccionarios.query();
       $scope.generosNoMusicales = GenerosNoMusicales.query();
       $scope.archivosCargados = [];
+      $scope.documentId = $routeParams.generoNoMusicalId;
+
 
       var control = 0;
       //Preparar datos
       $scope.actualizarTodo = function () {
         $scope.idEstados = this.generoNoMusical.estados;
+        $scope.archivosCargados = this.generoNoMusical.archivosAdjuntos;
       };
 
       // Funciones auxiliares
@@ -1183,7 +1186,7 @@ angular
 
         if ($scope.archivosCargados.length != 0) {
           const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-          $scope.actor.archivosAdjuntos = idArchivos;
+          $scope.generoNoMusical.archivosAdjuntos = $scope.generoNoMusical.archivosAdjuntos.concat(idArchivos);
         }
 
         //Usa el método $update de obra para enviar la petición PUT adecuada
