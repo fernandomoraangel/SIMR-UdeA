@@ -18,8 +18,6 @@ angular.module('archivos', [])
         agregarListener: agregarListener,
         removerListener: removerListener,
         subirArchivo: subirArchivo,
-        correrPrueba210: correrPrueba210,
-        loadFiles: loadFiles,
         getDocumentFiles: getDocumentFiles,
         mostrarArchivos: mostrarArchivos,
         deleteFile: deleteFile,
@@ -32,32 +30,39 @@ angular.module('archivos', [])
       function recibirMensaje(event) {
         if (event.origin !== angularAppOrigin) return;
 
-        if (event.data.type === 'FILE_UPLOAD') {
-          $rootScope.$apply(function () {
-            // const fileInfo = JSON.parse(event.data.message);
+        let messageType = '';
+        let data = null;
+
+        console.log('(ArchivoService) Mensaje recibido:', event.data);
+
+        switch (event.data.type) {
+          case 'FILE_UPLOAD':
+            messageType = 'archivoSubido';
             const { originalName, documentId, minioObjectName } = JSON.parse(event.data.message);
-            const fileInfo = {
+            data = {
               nombre: originalName,
               id: documentId,
               minioObjectName: minioObjectName
             };
-            // const datosArchivo = {
-            //   nombre: fileInfo.originalName,
-            //   id: fileInfo.documentId,
-            //   minioObjectName: fileInfo.minioObjectName
-            // };
-            console.log('Archivo subido (ArchivoService):', fileInfo);
-            $rootScope.$broadcast('archivoSubido', fileInfo);
-            // console.log('Archivo subido (ArchivoService):', datosArchivo);
-            // $rootScope.$broadcast('archivoSubido', datosArchivo);
-          });
-        } else if (event.data.type === 'FILE_LIST' && event.data.status === 'READY') {
-          $rootScope.$apply(function () {
-            $rootScope.$broadcast('archivoListo', event.data.message);
-          });
-          // Responder a la ventana emergente con los datos necesarios para cargar los archivos
-          enviarMensaje(mensajeAEnviar.type, mensajeAEnviar.message, mensajeAEnviar.dbCollection);
+            break;
+          case 'FILE_LIST':
+            if (event.data.status != 'READY') break;
+            messageType = 'archivoListo';
+            data = event.data.message;
+            enviarMensaje(mensajeAEnviar.type, mensajeAEnviar.message, mensajeAEnviar.dbCollection);
+            break;
+          case 'FILE_DELETED':
+            messageType = 'archivoEliminado';
+            data = event.data.message;
+            break;
+          default:
+            console.error('Tipo no reconocido:', event.data.type);
+            return;
         }
+
+        $rootScope.$apply(function () {
+          $rootScope.$broadcast(messageType, data);
+        });
       }
 
       function agregarListener() {
@@ -106,23 +111,6 @@ angular.module('archivos', [])
         } else {
           angularWindowFileUpload = $window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
         }
-      }
-
-      function correrPrueba210() {
-        console.log('Prueba (ArchivoService)');
-      }
-
-      function loadFiles() {
-        console.log('(ArchivoService) Cargando archivos...');
-        return [{
-          "nombre": "aurora-borealis.jpg",
-          "id": "670f51a5fb934de32915faf8",
-          "minioObjectName": "aurora-borealis-1729057188513.jpg"
-        }];
-        // ArchivoService.getAll().then(function (response) {
-        //   console.log('Archivos cargados:', response);
-        //   $scope.archivosCargados = response;
-        // });
       }
 
       function mostrarArchivos(documentId, dbCollection) {

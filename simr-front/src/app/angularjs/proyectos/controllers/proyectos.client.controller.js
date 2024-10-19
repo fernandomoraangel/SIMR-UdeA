@@ -63,6 +63,7 @@ angular.module("proyectos").controller("ProyectosController", [
     $scope.diccionarios = Diccionarios.query();
     var control = 0;
     $scope.archivosCargados = [];
+    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.proyectoId;
 
     //Preparar datos
@@ -630,7 +631,7 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
 
-    
+
     $scope.correrPrueba = function () {
       console.log('Corriendo prueba');
       console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
@@ -836,12 +837,21 @@ angular.module("proyectos").controller("ProyectosController", [
         $scope.proyecto.vinculoRelacionado = $scope.idEnlaces;
       }
 
-      if ($scope.archivosCargados.length != 0) {
+      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
         console.log('(update) Archivos cargados:', $scope.archivosCargados);
         console.log('(update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
         console.log('(update) idArchivos:', idArchivos);
-        $scope.proyecto.archivosAdjuntos = $scope.proyecto.archivosAdjuntos.concat(idArchivos);
+        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
+        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
+        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
+          return !$scope.archivosPorEliminar.some( archivosPorEliminar => {
+            return archivosPorEliminar._id === archivoAdjunto._id
+          });
+        });
+        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
+        $scope.proyecto.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
+        console.log('(update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
       }
 
       //Usa el método $update de proyecto para enviar la petición PUT adecuada

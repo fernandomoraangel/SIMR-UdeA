@@ -29,6 +29,11 @@ export interface FileBasicInfo {
   lastModified: Date;
 }
 
+export interface FileDocumentInfo {
+  id: string;
+  name: string;
+  documentId: string;
+}
 
 @NgModule({
   declarations: [

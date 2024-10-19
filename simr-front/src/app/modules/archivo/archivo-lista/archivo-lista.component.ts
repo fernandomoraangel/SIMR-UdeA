@@ -5,7 +5,7 @@ import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SharedMessageData } from '../../../models/shared-message-data.interface';
-import { FileBasicInfo } from '../archivo.module';
+import { FileBasicInfo, FileDocumentInfo } from '../archivo.module';
 
 // interface file {
 //   id: string;
@@ -102,14 +102,16 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     });
   }
 
-  viewFile2(filename: string): void {
-    this.selectedFileForViewing = filename;
-  }
+  // viewFile2(filename: string): void {
+  //   this.selectedFileForViewing = filename;
+  // }
 
   prueba() {
     console.log('Prueba');
     alert(this.documentId);
     console.log('files prueba:', this.files);
+    this.messageToAngularJS = { type: 'PRUEBA', message: 'Hola desde Angular!!!!!!!!!!!' }
+    this.sendMessage(this.messageToAngularJS);
   }
 
 
@@ -275,6 +277,12 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
         this.archivoService.deleteFile(fileInfo.name, fileInfo.id, this.documentId).subscribe({
           next: (response) => {
             console.log('Archivo eliminado con éxito:', response.message);
+            const fileDeleted: FileDocumentInfo = {
+              id: fileInfo.id,
+              name: fileInfo.name,
+              documentId: this.documentId
+            };
+            this.sendMessage({ type: 'FILE_DELETED', status: 'SUCCESS', message: JSON.stringify(fileDeleted) });
             // this.loadFiles();
           },
           error: (error) => {

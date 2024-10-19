@@ -5,24 +5,36 @@ angular.module('archivos')
       scope: {
         templateType: '@',
         archivosCargados: '=?',
+        archivosPorEliminar: '=?',
         documentId: '@?',
         dbCollection: '@?'
       },
       templateUrl: function (element, attrs) {
         switch (attrs.templateType) {
           case 'create-view':
-            // Add your template for 'vista-create' here
             return 'archivos/templates/create-view.html';
           case 'detail-view':
-            // Add your template for 'vista-detail' here
             return 'archivos/templates/detail-view.html';
           case 'edit-view':
             return 'archivos/templates/edit-view.html';
           default:
             return `
-            <p>No template found ${attrs.templateType}</p>
-          `;
+              <p>No template found ${attrs.templateType}</p>
+            `;
         }
+      },
+
+      link: function (scope, element, attrs) {
+        // Imprimir un mensaje cuando la directiva se cargue
+        console.log('Directiva miDirectiva cargada');
+
+        // También puedes imprimir otros datos, como atributos o el scope
+        console.log('Atributos:', attrs);
+
+        // Imprimir cuando se haga clic en el elemento de la directiva
+        element.on('click', function () {
+          console.log('Elemento clickeado');
+        });
       },
 
       // controller: function ($scope) {
@@ -35,6 +47,12 @@ angular.module('archivos')
         $scope.archivosCargados = $scope.archivosCargados || [];
         // $scope.archivosCargados = ArchivoService.loadFiles();
         // $scope.archivosCargados = ArchivoService.getDocumentFiles($scope.dbCollection, $scope.documentId);
+
+
+        if ($attrs.templateType === 'edit-view') {
+          $scope.archivosPorEliminar = $scope.archivosPorEliminar || [];
+        }
+
 
         // if ($attrs.templateType === 'edit-view') {
         //   ArchivoService.getDocumentFiles($scope.dbCollection, $scope.documentId)
@@ -74,18 +92,6 @@ angular.module('archivos')
         // }
 
         console.log('(Directiva) archivosCargados:', $scope.archivosCargados);
-        // $scope.archivosCargados = [{
-        //   "nombre": "aurora-borealis.jpg",
-        //   "id": "670f51a5fb934de32915faf8",
-        //   "minioObjectName": "aurora-borealis-1729057188513.jpg"
-        // }];
-
-        // console.log('Cargando archivos...');
-        // $scope.archivosCargados = [{
-        //   "nombre": "aurora-borealis.jpg",
-        //   "id": "670f51a5fb934de32915faf8",
-        //   "minioObjectName": "aurora-borealis-1729057188513.jpg"
-        // }];
 
 
         console.log('documentId:', $scope.documentId);
@@ -122,16 +128,11 @@ angular.module('archivos')
         ArchivoService.agregarListener();
 
         $scope.subirArchivo = function () {
-          console.log('Subir archivo (Controlador)');
+          console.log('Subir archivo (Directiva)');
           console.log('documentId:', $scope.documentId);
           console.log('dbCollection:', $scope.dbCollection);
           ArchivoService.subirArchivo();
         };
-
-        $scope.correrPrueba210 = function () {
-          console.log('Prueba (Directiva)');
-          ArchivoService.correrPrueba210();
-        }
 
         $scope.mostrarArchivos = function () {
           console.log('Mostrar archivos');
@@ -141,9 +142,10 @@ angular.module('archivos')
         };
 
         $scope.eliminarArchivo = function (archivo) {
+          console.log('(Directiva) archivosCargados:', $scope.archivosCargados);
           console.log('(Eliminar archivo) archivo:', archivo);
           console.log('documentId:', $scope.documentId, 'dbCollection', $scope.dbCollection);
-          var index = $scope.archivosCargados.indexOf(archivo);
+          const index = $scope.archivosCargados.indexOf(archivo);
           if (index > -1) {
             Swal.fire({
               title: "¡Advertencia de eliminación!",
@@ -184,15 +186,28 @@ angular.module('archivos')
           }
         });
 
-        // $scope.$on('archivoSubido', function (event, fileInfo) {
-        //   console.log('Archivo subido! (Directiva):', fileInfo);
-        //   try {
-        //     $scope.archivosCargados.push(fileInfo);
-        //     console.log('Nuevo archivo cargado:', $scope.archivosCargados);
-        //   } catch (error) {
-        //     console.error('Error al agregar archivo:', error);
-        //   }
-        // });
+        // $scope.$on('mensajePrueba', function (event, data) {
+        $scope.$on('archivoEliminado', function (event, data) {
+          console.log('event:', event);
+          console.log('(Directiva) Archivo Eliminado:', data);
+          const fileDeleted = JSON.parse(data);
+          console.log('fileDeleted:', fileDeleted);
+
+          if (fileDeleted.documentId !== $scope.documentId) {
+            console.log('El archivo eliminado no pertenece a este documento.');
+            return;
+          }
+
+          console.log('archivosPorEliminar (antes):', $scope.archivosPorEliminar);
+          $scope.archivosPorEliminar.push({ _id: fileDeleted.id });
+          console.log('archivosPorEliminar (después):', $scope.archivosPorEliminar);
+
+          // console.log('archivosCargados (antes):', $scope.archivosCargados);
+          // $scope.archivosCargados = $scope.archivosCargados.filter((archivo) => {
+          //   return archivo.id !== fileDeleted.id;
+          // });
+          // console.log('archivosCargados (después):', $scope.archivosCargados);
+        });
 
         $scope.$on('$destroy', function () {
           ArchivoService.removerListener();
@@ -200,18 +215,3 @@ angular.module('archivos')
       }
     };
   }]);
-
-
-
-/***
-Utilizar la directiva en los diferentes módulos:
-
-<archivo-manager archivos-cargados="vm.archivosCargados" document-id="{{vm.obraId}}" db-collection="obras"></archivo-manager>
-
-Para implementar esta solución, sigue estos pasos:
-
-1. Actualiza el ArchivoService con el código proporcionado en el primer artifact.
-2. Crea un nuevo archivo para la directiva (por ejemplo, archivoManagerDirective.js) y agrega el código del segundo artifact.
-3. Asegúrate de que ambos archivos estén incluidos en tu index.html o en el bundle de tu aplicación.
-4. Utiliza la directiva <archivo-manager> en los templates de tus módulos donde necesites manejar archivos.
-***/
