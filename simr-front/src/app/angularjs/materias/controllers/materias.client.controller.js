@@ -42,6 +42,7 @@ angular.module("materias").controller("MateriasController", [
     $scope.diccionarios = Diccionarios.query();
     $scope.actorName = [];
     $scope.archivosCargados = [];
+    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.materiaId;
 
     var control = 0;
@@ -794,9 +795,21 @@ angular.module("materias").controller("MateriasController", [
         $scope.materia.vinculoRelacionado = $scope.idEnlaces;
       }
 
-      if ($scope.archivosCargados.length != 0) {
+      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
+        console.log('(update) Archivos cargados:', $scope.archivosCargados);
+        console.log('(update) materia.archivosAdjuntos:', $scope.materia.archivosAdjuntos);
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.materia.archivosAdjuntos = $scope.materia.archivosAdjuntos.concat(idArchivos);
+        console.log('(update) idArchivos:', idArchivos);
+        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
+        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
+        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
+          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
+            return archivosPorEliminar._id === archivoAdjunto._id
+          });
+        });
+        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
+        $scope.materia.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
+        console.log('(update) materia.archivosAdjuntos:', $scope.materia.archivosAdjuntos);
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

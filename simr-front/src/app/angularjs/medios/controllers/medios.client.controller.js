@@ -50,6 +50,7 @@ angular.module("medios").controller("MediosController", [
     $scope.idEnlaces = [];
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
+    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.medioId;
 
 
@@ -1063,11 +1064,23 @@ angular.module("medios").controller("MediosController", [
         $scope.medio.vinculoRelacionado = $scope.idEnlaces;
       }
 
-      if ($scope.archivosCargados.length != 0) {
+      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
+        console.log('(update) Archivos cargados:', $scope.archivosCargados);
+        console.log('(update) medio.archivosAdjuntos:', $scope.medio.archivosAdjuntos);
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.medio.archivosAdjuntos = $scope.medio.archivosAdjuntos.concat(idArchivos);
+        console.log('(update) idArchivos:', idArchivos);
+        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
+        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
+        const idArchivosAdjuntosPorActualizar = $scope.medio.archivosAdjuntos.filter(archivoAdjunto => {
+          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
+            return archivosPorEliminar._id === archivoAdjunto._id
+          });
+        });
+        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
+        $scope.medio.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
+        console.log('(update) medio.archivosAdjuntos:', $scope.medio.archivosAdjuntos);
       }
-      
+
       //Agregar actores
       for (var i in $scope.idActores) {
         actorObra = new ActoresObras({

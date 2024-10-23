@@ -42,6 +42,7 @@ angular.module("sistemas").controller("SistemasController", [
     $scope.sistemas = Sistemas.query();
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
+    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.sistemaId;
 
     var control = 0;
@@ -1231,9 +1232,21 @@ angular.module("sistemas").controller("SistemasController", [
         $scope.sistema.vinculoRelacionado = $scope.idEnlaces;
       }
 
-      if ($scope.archivosCargados.length != 0) {
+      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
+        console.log('(update) Archivos cargados:', $scope.archivosCargados);
+        console.log('(update) sistema.archivosAdjuntos:', $scope.sistema.archivosAdjuntos);
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.sistema.archivosAdjuntos = $scope.sistema.archivosAdjuntos.concat(idArchivos);
+        console.log('(update) idArchivos:', idArchivos);
+        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
+        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
+        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
+          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
+            return archivosPorEliminar._id === archivoAdjunto._id
+          });
+        });
+        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
+        $scope.sistema.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
+        console.log('(update) sistema.archivosAdjuntos:', $scope.sistema.archivosAdjuntos);
       }
 
       //Usa el método $update de obra para enviar la petición PUT adecuada

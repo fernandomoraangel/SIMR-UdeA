@@ -41,6 +41,7 @@ angular
       $scope.diccionarios = Diccionarios.query();
       $scope.generosNoMusicales = GenerosNoMusicales.query();
       $scope.archivosCargados = [];
+      $scope.archivosPorEliminar = [];
       $scope.documentId = $routeParams.generoNoMusicalId;
 
 
@@ -1184,9 +1185,21 @@ angular
           $scope.generoNoMusical.vinculoRelacionado = $scope.idEnlaces;
         }
 
-        if ($scope.archivosCargados.length != 0) {
+        if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
+          console.log('(update) Archivos cargados:', $scope.archivosCargados);
+          console.log('(update) generoNoMusical.archivosAdjuntos:', $scope.generoNoMusical.archivosAdjuntos);
           const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-          $scope.generoNoMusical.archivosAdjuntos = $scope.generoNoMusical.archivosAdjuntos.concat(idArchivos);
+          console.log('(update) idArchivos:', idArchivos);
+          console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
+          // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
+          const idArchivosAdjuntosPorActualizar = $scope.generoNoMusical.archivosAdjuntos.filter(archivoAdjunto => {
+            return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
+              return archivosPorEliminar._id === archivoAdjunto._id
+            });
+          });
+          console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
+          $scope.generoNoMusical.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
+          console.log('(update) generoNoMusical.archivosAdjuntos:', $scope.generoNoMusical.archivosAdjuntos);
         }
 
         //Usa el método $update de obra para enviar la petición PUT adecuada

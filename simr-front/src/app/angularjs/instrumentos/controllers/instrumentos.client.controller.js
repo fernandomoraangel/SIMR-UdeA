@@ -40,6 +40,7 @@ angular.module("instrumentos").controller("InstrumentosController", [
     $scope.proyectos = Proyectos.query();
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
+    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.instrumentoId;
 
     var control = 0;
@@ -893,9 +894,21 @@ angular.module("instrumentos").controller("InstrumentosController", [
         $scope.instrumento.vinculoRelacionado = $scope.idEnlaces;
       }
 
-      if ($scope.archivosCargados.length != 0) {
+      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
+        console.log('(update) Archivos cargados:', $scope.archivosCargados);
+        console.log('(update) instrumento.archivosAdjuntos:', $scope.instrumento.archivosAdjuntos);
         const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        $scope.instrumento.archivosAdjuntos = $scope.instrumento.archivosAdjuntos.concat(idArchivos);
+        console.log('(update) idArchivos:', idArchivos);
+        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
+        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
+        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
+          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
+            return archivosPorEliminar._id === archivoAdjunto._id
+          });
+        });
+        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
+        $scope.instrumento.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
+        console.log('(update) instrumento.archivosAdjuntos:', $scope.instrumento.archivosAdjuntos);
       }
 
 
