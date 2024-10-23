@@ -19,6 +19,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
+// Pipes
+// import { CapitalizeWordsPipe } from './capitalize-words.pipe';
 
 // Import the UpgradeModule from @angular/upgrade/static
 import { UpgradeModule } from '@angular/upgrade/static';
@@ -44,7 +46,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     HomeComponent,
     PageNotFoundComponent,
     SigninComponent,
-    SignupComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,

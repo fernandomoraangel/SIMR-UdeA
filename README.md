@@ -3,19 +3,45 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
 
 ## Funcionalidades por desarrollar
 1. Migración progresiva de AngularJS a Angular.
-2. Subir, descargar y visualizar archivos desde "Enlace o dirección" en cada formulario, reproducir audios y mostrar PDFs, vídeos o imágenes en una ventana nueva.
+2. ~~Subir, descargar y visualizar archivos desde "Enlace o dirección" en cada formulario, reproducir audios y mostrar PDFs, vídeos o imágenes en una ventana nueva.~~
 3. Implementar búsqueda general en cualquier campo, con expresiones similares y con operadores booleanos (en cualquier parte de la base de datos). -PUede ser con https://www.fusejs.io/ y https://www.npmjs.com/package/elasticlunr).
 4. Implementar sistema de roles y permisos. Todo usuario se registar como "solo lector", el administrador puede cambiar, crear o editar  roles y permisos de cada rol.
 5. Implementar recuperación de contraseña usando Passport.
 6. Visualizar registros en Markdown -puede ser con markdown-it-
 7. Cambiar selectores por campos de texto con autocompletado y abrir automáticamente "Crear" si no se encuentran en la BD.
-8. Agregar campos a Idioma para permitir listado ISO de idiomas o lenguas locales (entidad lingüstica, familia, lengua, otras denominaciones, ubicación geográfica, variantes (con ubicación geográfica)), notas
+8. Agregar campos a Idioma para permitir listado ISO de idiomas o lenguas locales (entidad lingüstica, familia, lengua, otras denominaciones, ubicación geográfica, variantes (con ubicación geográfica), notas
 9. Resolver Issues
 10. Modificaciones de seguridad solicitadas por UdeA (vulnerabilidades, certificado SSL, Configurar en modo producción).
 ## Funcionalidades futuras
-1.  Vista de grafo (géneros formas, materias, Medios, sistemas sonoros).-Puede ser con https://www.sigmajs.org/-
+1.  Vista de grafo (géneros formas, materias, Medios, sistemas sonoros).-Puede ser con https://www.sigmajs.org/
 2.  Ver anotaciones cartográfico temporales en línea de tiempo y/o en mapa.
 3.  Crear diseño Responsive.
+
+## Funcionalidades implementadas
+### 1. Implementación del sistema de archivos con [MinIO](https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html):
+  - La implementación se realizó en Angular.
+    #### 1.1 Del lado del cliente (Angular):
+    - Creación del módulo de archivos, que contiene (además de un servicio) tres componentes principales:
+    - `archivo-subir`: Para la subida de archivos.
+    - `archivo-lista`: Para cargar y mostrar los archivos adjuntos de un documentos de la base de datos. 
+    - `archivo-vista`: Para previsualizar los archivos en el navegador.      
+
+    #### 1.2 Del lado del servidor (Express):
+    - Creación del archivo `minio.js` dentro de la carpeta `config`. <br>
+        Este archivo contiene la lógica y las diferentes rutas (o _endpoints_) necesarios para la gestión de archivos en el sistema MinIO y MongoDB:
+    - Rutas principales:
+      - `[GET]` `/files/document-files`: Obtiene la lista de archivos adjuntos a un documento de MongoDB.
+      - `[POST]` `/files/upload`: Sube un archivo a MinIO y almacena la información en MongoDB.
+      - `[GET]` `/files/files`: Lista todos los archivos en un bucket de MinIO.
+      - `[GET]` `/files/download/:filename`: Descarga un archivo de MinIO.
+      - `[DELETE]` `/files/:filename`: Elimina un archivo de MinIO y actualiza las referencias en MongoDB.
+      - `[POST]` `/files/delete-multiple`: Elimina múltiples archivos de MinIO y actualiza las referencias en MongoDB.
+      - `[GET]` `/files/view/:filename`: Previsualiza archivos (soporta streaming de audio y video).
+    - MongoDB: Almacena metadatos en una coleccion llamada `archivos`, como el nombre del archivo, su tamaño, fecha de subida, y referencia al nombre de objeto almacenado en MinIO (`minioObjectName`).
+
+
+### 2. Comunicación de los frameworks AngularJS y Angular usando PostMessages.
+
 
 ## Otros pendientes
 
@@ -29,6 +55,24 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
 3. Crear directorio para la base de datos en C:\data\db
 4.     npm install -g npm-check-updates
 5.     npm start
+6. Configurar las variables de entorno en el proyecto Express (dentro de la carpeta `simr-back`):
+   1. Crear el archivo `.env` (sin nombre, sólo la extensión)
+   2. Copiar en el archivo `.env` el siguiente texto :
+    ```javascript
+      # Credenciales de MongoDB
+    MONGO_URI=mongodb://superAdmin:SOh3TbYhx8ypJPxmt1oOfL@localhost/simr
+    MONGO_DB_NAME=simr
+
+    # Credenciales de MinIO
+    MINIO_ENDPOINT=play.min.io
+    MINIO_PORT=9000
+    MINIO_USE_SSL=true
+    MINIO_ACCESS_KEY=Q3AM3UQ867SPQQA43P2F
+    MINIO_SECRET_KEY=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+
+    # Nombre del bucket de MinIO
+    MINIO_BUCKET_NAME=sistema-archivos-simr
+    ```
 
 ## Para reiniciar servidor automáticamente:
 1.     npm install nodemon -g
@@ -39,7 +83,7 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
 6.     Atack to node process
 
 ### Tutorial:
-[Tutorial nodemon](https://www.digitalocean.com/community/tutorials/workflow-nodemon-es)
+[Tutorial nodemon](]https://www.digitalocean.com/community/tutorials/workflow-nodemon-es)
 
 Usar ctrl+shift+v para visualizar Markdown
 
@@ -51,6 +95,7 @@ Usar ctrl+shift+v para visualizar Markdown
 3. Usar npm version para manejar versionado automático 
        npm version minor --force
 4. [Comandos NPM](https://docs.npmjs.com/cli/v9/commands/npm-version?v=true)
+5. [MinIO JavaScript API](https://min.io/docs/minio/linux/developers/javascript/API.html)
    
 ## GIT
 ~~~
@@ -177,7 +222,7 @@ pm2 monit
 mkdir ssl
 openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out simr.crt -keyout simr.key
 ~~~
-[Tutorial](]https://liukin.es/como-crear-certificados-autofirmados-en-ubuntu-linux/)
+~~[Tutorial](https://liukin.es/como-crear-certificados-autofirmados-en-ubuntu-linux/)~~
 
 10.  Instalar Nginx
 ~~~

@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { SharedMessageData } from '../../../models/shared-message-data.interface';
 import { FileBasicInfo, FileDocumentInfo } from '../archivo.module';
 
+
 // interface file {
 //   id: string;
 //   name: string;
@@ -78,7 +79,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     // this.fileUploadSubscription = this.archivoService.fileUploaded$.subscribe(() => {
     this.fileChangedSubscription = this.archivoService.fileChanged$.subscribe(() => {
       // this.loadFiles();
-      this.getDocumentFiles(this.dbCollection, this.documentId);
+      // this.getDocumentFiles(this.dbCollection, this.documentId);
+      this.loadDocumentFiles(this.dbCollection, this.documentId);
     });
   }
 
@@ -137,7 +139,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
 
       console.log('DB Collection:', this.dbCollection);
       console.log('Document ID:', this.documentId);
-      this.getDocumentFiles(this.dbCollection, this.documentId);
+      // this.getDocumentFiles(this.dbCollection, this.documentId);
+      this.loadDocumentFiles(this.dbCollection, this.documentId);
       // this.getDocumentFiles('actors', event.data.message);
       // this.getDocumentFiles(this.dbCollection, this.documentId);
 
@@ -377,7 +380,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
 
   }
 
-  getDocumentFiles(collection: string, documentId: string): void {
+  // getDocumentFiles(collection: string, documentId: string): void {
+  loadDocumentFiles(collection: string, documentId: string): void {
     console.log('Obteniendo archivos adjuntos...');
     this.loading = true;
     // this.archivoService.getFilesByActor(documentId).subscribe({

@@ -13,6 +13,7 @@ import { ArchivoService } from './archivo.service';
 // Módulos
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { SharedModule } from '../../shared/shared.module';
 
 // Rutas
 const routes: Routes = [
@@ -51,7 +52,8 @@ export interface FileDocumentInfo {
     CommonModule,
     RouterModule.forChild(routes),
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    SharedModule
   ],
   providers: [
     ArchivoService

@@ -8,15 +8,16 @@
   window.onresize = sendHeight;
 </script> -->
 
-<div>
+<!-- <div>
   <input type="text" placeholder="Escribe un mensaje" #myMessage>
   <button (click)="sendMessage(myMessage.value)">Enviar mensaje a AngularJS</button>
   <p>Mensaje de AngularJS: {{documentId}}</p>
   <button (click)="prueba()">Prueba</button>
-</div>
+</div> -->
 
 <div class="file-list">
-  <h2>Archivos</h2>
+  <h1>{{dbCollection.toUpperCase()}}</h1>
+  <h2>Archivos {{ dbCollection | capitalizeWords }}</h2>
   <div *ngIf="loading" class="loading">Cargando archivos...</div>
   <div *ngIf="!loading && files.length > 0">
     <button (click)="deleteSelectedFiles()" [disabled]="selectedFiles.size === 0" class="delete-multiple-btn">
