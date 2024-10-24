@@ -43,7 +43,11 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   }
 
   receiveMessage(event: MessageEvent) {
-    if (event.origin !== this.angularJSOrigin) return;
+    // if (event.origin !== this.angularJSOrigin) return;
+    if (event.origin !== this.angularJSOrigin) {
+      // alert('Origen no permitido');
+      return;
+    }
 
     this.ngZone.run(() => {
       this.messageFromAngularJS = event.data;

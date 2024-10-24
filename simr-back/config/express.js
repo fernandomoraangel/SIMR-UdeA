@@ -15,16 +15,16 @@ const cors = require('cors');
 module.exports = function () {
 	// Instanciar la aplicación
 	const app = express();
-	
+
 	// Rutas para la API
 	const apiRouter = express.Router();
-	
+
 	// ================== CORS ===========================
-	
+
 	// // Configurando manualmente los encabezados CORS
 	// app.use((req, res, next) => {
 	// 	res.header('Access-Control-Allow-Origin', 'http://localhost:4200'); // Reemplazar con la URL del frontend
-			// res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+	// res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
 	// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	// 	res.header('Access-Control-Allow-Credentials', 'true'); // Añadir este encabezado
 	// 	next();
@@ -32,11 +32,18 @@ module.exports = function () {
 
 	// Usando el middleware CORS de Express
 	app.use(cors({
-		origin: 'http://localhost:4200',  // Permitir solicitudes solo desde http://localhost:4200
+		origin: ['http://localhost:4200', 'http://localhost:3000'],  // Permitir solicitudes solo desde http://localhost:4200
 		methods: ['GET', 'POST', 'DELETE', 'PUT'], // Permitir los métodos que necesitas
 		allowedHeaders: ['Content-Type', 'Authorization'], // Especifica los encabezados permitidos
 		credentials: true // Permitir envío de cookies y credenciales si es necesario
 	}));
+
+	// app.use(cors({
+	// 	origin: 'http://localhost:4200',  // Permitir solicitudes solo desde http://localhost:4200
+	// 	methods: ['GET', 'POST', 'DELETE', 'PUT'], // Permitir los métodos que necesitas
+	// 	allowedHeaders: ['Content-Type', 'Authorization'], // Especifica los encabezados permitidos
+	// 	credentials: true // Permitir envío de cookies y credenciales si es necesario
+	// }));
 
 	// ===================================================
 
@@ -67,6 +74,13 @@ module.exports = function () {
 		resave: true,
 		secret: config.sessionSecret
 	}));
+
+	// app.use(session({
+	// 	saveUninitialized: true,
+	// 	resave: true,
+	// 	secret: config.sessionSecret
+	// }));
+
 
 	// app.use(session({
 	// 	secret: config.sessionSecret, // Reemplaza con una clave secreta segura

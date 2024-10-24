@@ -3,45 +3,45 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
 
 ## Funcionalidades por desarrollar
 1. Migración progresiva de AngularJS a Angular.
-2. ~~Subir, descargar y visualizar archivos desde "Enlace o dirección" en cada formulario, reproducir audios y mostrar PDFs, vídeos o imágenes en una ventana nueva.~~
-3. Implementar búsqueda general en cualquier campo, con expresiones similares y con operadores booleanos (en cualquier parte de la base de datos). -PUede ser con https://www.fusejs.io/ y https://www.npmjs.com/package/elasticlunr).
-4. Implementar sistema de roles y permisos. Todo usuario se registar como "solo lector", el administrador puede cambiar, crear o editar  roles y permisos de cada rol.
-5. Implementar recuperación de contraseña usando Passport.
-6. Visualizar registros en Markdown -puede ser con markdown-it-
-7. Cambiar selectores por campos de texto con autocompletado y abrir automáticamente "Crear" si no se encuentran en la BD.
-8. Agregar campos a Idioma para permitir listado ISO de idiomas o lenguas locales (entidad lingüstica, familia, lengua, otras denominaciones, ubicación geográfica, variantes (con ubicación geográfica), notas
-9. Resolver Issues
-10. Modificaciones de seguridad solicitadas por UdeA (vulnerabilidades, certificado SSL, Configurar en modo producción).
+2. Implementar búsqueda general en cualquier campo, con expresiones similares y con operadores booleanos (en cualquier parte de la base de datos). Puede ser con https://www.fusejs.io/ y https://www.npmjs.com/package/elasticlunr).
+3. Implementar sistema de roles y permisos. Todo usuario se registrar como "solo lector", el administrador puede cambiar, crear o editar roles y permisos de cada rol.
+4. Implementar recuperación de contraseña usando Passport.
+5. Visualizar registros en Markdown -puede ser con markdown-it-
+6. Cambiar selectores por campos de texto con autocompletado y abrir automáticamente "Crear" si no se encuentran en la BD.
+7. Agregar campos a Idioma para permitir listado ISO de idiomas o lenguas locales (entidad lingüística, familia, lengua, otras denominaciones, ubicación geográfica, variantes (con ubicación geográfica), notas
+8. Resolver Issues
+9. Modificaciones de seguridad solicitadas por UdeA (vulnerabilidades, certificado SSL, Configurar en modo producción).
+
+## Funcionalidades implementadas
+### 1. Implementación del sistema de archivos con [MinIO](https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html):
+  - Subir, descargar y visualizar archivos: reproducir audios y mostrar PDFs, vídeos o imágenes en una ventana nueva.
+  - Implementación realizada en Angular.
+    #### 1.1 Del lado del cliente (Angular):
+    - Creación del módulo de archivos, que contiene (además de un servicio) tres componentes principales:
+      - `archivo-subir`: Para la subida de archivos.
+      - `archivo-lista`: Para cargar y mostrar los archivos adjuntos de un documento de la base de datos. 
+      - `archivo-vista`: Para previsualizar los archivos en el navegador.      
+
+    #### 1.2 Del lado del servidor (Express):
+    - Creación del archivo `minio.js` dentro de la carpeta `config` (proyecto `simr-back`). <br>
+        Este archivo contiene la lógica y las diferentes rutas (o _endpoints_) necesarios para la gestión de archivos en el sistema MinIO y MongoDB:
+    - Rutas principales:
+      - [GET] `/files/document-files`: Obtiene la lista de archivos adjuntos a un documento de MongoDB.
+      - [POST] `/files/upload`: Sube un archivo a MinIO y almacena la información en MongoDB.
+      - [GET] `/files/files`: Lista todos los archivos en un bucket de MinIO.
+      - [GET] `/files/download/:filename`: Descarga un archivo de MinIO.
+      - [DELETE] `/files/:filename`: Elimina un archivo de MinIO y actualiza las referencias en MongoDB.
+      - [POST] `/files/delete-multiple`: Elimina múltiples archivos de MinIO y actualiza las referencias en MongoDB.
+      - [GET] `/files/view/:filename`: Previsualiza archivos (soporta streaming de audio y video).
+    - MongoDB: Almacena metadatos en una colección llamada `archivos`, como el nombre del archivo, su tamaño, fecha de subida, y referencia al nombre de objeto almacenado en MinIO (`minioObjectName`).
+    - Las Entidades que hacen uso de archivos tienen asignada la propiedad `archivosAdjuntos` en su modelo, la cual guarda un listado de referencia a la colección `archivos`.
+
+### 2. Comunicación de los frameworks AngularJS y Angular usando PostMessages.
+
 ## Funcionalidades futuras
 1.  Vista de grafo (géneros formas, materias, Medios, sistemas sonoros).-Puede ser con https://www.sigmajs.org/
 2.  Ver anotaciones cartográfico temporales en línea de tiempo y/o en mapa.
 3.  Crear diseño Responsive.
-
-## Funcionalidades implementadas
-### 1. Implementación del sistema de archivos con [MinIO](https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html):
-  - La implementación se realizó en Angular.
-    #### 1.1 Del lado del cliente (Angular):
-    - Creación del módulo de archivos, que contiene (además de un servicio) tres componentes principales:
-    - `archivo-subir`: Para la subida de archivos.
-    - `archivo-lista`: Para cargar y mostrar los archivos adjuntos de un documentos de la base de datos. 
-    - `archivo-vista`: Para previsualizar los archivos en el navegador.      
-
-    #### 1.2 Del lado del servidor (Express):
-    - Creación del archivo `minio.js` dentro de la carpeta `config`. <br>
-        Este archivo contiene la lógica y las diferentes rutas (o _endpoints_) necesarios para la gestión de archivos en el sistema MinIO y MongoDB:
-    - Rutas principales:
-      - `[GET]` `/files/document-files`: Obtiene la lista de archivos adjuntos a un documento de MongoDB.
-      - `[POST]` `/files/upload`: Sube un archivo a MinIO y almacena la información en MongoDB.
-      - `[GET]` `/files/files`: Lista todos los archivos en un bucket de MinIO.
-      - `[GET]` `/files/download/:filename`: Descarga un archivo de MinIO.
-      - `[DELETE]` `/files/:filename`: Elimina un archivo de MinIO y actualiza las referencias en MongoDB.
-      - `[POST]` `/files/delete-multiple`: Elimina múltiples archivos de MinIO y actualiza las referencias en MongoDB.
-      - `[GET]` `/files/view/:filename`: Previsualiza archivos (soporta streaming de audio y video).
-    - MongoDB: Almacena metadatos en una coleccion llamada `archivos`, como el nombre del archivo, su tamaño, fecha de subida, y referencia al nombre de objeto almacenado en MinIO (`minioObjectName`).
-
-
-### 2. Comunicación de los frameworks AngularJS y Angular usando PostMessages.
-
 
 ## Otros pendientes
 
@@ -52,14 +52,13 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
 ## Instrucciones (En desarrollo)
 1. Instalar Mongodb, Nodejs
 2. Incluir el directorio de Mongodb en el path
-3. Crear directorio para la base de datos en C:\data\db
+3. Crear directorio para la base de datos en `C:\data\db`
 4.     npm install -g npm-check-updates
-5.     npm start
-6. Configurar las variables de entorno en el proyecto Express (dentro de la carpeta `simr-back`):
+5. Configurar las variables de entorno en el proyecto Express (dentro de la carpeta `simr-back`):
    1. Crear el archivo `.env` (sin nombre, sólo la extensión)
    2. Copiar en el archivo `.env` el siguiente texto :
     ```javascript
-      # Credenciales de MongoDB
+    # Credenciales de MongoDB
     MONGO_URI=mongodb://superAdmin:SOh3TbYhx8ypJPxmt1oOfL@localhost/simr
     MONGO_DB_NAME=simr
 
@@ -73,6 +72,19 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
     # Nombre del bucket de MinIO
     MINIO_BUCKET_NAME=sistema-archivos-simr
     ```
+  6. Correr Backend (`simr-back`):
+      ```
+      npm start
+      ``` 
+      O correrlo con Nodemon <br>
+      (Para que reinicie el servidor cada vez que detecte un cambio en el código):
+      ```
+      npm run dev
+      ```
+  7. Correr Frontend (`simr-front`):
+      ```
+      npm start
+      ```
 
 ## Para reiniciar servidor automáticamente:
 1.     npm install nodemon -g
@@ -86,7 +98,6 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
 [Tutorial nodemon](]https://www.digitalocean.com/community/tutorials/workflow-nodemon-es)
 
 Usar ctrl+shift+v para visualizar Markdown
-
 
 ## Útiles
 
@@ -114,8 +125,7 @@ git push origin main
 5. Construir sistema de roles y permisos.
 6. Construir sistema de auditoría. Revisar el modelo de datos de la auditoría.
 7. Verificar existencia de URL en campo enlaces.
-8.  Subir archivos.
-9.  Versionado semántico.
+8.  Versionado semántico.
     
 ## Autenticación Mongo DB
 1. Conectar a Mongod
@@ -169,7 +179,7 @@ db.changeUserPassword("accountUser", "SOh3TbYhx8ypJPxmt1oOfL")
 [Y si no](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition)
 [Solucionar problemas de dependencias incumplidas](https://askubuntu.com/questions/1403619/mongodb-install-fails-on-ubuntu-22-04-depends-on-libssl1-1-but-it-is-not-insta)
 
-Verificar que Mongo está corriendo y agregarlo para que inicie automaticamente
+Verificar que Mongo está corriendo y agregarlo para que inicie automáticamente
 ~~~
 sudo systemctl start mongod
 sudo systemctl status mongod
@@ -186,7 +196,6 @@ Reparar permisos de Mongodb (si aparece un error)
 sudo chown -R mongodb:mongodb /var/lib/mongodb
 sudo chown mongodb:mongodb /tmp/mongodb-27017.sock
 ~~~
-
 
 5. Instalar Express
 ~~~
@@ -230,7 +239,7 @@ sudo apt-get install nginx
 #Crear o editar archivo de configuración
 sudo nano /etc/nginx/nginx.conf
 ~~~
-Agregar a archivo de configuracion
+Agregar a archivo de configuración
 ~~~
 # HTTPS server
 server {
@@ -261,7 +270,7 @@ sudo systemctl enable nginx
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw allow 27017/tcp
-#También 27017 si se va a utilizar compass para administrar las bases de datos
+#También 27017 si se va a utilizar Compass para administrar las bases de datos
 sudo ufw enable
 ~~~
  (en Suse):
@@ -287,7 +296,6 @@ firewall-cmd --reload
 firewall-cmd --permanent --zone=public --add-port=27017/tcp
 ~~~
 
-
 Importar usando Compass la colección Diccionarios, como JSON
 
 ## Configuración de IP 
@@ -309,7 +317,6 @@ Para ver los servidores DNS configurados, puede usar el siguiente comando:
 Reemplaza <interface> por el nombre de la interfaz de red que deseas ver la información. Ejemplo: 'eth0' o 'wlan0'
 ##Acceso por escritorio remoto
 
-
 1. [Configurar XRDP](http://www.scalingbits.com/aws/sap/suse/gnome)
 
 2. [Conectarse XRDP](https://hotsechu.wordpress.com/2021/01/31/conectarse-a-un-equipo-linux-desde-windows-con-xrdp/)
@@ -321,3 +328,4 @@ git fetch
 ~~~
 git pull
 ~~~
+

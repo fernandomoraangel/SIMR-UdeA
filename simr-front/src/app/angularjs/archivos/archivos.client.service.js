@@ -90,8 +90,13 @@ angular.module('archivos', [])
         switch (type) {
           case 'FILE_LIST':
             if (angularWindowFileList && !angularWindowFileList.closed) {
-              console.log('Enviando mensaje a Angula(FILE_LIST):', messagePreprocessed);
+              console.log('Enviando mensaje a Angular(FILE_LIST):', messagePreprocessed);
+              console.log('Enviando mensaje a Angular - angularAppOrigin (FILE_LIST):', angularAppOrigin);
               angularWindowFileList.postMessage(messagePreprocessed, angularAppOrigin);
+              // angularWindowFileList.postMessage({
+              //   type: 'DATA',
+              //   payload: messagePreprocessed
+              // }, angularAppOrigin);
             }
             break;
           case 'FILE_UPLOAD':

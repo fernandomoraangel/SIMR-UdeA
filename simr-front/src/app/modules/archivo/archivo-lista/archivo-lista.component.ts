@@ -118,9 +118,13 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
 
 
   receiveMessage(event: MessageEvent) {
+    console.log('event', event);
+    console.log('event.origin', event.origin);
+    console.log('angularJSOrigin', this.angularJSOrigin);
     // if (event.origin !== this.angularJSOrigin) return;
     if (event.origin !== this.angularJSOrigin) {
-      alert('Origen no permitido');
+      console.log('Origen no permitido', this.angularJSOrigin, '!=', event.origin);
+      // alert(`Origen no permitido ${this.angularJSOrigin} != ${event.origin}`);
       return;
     }
 
