@@ -40,7 +40,6 @@ angular.module("instrumentos").controller("InstrumentosController", [
     $scope.proyectos = Proyectos.query();
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
-    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.instrumentoId;
 
     var control = 0;
@@ -872,68 +871,58 @@ angular.module("instrumentos").controller("InstrumentosController", [
     };
 
     //Método controller para actualizar una única obra
-    $scope.update = function () {
-      //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+    $scope.update = async function () {
+      try {
 
-      if ($scope.idAlias.length != 0) {
-        $scope.instrumento.alias = $scope.idAlias;
-      }
-      if ($scope.idProyectos.length != 0) {
-        $scope.instrumento.proyectosAsociados = $scope.idProyectos;
-      }
-      if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
-        $scope.instrumento.anotacionCartograficoTemporal =
-          $scope.idAnotacionesCartograficoTemporales;
-      }
+        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
 
-      if ($scope.idDescriptores.length != 0) {
-        $scope.instrumento.descriptorLibre = $scope.idDescriptores;
-      }
-
-      if ($scope.idEnlaces.length != 0) {
-        $scope.instrumento.vinculoRelacionado = $scope.idEnlaces;
-      }
-
-      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-        console.log('(update) Archivos cargados:', $scope.archivosCargados);
-        console.log('(update) instrumento.archivosAdjuntos:', $scope.instrumento.archivosAdjuntos);
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        console.log('(update) idArchivos:', idArchivos);
-        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
-          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
-            return archivosPorEliminar._id === archivoAdjunto._id
-          });
-        });
-        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-        $scope.instrumento.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-        console.log('(update) instrumento.archivosAdjuntos:', $scope.instrumento.archivosAdjuntos);
-      }
-
-
-      //Usa el método $update de obra para enviar la petición PUT adecuada
-      $scope.instrumento.$update(
-        function () {
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha actualizado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
-          //Si la actualización es correcta, redireccionar
-          $location.path("instrumentos/" + $scope.instrumento._id);
-        },
-        function (errorResponse) {
-          Swal.fire({
-            title: "¡Error!",
-            text: ($scope.error = errorResponse.data.message),
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-          $scope.error = errorResponse.data.message;
+        if ($scope.idAlias.length != 0) {
+          $scope.instrumento.alias = $scope.idAlias;
         }
-      );
+        if ($scope.idProyectos.length != 0) {
+          $scope.instrumento.proyectosAsociados = $scope.idProyectos;
+        }
+        if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
+          $scope.instrumento.anotacionCartograficoTemporal =
+            $scope.idAnotacionesCartograficoTemporales;
+        }
+
+        if ($scope.idDescriptores.length != 0) {
+          $scope.instrumento.descriptorLibre = $scope.idDescriptores;
+        }
+
+        if ($scope.idEnlaces.length != 0) {
+          $scope.instrumento.vinculoRelacionado = $scope.idEnlaces;
+        }
+
+        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('instrumentos', $scope.documentId, $scope.archivosCargados);
+        $scope.instrumento.archivosAdjuntos = archivosActualizados || [];
+
+        //Usa el método $update de obra para enviar la petición PUT adecuada
+        $scope.instrumento.$update(
+          function () {
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha actualizado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+            //Si la actualización es correcta, redireccionar
+            $location.path("instrumentos/" + $scope.instrumento._id);
+          },
+          function (errorResponse) {
+            Swal.fire({
+              title: "¡Error!",
+              text: ($scope.error = errorResponse.data.message),
+              icon: "error",
+              confirmButtonText: "Cerrar",
+            });
+            $scope.error = errorResponse.data.message;
+          }
+        );
+      } catch (error) {
+        console.error('Error al actualizar:', error);
+      }
     };
 
     //Método controller para borrar una obra

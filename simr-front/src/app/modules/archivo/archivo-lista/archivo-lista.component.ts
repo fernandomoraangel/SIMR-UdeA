@@ -28,6 +28,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   allSelected: boolean = false;
   selectedFileForViewing: string | null = null;
 
+  varPrueba = 0;
+
   // actorId: string | null = null;
   // actorId: string = "";
   dbCollection: string = "";
@@ -118,6 +120,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
 
 
   receiveMessage(event: MessageEvent) {
+    console.log('varPrueba:', this.varPrueba);
+    this.varPrueba++;
     console.log('event', event);
     console.log('event.origin', event.origin);
     console.log('angularJSOrigin', this.angularJSOrigin);
@@ -127,6 +131,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       // alert(`Origen no permitido ${this.angularJSOrigin} != ${event.origin}`);
       return;
     }
+
+    console.log('continua en el proceso receiveMessage');
 
     this.ngZone.run(() => {
       this.messageFromAngularJS = event.data;

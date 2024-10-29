@@ -63,7 +63,6 @@ angular.module("proyectos").controller("ProyectosController", [
     $scope.diccionarios = Diccionarios.query();
     var control = 0;
     $scope.archivosCargados = [];
-    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.proyectoId;
 
     //Preparar datos
@@ -72,7 +71,6 @@ angular.module("proyectos").controller("ProyectosController", [
       $scope.idFechas = this.proyecto.fechasAsociadas;
       $scope.idDescriptores = this.proyecto.descriptoresLibres;
       $scope.idEnlaces = this.proyecto.vinculoRelacionado;
-      $scope.archivosCargados = this.proyecto.archivosAdjuntos;
     };
 
     // Funciones auxiliares
@@ -819,63 +817,61 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     //Método controller para actualizar una única proyectos
-    $scope.update = function () {
-      //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
-      if ($scope.idActores.length != 0) {
-        $scope.proyecto.investigadores = $scope.idActores;
-      }
-
-      if ($scope.idFechas.length != 0) {
-        $scope.proyecto.fechasAsociadas = $scope.idFechas;
-      }
-
-      if ($scope.idDescriptores.length != 0) {
-        $scope.proyecto.descriptoresLibres = $scope.idDescriptores;
-      }
-
-      if ($scope.idEnlaces.length != 0) {
-        $scope.proyecto.vinculoRelacionado = $scope.idEnlaces;
-      }
-
-      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-        console.log('(update) Archivos cargados:', $scope.archivosCargados);
-        console.log('(update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        console.log('(update) idArchivos:', idArchivos);
-        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
-          return !$scope.archivosPorEliminar.some( archivosPorEliminar => {
-            return archivosPorEliminar._id === archivoAdjunto._id
-          });
-        });
-        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-        $scope.proyecto.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-        console.log('(update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
-      }
-
-      //Usa el método $update de proyecto para enviar la petición PUT adecuada
-      $scope.proyecto.$update(
-        function () {
-          //Si la actualización es correcta, redireccionar
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha actualizado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
-          $location.path("proyectos/" + $scope.proyecto._id);
-        },
-        function (errorResponse) {
-          Swal.fire({
-            title: "¡Error!",
-            text: ($scope.error = errorResponse.data.message),
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-          $scope.error = errorResponse.data.message;
+    $scope.update = async function () {
+      try {
+        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+        if ($scope.idActores.length != 0) {
+          $scope.proyecto.investigadores = $scope.idActores;
         }
-      );
+
+        if ($scope.idFechas.length != 0) {
+          $scope.proyecto.fechasAsociadas = $scope.idFechas;
+        }
+
+        if ($scope.idDescriptores.length != 0) {
+          $scope.proyecto.descriptoresLibres = $scope.idDescriptores;
+        }
+
+        if ($scope.idEnlaces.length != 0) {
+          $scope.proyecto.vinculoRelacionado = $scope.idEnlaces;
+        }
+
+        console.log('1. (update) Archivos cargados:', $scope.archivosCargados);
+
+        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('proyectos', $scope.documentId, $scope.archivosCargados);
+
+        console.log('3. (update) archivosActualizados:', archivosActualizados);
+
+        $scope.proyecto.archivosAdjuntos = archivosActualizados || [];
+
+        console.log('4. (update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
+
+        //Usa el método $update de proyecto para enviar la petición PUT adecuada
+        $scope.proyecto.$update(
+          function () {
+            //Si la actualización es correcta, redireccionar
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha actualizado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+            $location.path("proyectos/" + $scope.proyecto._id);
+          },
+          function (errorResponse) {
+            Swal.fire({
+              title: "¡Error!",
+              text: ($scope.error = errorResponse.data.message),
+              icon: "error",
+              confirmButtonText: "Cerrar",
+            });
+            $scope.error = errorResponse.data.message;
+          }
+        );
+
+      } catch (error) {
+        console.error('Error al actualizar:', error);
+      }
     };
 
     //Método controller para borrar una obra

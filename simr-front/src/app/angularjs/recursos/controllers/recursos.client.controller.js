@@ -66,7 +66,6 @@ angular.module("recursos").controller("RecursosController", [
     $scope.errorclass = "form-control";
     var control = 0;
     $scope.archivosCargados = [];
-    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.recursoId;
 
 
@@ -1951,100 +1950,91 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     //Método controller para actualizar una única obra
-    $scope.update = function () {
-      //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
-      if ($scope.idObrasRelacionadas.length != 0) {
-        $scope.recurso.obrasRelacionadas = $scope.idObrasRelacionadas;
-      }
+    $scope.update = async function () {
+      try {
 
-      if ($scope.idNormalizados.length != 0) {
-        $scope.recurso.numeroNormalizado = $scope.idNormalizados;
-      }
-
-      if ($scope.idMenciones.length != 0) {
-        $scope.recurso.mencionResponsabilidad = $scope.idMenciones;
-      }
-
-      if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
-        $scope.recurso.anotacionCartograficoTemporal =
-          $scope.idAnotacionesCartograficoTemporales;
-      }
-
-      if ($scope.idContenedores.length != 0) {
-        $scope.recurso.contenedores = $scope.idContenedores;
-      }
-
-      if ($scope.idFuentes.length != 0) {
-        $scope.recurso.fuente = $scope.idFuentes;
-      }
-
-      if ($scope.idTipos.length != 0) {
-        $scope.recurso.tiposDeRecurso = $scope.idTipos;
-      }
-
-      if ($scope.idMaterias.length != 0) {
-        $scope.recurso.materia = $scope.idMaterias;
-      }
-
-      if ($scope.idIdiomas.length != 0) {
-        $scope.recurso.idiomas = $scope.idIdiomas;
-      }
-
-      if ($scope.idDTecnicas.length != 0) {
-        $scope.recurso.descripcionTecnica = $scope.idDTecnicas;
-      }
-
-      if ($scope.idProyectos.length != 0) {
-        $scope.recurso.proyectos = $scope.idProyectos;
-      }
-
-      if ($scope.idDescriptores.length != 0) {
-        $scope.recurso.descriptorLibre = $scope.idDescriptores;
-      }
-
-      if ($scope.idEnlaces.length != 0) {
-        $scope.recurso.vinculoRelacionado = $scope.idEnlaces;
-      }
-
-      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-        console.log('(update) Archivos cargados:', $scope.archivosCargados);
-        console.log('(update) recurso.archivosAdjuntos:', $scope.recurso.archivosAdjuntos);
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        console.log('(update) idArchivos:', idArchivos);
-        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
-          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
-            return archivosPorEliminar._id === archivoAdjunto._id
-          });
-        });
-        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-        $scope.recurso.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-        console.log('(update) recurso.archivosAdjuntos:', $scope.recurso.archivosAdjuntos);
-      }
-
-      //Usa el método $update de recurso para enviar la petición PUT adecuada
-      $scope.recurso.$update(
-        function () {
-          //Si la actualización es correcta, redireccionar
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha actualizado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
-          $location.path("recursos/" + $scope.recurso._id);
-        },
-        function (errorResponse) {
-          Swal.fire({
-            title: "¡Error!",
-            text: ($scope.error = errorResponse.data.message),
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-          $scope.error = errorResponse.data.message;
+        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+        if ($scope.idObrasRelacionadas.length != 0) {
+          $scope.recurso.obrasRelacionadas = $scope.idObrasRelacionadas;
         }
-      );
+
+        if ($scope.idNormalizados.length != 0) {
+          $scope.recurso.numeroNormalizado = $scope.idNormalizados;
+        }
+
+        if ($scope.idMenciones.length != 0) {
+          $scope.recurso.mencionResponsabilidad = $scope.idMenciones;
+        }
+
+        if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
+          $scope.recurso.anotacionCartograficoTemporal =
+            $scope.idAnotacionesCartograficoTemporales;
+        }
+
+        if ($scope.idContenedores.length != 0) {
+          $scope.recurso.contenedores = $scope.idContenedores;
+        }
+
+        if ($scope.idFuentes.length != 0) {
+          $scope.recurso.fuente = $scope.idFuentes;
+        }
+
+        if ($scope.idTipos.length != 0) {
+          $scope.recurso.tiposDeRecurso = $scope.idTipos;
+        }
+
+        if ($scope.idMaterias.length != 0) {
+          $scope.recurso.materia = $scope.idMaterias;
+        }
+
+        if ($scope.idIdiomas.length != 0) {
+          $scope.recurso.idiomas = $scope.idIdiomas;
+        }
+
+        if ($scope.idDTecnicas.length != 0) {
+          $scope.recurso.descripcionTecnica = $scope.idDTecnicas;
+        }
+
+        if ($scope.idProyectos.length != 0) {
+          $scope.recurso.proyectos = $scope.idProyectos;
+        }
+
+        if ($scope.idDescriptores.length != 0) {
+          $scope.recurso.descriptorLibre = $scope.idDescriptores;
+        }
+
+        if ($scope.idEnlaces.length != 0) {
+          $scope.recurso.vinculoRelacionado = $scope.idEnlaces;
+        }
+
+        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('recursos', $scope.documentId, $scope.archivosCargados);
+        $scope.recurso.archivosAdjuntos = archivosActualizados || [];
+
+        //Usa el método $update de recurso para enviar la petición PUT adecuada
+        $scope.recurso.$update(
+          function () {
+            //Si la actualización es correcta, redireccionar
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha actualizado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+            $location.path("recursos/" + $scope.recurso._id);
+          },
+          function (errorResponse) {
+            Swal.fire({
+              title: "¡Error!",
+              text: ($scope.error = errorResponse.data.message),
+              icon: "error",
+              confirmButtonText: "Cerrar",
+            });
+            $scope.error = errorResponse.data.message;
+          }
+        );
+      } catch (error) {
+        console.error('Error al actualizar:', error);
+      }
     };
 
     //Método controller para borrar una obra

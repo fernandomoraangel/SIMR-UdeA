@@ -50,7 +50,6 @@ angular.module("medios").controller("MediosController", [
     $scope.idEnlaces = [];
     $scope.diccionarios = Diccionarios.query();
     $scope.archivosCargados = [];
-    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.medioId;
 
 
@@ -1041,89 +1040,80 @@ angular.module("medios").controller("MediosController", [
     };
 
     //Método controller para actualizar una única obra
-    $scope.update = function () {
-      //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
-      if ($scope.idAlias.length != 0) {
-        $scope.medio.alias = $scope.idAlias;
-      }
-      if ($scope.idInstrumentos.length != 0) {
-        $scope.medio.instrumentos = $scope.idInstrumentos;
-      }
-      if ($scope.idProyectos.length != 0) {
-        $scope.medio.proyectosAsociados = $scope.idProyectos;
-      }
+    $scope.update = async function () {
+      try {
 
-      if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
-        $scope.medio.anotacionCartograficoTemporal =
-          $scope.idAnotacionesCartograficoTemporales;
-      }
-      if ($scope.idDescriptores.length != 0) {
-        $scope.medio.descriptorLibre = $scope.idDescriptores;
-      }
-      if ($scope.idEnlaces.length != 0) {
-        $scope.medio.vinculoRelacionado = $scope.idEnlaces;
-      }
+        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+        if ($scope.idAlias.length != 0) {
+          $scope.medio.alias = $scope.idAlias;
+        }
+        if ($scope.idInstrumentos.length != 0) {
+          $scope.medio.instrumentos = $scope.idInstrumentos;
+        }
+        if ($scope.idProyectos.length != 0) {
+          $scope.medio.proyectosAsociados = $scope.idProyectos;
+        }
 
-      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-        console.log('(update) Archivos cargados:', $scope.archivosCargados);
-        console.log('(update) medio.archivosAdjuntos:', $scope.medio.archivosAdjuntos);
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        console.log('(update) idArchivos:', idArchivos);
-        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-        const idArchivosAdjuntosPorActualizar = $scope.medio.archivosAdjuntos.filter(archivoAdjunto => {
-          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
-            return archivosPorEliminar._id === archivoAdjunto._id
+        if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
+          $scope.medio.anotacionCartograficoTemporal =
+            $scope.idAnotacionesCartograficoTemporales;
+        }
+        if ($scope.idDescriptores.length != 0) {
+          $scope.medio.descriptorLibre = $scope.idDescriptores;
+        }
+        if ($scope.idEnlaces.length != 0) {
+          $scope.medio.vinculoRelacionado = $scope.idEnlaces;
+        }
+
+        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('medios', $scope.documentId, $scope.archivosCargados);
+        $scope.medio.archivosAdjuntos = archivosActualizados || [];
+
+        //Agregar actores
+        for (var i in $scope.idActores) {
+          actorObra = new ActoresObras({
+            actor: $scope.idActores[i].id,
+            obra: $routeParams.obraId,
+            roll: $scope.idActores[i].rol,
           });
-        });
-        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-        $scope.medio.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-        console.log('(update) medio.archivosAdjuntos:', $scope.medio.archivosAdjuntos);
-      }
 
-      //Agregar actores
-      for (var i in $scope.idActores) {
-        actorObra = new ActoresObras({
-          actor: $scope.idActores[i].id,
-          obra: $routeParams.obraId,
-          roll: $scope.idActores[i].rol,
-        });
+          //Usar el método '$save' de actor para enviar una petición POST apropiada
+          actorObra.$save(
+            function (response) {
+              //$location.path('obras/' + obraId);
+            },
+            function (errorResponse) {
+              //En caso contrario, presentar mensaje de error
+              $scope.error = errorResponse.data.message;
+              alert("Problemas al crear el registro " + $scope.error);
+            }
+          );
+        }
 
-        //Usar el método '$save' de actor para enviar una petición POST apropiada
-        actorObra.$save(
-          function (response) {
-            //$location.path('obras/' + obraId);
+        //Usa el método $update de obra para enviar la petición PUT adecuada
+        $scope.medio.$update(
+          function () {
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha actualizado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+            //Si la actualización es correcta, redireccionar
+            $location.path("medios/" + $scope.medio._id);
           },
           function (errorResponse) {
-            //En caso contrario, presentar mensaje de error
+            Swal.fire({
+              title: "¡Error!",
+              text: ($scope.error = errorResponse.data.message),
+              icon: "error",
+              confirmButtonText: "Cerrar",
+            });
             $scope.error = errorResponse.data.message;
-            alert("Problemas al crear el registro " + $scope.error);
           }
         );
+      } catch (error) {
+        console.error('Error al actualizar:', error);
       }
-
-      //Usa el método $update de obra para enviar la petición PUT adecuada
-      $scope.medio.$update(
-        function () {
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha actualizado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
-          //Si la actualización es correcta, redireccionar
-          $location.path("medios/" + $scope.medio._id);
-        },
-        function (errorResponse) {
-          Swal.fire({
-            title: "¡Error!",
-            text: ($scope.error = errorResponse.data.message),
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-          $scope.error = errorResponse.data.message;
-        }
-      );
     };
 
     //Método controller para borrar una obra

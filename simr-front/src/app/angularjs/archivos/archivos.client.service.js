@@ -4,30 +4,71 @@ angular.module('archivos', [])
     '$http',
     '$window',
     '$rootScope',
-    function ($resource, $http, $window, $rootScope) {
+    '$q',
+    function ($resource, $http, $window, $rootScope, $q) {
       // var apiUrl = 'http://localhost:3000';
-      var apiUrl = 'http://localhost:3000/files';
-      var angularAppOrigin = 'http://localhost:4200';
-      var Archivo = $resource(apiUrl + '/api/archivos/:archivoId', { archivoId: '@_id' }, { update: { method: 'PUT' } });
-      var angularWindowFileUpload;
-      var angularWindowFileList;
-      var listenerActivo = false;
-      var mensajeAEnviar = { type: '', message: '', dbCollection: '' }; // Mensaje a Enviar
+      const apiUrl = 'http://localhost:3000/files';
+      const angularAppOrigin = 'http://localhost:4200';
+      const Archivo = $resource(apiUrl + '/api/archivos/:archivoId', { archivoId: '@_id' }, { update: { method: 'PUT' } });
 
-      var service = {
-        agregarListener: agregarListener,
-        removerListener: removerListener,
-        subirArchivo: subirArchivo,
-        getDocumentFiles: getDocumentFiles,
-        mostrarArchivos: mostrarArchivos,
-        deleteFile: deleteFile,
-        getAll: function () { return Archivo.query().$promise; },
-        get: function (id) { return Archivo.get({ archivoId: id }).$promise; },
-        create: function (archivo) { return Archivo.save(archivo).$promise; },
-        update: function (archivo) { return Archivo.update({ archivoId: archivo._id }, archivo).$promise; }
+      // Variables para ventanas
+      let angularWindowFileUpload;
+      let angularWindowFileList;
+      let listenerActivo = false;
+      let mensajeAEnviar = { type: '', message: '', dbCollection: '' };
+
+      // Mapeo de tipos de documento a sus colecciones
+      const collectionMapping = {
+        'actores': 'Actor',
+        'generos': 'Genero Musical',
+        'generosNoMusicales': 'Genero No Musical',
+        'instrumentos': 'Instrumento',
+        'materias': 'Materia',
+        'medios': 'Medio Sonoro',
+        'obras': 'Obra',
+        'proyectos': 'Proyecto',
+        'recursos': 'Recurso',
+        'sistemas': 'Sistema Sonoro'
       };
 
+      // Funciones base del servicio
+      const service = {
+        agregarListener,
+        removerListener,
+        subirArchivo,
+        getDocumentFiles,
+        mostrarArchivos,
+        deleteFile,
+        getAll: () => Archivo.query().$promise,
+        get: (id) => Archivo.get({ archivoId: id }).$promise,
+        create: (archivo) => Archivo.save(archivo).$promise,
+        update: (archivo) => Archivo.update({ archivoId: archivo._id }, archivo).$promise,
+        actualizarListadoArchivos
+      };
+
+      // const collectionApi = $resource('/api/:coleccion/:id', { coleccion: '@coleccion', id: '@id' }, {
+      //   get: { method: 'GET' }
+      // });
+
+      // Método general para obtener una colección
+      // function obtenerColeccion(coleccion, id) {
+      //   // Verificar si la colección es válida
+      //   if (!collectionMapping[collectionType]) {
+      //     throw new Error(`Tipo de colección no soportado: ${collectionType}`);
+      //   }
+      //   return $q((resolve, reject) => {
+      //     api.get({ coleccion: coleccion, id: id }, (data) => {
+      //       resolve(data);
+      //     }, (error) => {
+      //       reject(error);
+      //     });
+      //   });
+      // }
+
+      // Función para recibir mensajes
       function recibirMensaje(event) {
+        // console.log('(ArchivoService - recibirMensaje) event.origin:', event.origin);
+        // console.log('(ArchivoService - recibirMensaje) angularAppOrigin:', angularAppOrigin);
         if (event.origin !== angularAppOrigin) return;
 
         let messageType = '';
@@ -60,7 +101,7 @@ angular.module('archivos', [])
             return;
         }
 
-        $rootScope.$apply(function () {
+        $rootScope.$apply(() => {
           $rootScope.$broadcast(messageType, data);
         });
       }
@@ -115,6 +156,27 @@ angular.module('archivos', [])
           angularWindowFileUpload.focus();
         } else {
           angularWindowFileUpload = $window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
+        }
+      }
+
+      async function actualizarListadoArchivos(dbCollection, documentId, archivosNuevos) {
+        try {
+          if (!collectionMapping[dbCollection]) {
+            throw new Error(`Tipo de colección no soportado: ${dbCollection}`);
+          }
+          let archivosActuales = await getDocumentFiles(dbCollection, documentId) || [];
+          console.log('2.1 (ArchivoService) Archivos actuales:', archivosActuales);
+          console.log('2.2 (ArchivoService) Archivos nuevos:', archivosNuevos);
+
+          // Preparando datos para actualizar
+          archivosActuales = archivosActuales.map(archivo => ({ _id: archivo.id }));
+          const archivosNuevosPreparados = archivosNuevos.map(archivo => ({ _id: archivo.id }));
+
+          const archivosActualizados = [...archivosActuales, ...(archivosNuevosPreparados || [])];
+          return archivosActualizados;
+        } catch (error) {
+          console.error(`Error actualizando archivos de ${dbCollection}:`, error);
+          throw error;
         }
       }
 

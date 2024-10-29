@@ -41,7 +41,6 @@ angular
       $scope.diccionarios = Diccionarios.query();
       $scope.generosNoMusicales = GenerosNoMusicales.query();
       $scope.archivosCargados = [];
-      $scope.archivosPorEliminar = [];
       $scope.documentId = $routeParams.generoNoMusicalId;
 
 
@@ -1149,81 +1148,72 @@ angular
       };
 
       //Método controller para actualizar una única obra
-      $scope.update = function () {
-        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
-        if ($scope.idAlias.length != 0) {
-          $scope.generoNoMusical.alias = $scope.idAlias;
-        }
+      $scope.update = async function () {
+        try {
 
-        if ($scope.idGenerosRelacionados.length != 0) {
-          $scope.generoNoMusical.generosRelacionados =
-            $scope.idGenerosRelacionados;
-        }
-
-        if ($scope.idPadres.length != 0) {
-          $scope.generoNoMusical.padres = $scope.idPadres;
-        }
-
-        if ($scope.idHijos.length != 0) {
-          $scope.generoNoMusical.hijos = $scope.idHijos;
-        }
-
-        if ($scope.idIdiomas.length != 0) {
-          $scope.generoNoMusical.idioma = $scope.idIdiomas;
-        }
-
-        if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
-          $scope.generoNoMusical.anotacionCartograficoTemporal =
-            $scope.idAnotacionesCartograficoTemporales;
-        }
-
-        if ($scope.idDescriptores.length != 0) {
-          $scope.generoNoMusical.descriptorLibre = $scope.idDescriptores;
-        }
-
-        if ($scope.idEnlaces.length != 0) {
-          $scope.generoNoMusical.vinculoRelacionado = $scope.idEnlaces;
-        }
-
-        if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-          console.log('(update) Archivos cargados:', $scope.archivosCargados);
-          console.log('(update) generoNoMusical.archivosAdjuntos:', $scope.generoNoMusical.archivosAdjuntos);
-          const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-          console.log('(update) idArchivos:', idArchivos);
-          console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-          // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-          const idArchivosAdjuntosPorActualizar = $scope.generoNoMusical.archivosAdjuntos.filter(archivoAdjunto => {
-            return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
-              return archivosPorEliminar._id === archivoAdjunto._id
-            });
-          });
-          console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-          $scope.generoNoMusical.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-          console.log('(update) generoNoMusical.archivosAdjuntos:', $scope.generoNoMusical.archivosAdjuntos);
-        }
-
-        //Usa el método $update de obra para enviar la petición PUT adecuada
-        $scope.generoNoMusical.$update(
-          function () {
-            //Si la actualización es correcta, redireccionar
-            Swal.fire({
-              title: "¡Registro correcto!",
-              text: "El registro se ha actualizado correctamente",
-              icon: "success",
-              confirmButtonText: "Cerrar",
-            });
-            $location.path("generosnomusicales/" + $scope.generoNoMusical._id);
-          },
-          function (errorResponse) {
-            Swal.fire({
-              title: "¡Error!",
-              text: ($scope.error = errorResponse.data.message),
-              icon: "error",
-              confirmButtonText: "Cerrar",
-            });
-            $scope.error = errorResponse.data.message;
+          //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+          if ($scope.idAlias.length != 0) {
+            $scope.generoNoMusical.alias = $scope.idAlias;
           }
-        );
+
+          if ($scope.idGenerosRelacionados.length != 0) {
+            $scope.generoNoMusical.generosRelacionados =
+              $scope.idGenerosRelacionados;
+          }
+
+          if ($scope.idPadres.length != 0) {
+            $scope.generoNoMusical.padres = $scope.idPadres;
+          }
+
+          if ($scope.idHijos.length != 0) {
+            $scope.generoNoMusical.hijos = $scope.idHijos;
+          }
+
+          if ($scope.idIdiomas.length != 0) {
+            $scope.generoNoMusical.idioma = $scope.idIdiomas;
+          }
+
+          if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
+            $scope.generoNoMusical.anotacionCartograficoTemporal =
+              $scope.idAnotacionesCartograficoTemporales;
+          }
+
+          if ($scope.idDescriptores.length != 0) {
+            $scope.generoNoMusical.descriptorLibre = $scope.idDescriptores;
+          }
+
+          if ($scope.idEnlaces.length != 0) {
+            $scope.generoNoMusical.vinculoRelacionado = $scope.idEnlaces;
+          }
+
+          const archivosActualizados = await ArchivoService.actualizarListadoArchivos('generosNoMusicales', $scope.documentId, $scope.archivosCargados);
+          $scope.generoNoMusical.archivosAdjuntos = archivosActualizados || [];
+
+          //Usa el método $update de obra para enviar la petición PUT adecuada
+          $scope.generoNoMusical.$update(
+            function () {
+              //Si la actualización es correcta, redireccionar
+              Swal.fire({
+                title: "¡Registro correcto!",
+                text: "El registro se ha actualizado correctamente",
+                icon: "success",
+                confirmButtonText: "Cerrar",
+              });
+              $location.path("generosnomusicales/" + $scope.generoNoMusical._id);
+            },
+            function (errorResponse) {
+              Swal.fire({
+                title: "¡Error!",
+                text: ($scope.error = errorResponse.data.message),
+                icon: "error",
+                confirmButtonText: "Cerrar",
+              });
+              $scope.error = errorResponse.data.message;
+            }
+          );
+        } catch (error) {
+          console.error('Error al actualizar:', error);
+        }
       };
 
       //Método controller para borrar una obra

@@ -29,7 +29,6 @@ angular.module("actores").controller("ActoresController", [
     $scope.idDescriptores = [];
     $scope.idEnlaces = [];
     $scope.archivosCargados = [];
-    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.actorId;
     $scope.actores = Actores.query();
     // $scope.archivos = Archivos.query();
@@ -134,7 +133,6 @@ angular.module("actores").controller("ActoresController", [
       $scope.idDescriptores = this.actor.descriptores;
       $scope.idEnlaces = this.actor.vinculoRelacionado;
       $scope.archivosCargados = this.actor.archivosAdjuntos;
-
     };
     // Ver
     $scope.verContenedores = function (x) {
@@ -613,7 +611,7 @@ angular.module("actores").controller("ActoresController", [
     var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
     var angularWindowFileUpload;
     var angularWindowFileList
-    
+
     /*
       filename,
       originalName,
@@ -1016,64 +1014,55 @@ angular.module("actores").controller("ActoresController", [
     };
 
     //Método controller para actualizar una única actor
-    $scope.update = function () {
-      //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
-      if ($scope.idContenedores.length != 0) {
-        $scope.actor.contenedor = $scope.idContenedores;
-      }
-
-      if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
-        $scope.actor.anotacionCartograficoTemporal =
-          $scope.idAnotacionesCartograficoTemporales;
-      }
-
-      if ($scope.idDescriptores.length != 0) {
-        $scope.actor.descriptores = $scope.idDescriptores;
-      }
-
-      if ($scope.idEnlaces.length != 0) {
-        $scope.actor.vinculoRelacionado = $scope.idEnlaces;
-      }
-
-      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-        console.log('(update) Archivos cargados:', $scope.archivosCargados);
-        console.log('(update) actor.archivosAdjuntos:', $scope.actor.archivosAdjuntos);
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        console.log('(update) idArchivos:', idArchivos);
-        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
-          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
-            return archivosPorEliminar._id === archivoAdjunto._id
-          });
-        });
-        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-        $scope.actor.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-        console.log('(update) actor.archivosAdjuntos:', $scope.actor.archivosAdjuntos);
-      }
-
-      //Usa el método $update de actor para enviar la petición PUT adecuada
-      $scope.actor.$update(
-        function () {
-          //Si la actualización es correcta, redireccionar
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha actualizado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
-          $location.path("actores/" + $scope.actor._id);
-        },
-        function (errorResponse) {
-          Swal.fire({
-            title: "¡Error!",
-            text: ($scope.error = errorResponse.data.message),
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-          $scope.error = errorResponse.data.message;
+    $scope.update = async function () {
+      try {
+        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+        if ($scope.idContenedores.length != 0) {
+          $scope.actor.contenedor = $scope.idContenedores;
         }
-      );
+
+        if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
+          $scope.actor.anotacionCartograficoTemporal =
+            $scope.idAnotacionesCartograficoTemporales;
+        }
+
+        if ($scope.idDescriptores.length != 0) {
+          $scope.actor.descriptores = $scope.idDescriptores;
+        }
+
+        if ($scope.idEnlaces.length != 0) {
+          $scope.actor.vinculoRelacionado = $scope.idEnlaces;
+        }
+
+        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('actores', $scope.documentId, $scope.archivosCargados);
+        $scope.actor.archivosAdjuntos = archivosActualizados || [];
+
+
+        //Usa el método $update de actor para enviar la petición PUT adecuada
+        $scope.actor.$update(
+          function () {
+            //Si la actualización es correcta, redireccionar
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha actualizado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+            $location.path("actores/" + $scope.actor._id);
+          },
+          function (errorResponse) {
+            Swal.fire({
+              title: "¡Error!",
+              text: ($scope.error = errorResponse.data.message),
+              icon: "error",
+              confirmButtonText: "Cerrar",
+            });
+            $scope.error = errorResponse.data.message;
+          }
+        );
+      } catch (error) {
+        console.error('Error al actualizar:', error);
+      }
     };
 
     //Método controller para borrar una actor
@@ -1135,10 +1124,10 @@ angular.module("actores").controller("ActoresController", [
     };
 
     // Limpiar el listener cuando se destruya el $scope
-    $scope.$on('$destroy', function() {
+    $scope.$on('$destroy', function () {
       window.removeEventListener('message', messageListener);
       console.log('Listener de message removido');
     });
-    
+
   },
 ]);

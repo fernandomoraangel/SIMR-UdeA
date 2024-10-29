@@ -122,7 +122,6 @@ angular.module("obras").controller("ObrasController", [
     $scope.campo = "";
     var control = 0;
     $scope.archivosCargados = [];
-    $scope.archivosPorEliminar = [];
     $scope.documentId = $routeParams.obraId;
 
 
@@ -2080,102 +2079,93 @@ angular.module("obras").controller("ObrasController", [
     };
 
     //Método controller para actualizar una única obra
-    $scope.update = function () {
-      //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
-      if ($scope.idDenominacionesRegionales.length != 0) {
-        $scope.obra.denominacionRegional = $scope.idDenominacionesRegionales;
-      }
-      if ($scope.idActores.length != 0) {
-        $scope.obra.actores = $scope.idActores;
-      }
-      if ($scope.idContenedores.length != 0) {
-        $scope.obra.contenedores = $scope.idContenedores;
-      }
+    $scope.update = async function () {
+      try {
 
-      if ($scope.idAsientosLigados.length != 0) {
-        $scope.obra.asientoLigado = $scope.idAsientosLigados;
-      }
-
-      if ($scope.idGeneros.length != 0) {
-        $scope.obra.generosFormas = $scope.idGeneros;
-      }
-
-      if ($scope.idGenerosNoMusicales.length != 0) {
-        $scope.obra.GenerosFormasNoMusicales = $scope.idGenerosNoMusicales;
-      }
-
-      if ($scope.idMaterias.length != 0) {
-        $scope.obra.materias = $scope.idMaterias;
-      }
-
-      if ($scope.idMedios.length != 0) {
-        $scope.obra.mediosSonoros = $scope.idMedios;
-      }
-
-      if ($scope.idSistemas.length != 0) {
-        $scope.obra.sistemasSonoros = $scope.idSistemas;
-      }
-
-      if ($scope.idIdiomas.length != 0) {
-        $scope.obra.idiomas = $scope.idIdiomas;
-      }
-
-      if ($scope.idProyectos.length != 0) {
-        $scope.obra.proyectos = $scope.idProyectos;
-      }
-
-      if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
-        $scope.obra.anotacionCartograficoTemporal =
-          $scope.idAnotacionesCartograficoTemporales;
-      }
-
-      if ($scope.idDescriptores.length != 0) {
-        $scope.obra.descriptores = $scope.idDescriptores;
-      }
-
-      if ($scope.idEnlaces.length != 0) {
-        $scope.obra.vinculosRelacionados = $scope.idEnlaces;
-      }
-
-      if ($scope.archivosCargados.length != 0 || $scope.archivosPorEliminar.length != 0) {
-        console.log('(update) Archivos cargados:', $scope.archivosCargados);
-        console.log('(update) obra.archivosAdjuntos:', $scope.obra.archivosAdjuntos);
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-        console.log('(update) idArchivos:', idArchivos);
-        console.log('(update) archivosPorEliminar:', $scope.archivosPorEliminar);
-        // Filtro de archivos por actualizar de los archivos adjuntos del proyecto
-        const idArchivosAdjuntosPorActualizar = $scope.proyecto.archivosAdjuntos.filter(archivoAdjunto => {
-          return !$scope.archivosPorEliminar.some(archivosPorEliminar => {
-            return archivosPorEliminar._id === archivoAdjunto._id
-          });
-        });
-        console.log('(update) idArchivosAdjuntosPorActualizar:', idArchivosAdjuntosPorActualizar);
-        $scope.obra.archivosAdjuntos = idArchivosAdjuntosPorActualizar.concat(idArchivos);
-        console.log('(update) obra.archivosAdjuntos:', $scope.obra.archivosAdjuntos);
-      }
-
-      //Usa el método $update de obra para enviar la petición PUT adecuada
-      $scope.obra.$update(
-        function () {
-          //Si la actualización es correcta, redireccionar
-          Swal.fire({
-            title: "¡Registro correcto!",
-            text: "El registro se ha actualizado correctamente",
-            icon: "success",
-            confirmButtonText: "Cerrar",
-          });
-          $location.path("obras/" + $scope.obra._id);
-        },
-        function (errorResponse) {
-          Swal.fire({
-            title: "¡Error!",
-            text: ($scope.error = errorResponse.data.message),
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-          $scope.error = errorResponse.data.message;
+        //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
+        if ($scope.idDenominacionesRegionales.length != 0) {
+          $scope.obra.denominacionRegional = $scope.idDenominacionesRegionales;
         }
-      );
+        if ($scope.idActores.length != 0) {
+          $scope.obra.actores = $scope.idActores;
+        }
+        if ($scope.idContenedores.length != 0) {
+          $scope.obra.contenedores = $scope.idContenedores;
+        }
+
+        if ($scope.idAsientosLigados.length != 0) {
+          $scope.obra.asientoLigado = $scope.idAsientosLigados;
+        }
+
+        if ($scope.idGeneros.length != 0) {
+          $scope.obra.generosFormas = $scope.idGeneros;
+        }
+
+        if ($scope.idGenerosNoMusicales.length != 0) {
+          $scope.obra.GenerosFormasNoMusicales = $scope.idGenerosNoMusicales;
+        }
+
+        if ($scope.idMaterias.length != 0) {
+          $scope.obra.materias = $scope.idMaterias;
+        }
+
+        if ($scope.idMedios.length != 0) {
+          $scope.obra.mediosSonoros = $scope.idMedios;
+        }
+
+        if ($scope.idSistemas.length != 0) {
+          $scope.obra.sistemasSonoros = $scope.idSistemas;
+        }
+
+        if ($scope.idIdiomas.length != 0) {
+          $scope.obra.idiomas = $scope.idIdiomas;
+        }
+
+        if ($scope.idProyectos.length != 0) {
+          $scope.obra.proyectos = $scope.idProyectos;
+        }
+
+        if ($scope.idAnotacionesCartograficoTemporales.length != 0) {
+          $scope.obra.anotacionCartograficoTemporal =
+            $scope.idAnotacionesCartograficoTemporales;
+        }
+
+        if ($scope.idDescriptores.length != 0) {
+          $scope.obra.descriptores = $scope.idDescriptores;
+        }
+
+        if ($scope.idEnlaces.length != 0) {
+          $scope.obra.vinculosRelacionados = $scope.idEnlaces;
+        }
+
+        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('obras', $scope.documentId, $scope.archivosCargados);
+        $scope.obra.archivosAdjuntos = archivosActualizados || [];
+
+        //Usa el método $update de obra para enviar la petición PUT adecuada
+        $scope.obra.$update(
+          function () {
+            //Si la actualización es correcta, redireccionar
+            Swal.fire({
+              title: "¡Registro correcto!",
+              text: "El registro se ha actualizado correctamente",
+              icon: "success",
+              confirmButtonText: "Cerrar",
+            });
+            $location.path("obras/" + $scope.obra._id);
+          },
+          function (errorResponse) {
+            Swal.fire({
+              title: "¡Error!",
+              text: ($scope.error = errorResponse.data.message),
+              icon: "error",
+              confirmButtonText: "Cerrar",
+            });
+            $scope.error = errorResponse.data.message;
+          }
+        );
+      } catch (error) {
+        console.error('Error al actualizar:', error);
+      }
     };
 
     //Método controller para borrar una obra
