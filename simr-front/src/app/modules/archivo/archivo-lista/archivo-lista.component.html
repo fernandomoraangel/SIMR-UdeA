@@ -1,29 +1,12 @@
-<!-- <script>
-  function sendHeight() {
-    const height = document.body.scrollHeight;
-    parent.postMessage(height, 'http://localhost:3000');  // Cambia 'http://localhost:3000' por el dominio de tu página principal
-  }
-
-  window.onload = sendHeight;
-  window.onresize = sendHeight;
-</script> -->
-
-<!-- <div>
-  <input type="text" placeholder="Escribe un mensaje" #myMessage>
-  <button (click)="sendMessage(myMessage.value)">Enviar mensaje a AngularJS</button>
-  <p>Mensaje de AngularJS: {{documentId}}</p>
-  <button (click)="prueba()">Prueba</button>
-</div> -->
-
 <div class="file-list">
-  <h1>{{dbCollection.toUpperCase()}}</h1>
-  <h2>Archivos {{ dbCollection | capitalizeWords }}</h2>
+  <h2>{{dbCollection.toUpperCase()}}</h2>
+  <h3 style="font-style: italic;">{{ documentName | capitalizeWords }}</h3>
+  <h4>Archivos</h4>
   <div *ngIf="loading" class="loading">Cargando archivos...</div>
   <div *ngIf="!loading && files.length > 0">
-    <button (click)="deleteSelectedFiles()" [disabled]="selectedFiles.size === 0" class="delete-multiple-btn">
-      Eliminar seleccionados ({{ selectedFiles.size }})
+    <button (click)="deleteSelectedFiles()" [disabled]="selectedFiles.length === 0" class="delete-multiple-btn">
+      Eliminar seleccionados ({{ selectedFiles.length }})
     </button>
-    <!-- <table *ngIf="!loading && files.length > 0"> -->
     <table>
       <thead>
         <tr>
@@ -39,7 +22,8 @@
       <tbody>
         <tr *ngFor="let file of files">
           <td>
-            <input type="checkbox" [checked]="selectedFiles.has(file.name)" (change)="toggleFileSelection(file.name)">
+            <!-- <input type="checkbox" [checked]="selectedFiles.has(file.name)" (change)="toggleFileSelection(file.name)"> -->
+            <input type="checkbox" [checked]="isInSelectedFiles(file.id)" (change)="toggleFileSelection(file)">
           </td>
           <td>{{ file.name }}</td>
           <td>{{ formatBytes(file.size) }}</td>
@@ -57,5 +41,3 @@
     No hay archivos disponibles.
   </div>
 </div>
-
-<!-- <app-archivo-vista *ngIf="selectedFileForViewing" [filename]="selectedFileForViewing"></app-archivo-vista> -->

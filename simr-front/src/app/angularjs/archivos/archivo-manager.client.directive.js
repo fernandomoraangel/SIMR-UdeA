@@ -7,6 +7,7 @@ angular.module('archivos')
         archivosCargados: '=?',
         archivosPorEliminar: '=?',
         documentId: '@?',
+        documentName: '@?',
         dbCollection: '@?'
       },
       templateUrl: function (element, attrs) {
@@ -37,87 +38,19 @@ angular.module('archivos')
         });
       },
 
-      // controller: function ($scope) {
       controller: function ($scope, $element, $attrs) {
 
         // Inicializar valores por defecto para atributos opcionales
         $scope.templateType = $scope.templateType || 'default';
         $scope.documentId = $scope.documentId || '';
+        $scope.documentName = $attrs.documentName || '';        // $scope.documentName = $scope.documentName || '';
         $scope.dbCollection = $scope.dbCollection || '';
         $scope.archivosCargados = $scope.archivosCargados || [];
-        // $scope.archivosCargados = ArchivoService.loadFiles();
-        // $scope.archivosCargados = ArchivoService.getDocumentFiles($scope.dbCollection, $scope.documentId);
 
 
         if ($attrs.templateType === 'edit-view') {
           $scope.archivosPorEliminar = $scope.archivosPorEliminar || [];
         }
-
-
-        // if ($attrs.templateType === 'edit-view') {
-        //   ArchivoService.getDocumentFiles($scope.dbCollection, $scope.documentId)
-        //     .then(response => {
-        //       console.log('response:', response);
-
-        //       $scope.archivosCargados = response.map(archivo => {
-        //         return {
-        //           nombre: archivo.name,
-        //           id: archivo.id,
-        //           minioObjectName: archivo.name
-        //         };
-        //       });
-
-        //       console.log('(Directive - getDocumentFiles) archivosCargados:', $scope.archivosCargados);
-
-        //       // $scope.archivosCargados = response;
-
-        //       // Usamos map para cambiar los nombres de los atributos
-
-        //       // let datos = response.map(archivo => {
-        //       //   return {
-        //       //     nombre: archivo.name,
-        //       //     id: archivo.id,
-        //       //     minioObjectName: archivo.name
-        //       //   };
-        //       // });
-        //       // console.log('datos:', datos);
-
-        //     })
-        //     .catch(error => {
-        //       console.error('Error al obtener los archivos:', error);
-        //       $scope.archivosCargados = [];
-        //     });
-        // } else {
-        //   $scope.archivosCargados = [];
-        // }
-
-        console.log('(Directiva) archivosCargados:', $scope.archivosCargados);
-
-
-        console.log('documentId:', $scope.documentId);
-        console.log('dbCollection:', $scope.dbCollection);
-
-        $scope.loadFiles = function () {
-          console.log('(loadFiles) Cargando archivos...');
-          $scope.archivosCargados = [{
-            "nombre": "aurora-borealis.jpg",
-            "id": "670f51a5fb934de32915faf8",
-            "minioObjectName": "aurora-borealis-1729057188513.jpg"
-          }];
-          // $scope.$apply();
-          // ArchivoService.getAll().then(function (response) {
-          //   console.log('Archivos cargados:', response);
-          //   $scope.archivosCargados = response;
-          // });
-        };
-
-
-        // Initialize archivosCargados if not defined
-        // if (!$scope.archivosCargados) {
-        // $scope.archivosCargados = [];
-        // $scope.archivosCargados = [{ nombre: 'archivo1' }, { nombre: 'archivo2' }];
-        // console.log('archivosCargados inicializado:', $scope.archivosCargados);
-        // }
 
         // Verificar si se proporcionaron atributos "requeridos"
         if (!$attrs.templateType) {
@@ -128,17 +61,11 @@ angular.module('archivos')
         ArchivoService.agregarListener();
 
         $scope.subirArchivo = function () {
-          console.log('Subir archivo (Directiva)');
-          console.log('documentId:', $scope.documentId);
-          console.log('dbCollection:', $scope.dbCollection);
           ArchivoService.subirArchivo();
         };
 
         $scope.mostrarArchivos = function () {
-          console.log('Mostrar archivos');
-          console.log('documentId:', $scope.documentId);
-          console.log('dbCollection:', $scope.dbCollection);
-          ArchivoService.mostrarArchivos($scope.documentId, $scope.dbCollection);
+          ArchivoService.mostrarArchivos($scope.documentId, $scope.documentName, $scope.dbCollection);
         };
 
         $scope.eliminarArchivo = function (archivo) {
@@ -158,11 +85,8 @@ angular.module('archivos')
               cancelButtonText: "Cancelar",
             }).then((result) => {
               if (result.isConfirmed) {
-                // ArchivoService.deleteFile(archivo.minioObjectName)
                 ArchivoService.deleteFile(archivo.minioObjectName, archivo.id);
                 $scope.archivosCargados.splice(index, 1);
-                // funcion propia de Angular.Js refresca mi scope y recarga mis datos
-                // $scope.$apply();
                 Swal.fire(
                   "Eliminado!",
                   "El archivo ha sido eliminado.",
@@ -178,35 +102,9 @@ angular.module('archivos')
           try {
             $scope.archivosCargados.push(fileInfo);
             console.log('Nuevo archivo cargado:', $scope.archivosCargados);
-            // if (!$scope.$$phase) {
-            //   $scope.$apply();
-            // }
           } catch (error) {
             console.error('Error al agregar archivo:', error);
           }
-        });
-
-        // $scope.$on('mensajePrueba', function (event, data) {
-        $scope.$on('archivoEliminado', function (event, data) {
-          console.log('event:', event);
-          console.log('(Directiva) Archivo Eliminado:', data);
-          const fileDeleted = JSON.parse(data);
-          console.log('fileDeleted:', fileDeleted);
-
-          if (fileDeleted.documentId !== $scope.documentId) {
-            console.log('El archivo eliminado no pertenece a este documento.');
-            return;
-          }
-
-          console.log('archivosPorEliminar (antes):', $scope.archivosPorEliminar);
-          $scope.archivosPorEliminar.push({ _id: fileDeleted.id });
-          console.log('archivosPorEliminar (después):', $scope.archivosPorEliminar);
-
-          // console.log('archivosCargados (antes):', $scope.archivosCargados);
-          // $scope.archivosCargados = $scope.archivosCargados.filter((archivo) => {
-          //   return archivo.id !== fileDeleted.id;
-          // });
-          // console.log('archivosCargados (después):', $scope.archivosCargados);
         });
 
         $scope.$on('$destroy', function () {

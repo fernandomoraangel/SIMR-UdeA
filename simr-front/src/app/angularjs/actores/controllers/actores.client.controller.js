@@ -132,7 +132,7 @@ angular.module("actores").controller("ActoresController", [
         this.actor.anotacionCartograficoTemporal;
       $scope.idDescriptores = this.actor.descriptores;
       $scope.idEnlaces = this.actor.vinculoRelacionado;
-      $scope.archivosCargados = this.actor.archivosAdjuntos;
+      // $scope.archivosCargados = this.actor.archivosAdjuntos;
     };
     // Ver
     $scope.verContenedores = function (x) {
@@ -792,59 +792,59 @@ angular.module("actores").controller("ActoresController", [
     // }, false);
 
 
-    $scope.archivoAdd = function () {
-      if (this.fileInfo === undefined || this.fileInfo == null) {
-        Swal.fire({
-          title: "¡Error!",
-          text: "Aún no ha subido algún archivo",
-          icon: "error",
-          confirmButtonText: "Cerrar",
-        });
-        return;
-      }
-      // existe = false;
+    // $scope.archivoAdd = function () {
+    //   if (this.fileInfo === undefined || this.fileInfo == null) {
+    //     Swal.fire({
+    //       title: "¡Error!",
+    //       text: "Aún no ha subido algún archivo",
+    //       icon: "error",
+    //       confirmButtonText: "Cerrar",
+    //     });
+    //     return;
+    //   }
+    //   // existe = false;
 
-      const datosArchivo = {
-        nombre: this.fileInfo.originalName,
-        id: this.fileInfo.documentId,
-        minioObjectName: this.fileInfo.minioObjectName
-      }
+    //   const datosArchivo = {
+    //     nombre: this.fileInfo.originalName,
+    //     id: this.fileInfo.documentId,
+    //     minioObjectName: this.fileInfo.minioObjectName
+    //   }
 
-      $scope.archivosCargados.push(datosArchivo);
-      $scope.fileInfo = null;
-    };
+    //   $scope.archivosCargados.push(datosArchivo);
+    //   $scope.fileInfo = null;
+    // };
 
-    $scope.archivoRemove = function (x) {
-      console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
-      for (var i in $scope.archivosCargados) {
-        if ($scope.archivosCargados[i].id === x.id) {
-          Swal.fire({
-            title: "¡Advertencia de eliminación!",
-            text:
-              "Va a eliminar:" +
-              $scope.archivosCargados[i].nombre,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirmar",
-            cancelButtonText: "Cancelar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              vm.eliminarArchivo(x.minioObjectName);
-              $scope.archivosCargados.splice(i - 1, 1);
-              // funcion propia de Angular.Js refresca mi scope y recarga mis datos
-              $scope.$apply();
-              Swal.fire(
-                "Eliminado!",
-                "El archivo ha sido eliminado.",
-                "success"
-              );
-            }
-          });
-        }
-      }
-      console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
+    // $scope.archivoRemove = function (x) {
+    //   console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
+    //   for (var i in $scope.archivosCargados) {
+    //     if ($scope.archivosCargados[i].id === x.id) {
+    //       Swal.fire({
+    //         title: "¡Advertencia de eliminación!",
+    //         text:
+    //           "Va a eliminar:" +
+    //           $scope.archivosCargados[i].nombre,
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonText: "Confirmar",
+    //         cancelButtonText: "Cancelar",
+    //       }).then((result) => {
+    //         if (result.isConfirmed) {
+    //           vm.eliminarArchivo(x.minioObjectName);
+    //           $scope.archivosCargados.splice(i - 1, 1);
+    //           // funcion propia de Angular.Js refresca mi scope y recarga mis datos
+    //           $scope.$apply();
+    //           Swal.fire(
+    //             "Eliminado!",
+    //             "El archivo ha sido eliminado.",
+    //             "success"
+    //           );
+    //         }
+    //       });
+    //     }
+    //   }
+    //   console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
 
-    };
+    // };
 
 
     $scope.enlaceAdd = function () {

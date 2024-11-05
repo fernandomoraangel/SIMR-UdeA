@@ -43,9 +43,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   }
 
   receiveMessage(event: MessageEvent) {
-    // if (event.origin !== this.angularJSOrigin) return;
     if (event.origin !== this.angularJSOrigin) {
-      // alert('Origen no permitido');
       return;
     }
 
@@ -55,16 +53,11 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(myMessage: string): void {
-    // alert('Enviando mensaje a AngularJS...');
     // Para ventanas emergentes
     if (window.opener) {
-      // alert('Enviando mensaje a AngularJS desde ventana...');
-      // window.opener.postMessage('Hola desde Angular', this.angularJSOrigin);
       window.opener.postMessage(myMessage, this.angularJSOrigin);
     } else if (window.parent) {
       // Para iframes
-      // alert('Enviando mensaje a AngularJS desde iFrame...');
-      // window.parent.postMessage('Hola desde Angular', this.angularJSOrigin);
       window.parent.postMessage(myMessage, this.angularJSOrigin);
     }
   }
@@ -74,7 +67,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
     this.uploadProgress = 0;
     this.processingFile = false;
   }
-  
+
   uploadFile(): void {
     if (this.selectedFile) {
       this.uploading = true;
@@ -88,9 +81,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
             }
           } else if (event.type === 'response') {
             console.log('Archivo subido exitosamente:', event.body);
-            // if (event.body && event.body.fileData) {
             if (event.body && event.body.fileData) {
-              // this.sendFileInfoToAngularJS(event.body.fileInfo);
               console.log('Información del archivo a enviar:', event.body);
               this.sendFileInfoToAngularJS(event.body);
             } else {
@@ -118,36 +109,6 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
     }
   }
 
-  // uploadFile(): void {
-  //   if (this.selectedFile) {
-  //     this.uploading = true;
-  //     this.archivoService.uploadFile(this.selectedFile).subscribe({
-  //       next: (event) => {
-  //         if (event.type === HttpEventType.UploadProgress) {
-  //           this.uploadProgress = Math.round(100 * event.loaded / event.total);
-  //           if (this.uploadProgress === 100) {
-  //             console.log('Procesando archivo...');
-  //             this.processingFile = true;
-  //           }
-  //         } else if (event.type === HttpEventType.Response) {
-  //           console.log(event.body.message);
-  //           this.sendFileInfoToAngularJS(event.body);
-  //           this.selectedFile = null;
-  //           this.uploading = false;
-  //           this.processingFile = false;
-  //           this.uploadProgress = 0;
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('Error al subir el archivo:', error);
-  //         this.uploading = false;
-  //         this.processingFile = false;
-  //         this.uploadProgress = 0;
-  //       }
-  //     });
-  //   }
-  // }
-
   sendFileInfoToAngularJS(fileInfo: any): void {
     console.log('Información del archivo a enviar:', fileInfo);
     const selectedFileInfo = {
@@ -160,7 +121,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
       documentId: fileInfo.documentId
     };
 
-    this.messageToAngularJS = {type: 'FILE_UPLOAD', message: JSON.stringify(selectedFileInfo)}
+    this.messageToAngularJS = { type: 'FILE_UPLOAD', message: JSON.stringify(selectedFileInfo) }
 
     if (window.opener) {
       console.log('Ventana padre encontrada');
@@ -170,13 +131,10 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
         icon: 'success',
         confirmButtonText: 'Aceptar'
       }).then(() => {
-        // window.opener.postMessage(JSON.stringify(selectedFileInfo), this.angularJSOrigin);
         window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
         console.log('Mensaje enviado a AngularJS');
         window.close();
       });
-      // window.opener.postMessage(JSON.stringify(selectedFileInfo), this.angularJSOrigin);
-      // console.log('Mensaje enviado a AngularJS');
     } else {
       console.error('No hay ventana padre para enviar el mensaje.\nDeshaciendo operación...');
       this.archivoService.deleteFile(selectedFileInfo.minioObjectName).subscribe({
@@ -198,7 +156,6 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
       });
       window.close();
     }
-    // window.close();
   }
 
 }

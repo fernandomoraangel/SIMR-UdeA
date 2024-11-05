@@ -1812,91 +1812,91 @@ angular.module("obras").controller("ObrasController", [
 
     //Enlaces
 
-    // *** ARCHIVOS ***
+    // // *** ARCHIVOS ***
 
-    // === EVENT LISTENER ===
-    // Agregar el listener cuando el controlador esté activo
-    ArchivoService.agregarListener();
+    // // === EVENT LISTENER ===
+    // // Agregar el listener cuando el controlador esté activo
+    // ArchivoService.agregarListener();
 
-    $scope.$on('$destroy', function () {
-      // Remover el listener cuando se destruya el controlador
-      ArchivoService.removerListener();
-    });
-    // ===(Fin de EVENT LISTENER)===
-
-
-    // (Testing)
-    $scope.pruebaArchivoService = function () {
-      ArchivoService.sayHello();
-      // ArchivoService.abrirVentanaMostrarArchivos();
-      console.log('archivosCargados', $scope.archivosCargados);
-    };
-    // (Fin de Testing)
+    // $scope.$on('$destroy', function () {
+    //   // Remover el listener cuando se destruya el controlador
+    //   ArchivoService.removerListener();
+    // });
+    // // ===(Fin de EVENT LISTENER)===
 
 
-    $scope.subirArchivo = function () {
-      ArchivoService.subirArchivo();
-    }
+    // // (Testing)
+    // $scope.pruebaArchivoService = function () {
+    //   ArchivoService.sayHello();
+    //   // ArchivoService.abrirVentanaMostrarArchivos();
+    //   console.log('archivosCargados', $scope.archivosCargados);
+    // };
+    // // (Fin de Testing)
+
+
+    // $scope.subirArchivo = function () {
+    //   ArchivoService.subirArchivo();
+    // }
 
     // Escuchar el evento de archivo subido
-    $scope.$on('archivoSubido', function (event, fileInfo) {
-      if (fileInfo === undefined || fileInfo == null) {
-        Swal.fire({
-          title: "¡Error!",
-          text: "Aún no ha subido algún archivo",
-          icon: "error",
-          confirmButtonText: "Cerrar",
-        });
-        return;
-      }
-      console.log('Se recibió archivo subido:', fileInfo);
-      $scope.archivosCargados.push(fileInfo);
-    });
+    // $scope.$on('archivoSubido', function (event, fileInfo) {
+    //   if (fileInfo === undefined || fileInfo == null) {
+    //     Swal.fire({
+    //       title: "¡Error!",
+    //       text: "Aún no ha subido algún archivo",
+    //       icon: "error",
+    //       confirmButtonText: "Cerrar",
+    //     });
+    //     return;
+    //   }
+    //   console.log('Se recibió archivo subido:', fileInfo);
+    //   $scope.archivosCargados.push(fileInfo);
+    // });
 
-    $scope.mostrarArchivos = function (obraId) {
-      ArchivoService.mostrarArchivos(obraId, 'obras');
-    };
+    // $scope.mostrarArchivos = function (obraId) {
+    //   ArchivoService.mostrarArchivos(obraId, 'obras');
+    // };
 
-    $scope.archivoRemove = function (x) {
-      console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
-      for (var i in $scope.archivosCargados) {
-        if ($scope.archivosCargados[i].id === x.id) {
-          Swal.fire({
-            title: "¡Advertencia de eliminación!",
-            text:
-              "Va a eliminar:" +
-              $scope.archivosCargados[i].nombre,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Confirmar",
-            cancelButtonText: "Cancelar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              $scope.eliminarArchivo(x.minioObjectName);
-              $scope.archivosCargados.splice(i - 1, 1);
-              // funcion propia de Angular.Js refresca mi scope y recarga mis datos
-              $scope.$apply();
-              Swal.fire(
-                "Eliminado!",
-                "El archivo ha sido eliminado.",
-                "success"
-              );
-            }
-          });
-        }
-      }
-      console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
-    };
+    // $scope.archivoRemove = function (x) {
+    //   console.log('archivosCargados (antes de eliminar):', $scope.archivosCargados);
+    //   for (var i in $scope.archivosCargados) {
+    //     if ($scope.archivosCargados[i].id === x.id) {
+    //       Swal.fire({
+    //         title: "¡Advertencia de eliminación!",
+    //         text:
+    //           "Va a eliminar:" +
+    //           $scope.archivosCargados[i].nombre,
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonText: "Confirmar",
+    //         cancelButtonText: "Cancelar",
+    //       }).then((result) => {
+    //         if (result.isConfirmed) {
+    //           $scope.eliminarArchivo(x.minioObjectName);
+    //           $scope.archivosCargados.splice(i - 1, 1);
+    //           // funcion propia de Angular.Js refresca mi scope y recarga mis datos
+    //           $scope.$apply();
+    //           Swal.fire(
+    //             "Eliminado!",
+    //             "El archivo ha sido eliminado.",
+    //             "success"
+    //           );
+    //         }
+    //       });
+    //     }
+    //   }
+    //   console.log('archivosCargados (despues de eliminar):', $scope.archivosCargados);
+    // };
 
-    $scope.eliminarArchivo = function (filename) {
-      ArchivoService.deleteFile(filename)
-        .then(function (data) {
-          console.log('Archivo eliminado:', data.message);
-        })
-        .catch(function (error) {
-          console.error('No se pudo eliminar el archivo', error);
-        });
-    };
+    // $scope.eliminarArchivo = function (filename) {
+    //   ArchivoService.deleteFile(filename)
+    //     .then(function (data) {
+    //       console.log('Archivo eliminado:', data.message);
+    //     })
+    //     .catch(function (error) {
+    //       console.error('No se pudo eliminar el archivo', error);
+    //     });
+    // };
 
     // *** (Fin de Archivos) ***
 

@@ -5,15 +5,12 @@ import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SharedMessageData } from '../../../models/shared-message-data.interface';
-import { FileBasicInfo, FileDocumentInfo } from '../archivo.module';
+import { FileBasicInfo, FileDeleteInfo, FileDocumentInfo } from '../archivo.module';
 
-
-// interface file {
-//   id: string;
-//   name: string;
-//   size: number;
-//   lastModified: Date;
-// }
+interface SelectedFileInfo {
+  id: string;
+  [key: string]: string;
+}
 
 @Component({
   selector: 'app-archivo-lista',
@@ -24,16 +21,15 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   // files: any[] = [];
   files: FileBasicInfo[] = [];
   loading: boolean = false;
-  selectedFiles: Set<string> = new Set();
+  selectedFiles: SelectedFileInfo[] = [];
+  // selectedFiles: Set<string> = new Set();
+  // selectedFiles: Set<FileDocumentInfo> = new Set();
   allSelected: boolean = false;
   selectedFileForViewing: string | null = null;
 
-  varPrueba = 0;
-
-  // actorId: string | null = null;
-  // actorId: string = "";
   dbCollection: string = "";
   documentId: string = "";
+  documentName: string = "";
 
   private fileChangedSubscription: Subscription = new Subscription();
 
@@ -47,41 +43,14 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private archivoService: ArchivoService,
     private ngZone: NgZone
-  ) {
-    // window.addEventListener('message', (event) => {
-    //   if (event.origin !== this.angularJSOrigin) return;
-
-    //   this.ngZone.run(() => {
-    //     this.messageFromAngularJS = event.data;
-    //   });
-
-    //   console.log('messageFromAngularJS:', this.messageFromAngularJS);
-    // if (event.data && event.data.type === 'FILE_LIST') {
-    //   console.log('Datos recibidos:', event.data);
-    //   this.dbCollection = event.data.dbCollection;
-    //   this.documentId = event.data.message;
-
-    //   this.getDocumentFiles('actores', this.messageFromAngularJS);
-    // }
-    // }, false);
-    // console.log('messageFromAngularJS:', this.messageFromAngularJS);
-  }
+  ) { }
 
   ngOnInit(): void {
     this.messageListener = this.receiveMessage.bind(this);
     window.addEventListener('message', this.messageListener, false);
     this.messageToAngularJS = { type: 'FILE_LIST', status: 'READY', message: 'Hola desde Angular!' };
-    // this.sendMessage(this.messageToAngularJS);s
     window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
-    // window.opener.postMessage('READY', this.angularJSOrigin);
-    // alert('messageFromAngularJS: ' + this.messageFromAngularJS);
-    console.log('messageFromAngularJS:', this.messageFromAngularJS);
-    // this.setupMessageListener();
-    // this.loadFiles();
-    // this.fileUploadSubscription = this.archivoService.fileUploaded$.subscribe(() => {
     this.fileChangedSubscription = this.archivoService.fileChanged$.subscribe(() => {
-      // this.loadFiles();
-      // this.getDocumentFiles(this.dbCollection, this.documentId);
       this.loadDocumentFiles(this.dbCollection, this.documentId);
     });
   }
@@ -92,11 +61,6 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     }
     window.removeEventListener('message', this.messageListener);
   }
-  // ngOnDestroy(): void {
-  //   if (this.fileUploadSubscription) {
-  //     this.fileUploadSubscription.unsubscribe();
-  //   }
-  // }
 
   viewFile(fileName: string) {
     this.dialog.open(ArchivoVistaComponent, {
@@ -106,162 +70,83 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     });
   }
 
-  // viewFile2(filename: string): void {
-  //   this.selectedFileForViewing = filename;
-  // }
-
-  prueba() {
-    console.log('Prueba');
-    alert(this.documentId);
-    console.log('files prueba:', this.files);
-    this.messageToAngularJS = { type: 'PRUEBA', message: 'Hola desde Angular!!!!!!!!!!!' }
-    this.sendMessage(this.messageToAngularJS);
-  }
-
-
   receiveMessage(event: MessageEvent) {
-    console.log('varPrueba:', this.varPrueba);
-    this.varPrueba++;
-    console.log('event', event);
-    console.log('event.origin', event.origin);
-    console.log('angularJSOrigin', this.angularJSOrigin);
-    // if (event.origin !== this.angularJSOrigin) return;
     if (event.origin !== this.angularJSOrigin) {
       console.log('Origen no permitido', this.angularJSOrigin, '!=', event.origin);
-      // alert(`Origen no permitido ${this.angularJSOrigin} != ${event.origin}`);
       return;
     }
-
-    console.log('continua en el proceso receiveMessage');
 
     this.ngZone.run(() => {
       this.messageFromAngularJS = event.data;
     });
 
-    console.log('event', event);
-    console.log('event.data', event.data);
-
-    console.log('messageFromAngularJS:', this.messageFromAngularJS);
     if (event.data && event.data.type === 'FILE_LIST') {
-      console.log('Datos recibidos:', event.data);
-      this.dbCollection = event.data.dbCollection;
-      this.documentId = event.data.message;
-
-      console.log('DB Collection:', this.dbCollection);
-      console.log('Document ID:', this.documentId);
-      // this.getDocumentFiles(this.dbCollection, this.documentId);
+      this.documentId = event.data.message.documentId;
+      this.documentName = event.data.message.documentName;
+      this.dbCollection = event.data.message.dbCollection;
       this.loadDocumentFiles(this.dbCollection, this.documentId);
-      // this.getDocumentFiles('actors', event.data.message);
-      // this.getDocumentFiles(this.dbCollection, this.documentId);
-
-      // if (event.data.db_collection === 'actores') {
-      //   this.dbCollection = event.data.db_collection;
-      //   this.documentId = event.data.message;
-      //   // this.loadFiles();
-      // } else if (event.data.db_collection === 'obras') {
-      //   console.log('DB Collection:', event.data.db_collection);
-      // }
-      // this.actorId = event.data.actorId;
-      // alert('Actor ID: ' + this.actorId);
-      // // this.loadFiles();
     }
   }
 
-  // setupMessageListener(): void {
-  //   // alert('Setting up message listener...');
-  //   this.messageListener = (event: MessageEvent) => {
-  //     alert('Verificando mensaje...');
-  //     if (event.data && event.data.type === 'ACTOR_ID') {
-  //       this.actorId = event.data.actorId;
-  //       alert('Actor ID: ' + this.actorId);
-  //       // this.loadFiles();
-  //     }
-  //   };
-  //   window.addEventListener('message', this.messageListener);
-  // }
-
   sendMessage(myMessage: string | SharedMessageData): void {
-    // alert('Enviando mensaje a AngularJS...');
     // Para ventanas emergentes
     if (window.opener) {
-      // alert('Enviando mensaje a AngularJS desde ventana...');
-      // window.opener.postMessage('Hola desde Angular', this.angularJSOrigin);
       window.opener.postMessage(myMessage, this.angularJSOrigin);
     } else if (window.parent) {
       // Para iframes
-      // alert('Enviando mensaje a AngularJS desde iFrame...');
-      // window.parent.postMessage('Hola desde Angular', this.angularJSOrigin);
       window.parent.postMessage(myMessage, this.angularJSOrigin);
     }
   }
 
   toggleAllSelection(): void {
     if (this.allSelected) {
-      this.selectedFiles.clear();
+      this.selectedFiles = [];
     } else {
-      this.files.forEach(file => this.selectedFiles.add(file.name));
+      this.files.forEach(file => {
+        const fileSelected: SelectedFileInfo = {
+          id: file.id,
+          name: file.name
+        };
+        this.selectedFiles.push(fileSelected)
+      });
     }
     this.allSelected = !this.allSelected;
   }
 
   isAllSelected(): boolean {
-    return this.selectedFiles.size === this.files.length;
+    return this.selectedFiles.length === this.files.length;
   }
 
   updateAllSelected(): void {
     this.allSelected = this.isAllSelected();
   }
 
-  toggleFileSelection(filename: string): void {
-    if (this.selectedFiles.has(filename)) {
-      this.selectedFiles.delete(filename);
+  botonPrueba(): void {
+    console.log('selectedFiles:', this.selectedFiles);
+  }
+
+  isInSelectedFiles(fileId: string): boolean {
+    return this.selectedFiles.find(item => item.id === fileId) !== undefined;
+  }
+
+  // toggleFileSelection(fileId: string): void {
+  toggleFileSelection(file: FileBasicInfo): void {
+    const existingItem = this.selectedFiles.find(item => item.id === file.id);
+    if (existingItem) {
+      this.selectedFiles = this.selectedFiles.filter(item => item.id !== file.id);
     } else {
-      this.selectedFiles.add(filename);
+      const fileSelected: SelectedFileInfo = {
+        id: file.id,
+        name: file.name
+      };
+      this.selectedFiles.push(fileSelected);
     }
     this.updateAllSelected();
   }
 
-
-  // loadFiles(): void {
-  //   this.loading = true;
-  //   this.archivoService.getFiles().subscribe({
-  //     next: (data) => {
-  //       console.log('Todos los Datos:', data);
-  //       this.files = data;
-  //       this.loading = false;
-  //     },
-  //     error: (error) => {
-  //       console.error('Error al cargar archivos:', error);
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
-
-
   downloadFile(filename: string): void {
     this.archivoService.downloadFile(filename);
   }
-
-  // downloadFile(filename: string): void {
-  //   this.archivoService.downloadFile(filename).subscribe({
-  //     next: (blob: Blob) => {
-  //       const url = window.URL.createObjectURL(blob);
-  //       const a = document.createElement('a');
-  //       a.href = url;
-  //       a.download = filename;
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       document.body.removeChild(a);
-  //       window.URL.revokeObjectURL(url);
-  //     },
-  //     error: (error) => {
-  //       console.error('Error al descargar el archivo:', error);
-  //     },
-  //     complete: () => {
-  //       console.log('Descarga completada');
-  //     }
-  //   });
-  // }
 
   formatBytes(bytes: number, decimals = 2): string {
     if (bytes === 0) return '0 Bytes';
@@ -272,7 +157,6 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
-  // deleteFile(filename: string): void {
   deleteFile(fileInfo: FileBasicInfo): void {
     Swal.fire({
       title: "¡Advertencia de eliminación!",
@@ -283,11 +167,13 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        // const fileToBeDeleted = {name: fileInfo.name, id: fileInfo.id};
-        // this.archivoService.deleteFile(filename, this.actorId).subscribe({
-        // this.archivoService.deleteFile(filename).subscribe({
-        console.log('archivo a eliminar:', fileInfo);
-        this.archivoService.deleteFile(fileInfo.name, fileInfo.id, this.documentId).subscribe({
+        const fileToDelete: FileDeleteInfo = {
+          fileName: fileInfo.name,
+          id: fileInfo.id,
+          documentId: this.documentId
+        };
+        // this.archivoService.deleteFile(fileInfo.name, fileInfo.id, this.documentId).subscribe({
+        this.archivoService.deleteFile(fileToDelete).subscribe({
           next: (response) => {
             console.log('Archivo eliminado con éxito:', response.message);
             const fileDeleted: FileDocumentInfo = {
@@ -296,7 +182,6 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
               documentId: this.documentId
             };
             this.sendMessage({ type: 'FILE_DELETED', status: 'SUCCESS', message: JSON.stringify(fileDeleted) });
-            // this.loadFiles();
           },
           error: (error) => {
             console.error('Error al eliminar el archivo:', error);
@@ -321,9 +206,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     });
   }
 
-
   deleteSelectedFiles(): void {
-    if (this.selectedFiles.size === 0) {
+    if (this.selectedFiles.length === 0) {
       Swal.fire({
         title: 'Advertencia',
         text: 'Por favor, seleccione al menos un archivo para eliminar',
@@ -332,12 +216,17 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       });
       return;
     }
-
-    const filesToDelete = Array.from(this.selectedFiles);
-
+    let filesToDelete: FileDeleteInfo[] = [];
+    this.selectedFiles.forEach((file) => {
+      filesToDelete.push({
+        fileName: file['name'],
+        id: file.id,
+        documentId: this.documentId
+      });
+    });
     Swal.fire({
       title: "¡Advertencia de eliminación!",
-      text: `¿Estás seguro de que quiere eliminar ${filesToDelete.length} archivo(s)?`,
+      text: `¿Estás seguro de que quiere eliminar ${filesToDelete.length} archivo(s) ? `,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Confirmar",
@@ -347,8 +236,8 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
         this.archivoService.deleteMultipleFiles(filesToDelete).subscribe({
           next: (response) => {
             console.log('Archivos eliminados con éxito:', response.message);
-            this.selectedFiles.clear();
-            // this.loadFiles();
+            // this.selectedFiles.clear();
+            this.selectedFiles = [];
           },
           error: (error) => {
             console.error('Error al eliminar los archivos:', error);
@@ -371,41 +260,11 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
         });
       }
     });
-
-    // if (confirm(`¿Estás seguro de que quiere eliminar ${filesToDelete.length} archivo(s)?`)) {
-    //   this.archivoService.deleteMultipleFiles(filesToDelete).subscribe({
-    //     next: (response) => {
-    //       console.log('Archivos eliminados con éxito:', response.message);
-    //       this.selectedFiles.clear();
-    //       this.loadFiles();
-    //     },
-    //     error: (error) => {
-    //       console.error('Error al eliminar los archivos:', error);
-    //     },
-    //     complete: () => {
-    //       console.log('Eliminación completada');
-    //     }
-    //   });
-    // }
-
   }
 
-  // getDocumentFiles(collection: string, documentId: string): void {
   loadDocumentFiles(collection: string, documentId: string): void {
     console.log('Obteniendo archivos adjuntos...');
     this.loading = true;
-    // this.archivoService.getFilesByActor(documentId).subscribe({
-    //   next: (data) => {
-    //     console.log('Datos obtenidos:', data);
-    //     this.files = data;
-    //     console.log('this.files', this.files);
-    //   },
-    //   error: (error) => {
-    //     console.error('Error al obtener los archivos adjuntos:', error);
-    //   }
-    // });
-
-    // this.archivoService.getDocumentProperty(collectionName, documentId, 'archivosAdjuntos')
     this.archivoService.getDocumentFiles(collection, documentId)
       .subscribe({
         next: (data) => {
@@ -413,7 +272,6 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
           this.files = data;
           this.loading = false;
           console.log('this.files', this.files);
-          // Procesa los datos como sea necesario
         },
         error: (error) => {
           console.error('Error al obtener los datos:', error);

@@ -30,11 +30,18 @@ export interface FileBasicInfo {
   lastModified: Date;
 }
 
+export interface FileDeleteInfo {
+  fileName: string;
+  id: string;
+  documentId?: string;
+}
+
 export interface FileDocumentInfo {
   id: string;
   name: string;
   documentId: string;
 }
+
 
 @NgModule({
   declarations: [

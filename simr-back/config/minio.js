@@ -81,8 +81,6 @@ router.get('/document-files', async (req, res) => {
       return res.status(400).json({ message: 'Missing required parameters' });
     }
 
-    // const filesProperty = 'archivosAdjuntos';
-
     console.log('collection:', collection);
     console.log('documentId:', documentId);
     console.log('filesProperty:', filesProperty);
@@ -90,19 +88,6 @@ router.get('/document-files', async (req, res) => {
     // await client.connect();
     clientConnection = await client.connect();
     console.log('Connected to MongoDB');
-
-    // const database = client.db(dbName);
-    // console.log('database:', database.databaseName);
-    // const collectionSelected = database.collection(collection);
-    // console.log('collectionSelected:', collectionSelected.FileCollectionName);
-
-    // Verificar la conexión listando las colecciones
-    // const collections = await database.listCollections().toArray();
-    // console.log('Available collections:', collections.map(c => c.name));
-
-    // Contar documentos en la colección
-    // const count = await collectionSelected.countDocuments();
-    // console.log(`Number of documents in ${collection}:`, count);
 
     let document;
 
@@ -141,11 +126,6 @@ router.get('/document-files', async (req, res) => {
         return res.status(404).json({ message: 'Not found' });
     }
 
-    // Intentar encontrar el documento por ID
-    // let document = await Actor.findById(documentId);
-    // let document = await collectionSelected.findOne({ _id: new ObjectId(documentId) });
-    console.log('document obtained by ID:', document);
-
     // Si se encuentra un documento, verificar la propiedad
     if (document) {
       if (filesProperty in document) {
@@ -153,11 +133,7 @@ router.get('/document-files', async (req, res) => {
         console.log('propertyValues:', propertyValues);
 
         if (Array.isArray(propertyValues)) {
-          // const archivosCollection = database.collection('archivos');
-          // console.log('collectionSelected:', archivosCollection.FileCollectionName);
-
           const documentFiles = [];
-
           const limit = 100; // Ajusta este límite según tus necesidades
 
           for (let i = 0; i < Math.min(propertyValues.length, limit); i++) {
@@ -168,10 +144,6 @@ router.get('/document-files', async (req, res) => {
               // const myFile = await archivosCollection.findOne({ _id: fileId._id });
               const myFile = await Archivo.findOne({ _id: fileId._id });
               console.log('myFile:', myFile);
-
-              // if (myFile && myFile.minioObjectName) {
-              //   documentFiles.push(myFile.minioObjectName);
-              // }
 
               const myFileProcessed = {
                 name: myFile.minioObjectName,
@@ -188,66 +160,16 @@ router.get('/document-files', async (req, res) => {
             }
           }
 
-          // propertyValues.forEach((id) = async () => {
-          //   console.log('fileId (filesProperty values):', id);
-          //   const myFile = await archivosCollection.findOne({ _id: id });
-          //   console.log('myFile:', myFile);
-
-          //   minioObjectNames.push(
-          //     // archivosCollection.findOne({ _id: ObjectId.createFromTime(fileId) }).minioObjectName
-          //   );
-          // });
           console.log('documentFiles:', documentFiles);
 
-          // const archivos = await archivosCollection.find({ _id: { $in: propertyValues.map(id => ObjectId.createFromTime(id)) } }).toArray();
-          // // const minioObjectNames = archivos.map(archivo => archivo.minioObjectName);
-          // console.log('minioObjectNames:', minioObjectNames);
           return res.json(documentFiles);
         }
-
-        // return res.json(propertyValues);
       } else {
         return res.status(404).json({ message: 'Property not found in document' });
       }
     } else {
       return res.status(404).json({ message: 'Document not found' });
     }
-
-    // // const document = await coll.findOne({ _id: id });
-    // // const document = database.actores.findOne({ _id: id });
-    // // const document = await database.collectionSelected.findById({ _id: new ObjectId(id) });
-    // // const document = await Archivo.find({id: new ObjectId(id)});
-    // let document = await collectionSelected.findOne({ _id: new ObjectId(id) });
-    // console.log('document obtained by ID:', document);
-    // // const document = await collectionSelected.findOne({ _id: new ObjectId(id) });
-    // console.log('document obtained:', document);
-
-    // if (!document) {
-    //   document = await collectionSelected.findOne({ _id: id });
-    //   console.log('document obtained by string ID:', document);
-    //   // return res.status(404).json({ message: 'Document not found' });
-    // }
-
-    // if (!(filesProperty in document)) {
-    //   return res.status(404).json({ message: 'Property not found in document' });
-    // }
-
-    // const propertyIds = document[filesProperty];
-    // const minioObjectNames = [];
-
-    // if (Array.isArray(propertyIds)) {
-    //   const archivosCollection = client.db(dbName).collection("archivos");
-    //   const archivos = await archivosCollection.find({ _id: { $in: propertyIds.map(id => new ObjectId(id)) } }).toArray();
-    //   minioObjectNames.push(...archivos.map(archivo => archivo.minioObjectName));
-    // } else {
-    //   return res.status(400).json({ message: 'Property is not an array' });
-    // }
-
-    // console.log('minioObjectNames:', minioObjectNames);
-
-    // res.json(minioObjectNames);
-
-    // res.json(document[filesProperty]);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -290,27 +212,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       minioObjectName: objectName
     };
 
-    // const uri = process.env.MONGODB_URI;
-    // const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-    // try {
-    //   await client.connect();
-    //   const database = client.db(process.env.MONGODB_DB_NAME);
-    //   const collection = database.collection('archivos');
-    //   await collection.insertOne(fileData);
-    //   console.log('File info saved to MongoDB');
-    // } catch (err) {
-    //   console.error('Error saving file info to MongoDB:', err);
-    // } finally {
-    //   await client.close();
-    // }
-
-    // Conectar a MongoDB y guardar fileData
-    // await client.connect();
-    // const db = client.db(dbName);
-    // const collection = db.collection(FileCollectionName);
-
-    // const result = await collection.insertOne(fileData);
     const result = await Archivo.create(fileData);
     console.log('result (server)', result);
     const documentId = result._id;
@@ -322,8 +223,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       fileData: fileData,
       documentId: documentId
     });
-
-    // res.status(200).json({ message: 'Archivo subido con éxito' }); // Respuesta de formato JSON
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error al subir el archivo' }); // Respuesta de formato JSON
@@ -374,7 +273,6 @@ router.get('/download/:filename', async (req, res) => {
 
 // *** ELIMINAR ARCHIVO ***
 // Ruta para eliminar un archivo
-// router.delete('/delete/:filename', async (req, res) => {
 router.delete('/:fileName', async (req, res) => {
   console.log("Entering Delete!!!");
   try {
@@ -455,20 +353,104 @@ router.delete('/:fileName', async (req, res) => {
 // *** ELIMINAR MULTIPLES ARCHIVOS ***
 // Ruta para eliminar multiples archivos
 router.post('/delete-multiple', async (req, res) => {
-  const filenames = req.body.filenames;
-
-  if (!Array.isArray(filenames) || filenames.length === 0) {
-    return res.status(400).json({ message: 'Se requiere un array de nombres de archivo' });
-  }
-
+  let clientConnection;
   try {
-    await Promise.all(filenames.map(filename => minioClient.removeObject(myBucketName, filename)));
-    res.status(200).json({ message: 'Archivos eliminados con éxito' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error al eliminar los archivos' });
+    console.log('Entrando a delete-multiple');
+    console.log('req.body:', req.body);
+
+    if (!req.body.files || !Array.isArray(req.body.files)) {
+      return res.status(400).json({ message: 'Se requiere un array de información de archivos' });
+    }
+
+    const files = req.body.files;
+    const deletionResults = [];
+    let hasErrors = false;
+
+    // Conectar a MongoDB una sola vez
+    clientConnection = await client.connect();
+    const db = clientConnection.db(dbName);
+
+    // Obtener la lista de colecciones una sola vez
+    const collections = await db.listCollections().toArray();
+
+    // Procesar cada archivo
+    for (const file of files) {
+      try {
+        const { fileName, id, documentId } = file;
+
+        // 1. Eliminar archivo de MinIO
+        await minioClient.removeObject(myBucketName, fileName);
+
+        if (id) {
+          // 2. Eliminar documento de la colección "archivos"
+          const fileDoc = await Archivo.findOne({ _id: id });
+          if (fileDoc) {
+            await Archivo.deleteOne({ _id: id });
+
+            // 3. Actualizar referencias en otras colecciones
+            const fileObjectId = new mongoose.Types.ObjectId(id);
+
+            for (const collectionInfo of collections) {
+              const collection = db.collection(collectionInfo.name);
+
+              try {
+                const result = await collection.updateMany(
+                  { archivosAdjuntos: { $elemMatch: { _id: fileObjectId } } },
+                  { $pull: { archivosAdjuntos: { _id: fileObjectId } } }
+                );
+
+                if (result.modifiedCount > 0) {
+                  console.log(`Referencias al archivo ${fileName} eliminadas en la colección ${collectionInfo.name}`);
+                }
+              } catch (error) {
+                console.error(`Error al actualizar referencias en la colección ${collectionInfo.name}:`, error);
+              }
+            }
+          }
+        }
+
+        deletionResults.push({
+          fileName,
+          success: true,
+          message: 'Archivo eliminado con éxito'
+        });
+
+      } catch (error) {
+        hasErrors = true;
+        deletionResults.push({
+          fileName: file.fileName,
+          success: false,
+          message: error.message || 'Error al eliminar el archivo'
+        });
+      }
+    }
+
+    // Responder con los resultados
+    if (hasErrors) {
+      res.status(207).json({
+        message: 'Algunos archivos no pudieron ser eliminados',
+        results: deletionResults
+      });
+    } else {
+      res.status(200).json({
+        message: 'Todos los archivos fueron eliminados con éxito',
+        results: deletionResults
+      });
+    }
+
+  } catch (error) {
+    console.error('Error general en la eliminación múltiple:', error);
+    res.status(500).json({
+      message: 'Error en el servidor al procesar la eliminación múltiple',
+      error: error.message
+    });
+  } finally {
+    if (clientConnection) {
+      await clientConnection.close();
+    }
   }
 });
+
 
 // *** PREVISUALIZACION ***
 // Ruta para previsualizar archivos

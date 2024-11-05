@@ -46,29 +46,8 @@ angular.module('archivos', [])
         actualizarListadoArchivos
       };
 
-      // const collectionApi = $resource('/api/:coleccion/:id', { coleccion: '@coleccion', id: '@id' }, {
-      //   get: { method: 'GET' }
-      // });
-
-      // Método general para obtener una colección
-      // function obtenerColeccion(coleccion, id) {
-      //   // Verificar si la colección es válida
-      //   if (!collectionMapping[collectionType]) {
-      //     throw new Error(`Tipo de colección no soportado: ${collectionType}`);
-      //   }
-      //   return $q((resolve, reject) => {
-      //     api.get({ coleccion: coleccion, id: id }, (data) => {
-      //       resolve(data);
-      //     }, (error) => {
-      //       reject(error);
-      //     });
-      //   });
-      // }
-
       // Función para recibir mensajes
       function recibirMensaje(event) {
-        // console.log('(ArchivoService - recibirMensaje) event.origin:', event.origin);
-        // console.log('(ArchivoService - recibirMensaje) angularAppOrigin:', angularAppOrigin);
         if (event.origin !== angularAppOrigin) return;
 
         let messageType = '';
@@ -134,10 +113,6 @@ angular.module('archivos', [])
               console.log('Enviando mensaje a Angular(FILE_LIST):', messagePreprocessed);
               console.log('Enviando mensaje a Angular - angularAppOrigin (FILE_LIST):', angularAppOrigin);
               angularWindowFileList.postMessage(messagePreprocessed, angularAppOrigin);
-              // angularWindowFileList.postMessage({
-              //   type: 'DATA',
-              //   payload: messagePreprocessed
-              // }, angularAppOrigin);
             }
             break;
           case 'FILE_UPLOAD':
@@ -165,8 +140,6 @@ angular.module('archivos', [])
             throw new Error(`Tipo de colección no soportado: ${dbCollection}`);
           }
           let archivosActuales = await getDocumentFiles(dbCollection, documentId) || [];
-          console.log('2.1 (ArchivoService) Archivos actuales:', archivosActuales);
-          console.log('2.2 (ArchivoService) Archivos nuevos:', archivosNuevos);
 
           // Preparando datos para actualizar
           archivosActuales = archivosActuales.map(archivo => ({ _id: archivo.id }));
@@ -180,31 +153,24 @@ angular.module('archivos', [])
         }
       }
 
-      function mostrarArchivos(documentId, dbCollection) {
+      // function mostrarArchivos(documentId, dbCollection) {
+      function mostrarArchivos(documentId, documentName, dbCollection) {
         if (angularWindowFileList && !angularWindowFileList.closed) {
           angularWindowFileList.close();
         }
-        // angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
         angularWindowFileList = $window.open(angularAppOrigin + '/files', '_blank');
-        mensajeAEnviar = {
-          type: 'FILE_LIST',
-          message: documentId,
+
+        const documentInfo = {
+          documentId: documentId,
+          documentName: documentName,
           dbCollection: dbCollection
         };
-        console.log('Mensaje a enviar (mostrarArchivos):', mensajeAEnviar);
 
-        // if (angularWindowFileList && !angularWindowFileList.closed) {
-        //   // angularWindowFileList.focus();
-        // } else {
-        //   // angularWindowFileList = $window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
-        //   angularWindowFileList = $window.open(angularAppOrigin + '/files', '_blank');
-        //   mensajeAEnviar = {
-        //     type: 'FILE_LIST',
-        //     message: documentId,
-        //     dbCollection: dbCollection
-        //   };
-        //   console.log('Mensaje a enviar (mostrarArchivos):', mensajeAEnviar);
-        // }
+        mensajeAEnviar = {
+          type: 'FILE_LIST',
+          message: documentInfo
+        };
+        console.log('Mensaje a enviar (mostrarArchivos):', mensajeAEnviar);
       }
 
       function deleteFile(fileName, fileId) {
@@ -239,15 +205,6 @@ angular.module('archivos', [])
           .catch(error => {
             console.error('Error al obtener archivos:', error);
           });
-
-        // return $http.get(`${apiUrl}/document-files/${dbCollection}/${documentId}`)
-        //   .then(response => {
-        //     return response.data;
-        //   })
-        //   .catch(error => {
-        //     console.error('Error al obtener archivos:', error);
-        //     throw error;
-        //   });
       }
 
       return service;

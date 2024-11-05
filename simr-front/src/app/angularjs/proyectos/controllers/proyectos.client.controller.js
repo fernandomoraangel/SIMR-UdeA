@@ -808,11 +808,15 @@ angular.module("proyectos").controller("ProyectosController", [
       $scope.proyectos = Proyectos.query();
     };
 
+    // console.log('$scope.proyecto:', $scope.proyecto);
+    // console.log('proyecto.nombre:', proyecto.nombre);
+    // console.log('$scope.proyecto.documentName:', $scope.proyecto.documentName);
+
     //Método controller para recuperar una única proyectos
     $scope.findOne = function () {
       //Usa el método 'get' de proyecto para enviar una petición GET apropiada
       $scope.proyecto = Proyectos.get({
-        proyectoId: $routeParams.proyectoId,
+        proyectoId: $routeParams.proyectoId
       });
     };
 
