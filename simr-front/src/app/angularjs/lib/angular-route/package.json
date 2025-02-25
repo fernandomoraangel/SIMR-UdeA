@@ -26,8 +26,13 @@
   "jspm": {
     "shim": {
       "angular-route": {
-        "deps": ["angular"]
+        "deps": [
+          "angular"
+        ]
       }
     }
+  },
+  "dependencies": {
+    "angular-route": "file:"
   }
 }

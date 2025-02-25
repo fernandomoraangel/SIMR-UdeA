@@ -19,13 +19,8 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
-    "types": [
-      "angular"
-    ]
+    "lib": ["ES2022", "dom"],
+    "types": ["angular"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

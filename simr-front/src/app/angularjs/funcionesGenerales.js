@@ -92,7 +92,9 @@ formatDate = function (date, precision = "AMD") {
   const fechaActual = new Date(date);
   //var opciones = {month: 'long', day: 'numeric' };
   var opciones = new Object();
-
+  if (precision == "" || date === "undefined") {
+    return "Sin fecha";
+  }
   if (precision.indexOf("A") != -1) {
     opciones["year"] = "numeric";
   }
@@ -125,6 +127,9 @@ formatDateYMD = function (date, precision) {
 
   if (precision.indexOf("D") != -1) {
     day = fechaActual.getDate();
+  }
+  if (precision == "") {
+    return "Sin fecha";
   }
   //Convertir a 2 dígitos
   return (
@@ -162,7 +167,7 @@ nombrarSi = function (nombre, x) {
     return;
   } else {
     if (nombre != "") {
-      return " " + nombre + ": " + x;
+      return " " + nombre + ": " + x + "; ";
     } else {
       return " " + x;
     }

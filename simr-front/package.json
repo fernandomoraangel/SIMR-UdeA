@@ -22,6 +22,7 @@
     "angular": "^1.8.3",
     "bootstrap": "^5.3.3",
     "rxjs": "~7.8.0",
+    "simr-front": "file:",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
@@ -29,6 +30,7 @@
     "@angular-devkit/build-angular": "^18.0.3",
     "@angular/cli": "^18.0.3",
     "@angular/compiler-cli": "^18.0.0",
+    "@types/angular": "^1.8.9",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",

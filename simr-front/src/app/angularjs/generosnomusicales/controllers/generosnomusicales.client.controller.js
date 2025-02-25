@@ -631,6 +631,7 @@ angular
       };
 
       //Anotaciones cartográfico temporales
+      //Modelo para las otras
       $scope.anotacionCartograficoTemporalAdd = function () {
         existe = false;
         //Calcular precisión para fecha inicio
@@ -667,32 +668,25 @@ angular
           obj[tup[0]] = tup[1];
         });
         if (
-          this.lugar === undefined ||
-          this.lugar === "" ||
-          this.evento === undefined ||
-          this.evento === "" ||
-          this.fechaDeInicio === undefined ||
-          this.fechaDeInicio === "" ||
-          this.fechaDeFin === undefined ||
-          this.fechaDeFin === "" ||
-          this.evidencia === undefined ||
-          this.evidencia === ""
+          this.lugar ||
+          this.evento ||
+          this.coberturaAmplitud ||
+          this.fechaDeInicio ||
+          this.fechaDeFin ||
+          this.fechaDeFin ||
+          this.evidencia
         ) {
-          //Mostrar mensaje de error
-          Swal.fire({
-            title: "¡Error!",
-            text: "Debe seleccionar completar todos los datos",
-            icon: "error",
-            confirmButtonText: "Cerrar",
-          });
-        } else {
           if ($scope.idAnotacionesCartograficoTemporales.indexOf(x) === -1) {
             for (var i in $scope.idAnotacionesCartograficoTemporales) {
               if (
                 $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                  this.lugar ||
+                  this.lugar &&
                 $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                  this.evento
+                  this.evento &&
+                $scope.idAnotacionesCartograficoTemporales[i]
+                  .coberturaAmplitud === this.coberturaAmplitud &&
+                $scope.idAnotacionesCartograficoTemporales[i].evidencia ===
+                  this.evidencia
                 //TODO: Resolver comparación de fechas para usar &&
               ) {
                 //Mensaje de error
@@ -722,34 +716,50 @@ angular
             this.fechaDeFin = "";
             this.evidencia = "";
           }
+        } else {
+          //Mostrar mensaje de error
+          Swal.fire({
+            title: "¡Error!",
+            text: "Debe completar por lo menos uno de los datos",
+            icon: "error",
+            confirmButtonText: "Cerrar",
+          });
         }
       };
-
+      //Modelo para las otras
       $scope.anotacionCartograficoTemporalRemove = function (x) {
+        textoSalida = "va a eliminar a ";
+        if (x.lugar != "undefined") {
+          textoSalida = textoSalida + "lugar: " + x.lugar + " ";
+        }
+        if (x.evento != "undefined") {
+          textoSalida = textoSalida + "evento: " + x.evento + " ";
+        }
+        if (x.coberturaAmplitud != "undefined") {
+          textoSalida = textoSalida + "cobertura: " + x.coberturaAmplitud + " ";
+        }
+        if (x.fechaInicio != "undefined") {
+          textoSalida =
+            textoSalida +
+            "inicio: " +
+            $scope.formatDate(x.fechaInicio, x.precisionInicio) +
+            " ";
+        }
+        if (x.fechaFin != "undefined") {
+          textoSalida =
+            textoSalida +
+            "fin: " +
+            $scope.formatDate(x.fechaFin, x.precisionFin) +
+            " ";
+        }
+        if (x.evidencia != "undefined") {
+          textoSalida = textoSalida + "evidencia: " + x.evidencia;
+        }
         for (var i in $scope.idAnotacionesCartograficoTemporales) {
-          if ($scope.idAnotacionesCartograficoTemporales[i].lugar === x) {
+          if ($scope.idAnotacionesCartograficoTemporales[i] === x) {
             Swal.fire({
               title: "¡Advertencia de eliminación!",
-              text:
-                "va a eliminar a " +
-                $scope.idAnotacionesCartograficoTemporales[i].lugar +
-                "; " +
-                $scope.idAnotacionesCartograficoTemporales[i].evento +
-                "; " +
-                $scope.idAnotacionesCartograficoTemporales[i]
-                  .coberturaAmplitud +
-                "; " +
-                $scope.formatDate(
-                  $scope.idAnotacionesCartograficoTemporales[i].fechaInicio,
-                  $scope.idAnotacionesCartograficoTemporales[i].precisionInicio
-                ) +
-                "; " +
-                $scope.formatDate(
-                  $scope.idAnotacionesCartograficoTemporales[i].fechaFin,
-                  $scope.idAnotacionesCartograficoTemporales[i].precisionFin
-                ) +
-                "; " +
-                $scope.idAnotacionesCartograficoTemporales[i].evidencia,
+              text: textoSalida,
               icon: "warning",
               showCancelButton: true,
               confirmButtonText: "Confirmar",
