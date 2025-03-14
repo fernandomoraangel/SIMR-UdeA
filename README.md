@@ -1,5 +1,12 @@
 # SIMR
-El Sistema de información de músicas regionales (simr) es una aplicación CRUD elaborada para administrar el catálogo del grupo de investigación de Músicas Regionales de la Universidad de Antioquia, bajo la arquitectura MEAN stack.
+El Sistema de información de músicas regionales (SIMR) es una aplicación de gestión bibliotecaria y archivística y de gestión del conocimiento, elaborada para administrar y analizar el catálogo del Fondo de documentación perteneciente al Grupo de investigación de Músicas Regionales de la Universidad de Antioquia, así como sus colecciones virtuales de audios, partituras, imágenes y vídeos. Esta herramienta está orientada a investigadores y permite integrar información de los proyectos de investigación y del conocimiento de los investigadores a registros relacionados con Obras, Actores, Recursos, ejemplares y diversos tesauros. Está creada bajo la arquitectura MEAN stack y utiliza como nube privada de archivo la tecnología MiniIO.
+
+EL SIMIR está basado en principios de la bibliotecología y la archivística y sistematiza la experiencia de más de 30 años del grupo Músicas Regionales estudiando las músicas del país y el continente desde la perspectiva de la musicología. Es una aplicación web desde la cual los usuarios pueden hacer procesos de análisis y catalogación de diversos tipos de obras musicales (y no musicales) y en la cual pueden relacionarse estas obras con elementos de las colecciones del grupo y el conocimiento que sobre estas acumulan los investigadores y los proyectos.
+
+## Equipo de desarrollo
+
+Fernando Mora Ángel, desearrollador principal
+
 
 ## Funcionalidades por desarrollar
 1. Migración progresiva de AngularJS a Angular.
@@ -63,7 +70,7 @@ El Sistema de información de músicas regionales (simr) es una aplicación CRUD
     MONGO_DB_NAME=simr
 
     # Credenciales de MinIO
-    MINIO_ENDPOINT=play.min.io
+    MINIO_ENDPOINT="play.min.io"
     MINIO_PORT=9000
     MINIO_USE_SSL=true
     MINIO_ACCESS_KEY=Q3AM3UQ867SPQQA43P2F
