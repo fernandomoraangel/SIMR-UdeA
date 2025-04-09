@@ -129,7 +129,7 @@ exports.renderSignup = (req, res, next) => {
       messages: req.flash("error"),
     });
   } else {
-    return res.redirect("/idiomas");
+    return res.redirect("/");
   }
 };
 
@@ -212,10 +212,11 @@ exports.signup = async (req, res, next) => {
         // Si ocurre error de login moverse al siguiente middleware
         if (err) return next(err);
         // Redirecciona de nuevo a la página principal
-        // return res.redirect("/");
+        return res.redirect("/");
         // return res.status(200).json({ message: 'Registro exitoso', user });
-        const { _id, username, email } = user;
-        return res.status(200).json({ message: 'Registro exitoso', user: { _id, username, email } });
+
+        // const { _id, username, email } = user;
+        // return res.status(200).json({ message: 'Registro exitoso', user: { _id, username, email } });
       });
     } catch (err) {
       // Si ocurre un error, lo reporta usando el mensaje flash
