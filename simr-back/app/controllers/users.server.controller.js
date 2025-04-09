@@ -160,7 +160,8 @@ exports.signin = (req, res, next) => {
         email: user.email,
       };
       // res.json({ message: 'Authentication successful', user: safeUser });
-      res.status(200).json({ message: 'Authentication successful', user: safeUser });
+      // res.status(200).json({ message: 'Authentication successful', user: safeUser });
+      return res.redirect("/");
       // res.status(200).json({
       //   message: 'Authentication successful',
       //   user: safeUser,
