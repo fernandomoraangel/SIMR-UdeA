@@ -1,11 +1,16 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ArchivoVistaComponent } from '../archivo-vista/archivo-vista.component';
-import { ArchivoService } from '../archivo.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+
+import { ArchivoService } from '../archivo.service';
+import { ArchivoVistaComponent } from '../archivo-vista/archivo-vista.component';
 import { SharedMessageData } from '../../../models/shared-message-data.interface';
-import { FileBasicInfo, FileDeleteInfo, FileDocumentInfo } from '../archivo.module';
+import {
+  FileBasicInfo,
+  FileDeleteInfo,
+  FileDocumentInfo,
+} from '../archivo.module';
 
 interface SelectedFileInfo {
   id: string;
@@ -15,7 +20,7 @@ interface SelectedFileInfo {
 @Component({
   selector: 'app-archivo-lista',
   templateUrl: './archivo-lista.component.html',
-  styleUrls: ['./archivo-lista.component.css']
+  styleUrls: ['./archivo-lista.component.css'],
 })
 export class ArchivoListaComponent implements OnInit, OnDestroy {
   // files: any[] = [];
@@ -27,9 +32,9 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   allSelected: boolean = false;
   selectedFileForViewing: string | null = null;
 
-  dbCollection: string = "";
-  documentId: string = "";
-  documentName: string = "";
+  dbCollection: string = '';
+  documentId: string = '';
+  documentName: string = '';
 
   private fileChangedSubscription: Subscription = new Subscription();
 
@@ -43,16 +48,22 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private archivoService: ArchivoService,
     private ngZone: NgZone
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.messageListener = this.receiveMessage.bind(this);
     window.addEventListener('message', this.messageListener, false);
-    this.messageToAngularJS = { type: 'FILE_LIST', status: 'READY', message: 'Hola desde Angular!' };
+    this.messageToAngularJS = {
+      type: 'FILE_LIST',
+      status: 'READY',
+      message: 'Hola desde Angular!',
+    };
     window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
-    this.fileChangedSubscription = this.archivoService.fileChanged$.subscribe(() => {
-      this.loadDocumentFiles(this.dbCollection, this.documentId);
-    });
+    this.fileChangedSubscription = this.archivoService.fileChanged$.subscribe(
+      () => {
+        this.loadDocumentFiles(this.dbCollection, this.documentId);
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -66,15 +77,17 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     this.dialog.open(ArchivoVistaComponent, {
       width: '90%',
       height: '90%',
-      data: { filename: fileName }
+      data: { filename: fileName },
     });
   }
 
   receiveMessage(event: MessageEvent) {
     if (event.origin !== this.angularJSOrigin) {
-      console.log('Origen no permitido', this.angularJSOrigin, '!=', event.origin);
+      // console.log('Origen no permitido', this.angularJSOrigin, '!=', event.origin);
       return;
     }
+
+    // console.log('Origen permitido', this.angularJSOrigin, '==', event.origin);
 
     this.ngZone.run(() => {
       this.messageFromAngularJS = event.data;
@@ -102,12 +115,12 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
     if (this.allSelected) {
       this.selectedFiles = [];
     } else {
-      this.files.forEach(file => {
+      this.files.forEach((file) => {
         const fileSelected: SelectedFileInfo = {
           id: file.id,
-          name: file.name
+          name: file.name,
         };
-        this.selectedFiles.push(fileSelected)
+        this.selectedFiles.push(fileSelected);
       });
     }
     this.allSelected = !this.allSelected;
@@ -126,18 +139,20 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   }
 
   isInSelectedFiles(fileId: string): boolean {
-    return this.selectedFiles.find(item => item.id === fileId) !== undefined;
+    return this.selectedFiles.find((item) => item.id === fileId) !== undefined;
   }
 
   // toggleFileSelection(fileId: string): void {
   toggleFileSelection(file: FileBasicInfo): void {
-    const existingItem = this.selectedFiles.find(item => item.id === file.id);
+    const existingItem = this.selectedFiles.find((item) => item.id === file.id);
     if (existingItem) {
-      this.selectedFiles = this.selectedFiles.filter(item => item.id !== file.id);
+      this.selectedFiles = this.selectedFiles.filter(
+        (item) => item.id !== file.id
+      );
     } else {
       const fileSelected: SelectedFileInfo = {
         id: file.id,
-        name: file.name
+        name: file.name,
       };
       this.selectedFiles.push(fileSelected);
     }
@@ -159,18 +174,18 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
 
   deleteFile(fileInfo: FileBasicInfo): void {
     Swal.fire({
-      title: "¡Advertencia de eliminación!",
+      title: '¡Advertencia de eliminación!',
       text: `¿Estás seguro de que quiere eliminar el archivo "${fileInfo.name}"?`,
-      icon: "warning",
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         const fileToDelete: FileDeleteInfo = {
           fileName: fileInfo.name,
           id: fileInfo.id,
-          documentId: this.documentId
+          documentId: this.documentId,
         };
         // this.archivoService.deleteFile(fileInfo.name, fileInfo.id, this.documentId).subscribe({
         this.archivoService.deleteFile(fileToDelete).subscribe({
@@ -179,9 +194,13 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
             const fileDeleted: FileDocumentInfo = {
               id: fileInfo.id,
               name: fileInfo.name,
-              documentId: this.documentId
+              documentId: this.documentId,
             };
-            this.sendMessage({ type: 'FILE_DELETED', status: 'SUCCESS', message: JSON.stringify(fileDeleted) });
+            this.sendMessage({
+              type: 'FILE_DELETED',
+              status: 'SUCCESS',
+              message: JSON.stringify(fileDeleted),
+            });
           },
           error: (error) => {
             console.error('Error al eliminar el archivo:', error);
@@ -189,7 +208,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
               title: '¡Error al eliminar el archivo!',
               text: error,
               icon: 'error',
-              confirmButtonText: 'Aceptar'
+              confirmButtonText: 'Aceptar',
             });
           },
           complete: () => {
@@ -198,9 +217,9 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
               title: '¡Eliminado!',
               text: 'Archivo eliminado exitosamente',
               icon: 'success',
-              confirmButtonText: 'Aceptar'
+              confirmButtonText: 'Aceptar',
             });
-          }
+          },
         });
       }
     });
@@ -212,7 +231,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
         title: 'Advertencia',
         text: 'Por favor, seleccione al menos un archivo para eliminar',
         icon: 'warning',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
       });
       return;
     }
@@ -221,16 +240,16 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       filesToDelete.push({
         fileName: file['name'],
         id: file.id,
-        documentId: this.documentId
+        documentId: this.documentId,
       });
     });
     Swal.fire({
-      title: "¡Advertencia de eliminación!",
+      title: '¡Advertencia de eliminación!',
       text: `¿Estás seguro de que quiere eliminar ${filesToDelete.length} archivo(s) ? `,
-      icon: "warning",
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.archivoService.deleteMultipleFiles(filesToDelete).subscribe({
@@ -245,7 +264,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
               title: '¡Error al eliminar los archivos',
               text: error,
               icon: 'error',
-              confirmButtonText: 'Aceptar'
+              confirmButtonText: 'Aceptar',
             });
           },
           complete: () => {
@@ -254,9 +273,9 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
               title: '¡Éxito!',
               text: 'Eliminación exitosa',
               icon: 'success',
-              confirmButtonText: 'Aceptar'
+              confirmButtonText: 'Aceptar',
             });
-          }
+          },
         });
       }
     });
@@ -265,19 +284,17 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   loadDocumentFiles(collection: string, documentId: string): void {
     console.log('Obteniendo archivos adjuntos...');
     this.loading = true;
-    this.archivoService.getDocumentFiles(collection, documentId)
-      .subscribe({
-        next: (data) => {
-          console.log('Datos obtenidos:', data);
-          this.files = data;
-          this.loading = false;
-          console.log('this.files', this.files);
-        },
-        error: (error) => {
-          console.error('Error al obtener los datos:', error);
-          this.loading = false;
-        }
-      });
+    this.archivoService.getDocumentFiles(collection, documentId).subscribe({
+      next: (data) => {
+        console.log('Datos obtenidos:', data);
+        this.files = data;
+        this.loading = false;
+        console.log('this.files', this.files);
+      },
+      error: (error) => {
+        console.error('Error al obtener los datos:', error);
+        this.loading = false;
+      },
+    });
   }
-
 }

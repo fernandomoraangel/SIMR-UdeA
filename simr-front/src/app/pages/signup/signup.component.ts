@@ -34,7 +34,8 @@ export class SignupComponent implements OnInit {
       // Aquí puedes agregar la lógica para enviar los datos al servidor
       const newUser: User = this.signupForm.value;
       newUser.provider = 'local'; // o cualquier valor predeterminado
-      this.authService.signup(newUser).subscribe({
+      // this.authService.signup(newUser).subscribe({
+      this.authService.register(newUser).subscribe({
         next: response => {
           // console.log('Registration successful', response);
           this.router.navigate(['/mi-ruta-2']);

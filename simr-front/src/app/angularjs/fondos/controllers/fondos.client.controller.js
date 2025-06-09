@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller fondos
 angular.module("fondos").controller("FondosController", [

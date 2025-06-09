@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller obras
 angular.module("instrumentos").controller("InstrumentosController", [

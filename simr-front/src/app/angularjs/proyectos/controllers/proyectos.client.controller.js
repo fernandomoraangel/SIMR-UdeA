@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller proyectos
 angular.module("proyectos").controller("ProyectosController", [

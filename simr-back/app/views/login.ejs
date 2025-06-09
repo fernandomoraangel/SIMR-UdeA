@@ -17,7 +17,8 @@
 <!-- Renderizar el formulario sign in-->
 <div class="container">
 	<div><img src="img/logomr.png" alt="Logo"> </div>
-<form class="form-login" action="/signin"method="post">
+<!-- <form class="form-login" action="/api/auth/signin"method="post"> -->
+<form class="form-login" action="/api/auth/login"method="post">
 	<label>Usuario:</label>
 	<input type="text"  class="form-control " name="username"/>
 	<label>Contraseña:</label>
@@ -25,7 +26,8 @@
     <input type="submit" class="btn btn-primary pull-right" value="Identificarse"></a>
 </form>
 	<!--<a href="/oauth/google">Registrarse usando Google</a>-->
-	<p></p><a href="/signup"> Registrarse</a>
+	<p></p><a href="/register"> Registrarse</a>
+	<!-- <p></p><a href="/api/auth/signup"> Registrarse</a> -->
 	<a href="/">Regresar</a>
 </div> <!--div containter-->
 </body>

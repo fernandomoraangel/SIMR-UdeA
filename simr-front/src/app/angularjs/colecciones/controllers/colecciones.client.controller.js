@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller obras
 angular.module("colecciones").controller("ColeccionesController", [

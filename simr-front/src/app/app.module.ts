@@ -8,11 +8,18 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './pages/home/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClient,
+  provideHttpClient,
+} from '@angular/common/http';
 import { ActorModule } from './modules/actor/actor.module';
-import { ArchivoModule } from './modules/archivo/archivo.module'; 
+import { ArchivoModule } from './modules/archivo/archivo.module';
 import { SigninComponent } from './pages/signin/signin.component';
 import { SignupComponent } from './pages/signup/signup.component';
+// import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthService } from './services/auth.service';
+import { AuthGuard } from './guards/auth.guard';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 // Modules
@@ -29,8 +36,7 @@ import { PruebaModule } from './modules/prueba/prueba.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 // import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-
-// Define your AngularJS module 
+// Define your AngularJS module
 // declare const angular: any;
 // const angularJsApp = angular.module('angularJsApp', []);
 
@@ -39,14 +45,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 //   template: `<h1>Legacy AngularJS Component</h1>`
 // });
 
-
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     PageNotFoundComponent,
     SigninComponent,
-    SignupComponent
+    SignupComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,24 +63,25 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     AppRoutingModule,
     UpgradeModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   providers: [
     provideHttpClient(),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    provideAnimationsAsync()
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+    provideAnimationsAsync(),
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-
 export class AppModule {
-  constructor(private upgrade: UpgradeModule) { }
+  constructor(private upgrade: UpgradeModule) {}
   ngDoBootstrap() {
     this.upgrade.bootstrap(document.body, ['simr'], { strictDi: true });
   }
-  
 }
-
 
 // ============================
 
@@ -90,7 +96,6 @@ export class AppModule {
 //   'appComponent',
 //   downgradeComponent({ component: AppComponent }) as angular.IDirectiveFactory
 // );
-
 
 // ============================
 

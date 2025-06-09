@@ -1,4 +1,4 @@
-"use scrict";
+// "use strict";
 
 //Controller Actores
 angular.module("actores").controller("ActoresController", [
@@ -1125,8 +1125,12 @@ angular.module("actores").controller("ActoresController", [
 
     // Limpiar el listener cuando se destruya el $scope
     $scope.$on('$destroy', function () {
-      window.removeEventListener('message', messageListener);
-      console.log('Listener de message removido');
+      try{
+        window.removeEventListener('message', messageListener);
+        console.log('Listener de message removido');
+      } catch (error) {
+        console.error('Error al remover el listener de message:', error);
+      }
     });
 
   },

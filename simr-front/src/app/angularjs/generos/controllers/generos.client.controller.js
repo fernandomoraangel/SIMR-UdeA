@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller géneros
 angular.module("generos").controller("GenerosController", [

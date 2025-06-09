@@ -2,8 +2,9 @@
 "use strict";
 
 // Cargar dependencias del módulo
-var config = require("./config"),
-  mongoose = require("mongoose");
+const config = require("./config");
+const mongoose = require("mongoose");
+
 mongoose.set("strictQuery", false);
 // Definir el método de configuración de mongoose
 module.exports = function () {

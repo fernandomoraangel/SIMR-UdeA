@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller materias
 angular.module("materias").controller("MateriasController", [

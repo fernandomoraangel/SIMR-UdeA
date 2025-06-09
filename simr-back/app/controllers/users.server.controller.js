@@ -1,9 +1,72 @@
 //Invocar el modo 'strict' de Javascript
-"use Strict";
+"use strict";
 
 // Cargar el model Mongoose 'User'
 const User = require("mongoose").model("User");
 const passport = require("passport");
+const jwt = require('jsonwebtoken');
+
+// Configuración de cookies seguras
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
+};
+
+// TODO: Usar función en generateTokens(), signin(), refreshToken()
+// function getSafeUser(user) {
+const getSafeUser = (user) => {
+  return {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    fullName: user.fullName
+  };
+}
+
+
+  // user: {
+  //   id: user._id,
+  //   email: user.email,
+  //   name: user.name,
+  //   roles: user.roles || []
+  // }
+
+
+// Función para generar tokens
+const generateTokens = (user) => {
+  const accessToken = jwt.sign(
+    {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRATION }
+  );
+
+  // const accessToken = jwt.sign(
+  //   {
+  //     id: user._id,
+  //     username: user.username,
+  //     email: user.email,
+  //     fullName: user.fullName,
+  //     roles: user.roles || []
+  //   },
+  //   process.env.JWT_SECRET,
+  //   { expiresIn: '15m' }
+  // );
+
+  const refreshToken = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  return { accessToken, refreshToken };
+};
 
 // Crear un nuevo método controler 'create'
 exports.create = async (req, res, next) => {
@@ -102,12 +165,27 @@ const getErrorMessage = (err) => {
   return message;
 };
 
+// Generar token JWT para el usuario
+const generateToken = (user) => {
+  const payload = {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    fullName: user.fullName
+  };
+  // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
+
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+};
+
 // Controller que renderiza la página signin
-exports.renderSignin = (req, res, next) => {
+// exports.renderSignin = (req, res, next) => {
+exports.renderLogin = (req, res, next) => {
   // Si el usuario no está conectado, renderizar signin, en otro caso redireccionar al usuario
   if (!req.user) {
     // Usa el objeto 'response' para renderizar la página
-    res.render("signin", {
+    // res.render("signin", {
+    res.render("login", {
       // Reconfigurar la variable title de la página
       title: "Página de registro",
       // Configurar la variable del mensaje flash
@@ -119,11 +197,13 @@ exports.renderSignin = (req, res, next) => {
 };
 
 // Controller que renderiza la página signup
-exports.renderSignup = (req, res, next) => {
+// exports.renderSignup = (req, res, next) => {
+exports.renderRegister = (req, res, next) => {
   // Si el usuario no está conectado, renderizar la página signin, en otro caso, redireccionar al usuario
   if (!req.user) {
     // Usa el objeto 'response' para renderizar la página
-    res.render("signup", {
+    // res.render("signup", {
+    res.render("register", {
       title: "Página de registro",
       // Configura la variable para el mensaje flash
       messages: req.flash("error"),
@@ -142,34 +222,156 @@ exports.renderSignup = (req, res, next) => {
 // 	})
 // };
 
-exports.signin = (req, res, next) => {
-  passport.authenticate('local', (err, user) => {
+
+// * [Metodo original de signin]
+// exports.signin = (req, res, next) => {
+//   passport.authenticate('local', (err, user) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     if (!user) {
+//       return res.status(401).json({ message: 'Authentication failed' });
+//     }
+//     req.logIn(user, (err) => {
+//       if (err) {
+//         return next(err);
+//       }
+//       const safeUser = {
+//         id: user._id,
+//         username: user.username,
+//         email: user.email,
+//       };
+//       // res.json({ message: 'Authentication successful', user: safeUser });
+//       // res.status(200).json({ message: 'Authentication successful', user: safeUser });
+//       return res.redirect("/");
+//       // res.status(200).json({
+//       //   message: 'Authentication successful',
+//       //   user: safeUser,
+//       //   redirectUrl: '/home' // Cambia esta URL según sea necesario
+//       // });
+//     });
+//   })(req, res, next);
+// };
+
+// Controller modificado para signin con JWT
+// exports.signin = (req, res, next) => {
+exports.login = (req, res, next) => {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err) {
-      return next(err);
+      return res.status(500).json({ message: 'Error interno del servidor' });
+      // return next(err);
     }
+
     if (!user) {
-      return res.status(401).json({ message: 'Authentication failed' });
+      return res.status(401).json({
+        message: info?.message || 'Credenciales inválidas'
+      });
     }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      const safeUser = {
+
+    const { accessToken, refreshToken } = generateTokens(user);
+
+    // Guardar refresh token en cookie HttpOnly
+    res.cookie('refreshToken', refreshToken, cookieOptions);
+
+    // Respuesta exitosa
+    res.status(200).json({
+      accessToken,
+      user: {
         id: user._id,
         username: user.username,
         email: user.email,
-      };
-      // res.json({ message: 'Authentication successful', user: safeUser });
-      // res.status(200).json({ message: 'Authentication successful', user: safeUser });
-      return res.redirect("/");
-      // res.status(200).json({
-      //   message: 'Authentication successful',
-      //   user: safeUser,
-      //   redirectUrl: '/home' // Cambia esta URL según sea necesario
-      // });
+        fullName: user.fullName
+      },
+      message: 'Inicio de sesión exitoso'
     });
   })(req, res, next);
 };
+
+
+// exports.signin = (req, res, next) => {
+//   passport.authenticate('local', (err, user, info) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     if (!user) {
+//       return res.status(401).json({ message: 'Autenticación fallida', info });
+//     }
+
+//     req.login(user, { session: false }, (err) => {
+//       if (err) {
+//         return next(err);
+//       }
+
+//       // Generamos el token JWT
+//       const token = generateToken(user);
+
+//       // Configuramos los datos seguros del usuario para devolver
+// const safeUser = {
+//   id: user._id,
+//   username: user.username,
+//   email: user.email,
+//   fullName: user.fullName
+// };
+
+//       // Devolvemos el token y los datos del usuario
+//       return res.status(200).json({
+//         message: 'Autenticación exitosa',
+//         token,
+//         user: safeUser
+//       });
+//     });
+//   })(req, res, next);
+// };
+
+// Controller para Google OAuth con JWT
+exports.googleCallback = (req, res) => {
+  // Después de la autenticación exitosa con Google
+  const token = generateToken(req.user);
+  const safeUser = {
+    id: req.user._id,
+    username: req.user.username,
+    email: req.user.email,
+    fullName: req.user.fullName
+  };
+
+  // Redireccionar a la página principal con el token como parámetro de consulta
+  // En el frontend, puedes capturar este token y almacenarlo en localStorage
+  res.redirect(`/?token=${token}&user=${encodeURIComponent(JSON.stringify(safeUser))}`);
+};
+
+
+exports.refreshToken = (req, res) => {
+  passport.authenticate('jwt-refresh', { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error interno del servidor' });
+    }
+
+    if (!user) {
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+      });
+      return res.status(401).json({ message: 'Refresh token inválido' });
+    }
+
+    const { accessToken, refreshToken } = generateTokens(user);
+
+    // Actualizar refresh token en cookie
+    res.cookie('refreshToken', refreshToken, cookieOptions);
+
+    res.json({
+      accessToken,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName
+      }
+    });
+  })(req, res, next);
+};
+
 
 // {
 //   successRedirect: '/',
@@ -186,74 +388,195 @@ exports.signin = (req, res, next) => {
 // });
 
 // Controller para signout
-exports.signout = (req, res, next) => {
-  // Usa el método logout de passport con respectivo callback para salir
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    // Redirecciona al usuario de vuelta a la página principal
-    res.redirect('/');
+// * [Metodo original de signout]
+// exports.signout = (req, res, next) => {
+//   // Usa el método logout de passport con respectivo callback para salir
+//   req.logout((err) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     // Redirecciona al usuario de vuelta a la página principal
+//     res.redirect('/');
+//   });
+// };
+
+// exports.signout = (req, res) => {
+//   // Con JWT, el logout es principalmente manejado por el cliente
+//   // Solo necesitamos responder con un mensaje de éxito
+//   res.status(200).json({ message: 'Sesión cerrada exitosamente' });
+// };
+
+// exports.signout = (req, res) => {
+exports.logout = (req, res) => {
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
   });
+
+  res.status(200).json({ message: 'Sesión cerrada exitosamente' });
 };
 
+// Obtener usuario actual
+exports.currentUser = (req, res) => {
+  passport.authenticate('jwt-access', { session: false }),
+    (req, res) => {
+      res.json({
+        user: {
+          id: req.user._id,
+          username: req.user.username,
+          email: req.user.email,
+          fullName: req.user.fullName
+        }
+      });
+    }
+}
+
 // Controller para crear nuevo usuario
-exports.signup = async (req, res, next) => {
+// * [Metodo original de signup]
+// exports.signup = async (req, res, next) => {
+//   // Si user no esta conectado, crear y hacer login a un nuevo usuario
+//   if (!req.user) {
+//     try {
+//       // Crear una nueva instancia del modelo 'User'
+//       // console.log(req.body);
+//       const user = new User(req.body);
+//       // Configurar la propiedad user provider
+//       user.provider = "local";
+//       // Intenta salvar el documento user
+//       await user.save();
+//       req.login(user, function (err) {
+//         // Si ocurre error de login moverse al siguiente middleware
+//         if (err) return next(err);
+//         // Redirecciona de nuevo a la página principal
+//         return res.redirect("/");
+//         // return res.status(200).json({ message: 'Registro exitoso', user });
+
+//         // const { _id, username, email } = user;
+//         // return res.status(200).json({ message: 'Registro exitoso', user: { _id, username, email } });
+//       });
+//     } catch (err) {
+//       // Si ocurre un error, lo reporta usando el mensaje flash
+//       // Usa el método de manejo de errores para obtener el error
+//       const message = getErrorMessage(err);
+//       // Configura los mensajes flash
+//       req.flash("error", message);
+//       // Redirecciona al usuario de vuelta a signup
+//       // return res.redirect("/signup");
+//       return res.status(500).json({ message: 'Error en el registro', err });
+//     }
+//   } else {
+//     // return res.redirect("/");
+//     // return res.status(200).json({ message: 'Registro exitoso', user });
+//     // return res.status(200).json({ message: 'Registro exitoso', user: { id, username, email } });
+//     return res.status(405).send({ message: 'Usuario ya registrado' });
+//   }
+// };
+
+// exports.signup = async (req, res, next) => {
+exports.register = async (req, res, next) => {
   // Si user no esta conectado, crear y hacer login a un nuevo usuario
   if (!req.user) {
     try {
       // Crear una nueva instancia del modelo 'User'
-      // console.log(req.body);
       const user = new User(req.body);
       // Configurar la propiedad user provider
       user.provider = "local";
       // Intenta salvar el documento user
       await user.save();
-      req.login(user, function (err) {
-        // Si ocurre error de login moverse al siguiente middleware
-        if (err) return next(err);
-        // Redirecciona de nuevo a la página principal
-        return res.redirect("/");
-        // return res.status(200).json({ message: 'Registro exitoso', user });
 
-        // const { _id, username, email } = user;
-        // return res.status(200).json({ message: 'Registro exitoso', user: { _id, username, email } });
+      // Generamos el token JWT después del registro exitoso
+      const token = generateToken(user);
+
+      // Configuramos los datos seguros del usuario para devolver
+      const safeUser = {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName
+      };
+
+      // Devolvemos el token y los datos del usuario
+      return res.status(201).json({
+        message: 'Registro exitoso',
+        token,
+        user: safeUser
       });
     } catch (err) {
-      // Si ocurre un error, lo reporta usando el mensaje flash
-      // Usa el método de manejo de errores para obtener el error
+      // Si ocurre un error, obtenemos el mensaje de error
       const message = getErrorMessage(err);
-      // Configura los mensajes flash
-      req.flash("error", message);
-      // Redirecciona al usuario de vuelta a signup
-      // return res.redirect("/signup");
-      return res.status(500).json({ message: 'Error en el registro', err });
+      return res.status(400).json({ message: message, error: err });
     }
   } else {
-    // return res.redirect("/");
-    // return res.status(200).json({ message: 'Registro exitoso', user });
-    // return res.status(200).json({ message: 'Registro exitoso', user: { id, username, email } });
-    return res.status(405).send({ message: 'Usuario ya registrado' });
+    return res.status(403).json({ message: 'Usuario ya registrado' });
   }
 };
 
 // Middleware controller para autorizar operaciones
+// * [Metodo original de requiresLogin]
+// exports.requiresLogin = (req, res, next) => {
+//   if (!req.isAuthenticated()) {
+//     return res.status(401).send({
+//       message: "Usuario no autorizado",
+//       redirect: "/",
+//     });
+//   }
+//   // Llamar siguiente middleware
+//   next();
+// };
+
+// Middleware controller para autorizar operaciones basado en JWT
 exports.requiresLogin = (req, res, next) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).send({
-      message: "Usuario no autorizado",
-      redirect: "/",
+  // Verificar si existe un token en la solicitud
+  const token = req.headers.authorization?.split(' ')[1] || req.query.token;
+
+  console.log('req: ', req);
+  console.log('req.isAuthenticated(): ', req.isAuthenticated());
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Acceso no autorizado. Token no proporcionado.",
     });
   }
-  // Llamar siguiente middleware
-  next();
+
+  try {
+    // Verificar y decodificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Adjuntar la información del usuario decodificada a la solicitud
+    req.user = decoded;
+
+    // Continuar con el siguiente middleware
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      message: "Token inválido o expirado",
+      error: error.message
+    });
+  }
 };
 
-/* if (err) {
-        // Usa el método de manejo de errores para obtener el error
-        var message = getErrorMessage(err);
-        // Configura los mensajes flash
-        req.flash("error", message);
-        // Redirecciona al usuario de vuelta a signup
-        return res.redirect("/signup");
-      } */
+// Verificar token de manera asíncrona
+exports.verifyToken = (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1] || req.query.token;
+
+  if (!token) {
+    return res.status(401).json({ valid: false, message: "Token no proporcionado" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Token decodificado en verifyToken: ", decoded);
+    return res.status(200).json({
+      valid: true,
+      user: {
+        id: decoded.id,
+        username: decoded.username,
+        fullName: decoded.fullName,
+        email: decoded.email
+      }
+    });
+  } catch (error) {
+    return res.status(401).json({ valid: false, message: "Token inválido o expirado" });
+  }
+};

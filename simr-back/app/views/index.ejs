@@ -7,7 +7,7 @@
     <!-- <base href="!"> -->
     <link rel="stylesheet" href="../lib/bootstrap-css/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="/styles.css" />
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- <script src="/lib/sweetalert2/dist/sweetalert2.all.min.js"></script> -->
     <script src="funcionesGenerales.js"></script>
     <script src="listas.js"></script>
@@ -17,15 +17,14 @@
     <!--Si un usuario es autentificado, mostrar su nombre completo, sino mostrar enlaces-->
 
     <section ng-view></section>
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="<%= nonce %>">
       window.user = <%- user || 'null' %>;
     </script>
 
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="<%= nonce %>">
     src="/lib/requirejs/bin/r.js"
     </script>
     
-    </script>
     <script src="/lib/jquery/dist/jquery.min.js"></script>
     <script src="/lib/bootstrap-css/js/bootstrap.min.js"></script>
 
@@ -329,10 +328,31 @@
 
     
 <!-- Usuarios -->
-    <script type="text/javascript" src="/users.client.module.js"></script>
+    <!-- <script type="text/javascript" src="/users.client.module.js"></script> -->
+    <script
+      type="text/javascript"
+      src="/users/users.client.module.js"
+    ></script>
+
+    
+    <script
+    type="text/javascript"
+    src="/users/controllers/login-externo.client.controller.js"
+    ></script>
+    
+    <script
+    type="text/javascript"
+    src="/users/controllers/dashboard.client.controller.js"
+    ></script>
+    
     <script
       type="text/javascript"
       src="/users/services/authentication.client.service.js"
+    ></script>
+    
+    <script
+      type="text/javascript"
+      src="/users/config/users.client.routes.js"
     ></script>
 
     <script type="text/javascript" src="/application.js"></script>

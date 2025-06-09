@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller medios
 angular.module("medios").controller("MediosController", [

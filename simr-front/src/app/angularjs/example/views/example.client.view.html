@@ -140,26 +140,36 @@
         <ul class="nav navbar-nav navbar-right">
 
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+            <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
               aria-expanded="false"> <small data-ng-bind="authentication.user.fullName"></small><span
+                class="caret"></span></a> -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+              aria-expanded="false"> <small data-ng-bind="authentication.getCurrentUser().fullName"></small><span
                 class="caret"></span></a>
-            <ul class="dropdown-menu" data-ng-show="!authentication.user">
-              <li><a href="/signin">Iniciar sesión</a></li>
-              <li><a href="/signup">Registrarse</a></li>
+            <!-- <ul class="dropdown-menu" data-ng-show="!authentication.user"> -->
+            <ul class="dropdown-menu" data-ng-show="authentication.isAuthenticated() == false">
+              <!-- <li><a href="/signin">Iniciar sesión</a></li>
+              <li><a href="/signup">Registrarse</a></li> -->
+              <li><a href="/login">Iniciar sesión</a></li>
+              <li><a href="/register">Registrarse</a></li>
             </ul>
-            <ul class="dropdown-menu" data-ng-show="authentication.user">
-              <li><a href="/signout">Terminar sesión</a></li>
+            <ul class="dropdown-menu" data-ng-show="authentication.isAuthenticated() == true">
+              <!-- <li><a href="/signout">Terminar sesión</a></li> -->
+              <li><a href="/logout">Terminar sesión</a></li>
             </ul>
           </li>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-  <div data-ng-show="!authentication.user">
+  <!-- <div data-ng-show="!authentication.user"> -->
+  <div data-ng-show="authentication.isAuthenticated() == false">
     <img src="img/sello.png" alt="Logo" class="img-resize" style="max-width: 100%;">
     <h2>Bienvenido a nuestro Sistema de Información</h2>
-    <a href="/signin">Iniciar sesión</a>
-    <a href="/signup">Registrarse</a>
+    <!-- <a href="/signin">Iniciar sesión</a> -->
+    <a href="/login">Iniciar sesión</a>
+    <!-- <a href="/signup">Registrarse</a> -->
+    <a href="/register">Registrarse</a>
     <a href="https://github.com/fernandomoraangel/simr/wiki" target="_blank">Manual de
       usuario</a>
     <a href="https://github.com/fernandomoraangel/simr/issues" target="_blank">Reportar situación</a>

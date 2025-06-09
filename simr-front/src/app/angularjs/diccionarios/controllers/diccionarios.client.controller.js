@@ -1,4 +1,4 @@
-"use scrict";
+"use strict";
 
 //Controller diccinarios
 angular.module("diccionarios").controller("DiccionariosController", [

@@ -87,9 +87,9 @@ export class SigninComponent implements OnInit {
         //   );
         // }
 
-        const accessToken = response.accessToken;
+        const token = response.token;
         // Redireccionar con el token como parámetro
-        window.location.href = `http://localhost:3000/#!/login-externo/?token=${accessToken}`;
+        window.location.href = `http://localhost:3000/#!/login-externo/?token=${token}`;
       },
       error: (error) => {
         // Manejo específico de error en el componente

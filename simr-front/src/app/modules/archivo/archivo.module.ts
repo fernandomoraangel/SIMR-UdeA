@@ -2,11 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
-// Componentes
-import { ArchivoListaComponent } from './archivo-lista/archivo-lista.component';
-import { ArchivoSubidaComponent } from './archivo-subida/archivo-subida.component';
-import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
-
 // Servicios
 import { ArchivoService } from './archivo.service';
 
@@ -15,12 +10,17 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { SharedModule } from '../../shared/shared.module';
 
-// Rutas
-const routes: Routes = [
-  { path: 'files', component: ArchivoListaComponent },
-  { path: 'files/upload', component: ArchivoSubidaComponent },
-  { path: 'files/preview', component: ArchivoVistaComponent }
-];
+// Componentes
+import { ArchivoListaComponent } from './archivo-lista/archivo-lista.component';
+import { ArchivoSubidaComponent } from './archivo-subida/archivo-subida.component';
+import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
+
+// // Rutas
+// const routes: Routes = [
+//   { path: 'files', component: ArchivoListaComponent },
+//   { path: 'files/upload', component: ArchivoSubidaComponent },
+//   { path: 'files/preview', component: ArchivoVistaComponent },
+// ];
 
 // Interfaces
 export interface FileBasicInfo {
@@ -42,28 +42,25 @@ export interface FileDocumentInfo {
   documentId: string;
 }
 
-
 @NgModule({
   declarations: [
     ArchivoListaComponent,
     ArchivoSubidaComponent,
-    ArchivoVistaComponent
+    ArchivoVistaComponent,
   ],
   exports: [
     ArchivoListaComponent,
     ArchivoSubidaComponent,
     ArchivoVistaComponent,
-    RouterModule
+    RouterModule,
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes),
+    // RouterModule.forChild(routes),
     MatDialogModule,
     MatButtonModule,
-    SharedModule
+    SharedModule,
   ],
-  providers: [
-    ArchivoService
-  ]
+  providers: [ArchivoService],
 })
-export class ArchivoModule { }
+export class ArchivoModule {}
