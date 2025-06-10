@@ -5,6 +5,7 @@
 const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
+const { get } = require("mongoose");
 
 // Configuración de cookies seguras
 const cookieOptions = {
@@ -14,55 +15,40 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
 };
 
-// TODO: Usar función en generateTokens(), signin(), refreshToken()
 // function getSafeUser(user) {
 const getSafeUser = (user) => {
   return {
     id: user._id,
     username: user.username,
-    email: user.email,
-    fullName: user.fullName
+    email: user.email
   };
 }
-
-
-  // user: {
-  //   id: user._id,
-  //   email: user.email,
-  //   name: user.name,
-  //   roles: user.roles || []
-  // }
-
 
 // Función para generar tokens
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
-    {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      fullName: user.fullName
-    },
+    getSafeUser(user),
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRATION }
   );
 
-  // const accessToken = jwt.sign(
-  //   {
-  //     id: user._id,
-  //     username: user.username,
-  //     email: user.email,
-  //     fullName: user.fullName,
-  //     roles: user.roles || []
-  //   },
-  //   process.env.JWT_SECRET,
-  //   { expiresIn: '15m' }
-  // );
+  // (backup de accessToken)
+  //   const accessToken = jwt.sign(
+  //     {
+  //       id: user._id,
+  //       username: user.username,
+  //       email: user.email,
+  //       fullName: user.fullName,
+  //       roles: user.roles || []
+  //     },
+  //     process.env.JWT_SECRET,
+  //     { expiresIn: process.env.JWT_EXPIRATION }
+  //   );
 
   const refreshToken = jwt.sign(
     { userId: user._id },
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
   );
 
   return { accessToken, refreshToken };
@@ -167,16 +153,25 @@ const getErrorMessage = (err) => {
 
 // Generar token JWT para el usuario
 const generateToken = (user) => {
-  const payload = {
-    id: user._id,
-    username: user.username,
-    email: user.email,
-    fullName: user.fullName
-  };
+  const payload = getSafeUser(user);
   // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
 
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
 };
+
+// (backup de generateToken)
+// const generateToken = (user) => {
+//   const payload = {
+//     id: user._id,
+//     username: user.username,
+//     email: user.email,
+//     fullName: user.fullName
+//   };
+//   // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
+
+//   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+// };
+
 
 // Controller que renderiza la página signin
 // exports.renderSignin = (req, res, next) => {
@@ -276,14 +271,19 @@ exports.login = (req, res, next) => {
     // Respuesta exitosa
     res.status(200).json({
       accessToken,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        fullName: user.fullName
-      },
+      user: getSafeUser(user),
       message: 'Inicio de sesión exitoso'
     });
+    // res.status(200).json({
+    //   accessToken,
+    //   user: {
+    //     id: user._id,
+    //     username: user.username,
+    //     email: user.email,
+    //     fullName: user.fullName
+    //   },
+    //   message: 'Inicio de sesión exitoso'
+    // });
   })(req, res, next);
 };
 
@@ -327,12 +327,14 @@ exports.login = (req, res, next) => {
 exports.googleCallback = (req, res) => {
   // Después de la autenticación exitosa con Google
   const token = generateToken(req.user);
-  const safeUser = {
-    id: req.user._id,
-    username: req.user.username,
-    email: req.user.email,
-    fullName: req.user.fullName
-  };
+  const safeUser = getSafeUser(req.user);
+
+  // const safeUser = {
+  //   id: req.user._id,
+  //   username: req.user.username,
+  //   email: req.user.email,
+  //   fullName: req.user.fullName
+  // };
 
   // Redireccionar a la página principal con el token como parámetro de consulta
   // En el frontend, puedes capturar este token y almacenarlo en localStorage
@@ -362,13 +364,19 @@ exports.refreshToken = (req, res) => {
 
     res.json({
       accessToken,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        fullName: user.fullName
-      }
+      user: getSafeUser(user),
+      message: 'Refresh token exitoso'
     });
+
+    // res.json({
+    //   accessToken,
+    //   user: {
+    //     id: user._id,
+    //     username: user.username,
+    //     email: user.email,
+    //     fullName: user.fullName
+    //   }
+    // });
   })(req, res, next);
 };
 
@@ -422,13 +430,19 @@ exports.currentUser = (req, res) => {
   passport.authenticate('jwt-access', { session: false }),
     (req, res) => {
       res.json({
-        user: {
-          id: req.user._id,
-          username: req.user.username,
-          email: req.user.email,
-          fullName: req.user.fullName
-        }
+        user: getSafeUser(req.user)
       });
+
+      // (req, res) => {
+      //   res.json({
+      //     user: {
+      //       id: req.user._id,
+      //       username: req.user.username,
+      //       email: req.user.email,
+      //       fullName: req.user.fullName
+      //     }
+      //   });
+
     }
 }
 
@@ -489,12 +503,14 @@ exports.register = async (req, res, next) => {
       const token = generateToken(user);
 
       // Configuramos los datos seguros del usuario para devolver
-      const safeUser = {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        fullName: user.fullName
-      };
+      const safeUser = getSafeUser(user);
+
+      // const safeUser = {
+      //   id: user._id,
+      //   username: user.username,
+      //   email: user.email,
+      //   fullName: user.fullName
+      // };
 
       // Devolvemos el token y los datos del usuario
       return res.status(201).json({
@@ -569,13 +585,19 @@ exports.verifyToken = (req, res) => {
     console.log("Token decodificado en verifyToken: ", decoded);
     return res.status(200).json({
       valid: true,
-      user: {
-        id: decoded.id,
-        username: decoded.username,
-        fullName: decoded.fullName,
-        email: decoded.email
-      }
+      user: getSafeUser(decoded)
     });
+
+    // return res.status(200).json({
+    //   valid: true,
+    //   user: {
+    //     id: decoded.id,
+    //     username: decoded.username,
+    //     fullName: decoded.fullName,
+    //     email: decoded.email
+    //   }
+    // });
+
   } catch (error) {
     return res.status(401).json({ valid: false, message: "Token inválido o expirado" });
   }

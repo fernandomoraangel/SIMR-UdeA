@@ -51,6 +51,8 @@ module.exports = function () {
     })(req, res, next); // Llama al middleware generado por helmet
   });
 
+
+  // Desactivar Helmet CSP si es necesario
   // app.use(helmet({
   // 	contentSecurityPolicy: false // Ajustar según necesidades
   // }));
@@ -192,15 +194,15 @@ module.exports = function () {
 
 
   //* Middleware para debug de autenticación
-  app.use((req, res, next) => {
-    console.log('Auth Debug:', {
-      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
-      user: req.user ? req.user.email : 'No user',
-      sessionID: req.sessionID,
-      hasJWT: !!req.headers.authorization
-    });
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   console.log('Auth Debug:', {
+  //     isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+  //     user: req.user ? req.user.email : 'No user',
+  //     sessionID: req.sessionID,
+  //     hasJWT: !!req.headers.authorization
+  //   });
+  //   next();
+  // });
 
   //* Rutas de autenticación
   // app.use('/api/auth', require('./routes/auth'));
