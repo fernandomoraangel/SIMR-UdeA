@@ -13,6 +13,8 @@ var UserSchema = new Schema({
 	firstName: String,
 	lastName: String,
 	email: {
+		required: true,
+		unique: true,
 		type: String,
 		// Validación
 		match: [/.+\@.+\..+/, "Escriba una dirección de correo válida"]

@@ -16,13 +16,13 @@ const crypto = require('crypto');
 
 // Función para inicializar la aplicación express
 module.exports = function () {
-  // * Instanciar la aplicación
+  //* Instanciar la aplicación
   const app = express();
 
-  // * Rutas para la API
+  //* Rutas para la API
   const apiRouter = express.Router();
 
-  // * Middlewares de seguridad
+  //* Middlewares de seguridad
 
   app.use((req, res, next) => {
     res.locals.nonce = crypto.randomBytes(16).toString('base64');
@@ -51,28 +51,11 @@ module.exports = function () {
     })(req, res, next); // Llama al middleware generado por helmet
   });
 
-  // app.use(helmet.contentSecurityPolicy({
-  //   directives: {
-  //     defaultSrc: ["'self'"],
-  //     scriptSrc: [
-  //       "'self'",
-  //       `'nonce-${res.locals.nonce}'`,
-  //       "sha256:/jHqMvDRSj5Ys5es30VT6CPd8Mn1Ozv6Yju7n+sZM8k="],
-  //     styleSrc: [
-  //       "'self'",
-  //       "'unsafe-inline'",
-  //       "https://fonts.googleapis.com"],
-  //     imgSrc: ["'self'", "data:"],
-  //     frameAncestors: ["'self'"],
-  //     upgradeInsecureRequests: []
-  //   }
-  // }));
-
   // app.use(helmet({
   // 	contentSecurityPolicy: false // Ajustar según necesidades
   // }));
 
-  // * Parsers
+  //* Parsers
   app.use(express.json({ limit: '10mb' })); // Middleware para analizar el cuerpo JSON
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
@@ -102,7 +85,7 @@ module.exports = function () {
   // 	next();
   // });
 
-  // CORS con soporte para cookies
+  //* CORS con soporte para cookies
   app.use(cors({
     origin: [
       'http://localhost:4200', // Angular
@@ -143,9 +126,6 @@ module.exports = function () {
     app.use(compress());
   }
 
-
-
-
   app.use(methodOverride());
 
   // Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
@@ -159,7 +139,7 @@ module.exports = function () {
   // 	saveUninitialized: false
   // }));
 
-  // Configuración de la sesión, usando MongoStore para persistencia
+  //* Configuración de la sesión, usando MongoStore para persistencia
   app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -176,14 +156,14 @@ module.exports = function () {
     }
   }));
 
-  // * working 2025-06-08
+  //* working 2025-06-08
   // app.use(session({
   // 	saveUninitialized: true,
   // 	resave: true,
   // 	secret: config.sessionSecret
   // }));
 
-  // * end of (working 2025-06-08)
+  //* end of (working 2025-06-08)
 
 
   // app.use(session({
@@ -211,7 +191,7 @@ module.exports = function () {
   // }));
 
 
-  // * Middleware para debug de autenticación
+  //* Middleware para debug de autenticación
   app.use((req, res, next) => {
     console.log('Auth Debug:', {
       isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
@@ -222,10 +202,10 @@ module.exports = function () {
     next();
   });
 
-  // * Rutas de autenticación
+  //* Rutas de autenticación
   // app.use('/api/auth', require('./routes/auth'));
 
-  // * Rutas protegidas de ejemplo
+  //* Rutas protegidas de ejemplo
   // app.use('/api/users', require('./middleware/auth').authenticate, require('./routes/users'));
   // app.use('/api/admin', [
   //   require('./middleware/auth').authenticate,
@@ -233,10 +213,10 @@ module.exports = function () {
   // ], require('./routes/admin'));
 
 
-  // Configurar el directorio views
+  //* Configurar el directorio views
   app.set('views', './app/views');
 
-  // Configurar el motor de plantillas
+  //* Configurar el motor de plantillas
   app.set('view engine', 'ejs');
 
   // Registrar flash
