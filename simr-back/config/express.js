@@ -148,7 +148,8 @@ module.exports = function () {
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      touchAfter: 24 * 3600 // 24 hours
+      touchAfter: 24 * 3600, // 24 hours - lazy session update - Actualiza sesión solo si han pasado 24h
+      ttl: 24 * 60 * 60 // Time to live (24 hours) - Sesiones expiradas se eliminan automáticamente
     }),
     cookie: {
       secure: process.env.NODE_ENV === 'production',
