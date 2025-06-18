@@ -3,13 +3,14 @@
 
 // Cargar dependencias de los módulos
 
-var mongoose = require('mongoose'),
-	crypto = require('crypto'),
-	Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-// Definir un nuevo 'UseSchema'
+// var mongoose = require('mongoose'),
+// 	crypto = require('crypto'),
+// 	Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
 	firstName: String,
 	lastName: String,
 	email: {
@@ -51,7 +52,12 @@ var UserSchema = new Schema({
 		type: Date,
 		// Crear un valor 'created' por defecto
 		default: Date.now
-	}
+	},
+	refreshTokens: [{
+		token: String,
+		createdAt: { type: Date, default: Date.now },
+		expiresAt: Date
+	}]
 });
 
 // Configurar la propiedad virtual 'fullname'
@@ -63,39 +69,61 @@ UserSchema.virtual('fullName').get(function () {
 	this.lastName = splitName[1] || '';
 });
 
-
-
-
 // Usar un middleware pre-save para la contraseña
 UserSchema.pre('save', async function (next) {
-	// if (this.isModified('password') || this.isNew) {
-	//   const salt = await bcrypt.genSalt(10);
-	//   this.password = await bcrypt.hash(this.password, salt);
-	// }
+	// Solo hashear si la contraseña fue modificada
+	if (!this.isModified('password')) return next();
 
-	// AngularJS
-	if (this.password) {
-		this.salt = new Buffer.from(crypto.randomBytes(16).toString('base64'));
-		this.password = this.hashPassword(this.password);
-		//console.log(this.password+" Password save")
+	try {
+		// Generar salt y hashear la contraseña
+		const saltRounds = 12;
+		this.password = await bcrypt.hash(this.password, saltRounds);
+		next();
+	} catch (error) {
+		next(error);
 	}
-	next();
 });
 
-// Crear un método instancia para hashing una contraseña
-UserSchema.methods.hashPassword = function (password) {
-	//console.log(crypto.pbkdf2Sync(this.password,this.salt,10000,64,'sha512').toString('base64')+" hashPassword");
-	return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('base64');
+// // Usar un middleware pre-save para la contraseña
+// UserSchema.pre('save', async function (next) {
+// 	// AngularJS
+// 	if (this.password) {
+// 		this.salt = new Buffer.from(crypto.randomBytes(16).toString('base64'));
+// 		this.password = this.hashPassword(this.password);
+// 		//console.log(this.password+" Password save")
+// 	}
+// 	next();
+// });
+
+// Método para comparar contraseñas
+userSchema.methods.comparePassword = async function (candidatePassword) {
+	return await bcrypt.compare(candidatePassword, this.password);
 };
 
-
-
-//Crear un método instancia para autenticar el usuario
-UserSchema.methods.authenticate = function (password) {
-	//console.log(password+" password");
-	//console.log(this.hashPassword(password)+" hashPassword");
-	return this.password == this.hashPassword(password);
+// Limpiar refresh tokens expirados
+userSchema.methods.cleanExpiredTokens = function () {
+	this.refreshTokens = this.refreshTokens.filter(
+		tokenObj => tokenObj.expiresAt > new Date()
+	);
 };
+
+// // Crear un método instancia para hashing una contraseña
+// UserSchema.methods.hashPassword = function (password) {
+// 	//console.log(crypto.pbkdf2Sync(this.password,this.salt,10000,64,'sha512').toString('base64')+" hashPassword");
+// 	return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('base64');
+// };
+
+
+
+
+
+
+// //Crear un método instancia para autenticar el usuario
+// UserSchema.methods.authenticate = function (password) {
+// 	//console.log(password+" password");
+// 	//console.log(this.hashPassword(password)+" hashPassword");
+// 	return this.password == this.hashPassword(password);
+// };
 
 //Encontrar posibles username no usados
 UserSchema.statics.findUniqueUserName = function (username, suffix, callback) {
