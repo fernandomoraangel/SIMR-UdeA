@@ -4,7 +4,7 @@
 // Cargar dependencias de los módulos
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // var mongoose = require('mongoose'),
 // 	crypto = require('crypto'),
@@ -96,12 +96,12 @@ UserSchema.pre('save', async function (next) {
 // });
 
 // Método para comparar contraseñas
-userSchema.methods.comparePassword = async function (candidatePassword) {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
 	return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Limpiar refresh tokens expirados
-userSchema.methods.cleanExpiredTokens = function () {
+UserSchema.methods.cleanExpiredTokens = function () {
 	this.refreshTokens = this.refreshTokens.filter(
 		tokenObj => tokenObj.expiresAt > new Date()
 	);

@@ -19,19 +19,23 @@ module.exports = function () {
     return token;
   };
 
+  // Configuración de las opciones para la estrategia JWT
+  // Se define un extractor de tokens que puede obtener el token desde las cookies o desde el header Authorization
   const opts = {
     jwtFromRequest: ExtractJwt.fromExtractors([
       cookieExtractor,
       ExtractJwt.fromAuthHeaderAsBearerToken()
     ]),
-    secretOrKey: process.env.JWT_SECRET
+    secretOrKey: process.env.JWT_SECRET,
+    ignoreExpiration: false
   };
 
-  // Estrategia JWT para autenticación con tokens
+  // Estrategia JWT con múltiples extractores para autenticación con tokens
   passport.use(new JwtStrategy(opts, async (payload, done) => {
     try {
       const user = await User.findById(payload.id);
 
+      // TODO: Revisar si esto es necesario
       // if (user && user.isActive) {
       //   return done(null, user);
       // }
@@ -42,51 +46,6 @@ module.exports = function () {
       return done(null, false);
     } catch (error) {
       return done(error, false);
-    }
-  }));
-
-
-//===================
-  // Estrategia JWT para cookies (para compartir entre apps)
-  passport.use('jwt-cookie', new JwtStrategy({
-    jwtFromRequest: (req) => {
-      let token = null;
-      if (req && req.cookies) {
-        token = req.cookies.accessToken;
-      }
-      return token;
-    },
-    secretOrKey: JWT_SECRET
-  }, async (payload, done) => {
-    try {
-      const user = await User.findById(payload.id);
-      if (user) {
-        return done(null, user);
-      }
-      return done(null, false);
-    } catch (error) {
-      return done(error, false);
-    }
-  }));
-//===================
-
-
-  // Estrategia JWT para validar access tokens
-  // passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
-  passport.use('jwt-access', new JwtStrategy(opts, async (jwt_payload, done) => {
-    try {
-      const user = await User.findById(jwt_payload.id);
-
-      console.log('JWT middleware: ', user);
-
-      // if (user) {
-      if (user && user.isActive) {
-        return done(null, user);
-      }
-
-      return done(null, false);
-    } catch (err) {
-      return done(err, false);
     }
   }));
 
