@@ -6,12 +6,21 @@ const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
 const { get } = require("mongoose");
+const { generateTokens, verifyRefreshToken, getTokenExpiry } = require('../../utils/jwtUtils');
 
 // Configuración de cookies seguras
+// const cookieOptions = {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === 'production',
+//   sameSite: 'strict',
+//   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
+// };
+
+// * Configuración de cookies seguras
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  secure: process.env.NODE_ENV === 'production', // HTTPS en producción
+  sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
 };
 
@@ -24,35 +33,64 @@ const getSafeUser = (user) => {
   };
 }
 
-// Función para generar tokens
-const generateTokens = (user) => {
-  const accessToken = jwt.sign(
-    getSafeUser(user),
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRATION }
-  );
+// Controller modificado para signin con JWT
+// exports.signin = (req, res, next) => {
+exports.login = (req, res, next) => {
+  passport.authenticate('local', { session: false }, async (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error interno del servidor' });
+      // return next(err);
+    }
 
-  // (backup de accessToken)
-  //   const accessToken = jwt.sign(
-  //     {
-  //       id: user._id,
-  //       username: user.username,
-  //       email: user.email,
-  //       fullName: user.fullName,
-  //       roles: user.roles || []
-  //     },
-  //     process.env.JWT_SECRET,
-  //     { expiresIn: process.env.JWT_EXPIRATION }
-  //   );
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: info?.message || 'Credenciales inválidas'
+      });
+    }
 
-  const refreshToken = jwt.sign(
-    { userId: user._id },
-    process.env.JWT_REFRESH_SECRET,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
-  );
+    try {
+      // Limpiar tokens expirados
+      user.cleanExpiredTokens();
 
-  return { accessToken, refreshToken };
+      // Generar nuevos tokens
+      const { accessToken, refreshToken } = generateTokens(user._id);
+
+      // Guardar refresh token en la base de datos
+      user.refreshTokens.push({
+        token: refreshToken,
+        expiresAt: getTokenExpiry(refreshToken)
+      });
+
+      await user.save();
+
+      // Configurar cookies
+      res.cookie('accessToken', accessToken, {
+        ...cookieOptions,
+        maxAge: 15 * 60 * 1000 // 15 minutos
+      });
+
+      res.cookie('refreshToken', refreshToken, cookieOptions);
+
+      // Respuesta para el cliente
+      res.json({
+        success: true,
+        message: 'Inicio de sesión exitoso',
+        user: getSafeUser(user),
+        tokens: {
+          accessToken,
+          expiresIn: 15 * 60 // 15 minutos en segundos
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  })(req, res, next);
 };
+
+
+
+
 
 // Crear un nuevo método controler 'create'
 exports.create = async (req, res, next) => {
@@ -247,45 +285,6 @@ exports.renderRegister = (req, res, next) => {
 //     });
 //   })(req, res, next);
 // };
-
-// Controller modificado para signin con JWT
-// exports.signin = (req, res, next) => {
-exports.login = (req, res, next) => {
-  passport.authenticate('local', { session: false }, (err, user, info) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error interno del servidor' });
-      // return next(err);
-    }
-
-    if (!user) {
-      return res.status(401).json({
-        message: info?.message || 'Credenciales inválidas'
-      });
-    }
-
-    const { accessToken, refreshToken } = generateTokens(user);
-
-    // Guardar refresh token en cookie HttpOnly
-    res.cookie('refreshToken', refreshToken, cookieOptions);
-
-    // Respuesta exitosa
-    res.status(200).json({
-      accessToken,
-      user: getSafeUser(user),
-      message: 'Inicio de sesión exitoso'
-    });
-    // res.status(200).json({
-    //   accessToken,
-    //   user: {
-    //     id: user._id,
-    //     username: user.username,
-    //     email: user.email,
-    //     fullName: user.fullName
-    //   },
-    //   message: 'Inicio de sesión exitoso'
-    // });
-  })(req, res, next);
-};
 
 
 // exports.signin = (req, res, next) => {
