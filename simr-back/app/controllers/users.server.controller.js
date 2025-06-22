@@ -230,13 +230,11 @@ exports.renderLogin = (req, res, next) => {
 };
 
 // Controller que renderiza la página signup
-// exports.renderSignup = (req, res, next) => {
-exports.renderRegister = (req, res, next) => {
+exports.renderSignup = (req, res, next) => {
   // Si el usuario no está conectado, renderizar la página signin, en otro caso, redireccionar al usuario
   if (!req.user) {
     // Usa el objeto 'response' para renderizar la página
-    // res.render("signup", {
-    res.render("register", {
+    res.render("signup", {    
       title: "Página de registro",
       // Configura la variable para el mensaje flash
       messages: req.flash("error"),
@@ -487,7 +485,7 @@ exports.currentUser = (req, res) => {
 // };
 
 // exports.signup = async (req, res, next) => {
-exports.register = async (req, res, next) => {
+exports.signup = async (req, res, next) => {
   // Si user no esta conectado, crear y hacer login a un nuevo usuario
   if (!req.user) {
     try {
