@@ -6,14 +6,6 @@ const jwt = require('jsonwebtoken');
 // const { get } = require("mongoose");
 const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/jwtUtils');
 
-// Configuración de cookies seguras
-// const cookieOptions = {
-//   httpOnly: true,
-//   secure: process.env.NODE_ENV === 'production',
-//   sameSite: 'strict',
-//   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
-// };
-
 //* Configuración de cookies seguras
 const cookieOptions = {
   httpOnly: true,
@@ -200,6 +192,23 @@ exports.logout = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error durante logout'
+    });
+  }
+};
+
+//* VERIFY TOKEN - Verificar autenticación
+exports.verifyToken = (req, res) => {
+  passport.authenticate('jwt', { session: false }), (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token inválido o expirado'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: getSafeUser(req.user)
     });
   }
 };
@@ -633,33 +642,3 @@ exports.requiresLogin = (req, res, next) => {
   }
 };
 
-// Verificar token de manera asíncrona
-exports.verifyToken = (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1] || req.query.token;
-
-  if (!token) {
-    return res.status(401).json({ valid: false, message: "Token no proporcionado" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Token decodificado en verifyToken: ", decoded);
-    return res.status(200).json({
-      valid: true,
-      user: getSafeUser(decoded)
-    });
-
-    // return res.status(200).json({
-    //   valid: true,
-    //   user: {
-    //     id: decoded.id,
-    //     username: decoded.username,
-    //     fullName: decoded.fullName,
-    //     email: decoded.email
-    //   }
-    // });
-
-  } catch (error) {
-    return res.status(401).json({ valid: false, message: "Token inválido o expirado" });
-  }
-};
