@@ -49,27 +49,25 @@ module.exports = function () {
     }
   }));
 
-  // Estrategia JWT para refresh tokens (desde cookies)
-  passport.use('jwt-refresh', new JwtStrategy({
-    jwtFromRequest: (req) => {
-      let token = null;
-      if (req && req.cookies) {
-        token = req.cookies.refreshToken;
-      }
-      return token;
-    },
-    secretOrKey: process.env.JWT_REFRESH_SECRET
-  }, async (payload, done) => {
-    try {
-      const user = await User.findById(payload.id);
-
-      if (user && user.isActive) {
-        return done(null, user);
-      }
-
-      return done(null, false);
-    } catch (error) {
-      return done(error);
-    }
-  }));
+  //! // Estrategia JWT para cookies (para compartir entre apps)
+  // passport.use('jwt-cookie', new JwtStrategy({
+  //   jwtFromRequest: (req) => {
+  //     let token = null;
+  //     if (req && req.cookies) {
+  //       token = req.cookies.accessToken;
+  //     }
+  //     return token;
+  //   },
+  //   secretOrKey: JWT_SECRET
+  // }, async (payload, done) => {
+  //   try {
+  //     const user = await User.findById(payload.userId);
+  //     if (user) {
+  //       return done(null, user);
+  //     }
+  //     return done(null, false);
+  //   } catch (error) {
+  //     return done(error, false);
+  //   }
+  // }));
 };

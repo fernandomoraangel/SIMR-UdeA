@@ -1,12 +1,10 @@
-//Invocar el modo 'strict' de Javascript
 "use strict";
 
-// Cargar el model Mongoose 'User'
 const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
-const { get } = require("mongoose");
-const { generateTokens, verifyRefreshToken, getTokenExpiry } = require('../../utils/jwtUtils');
+// const { get } = require("mongoose");
+const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/jwtUtils');
 
 // Configuración de cookies seguras
 // const cookieOptions = {
@@ -16,15 +14,17 @@ const { generateTokens, verifyRefreshToken, getTokenExpiry } = require('../../ut
 //   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
 // };
 
-// * Configuración de cookies seguras
+//* Configuración de cookies seguras
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // HTTPS en producción
   sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
-  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
+  maxAge: process.env.JWT_REFRESH_EXPIRATION
 };
+// maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
 
-// function getSafeUser(user) {
+//* Función para obtener un usuario seguro
+// Esta función se usa para evitar enviar información sensible del usuario al cliente
 const getSafeUser = (user) => {
   return {
     id: user._id,
@@ -33,8 +33,7 @@ const getSafeUser = (user) => {
   };
 }
 
-// Controller modificado para signin con JWT
-// exports.signin = (req, res, next) => {
+//* Login - Inicio de sesión
 exports.login = (req, res, next) => {
   passport.authenticate('local', { session: false }, async (err, user, info) => {
     if (err) {
@@ -67,8 +66,9 @@ exports.login = (req, res, next) => {
       // Configurar cookies
       res.cookie('accessToken', accessToken, {
         ...cookieOptions,
-        maxAge: 15 * 60 * 1000 // 15 minutos
+        maxAge: process.env.JWT_EXPIRATION
       });
+      // maxAge: 15 * 60 * 1000 // 15 minutos
 
       res.cookie('refreshToken', refreshToken, cookieOptions);
 
@@ -79,16 +79,98 @@ exports.login = (req, res, next) => {
         user: getSafeUser(user),
         tokens: {
           accessToken,
-          expiresIn: 15 * 60 // 15 minutos en segundos
+          expiresIn: process.env.JWT_EXPIRATION
         }
       });
+      // expiresIn: 15 * 60 // 15 minutos en segundos
     } catch (error) {
       next(error);
     }
   })(req, res, next);
 };
 
+//* Refresh Token - Actualización de tokens
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
 
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token no encontrado'
+      });
+    }
+
+    // Verificar el refresh token
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token inválido'
+      });
+    }
+
+    // Buscar usuario y verificar que el token existe
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Usuario no encontrado'
+      });
+    }
+
+    // Verifica si el refreshToken recibido es válido y vigente en la lista de tokens almacenados del usuario
+    const tokenExists = user.refreshTokens.some(
+      tokenObj => tokenObj.token === refreshToken && tokenObj.expiresAt > new Date()
+    );
+
+    if (!tokenExists) {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token no válido'
+      });
+    }
+
+    // Generar nuevos tokens
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user._id);
+
+    // Reemplazar el refresh token anterior
+    user.refreshTokens = user.refreshTokens.filter(
+      tokenObj => tokenObj.token !== refreshToken
+    );
+
+    user.refreshTokens.push({
+      token: newRefreshToken,
+      expiresAt: getTokenExpiration(newRefreshToken)
+    });
+
+    await user.save();
+
+    // Actualizar cookies
+    res.cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: process.env.JWT_EXPIRATION
+    });
+    //   maxAge: 15 * 60 * 1000 // 15 minutos
+
+    res.cookie('refreshToken', newRefreshToken, cookieOptions);
+
+    res.json({
+      success: true,
+      tokens: {
+        accessToken,
+        expiresIn: process.env.JWT_EXPIRATION
+      }
+    });
+    // expiresIn: 15 * 60 // 15 minutos en segundos
+  } catch (error) {
+    console.error('Error al refrescar el token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+};
 
 
 
@@ -234,7 +316,7 @@ exports.renderSignup = (req, res, next) => {
   // Si el usuario no está conectado, renderizar la página signin, en otro caso, redireccionar al usuario
   if (!req.user) {
     // Usa el objeto 'response' para renderizar la página
-    res.render("signup", {    
+    res.render("signup", {
       title: "Página de registro",
       // Configura la variable para el mensaje flash
       messages: req.flash("error"),
@@ -336,45 +418,6 @@ exports.googleCallback = (req, res) => {
   // Redireccionar a la página principal con el token como parámetro de consulta
   // En el frontend, puedes capturar este token y almacenarlo en localStorage
   res.redirect(`/?token=${token}&user=${encodeURIComponent(JSON.stringify(safeUser))}`);
-};
-
-
-exports.refreshToken = (req, res) => {
-  passport.authenticate('jwt-refresh', { session: false }, (err, user, info) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error interno del servidor' });
-    }
-
-    if (!user) {
-      res.clearCookie('refreshToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-      });
-      return res.status(401).json({ message: 'Refresh token inválido' });
-    }
-
-    const { accessToken, refreshToken } = generateTokens(user);
-
-    // Actualizar refresh token en cookie
-    res.cookie('refreshToken', refreshToken, cookieOptions);
-
-    res.json({
-      accessToken,
-      user: getSafeUser(user),
-      message: 'Refresh token exitoso'
-    });
-
-    // res.json({
-    //   accessToken,
-    //   user: {
-    //     id: user._id,
-    //     username: user.username,
-    //     email: user.email,
-    //     fullName: user.fullName
-    //   }
-    // });
-  })(req, res, next);
 };
 
 

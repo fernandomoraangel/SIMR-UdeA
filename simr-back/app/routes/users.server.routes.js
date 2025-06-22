@@ -14,15 +14,15 @@ module.exports = function (app) {
   app.route('/api/auth/login')
     .post(users.login);
 
+  app.route('/api/auth/refresh')
+    .post(users.refreshToken);
+
   app.route('/api/auth/logout')
     .get(users.logout);
 
   app.route('/api/auth/verify')
     .get(users.verifyToken);
-
-  app.route('/api/auth/refresh')
-    .post(users.refreshToken);
-
+  
   app.route('/api/auth/me')
     .get(users.currentUser);
 
