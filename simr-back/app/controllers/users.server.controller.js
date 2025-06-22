@@ -33,7 +33,7 @@ const getSafeUser = (user) => {
   };
 }
 
-//* Login - Inicio de sesión
+//* LOGIN - Inicio de sesión
 exports.login = (req, res, next) => {
   passport.authenticate('local', { session: false }, async (err, user, info) => {
     if (err) {
@@ -89,7 +89,7 @@ exports.login = (req, res, next) => {
   })(req, res, next);
 };
 
-//* Refresh Token - Actualización de tokens
+//* REFRESH TOKEN - Actualización de tokens
 exports.refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
@@ -172,6 +172,37 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
+//* LOGOUT - Cierre de sesión
+exports.logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    if (refreshToken) {
+      // Remover refresh token de la base de datos
+      const decoded = verifyRefreshToken(refreshToken);
+      if (decoded) {
+        const user = await User.findById(decoded.id);
+        if (user) {
+          user.refreshTokens = user.refreshTokens.filter(
+            tokenObj => tokenObj.token !== refreshToken
+          );
+          await user.save();
+        }
+      }
+    }
+
+    // Limpiar cookies
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
+    res.json({ success: true, message: 'Cierre de sesión exitoso' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error durante logout'
+    });
+  }
+};
 
 
 // Crear un nuevo método controler 'create'
@@ -454,16 +485,6 @@ exports.googleCallback = (req, res) => {
 //   res.status(200).json({ message: 'Sesión cerrada exitosamente' });
 // };
 
-// exports.signout = (req, res) => {
-exports.logout = (req, res) => {
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
-  });
-
-  res.status(200).json({ message: 'Sesión cerrada exitosamente' });
-};
 
 // Obtener usuario actual
 exports.currentUser = (req, res) => {
