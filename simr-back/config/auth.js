@@ -1,17 +1,17 @@
 // const passport = require('../config/passport');
 const passport = require("passport");
 
-// Middleware para rutas protegidas
+//* Middleware para rutas protegidas
 const requireAuth = (req, res, next) => {
-  passport.authenticate('jwt-access', { session: false }, (err, user, info) => {
+  passport.authenticate('jwt', { session: false }, (err, user) => {
     if (err) {
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
 
     if (!user) {
       return res.status(401).json({
-        message: 'Token requerido',
-        expired: info?.name === 'TokenExpiredError'
+        success: false,
+        message: 'Token de acceso requerido',
       });
     }
 
@@ -20,7 +20,18 @@ const requireAuth = (req, res, next) => {
   })(req, res, next);
 };
 
-// Middleware para verificar roles
+//* Middleware para rutas opcionales (si el usuario está autenticado, se agrega al req.user)
+// const optionalAuth = (req, res, next) => {
+//   passport.authenticate('jwt', { session: false }, (err, user, info) => {
+//     if (user) {
+//       req.user = user;
+//     }
+//     next();
+//   })(req, res, next);
+// };
+
+
+//* Middleware para verificar roles
 const requireRole = (roles) => {
   return (req, res, next) => {
     if (!req.user) {
