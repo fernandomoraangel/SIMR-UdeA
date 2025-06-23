@@ -4,7 +4,7 @@ const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
 // const { get } = require("mongoose");
-const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/jwtUtils');
+const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/tokenUtils');
 
 //* Configuración de cookies seguras
 const cookieOptions = {

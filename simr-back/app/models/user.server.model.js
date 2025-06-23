@@ -1,14 +1,15 @@
 // Invocar el modo javascript 'strict'
 'use strict';
 
-// Cargar dependencias de los módulos
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
-// var mongoose = require('mongoose'),
-// 	crypto = require('crypto'),
-// 	Schema = mongoose.Schema;
+const isBcryptHash = (hash) => {
+	// bcrypt tiene un formato específico: $2a$, $2b$, $2x$, $2y$
+	const bcryptRegex = /^\$2[abxy]\$\d{2}\$.{53}$/;
+	return bcryptRegex.test(hash);
+}
 
 const UserSchema = new mongoose.Schema({
 	firstName: String,
@@ -76,28 +77,45 @@ UserSchema.pre('save', async function (next) {
 
 	try {
 		// Generar salt y hashear la contraseña
-		const saltRounds = 12;
-		this.password = await bcrypt.hash(this.password, saltRounds);
+		this.password = await this.hashPassword(this.password);
 		next();
 	} catch (error) {
 		next(error);
 	}
 });
 
-// // Usar un middleware pre-save para la contraseña
-// UserSchema.pre('save', async function (next) {
-// 	// AngularJS
-// 	if (this.password) {
-// 		this.salt = new Buffer.from(crypto.randomBytes(16).toString('base64'));
-// 		this.password = this.hashPassword(this.password);
-// 		//console.log(this.password+" Password save")
-// 	}
-// 	next();
-// });
+// Función para hacer Hashing a la Contraseña
+UserSchema.methods.hashPassword = async (plainPassword) => {
+	const saltRounds = 12;
+	return await bcrypt.hash(plainPassword, saltRounds);
+};
 
 // Método para comparar contraseñas
 UserSchema.methods.comparePassword = async function (candidatePassword) {
 	return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Método híbrido para verificar la contraseña, migrando de pbkdf2 a bcrypt si es necesario
+UserSchema.methods.verifyPassword = async function (candidatePassword) {
+	if (isBcryptHash) {
+		// Contraseña en formato bcrypt
+		return await bcrypt.compare(candidatePassword, this.password);
+	} else {
+		// Contraseña antigua en formato pbkdf2
+		if (!this.salt) return false; // Sin salt = inválido
+
+		const hashed = crypto.pbkdf2Sync(candidatePassword, this.salt, 10000, 64, 'sha512').toString('base64');
+		const isMatch = hashed === this.password;
+
+		// Si coincide, migrar automáticamente a bcrypt
+		if (isMatch) {
+			this.password = await this.hashPassword(candidatePassword);
+			this.salt = undefined; // ya no se necesita
+			await this.save(); // persistir nueva contraseña
+		}
+
+		return isMatch;
+	}
 };
 
 // Limpiar refresh tokens expirados
@@ -107,32 +125,14 @@ UserSchema.methods.cleanExpiredTokens = function () {
 	);
 };
 
-// // Crear un método instancia para hashing una contraseña
-// UserSchema.methods.hashPassword = function (password) {
-// 	//console.log(crypto.pbkdf2Sync(this.password,this.salt,10000,64,'sha512').toString('base64')+" hashPassword");
-// 	return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('base64');
-// };
-
-
-
-
-
-
-// //Crear un método instancia para autenticar el usuario
-// UserSchema.methods.authenticate = function (password) {
-// 	//console.log(password+" password");
-// 	//console.log(this.hashPassword(password)+" hashPassword");
-// 	return this.password == this.hashPassword(password);
-// };
-
-//Encontrar posibles username no usados
+// Encontrar posibles username no usados
 UserSchema.statics.findUniqueUserName = function (username, suffix, callback) {
 	var _this = this;
 	//Añadir un sufijo 'username'
 	var possibleUsername = username + (suffix || '');
 	//User el método 'findOne del model 'User' para encontrar un username 'unico disponible'
 	_this.findOne({
-		Username: possibleUsername
+		username: possibleUsername
 	}, function (err, user) {
 		if (!err) {
 			//Si un username único disponible fue encontrado, llama al método callback
@@ -146,12 +146,13 @@ UserSchema.statics.findUniqueUserName = function (username, suffix, callback) {
 		}
 	});
 };
-//Configura el 'UserSchema' para usar getters y virtuals cuando se transforme a JSON
+
+// Configura el 'UserSchema' para usar getters y virtuals cuando se transforme a JSON
 UserSchema.set('toJSON', {
 	getters: true,
 	virtuals: true
 });
 
 
-//Crear el modelo 'User' a partir del 'UserSchema'
+// Crear el modelo 'User' a partir del 'UserSchema'
 mongoose.model('User', UserSchema);
