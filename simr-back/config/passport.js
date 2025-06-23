@@ -6,23 +6,23 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 
 module.exports = function () {
-	const User = mongoose.model('User');
+	// const User = mongoose.model('User');
 
-	// Serializar sessions
-	passport.serializeUser((user, done) => {
-		done(null, user.id);
-	});
+	// // Serializar sessions
+	// passport.serializeUser((user, done) => {
+	// 	done(null, user.id);
+	// });
 
-	// Deserializar sessions
-	passport.deserializeUser(async (id, done) => {
-		try {
-			// const user = await User.findOne({ _id: id });
-			const user = await User.findOne({ _id: id }).select('-password -salt').exec();
-			done(null, user);
-		} catch (err) {
-			done(err, null);
-		}
-	});
+	// // Deserializar sessions
+	// passport.deserializeUser(async (id, done) => {
+	// 	try {
+	// 		// const user = await User.findOne({ _id: id });
+	// 		const user = await User.findOne({ _id: id }).select('-password -salt').exec();
+	// 		done(null, user);
+	// 	} catch (err) {
+	// 		done(err, null);
+	// 	}
+	// });
 
 	// Cargar las estrategias de Passport
 	require('./strategies/local.js')();

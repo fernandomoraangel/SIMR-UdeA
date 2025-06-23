@@ -23,8 +23,8 @@ module.exports = function (app) {
   app.route('/api/auth/verify')
     .get(users.verifyToken);
   
-  app.route('/api/auth/me')
-    .get(users.currentUser);
+  // app.route('/api/auth/me')
+  //   .get(users.currentUser);
 
   // Configurar rutas Google OAuth
   app.get('/api/auth/google', passport.authenticate('google', {

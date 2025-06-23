@@ -496,25 +496,25 @@ exports.googleCallback = (req, res) => {
 
 
 // Obtener usuario actual
-exports.currentUser = (req, res) => {
-  passport.authenticate('jwt-access', { session: false }),
-    (req, res) => {
-      res.json({
-        user: getSafeUser(req.user)
-      });
+// exports.currentUser = (req, res) => {
+//   passport.authenticate('jwt-access', { session: false }),
+//     (req, res) => {
+//       res.json({
+//         user: getSafeUser(req.user)
+//       });
 
-      // (req, res) => {
-      //   res.json({
-      //     user: {
-      //       id: req.user._id,
-      //       username: req.user.username,
-      //       email: req.user.email,
-      //       fullName: req.user.fullName
-      //     }
-      //   });
+//       // (req, res) => {
+//       //   res.json({
+//       //     user: {
+//       //       id: req.user._id,
+//       //       username: req.user.username,
+//       //       email: req.user.email,
+//       //       fullName: req.user.fullName
+//       //     }
+//       //   });
 
-    }
-}
+//     }
+// }
 
 // Controller para crear nuevo usuario
 // * [Metodo original de signup]

@@ -141,23 +141,24 @@ module.exports = function () {
   // 	saveUninitialized: false
   // }));
 
-  //* Configuración de la sesión, usando MongoStore para persistencia
-  app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      touchAfter: 24 * 3600, // 24 hours - lazy session update - Actualiza sesión solo si han pasado 24h
-      ttl: 24 * 60 * 60 // Time to live (24 hours) - Sesiones expiradas se eliminan automáticamente
-    }),
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'strict'
-    }
-  }));
+  //* Configuración de la sesión, usando MongoStore para persistencia (working 2025-06-23)
+  // app.use(session({
+  //   secret: process.env.SESSION_SECRET,
+  //   resave: false,
+  //   saveUninitialized: false,
+  //   store: MongoStore.create({
+  //     mongoUrl: process.env.MONGO_URI,
+  //     touchAfter: 24 * 3600, // 24 hours - lazy session update - Actualiza sesión solo si han pasado 24h
+  //     ttl: 24 * 60 * 60 // Time to live (24 hours) - Sesiones expiradas se eliminan automáticamente
+  //   }),
+  //   cookie: {
+  //     secure: process.env.NODE_ENV === 'production',
+  //     httpOnly: true,
+  //     maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  //     sameSite: 'strict'
+  //   }
+  // }));
+  //* end of (working 2025-06-23)
 
   //* working 2025-06-08
   // app.use(session({
@@ -227,7 +228,7 @@ module.exports = function () {
 
   // Configurar passport
   app.use(passport.initialize());
-  app.use(passport.session());
+  // app.use(passport.session());
 
   // Servir archivos estáticos
   // AngularJS

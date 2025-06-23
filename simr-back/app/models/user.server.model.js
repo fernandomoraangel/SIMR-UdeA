@@ -72,6 +72,7 @@ UserSchema.virtual('fullName').get(function () {
 
 // Usar un middleware pre-save para la contraseña
 UserSchema.pre('save', async function (next) {
+	console.log('Pre-save middleware triggered for user:', this.username);
 	// Solo hashear si la contraseña fue modificada
 	if (!this.isModified('password')) return next();
 
