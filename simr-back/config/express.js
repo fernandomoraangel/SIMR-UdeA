@@ -1,12 +1,12 @@
 const config = require('./config');
 const express = require('express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
+// const session = require('express-session');
+// const MongoStore = require('connect-mongo');
 const morgan = require('morgan');
 const compress = require('compression');
 // const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-const flash = require('connect-flash');
+// const flash = require('connect-flash');
 const passport = require('passport');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -23,7 +23,6 @@ module.exports = function () {
   const apiRouter = express.Router();
 
   //* Middlewares de seguridad
-
   app.use((req, res, next) => {
     res.locals.nonce = crypto.randomBytes(16).toString('base64');
     next();
@@ -223,8 +222,8 @@ module.exports = function () {
   //* Configurar el motor de plantillas
   app.set('view engine', 'ejs');
 
-  // Registrar flash
-  app.use(flash());
+  // // Registrar flash
+  // app.use(flash());
 
   // Configurar passport
   app.use(passport.initialize());

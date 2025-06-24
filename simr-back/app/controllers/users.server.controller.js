@@ -344,7 +344,8 @@ exports.renderLogin = (req, res, next) => {
       // Reconfigurar la variable title de la página
       title: "Página de registro",
       // Configurar la variable del mensaje flash
-      messages: req.flash("error") || req.flash("info"),
+      // messages: req.flash("error") || req.flash("info"),
+      messages: ['Credenciales inválidas'],
     });
   } else {
     return res.redirect("/");
@@ -359,7 +360,8 @@ exports.renderSignup = (req, res, next) => {
     res.render("signup", {
       title: "Página de registro",
       // Configura la variable para el mensaje flash
-      messages: req.flash("error"),
+      // messages: req.flash("error"),
+      messages: ['Error al registrar usuario'],
     });
   } else {
     return res.redirect("/");
