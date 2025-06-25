@@ -3,17 +3,18 @@
 const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
-// const { get } = require("mongoose");
 const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/tokenUtils');
+
+const COOKIE_MAX_AGE = parseInt(process.env.JWT_EXPIRATION) * 1000; // Convertir a milisegundos
+const COOKIE_REFRESH_MAX_AGE = parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
 
 //* Configuración de cookies seguras
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // HTTPS en producción
   sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
-  maxAge: process.env.JWT_REFRESH_EXPIRATION
+  maxAge: COOKIE_REFRESH_MAX_AGE
 };
-// maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
 
 //* Función para obtener un usuario seguro
 // Esta función se usa para evitar enviar información sensible del usuario al cliente
@@ -28,6 +29,10 @@ const getSafeUser = (user) => {
 //* LOGIN - Inicio de sesión
 exports.login = (req, res, next) => {
   passport.authenticate('local', { session: false }, async (err, user, info) => {
+
+    console.log('LOGIN: passport.authenticate (backend) - user:', user);
+    console.log('LOGIN: passport.authenticate (backend) - info:', info);
+
     if (err) {
       return res.status(500).json({ message: 'Error interno del servidor' });
       // return next(err);
@@ -50,7 +55,7 @@ exports.login = (req, res, next) => {
       // Guardar refresh token en la base de datos
       user.refreshTokens.push({
         token: refreshToken,
-        expiresAt: getTokenExpiry(refreshToken)
+        expiresAt: getTokenExpiration(refreshToken)
       });
 
       await user.save();
@@ -58,9 +63,8 @@ exports.login = (req, res, next) => {
       // Configurar cookies
       res.cookie('accessToken', accessToken, {
         ...cookieOptions,
-        maxAge: process.env.JWT_EXPIRATION
+        maxAge: COOKIE_MAX_AGE
       });
-      // maxAge: 15 * 60 * 1000 // 15 minutos
 
       res.cookie('refreshToken', refreshToken, cookieOptions);
 
@@ -74,7 +78,6 @@ exports.login = (req, res, next) => {
           expiresIn: process.env.JWT_EXPIRATION
         }
       });
-      // expiresIn: 15 * 60 // 15 minutos en segundos
     } catch (error) {
       next(error);
     }
@@ -141,9 +144,8 @@ exports.refreshToken = async (req, res) => {
     // Actualizar cookies
     res.cookie('accessToken', accessToken, {
       ...cookieOptions,
-      maxAge: process.env.JWT_EXPIRATION
+      maxAge: COOKIE_MAX_AGE
     });
-    //   maxAge: 15 * 60 * 1000 // 15 minutos
 
     res.cookie('refreshToken', newRefreshToken, cookieOptions);
 
@@ -154,7 +156,6 @@ exports.refreshToken = async (req, res) => {
         expiresIn: process.env.JWT_EXPIRATION
       }
     });
-    // expiresIn: 15 * 60 // 15 minutos en segundos
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     res.status(500).json({

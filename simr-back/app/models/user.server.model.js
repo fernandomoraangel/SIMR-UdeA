@@ -5,12 +5,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const isBcryptHash = (hash) => {
-	// bcrypt tiene un formato específico: $2a$, $2b$, $2x$, $2y$
-	const bcryptRegex = /^\$2[abxy]\$\d{2}\$.{53}$/;
-	return bcryptRegex.test(hash);
-}
-
 const UserSchema = new mongoose.Schema({
 	firstName: String,
 	lastName: String,
@@ -91,6 +85,12 @@ UserSchema.methods.hashPassword = async (plainPassword) => {
 	return await bcrypt.hash(plainPassword, saltRounds);
 };
 
+UserSchema.methods.isBcryptHash = function (hash) {
+	console.log('Verificando hash:', hash);
+	const bcryptRegex = /^\$2[abxy]\$\d{2}\$.{53}$/; // bcrypt tiene un formato específico: $2a$, $2b$, $2x$, $2y$
+	return bcryptRegex.test(hash);
+}
+
 // Método para comparar contraseñas
 UserSchema.methods.comparePassword = async function (candidatePassword) {
 	return await bcrypt.compare(candidatePassword, this.password);
@@ -98,21 +98,26 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 
 // Método híbrido para verificar la contraseña, migrando de pbkdf2 a bcrypt si es necesario
 UserSchema.methods.verifyPassword = async function (candidatePassword) {
-	if (isBcryptHash) {
+	console.log('Verifying password for user:', this.username, candidatePassword);
+	if (this.isBcryptHash(this.password)) {
 		// Contraseña en formato bcrypt
+		console.log('Contraseña en formato bcrypt');
 		return await bcrypt.compare(candidatePassword, this.password);
 	} else {
 		// Contraseña antigua en formato pbkdf2
+		console.log('Contraseña en formato pbkdf2');
 		if (!this.salt) return false; // Sin salt = inválido
 
 		const hashed = crypto.pbkdf2Sync(candidatePassword, this.salt, 10000, 64, 'sha512').toString('base64');
+		console.log('Contraseña hasheada:', hashed);
 		const isMatch = hashed === this.password;
 
 		// Si coincide, migrar automáticamente a bcrypt
 		if (isMatch) {
-			this.password = await this.hashPassword(candidatePassword);
-			this.salt = undefined; // ya no se necesita
-			await this.save(); // persistir nueva contraseña
+			console.log('Las contraseñas coinciden, migrando a bcrypt');
+			// this.password = await this.hashPassword(candidatePassword);
+			// this.salt = undefined; // ya no se necesita
+			// await this.save(); // persistir nueva contraseña
 		}
 
 		return isMatch;
