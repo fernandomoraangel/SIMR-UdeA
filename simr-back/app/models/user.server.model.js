@@ -67,10 +67,23 @@ UserSchema.virtual('fullName').get(function () {
 // Usar un middleware pre-save para la contraseña
 UserSchema.pre('save', async function (next) {
 	console.log('Pre-save middleware triggered for user:', this.username);
+
+	// Verificar si la contraseña ya fue hasheada manualmente
+	if (this._skipHashing) {
+        console.log('Saltando hashing (ya fue hasheada manualmente)');
+        delete this._skipHashing;
+        return next();
+    }
+
 	// Solo hashear si la contraseña fue modificada
-	if (!this.isModified('password')) return next();
+	// if (!this.isModified('password')) return next();
+	if (!this.isModified('password')) {
+		console.log('Contraseña no modificada, saltando hashing para usuario:', this.username);
+		return next();
+	}
 
 	try {
+		console.log('(Pre-save) Hashing password for user:', this.username);
 		// Generar salt y hashear la contraseña
 		this.password = await this.hashPassword(this.password);
 		next();
@@ -115,9 +128,10 @@ UserSchema.methods.verifyPassword = async function (candidatePassword) {
 		// Si coincide, migrar automáticamente a bcrypt
 		if (isMatch) {
 			console.log('Las contraseñas coinciden, migrando a bcrypt');
-			// this.password = await this.hashPassword(candidatePassword);
-			// this.salt = undefined; // ya no se necesita
-			// await this.save(); // persistir nueva contraseña
+			this.password = await this.hashPassword(candidatePassword);
+			this.salt = undefined; // Ya no se necesita con bcrypt
+			this._skipHashing = true; // Flag temporal para evitar rehashing
+			await this.save(); // Persistir nueva contraseña
 		}
 
 		return isMatch;

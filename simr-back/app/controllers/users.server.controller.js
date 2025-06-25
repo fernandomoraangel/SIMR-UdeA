@@ -616,13 +616,19 @@ exports.signup = async (req, res, next) => {
 
 // Middleware controller para autorizar operaciones basado en JWT
 exports.requiresLogin = (req, res, next) => {
-  // Verificar si existe un token en la solicitud
-  const token = req.headers.authorization?.split(' ')[1] || req.query.token;
+  console.log('Entrando al middleware requiresLogin...');
+  // console.log('req.headers: ', req.headers);
 
-  console.log('req: ', req);
+  // Verificar si existe un token en la solicitud
+  // const token = req.headers.authorization?.split(' ')[1] || req.query.token;
+
+  const token = req.cookies['accessToken'];
+
+  // console.log('req: ', req);
   console.log('req.isAuthenticated(): ', req.isAuthenticated());
 
   if (!token) {
+    console.log('[Acceso no autorizado] Token no proporcionado en la solicitud.');
     return res.status(401).json({
       message: "Acceso no autorizado. Token no proporcionado.",
     });
@@ -632,8 +638,13 @@ exports.requiresLogin = (req, res, next) => {
     // Verificar y decodificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    console.log('Token decodificado: ', decoded);
+
     // Adjuntar la información del usuario decodificada a la solicitud
     req.user = decoded;
+
+    console.log('req.user: ', req.user);
+    console.log('Continuando con el siguiente middleware...');
 
     // Continuar con el siguiente middleware
     next();
