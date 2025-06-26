@@ -88,14 +88,12 @@ module.exports = function () {
 
   //* CORS con soporte para cookies
   app.use(cors({
-    origin: [
-      'http://localhost:4200', // Angular
-      'http://localhost:3000', // AngularJS
-      process.env.FRONTEND_URL
-    ],
+    origin: process.env.NODE_ENV === 'production'
+      ? ['https://tudominio.com', 'https://www.tudominio.com']
+      : ['http://localhost:4200', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }));
 
   // Usando el middleware CORS de Express (funcionando)
