@@ -4,6 +4,7 @@
 // Cargar los módulos necesarios
 const passport = require('passport');
 const users = require('../../app/controllers/users.server.controller');
+const {requireAuth} = require('../../config/auth');
 
 // Define el método routes module
 module.exports = function (app) {
@@ -22,7 +23,7 @@ module.exports = function (app) {
 
   app.route('/api/auth/verify')
     .get(users.verifyToken);
-  
+
   // app.route('/api/auth/me')
   //   .get(users.currentUser);
 
@@ -50,8 +51,13 @@ module.exports = function (app) {
 
   // Rutas para usuarios (protegidas con JWT)
   app.route('/api/users')
+    // .get(requireAuth, users.list)
     .get(users.requiresLogin, users.list)
     .post(users.requiresLogin, users.create);
+  
+    // app.route('/api/users')
+  //   .get(users.requiresLogin, users.list)
+  //   .post(users.requiresLogin, users.create);
 
   app.route('/api/users/:userId')
     .get(users.requiresLogin, users.read)
@@ -60,4 +66,12 @@ module.exports = function (app) {
 
   // Middleware para procesar el parámetro userId
   app.param('userId', users.userByID);
+
+  // Ruta para redirección desde Angular a AngularJS
+  app.route('/redirect-to-legacy')
+    .get(passport.authenticate('jwt', { session: false }), (req, res) => {
+      // El usuario ya está autenticado por JWT, redirigir a AngularJS
+      const legacyAppUrl = process.env.ANGULARJS_APP_URL || 'http://localhost:3000';
+      res.redirect(legacyAppUrl);
+    });
 };

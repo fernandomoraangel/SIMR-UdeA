@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const generateTokens = (userId) => {
+  const jti = crypto.randomUUID();
+
   const accessToken = jwt.sign(
     { userId, type: 'access' },
     process.env.JWT_SECRET,
@@ -9,12 +11,12 @@ const generateTokens = (userId) => {
   );
 
   const refreshToken = jwt.sign(
-    { userId, type: 'refresh', jti: crypto.randomUUID() },
+    { userId, type: 'refresh', jti },
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
   );
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, jti };
 };
 
 const verifyRefreshToken = (token) => {
@@ -30,7 +32,7 @@ const getTokenExpiration = (token) => {
     const decoded = jwt.decode(token);
     return new Date(decoded.exp * 1000);
   } catch (error) {
-    return null; F
+    return null;
   }
 };
 

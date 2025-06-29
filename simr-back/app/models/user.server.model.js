@@ -50,6 +50,7 @@ const UserSchema = new mongoose.Schema({
 	},
 	refreshTokens: [{
 		token: String,
+		jti: String, // Identificador único del token
 		createdAt: { type: Date, default: Date.now },
 		expiresAt: Date
 	}]
@@ -104,10 +105,10 @@ UserSchema.methods.isBcryptHash = function (hash) {
 	return bcryptRegex.test(hash);
 }
 
-// Método para comparar contraseñas
-UserSchema.methods.comparePassword = async function (candidatePassword) {
-	return await bcrypt.compare(candidatePassword, this.password);
-};
+// Método para comparar contraseñas (solo para bcrypt)
+// UserSchema.methods.comparePassword = async function (candidatePassword) {
+// 	return await bcrypt.compare(candidatePassword, this.password);
+// };
 
 // Método híbrido para verificar la contraseña, migrando de pbkdf2 a bcrypt si es necesario
 UserSchema.methods.verifyPassword = async function (candidatePassword) {

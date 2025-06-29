@@ -11,7 +11,7 @@ const requireAuth = (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Token de acceso requerido',
+        message: '[requireAuth] Token de acceso requerido',
       });
     }
 

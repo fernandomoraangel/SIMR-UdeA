@@ -46,26 +46,29 @@ exports.login = (req, res, next) => {
     }
 
     try {
-      // Limpiar tokens expirados
+      // Limpiar refresh tokens expirados
       user.cleanExpiredTokens();
 
       // Generar nuevos tokens
-      const { accessToken, refreshToken } = generateTokens(user._id);
+      const { accessToken, refreshToken, jti } = generateTokens(user._id);
 
       // Guardar refresh token en la base de datos
       user.refreshTokens.push({
         token: refreshToken,
+        jti,
         expiresAt: getTokenExpiration(refreshToken)
       });
 
       await user.save();
 
       // Configurar cookies
+      // Cookie de acceso
       res.cookie('accessToken', accessToken, {
         ...cookieOptions,
         maxAge: COOKIE_MAX_AGE
       });
 
+      // Cookie de refresh
       res.cookie('refreshToken', refreshToken, cookieOptions);
 
       // Respuesta para el cliente
@@ -86,18 +89,19 @@ exports.login = (req, res, next) => {
 
 //* REFRESH TOKEN - Actualización de tokens
 exports.refreshToken = async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: 'Refresh token no encontrado'
+    });
+  }
+
   try {
-    const { refreshToken } = req.cookies;
-
-    if (!refreshToken) {
-      return res.status(401).json({
-        success: false,
-        message: 'Refresh token no encontrado'
-      });
-    }
-
     // Verificar el refresh token
     const decoded = verifyRefreshToken(refreshToken);
+    console.log('(user.controller) REFRESH TOKEN: decoded:', decoded);
     if (!decoded) {
       return res.status(401).json({
         success: false,
@@ -106,7 +110,7 @@ exports.refreshToken = async (req, res) => {
     }
 
     // Buscar usuario y verificar que el token existe
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -114,30 +118,25 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    // Verifica si el refreshToken recibido es válido y vigente en la lista de tokens almacenados del usuario
-    const tokenExists = user.refreshTokens.some(
-      tokenObj => tokenObj.token === refreshToken && tokenObj.expiresAt > new Date()
+    // Verificar si el jti existe en la base de datos, y extrae el token correspondiente
+    const validToken = user.refreshTokens.find(
+      token => token.jti === decoded.jti && token.expiresAt > new Date()
     );
 
-    if (!tokenExists) {
-      return res.status(401).json({
-        success: false,
-        message: 'Refresh token no válido'
-      });
+    if (!validToken) {
+      return res.status(403).json({ message: 'Refresh token revocado o expirado' });
     }
 
+    // Limpiar tokens expirados
+    user.cleanExpiredTokens();
+
     // Generar nuevos tokens
-    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user._id);
+    const { accessToken, refreshToken: newRefreshToken, jti: newJti } = generateTokens(user._id);
 
-    // Reemplazar el refresh token anterior
-    user.refreshTokens = user.refreshTokens.filter(
-      tokenObj => tokenObj.token !== refreshToken
-    );
-
-    user.refreshTokens.push({
-      token: newRefreshToken,
-      expiresAt: getTokenExpiration(newRefreshToken)
-    });
+    // Reemplazar el token anterior
+    validToken.token = newRefreshToken;
+    validToken.jti = newJti;
+    validToken.expiresAt = getTokenExpiration(newRefreshToken);
 
     await user.save();
 
@@ -149,8 +148,10 @@ exports.refreshToken = async (req, res) => {
 
     res.cookie('refreshToken', newRefreshToken, cookieOptions);
 
+    // Responder al cliente con los nuevos tokens
     res.json({
       success: true,
+      message: 'Token actualizado exitosamente',
       tokens: {
         accessToken,
         expiresIn: process.env.JWT_EXPIRATION
