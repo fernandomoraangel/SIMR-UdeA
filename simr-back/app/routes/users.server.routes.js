@@ -19,7 +19,7 @@ module.exports = function (app) {
     .post(users.refreshToken);
 
   app.route('/api/auth/logout')
-    .get(users.logout);
+    .post(users.logout);
 
   app.route('/api/auth/verify')
     .get(users.verifyToken);
