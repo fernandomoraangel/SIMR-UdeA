@@ -7,13 +7,13 @@ const generateTokens = (userId) => {
   const accessToken = jwt.sign(
     { userId, type: 'access' },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRATION }
+    { expiresIn: Number(process.env.JWT_EXPIRATION) }
   );
 
   const refreshToken = jwt.sign(
     { userId, type: 'refresh', jti },
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
+    { expiresIn: Number(process.env.JWT_REFRESH_EXPIRATION) }
   );
 
   return { accessToken, refreshToken, jti };
@@ -30,7 +30,9 @@ const verifyRefreshToken = (token) => {
 const getTokenExpiration = (token) => {
   try {
     const decoded = jwt.decode(token);
-    return new Date(decoded.exp * 1000);
+    console.log('(getTokenExpiration) Expiration date for token: ', decoded);
+    console.log('Date now: ', new Date());
+    return new Date(decoded.exp * 1000); // Convertir a milisegundos
   } catch (error) {
     return null;
   }

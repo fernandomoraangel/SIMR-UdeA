@@ -4,17 +4,18 @@ const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
 const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/tokenUtils');
+const { cookieHelpers } = require('../../config/cookieConfig');
 
-const COOKIE_MAX_AGE = parseInt(process.env.JWT_EXPIRATION) * 1000; // Convertir a milisegundos
-const COOKIE_REFRESH_MAX_AGE = parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
+// const COOKIE_MAX_AGE = parseInt(process.env.JWT_EXPIRATION) * 1000; // Convertir a milisegundos
+// const COOKIE_REFRESH_MAX_AGE = parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
 
-//* Configuración de cookies seguras
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production', // HTTPS en producción
-  sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
-  maxAge: COOKIE_REFRESH_MAX_AGE
-};
+// //* Configuración de cookies seguras
+// const cookieOptions = {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === 'production', // HTTPS en producción
+//   sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
+//   maxAge: COOKIE_REFRESH_MAX_AGE
+// };
 
 //* Función para obtener un usuario seguro
 // Esta función se usa para evitar enviar información sensible del usuario al cliente
@@ -61,15 +62,20 @@ exports.login = (req, res, next) => {
 
       await user.save();
 
-      // Configurar cookies
-      // Cookie de acceso
-      res.cookie('accessToken', accessToken, {
-        ...cookieOptions,
-        maxAge: COOKIE_MAX_AGE
-      });
+      // Configurar cookies seguras
+      const cookiesSaved = cookieHelpers.setAuthCookies(res, accessToken, refreshToken);
 
-      // Cookie de refresh
-      res.cookie('refreshToken', refreshToken, cookieOptions);
+      if (!cookiesSaved) {
+        console.warn('Hubo problemas configurando las cookies');
+      }
+      // // Cookie de acceso
+      // res.cookie('accessToken', accessToken, {
+      //   ...cookieOptions,
+      //   maxAge: COOKIE_MAX_AGE
+      // });
+
+      // // Cookie de refresh
+      // res.cookie('refreshToken', refreshToken, cookieOptions);
 
       // Respuesta para el cliente
       res.json({
@@ -141,12 +147,17 @@ exports.refreshToken = async (req, res) => {
     await user.save();
 
     // Actualizar cookies
-    res.cookie('accessToken', accessToken, {
-      ...cookieOptions,
-      maxAge: COOKIE_MAX_AGE
-    });
+    const cookiesUpdated = cookieHelpers.setAuthCookies(res, accessToken, newRefreshToken);
 
-    res.cookie('refreshToken', newRefreshToken, cookieOptions);
+    if (!cookiesUpdated) {
+      console.warn('Hubo problemas actualizando las cookies');
+    }
+    // res.cookie('accessToken', accessToken, {
+    //   ...cookieOptions,
+    //   maxAge: COOKIE_MAX_AGE
+    // });
+
+    // res.cookie('refreshToken', newRefreshToken, cookieOptions);
 
     // Responder al cliente con los nuevos tokens
     res.json({
@@ -172,28 +183,57 @@ exports.logout = async (req, res) => {
     const { refreshToken } = req.cookies;
 
     if (refreshToken) {
-      // Remover refresh token de la base de datos
+      // Verificar y decodificar el refresh token
       const decoded = verifyRefreshToken(refreshToken);
-      if (decoded) {
-        const user = await User.findById(decoded.id);
-        if (user) {
+
+      console.log('(user.controller) LOGOUT: decoded:', decoded);
+
+      // Remover refresh token de la base de datos
+      if (decoded && decoded.userId && decoded.jti) {
+        // Buscar usuario y remover el refresh token por JTI
+        const user = await User.findById(decoded.userId);
+        if (user && user.refreshTokens) {
+          const initialLength = user.refreshTokens.length;
+
+          // Filtrar token por JTI 
           user.refreshTokens = user.refreshTokens.filter(
-            tokenObj => tokenObj.token !== refreshToken
+            tokenObj => tokenObj.jti !== decoded.jti
           );
-          await user.save();
+
+          // Solo guardar si realmente se eliminó algo
+          if (user.refreshTokens.length < initialLength) {
+            await user.save();
+            console.log(`Token con JTI ${decoded.jti} eliminado para usuario ${user._id}`);
+          } else {
+            console.log(`Token con JTI ${decoded.jti} no encontrado para usuario ${user._id}`);
+          }
         }
+      } else {
+        // Token inválido o expirado
+        console.log('Token inválido o expirado durante logout');
       }
     }
 
     // Limpiar cookies
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    const cookiesCleared = cookieHelpers.clearAuthCookies(res);
+    // res.clearCookie('accessToken');
+    // res.clearCookie('refreshToken');
+
+    if (!cookiesCleared) {
+      console.warn('Hubo problemas limpiando las cookies');
+    }
 
     res.json({ success: true, message: 'Cierre de sesión exitoso' });
   } catch (error) {
+    console.error('Error durante logout:', error);
+
+    // Aún limpiar cookies aunque haya error
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
     res.status(500).json({
       success: false,
-      message: 'Error durante logout'
+      message: 'Error durante logout, pero sesión cerrada localmente'
     });
   }
 };
@@ -570,35 +610,51 @@ exports.signup = async (req, res, next) => {
       const user = new User(req.body);
       // Configurar la propiedad user provider
       user.provider = "local";
+
+      // Generar tokens para login automático después del registro
+      const { accessToken, refreshToken, jti } = generateTokens(user._id);
+
+      // Guardar refresh token en la base de datos
+      user.refreshTokens.push({
+        token: refreshToken,
+        jti,
+        expiresAt: getTokenExpiration(refreshToken)
+      });
+
       // Intenta salvar el documento user
       await user.save();
 
-      // Generamos el token JWT después del registro exitoso
-      const token = generateToken(user);
+      // Configurar cookies seguras
+      // authService.setSecureCookies(res, accessToken, refreshToken);
+      const cookiesSaved = cookieHelpers.setAuthCookies(res, accessToken, refreshToken);
 
-      // Configuramos los datos seguros del usuario para devolver
-      const safeUser = getSafeUser(user);
-
-      // const safeUser = {
-      //   id: user._id,
-      //   username: user.username,
-      //   email: user.email,
-      //   fullName: user.fullName
-      // };
+      if (!cookiesSaved) {
+        console.warn('Hubo problemas configurando las cookies');
+      }
 
       // Devolvemos el token y los datos del usuario
-      return res.status(201).json({
-        message: 'Registro exitoso',
-        token,
-        user: safeUser
+      // return res.status(201).json({
+      res.status(201).json({
+        success: true,
+        message: 'Usuario registrado exitosamente',
+        user: getSafeUser(user),
+        accessToken,
+        redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
       });
     } catch (err) {
+      console.error('Error en signup:', error);
+
       // Si ocurre un error, obtenemos el mensaje de error
       const message = getErrorMessage(err);
-      return res.status(400).json({ message: message, error: err });
+      // return res.status(400).json({ message: message, error: err });
+      res.status(400).json({ success: false, message: message, error: err });
     }
   } else {
-    return res.status(403).json({ message: 'Usuario ya registrado' });
+    // return res.status(403).json({
+    res.status(403).json({
+      success: false,
+      message: 'Usuario ya registrado'
+    });
   }
 };
 
