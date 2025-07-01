@@ -638,7 +638,10 @@ exports.signup = async (req, res, next) => {
         success: true,
         message: 'Usuario registrado exitosamente',
         user: getSafeUser(user),
-        accessToken,
+        tokens: {
+          accessToken,
+          expiresIn: process.env.JWT_EXPIRATION
+        },
         redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
       });
     } catch (err) {
