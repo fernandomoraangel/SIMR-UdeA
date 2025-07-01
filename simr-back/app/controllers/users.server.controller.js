@@ -354,12 +354,12 @@ const getErrorMessage = (err) => {
 };
 
 // Generar token JWT para el usuario
-const generateToken = (user) => {
-  const payload = getSafeUser(user);
-  // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
+// const generateToken = (user) => {
+//   const payload = getSafeUser(user);
+//   // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
 
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-};
+//   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+// };
 
 // (backup de generateToken)
 // const generateToken = (user) => {
