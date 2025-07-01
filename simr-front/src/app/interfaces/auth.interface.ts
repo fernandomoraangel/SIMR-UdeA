@@ -5,6 +5,26 @@ export interface User {
   //   roles: string[];
 }
 
+
+export interface SignupCredentials {
+  username: string;
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface SignupResponse {
+  success: boolean;
+  message: string;
+  user?: User;
+  tokens?: {
+    accessToken: string;
+    expiresIn: number;
+  };
+  redirectUrl?: string; // URL to redirect after signup, if applicable
+}
+
 export interface LoginResponse {
   success: boolean;
   message: string;

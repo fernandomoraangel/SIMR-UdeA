@@ -19,32 +19,11 @@ import {
   User,
   LoginResponse,
   AuthVerifyResponse,
+  SignupCredentials,
+  SignupResponse,
   // LoginCredentials,
   AuthState,
 } from '../interfaces/auth.interface';
-
-// interface User {
-//   id: string;
-//   username: string;
-//   email: string;
-//   fullName?: string;
-// }
-
-// interface AuthResponse {
-//   message: string;
-//   token: string;
-//   user: User;
-// }
-
-// export interface LoginResponse {
-//   success: boolean;
-//   message: string;
-//   user?: User;
-//   tokens?: {
-//     accessToken: string;
-//     expiresIn: number;
-//   };
-// }
 
 @Injectable({
   providedIn: 'root',
@@ -118,6 +97,29 @@ export class AuthService {
               this.setAuthState(response.user, null);
             }
           }
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  // Registrar usuario
+  signup(credentials: SignupCredentials): Observable<SignupResponse> {
+    // Limpiar cualquier sesión previa
+    this.clearAuthState();
+
+    // Enviar solicitud de registro
+    return this.http
+      .post<SignupResponse>(`${this.BASE_URL}/signup`, credentials, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap((response) => {
+          if (response.success && response.user && response.tokens) {
+            // Si el registro incluye login automático
+            this.setAuthState(response.user, response.tokens.accessToken);
+            this.scheduleTokenRefresh(response.tokens.expiresIn);
+          }
+          // Si requiere verificación de email, no establecer auth state
         }),
         catchError(this.handleError)
       );
@@ -278,7 +280,7 @@ export class AuthService {
   }
 
   // Método centralizado para manejar errores HTTP
-  private handleError(error: HttpErrorResponse) {
+  private handleError1(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error desconocido';
 
     if (error.error instanceof ErrorEvent) {
@@ -288,11 +290,11 @@ export class AuthService {
     }
 
     console.error('Error en AuthService:', errorMessage);
-    return throwError(errorMessage);
+    return throwError(() => errorMessage);
   }
 
   //! (former code) // Método centralizado para manejar errores HTTP
-  private handleError1(error: HttpErrorResponse) {
+  private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
 
     if (error.error instanceof ErrorEvent) {
@@ -319,6 +321,8 @@ export class AuthService {
           break;
       }
     }
+    console.error('Error en AuthService:', errorMessage);
+    return throwError(() => errorMessage);
   }
   //! End of former code
 }
