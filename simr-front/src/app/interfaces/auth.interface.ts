@@ -2,7 +2,6 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  fullName: string;
   //   roles: string[];
 }
 
@@ -16,6 +15,11 @@ export interface LoginResponse {
   };
 }
 
+export interface AuthVerifyResponse {
+  success: boolean;
+  user: User;
+}
+
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -26,16 +30,3 @@ export interface LoginCredentials {
   username: string;
   password: string;
 }
-
-// export interface User {
-//   id: string;
-//   email: string;
-//   name: string;
-//   roles: string[];
-// }
-
-// export interface AuthResponse {
-//   accessToken: string;
-//   user: User;
-//   message?: string;
-// }
