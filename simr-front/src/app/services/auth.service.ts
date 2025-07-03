@@ -11,7 +11,7 @@ import {
   timer,
   firstValueFrom,
 } from 'rxjs';
-import { tap, catchError, switchMap } from 'rxjs/operators';
+import { tap, catchError, switchMap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
@@ -38,6 +38,11 @@ export class AuthService {
   });
 
   public authState$ = this.authStateSubject.asObservable();
+
+  public isAuthenticated$ = this.authState$.pipe(
+    map((state) => state.isAuthenticated)
+  );
+
   private refreshTimer: any;
 
   //! former code below
