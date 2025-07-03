@@ -8,12 +8,12 @@ import { LoginCredentials } from '../../interfaces/auth.interface';
 const base_url = environment.base_url;
 
 @Component({
-  selector: 'app-signin',
-  templateUrl: './signin.component.html',
-  styleUrl: './signin.component.css',
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
-export class SigninComponent implements OnInit {
-  signinForm: FormGroup;
+export class LoginComponent implements OnInit {
+  loginForm: FormGroup;
   loading = false;
   errorMessage = '';
 
@@ -22,7 +22,7 @@ export class SigninComponent implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
-    this.signinForm = this.formBuilder.group({
+    this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
@@ -31,18 +31,19 @@ export class SigninComponent implements OnInit {
   ngOnInit(): void {}
 
   onSubmit(): void {
-    if (this.signinForm.invalid) {
+    if (this.loginForm.invalid) {
       return;
     }
 
     this.loading = true;
     this.errorMessage = '';
-    // const { username, password } = this.signinForm.value;
-    // console.log('onSubmit(signinComponent)', username, password);
-    const credentials: LoginCredentials = this.signinForm.value;
-    console.log('onSubmit(signinComponent)', credentials.username, credentials.password);
+    const { username, password } = this.loginForm.value;
+    // console.log('onSubmit(loginComponent)', username, password);
+    const credentials: LoginCredentials = this.loginForm.value;
+    console.log('onSubmit(loginComponent)', credentials.username, credentials.password);
     // this.authService.login(username, password).subscribe({
-    this.authService.login(credentials).subscribe({
+    // this.authService.login(credentials).subscribe({
+    this.authService.login(username, password).subscribe({
       next: (response) => {
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
@@ -87,7 +88,7 @@ export class SigninComponent implements OnInit {
         //   );
         // }
 
-        const accessToken = response.accessToken;
+        const accessToken = response.tokens?.accessToken;
         // Redireccionar con el token como parámetro
         window.location.href = `http://localhost:3000/#!/login-externo/?token=${accessToken}`;
       },
@@ -100,7 +101,7 @@ export class SigninComponent implements OnInit {
 
         // Acciones adicionales basadas en el tipo de error
         if (error.status === 401) {
-          this.signinForm.get('password')?.reset();
+          this.loginForm.get('password')?.reset();
           // Podrías también centrar el cursor en el campo de contraseña
         }
       },

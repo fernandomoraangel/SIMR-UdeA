@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from '../../models/user.model';
+import { SignupCredentials } from '../../interfaces/auth.interface';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -32,10 +33,10 @@ export class SignupComponent implements OnInit {
     if (this.signupForm.valid) {
       console.log("signupForm Values:", this.signupForm.value);
       // Aquí puedes agregar la lógica para enviar los datos al servidor
-      const newUser: User = this.signupForm.value;
-      newUser.provider = 'local'; // o cualquier valor predeterminado
+      const newUser: SignupCredentials = this.signupForm.value;
+      // newUser.provider = 'local'; // o cualquier valor predeterminado
       // this.authService.signup(newUser).subscribe({
-      this.authService.register(newUser).subscribe({
+      this.authService.signup(newUser).subscribe({
         next: response => {
           // console.log('Registration successful', response);
           this.router.navigate(['/mi-ruta-2']);

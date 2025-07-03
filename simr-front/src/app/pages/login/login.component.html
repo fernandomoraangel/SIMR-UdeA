@@ -1,20 +1,20 @@
-<div class="signin-container">
+<div class="login-container">
   <h2>Inicio de Sesión</h2>
-  <form [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div>
       <label for="username">Usuario:</label>
       <input type="text" id="username" formControlName="username">
-      <div *ngIf="signinForm.get('username')?.invalid && signinForm.get('username')?.touched">
+      <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
         El usuario es requerido
       </div>
     </div>
     <div>
       <label for="password">Contraseña:</label>
       <input type="password" id="password" formControlName="password">
-      <div *ngIf="signinForm.get('password')?.invalid && signinForm.get('password')?.touched">
+      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
         La contraseña es requerida
       </div>
     </div>
-    <button type="submit" [disabled]="signinForm.invalid">Identificarse</button>
+    <button type="submit" [disabled]="loginForm.invalid">Identificarse</button>
   </form>
 </div>

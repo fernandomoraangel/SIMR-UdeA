@@ -7,13 +7,13 @@ import { ArchivoRoutingModule } from './modules/archivo/archivo.routes';
 // Componentes
 import { HomeComponent } from './pages/home/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { SigninComponent } from './pages/signin/signin.component';
+import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 
 const routes: Routes = [
   // { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '', component: HomeComponent },
-  { path: 'signin', component: SigninComponent },
+  { path: 'login', component: LoginComponent },
   // { path: 'signup', component: SignupComponent },
   { path: '**', component: PageNotFoundComponent },
 ];

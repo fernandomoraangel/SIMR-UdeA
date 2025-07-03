@@ -15,7 +15,7 @@ import {
 } from '@angular/common/http';
 import { ActorModule } from './modules/actor/actor.module';
 import { ArchivoModule } from './modules/archivo/archivo.module';
-import { SigninComponent } from './pages/signin/signin.component';
+import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 // import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AuthService } from './services/auth.service';
@@ -50,7 +50,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     AppComponent,
     HomeComponent,
     PageNotFoundComponent,
-    SigninComponent,
+    LoginComponent,
     SignupComponent,
   ],
   imports: [
