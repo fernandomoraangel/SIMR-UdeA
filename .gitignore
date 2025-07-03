@@ -16,7 +16,7 @@
 /simr-back/*.pid.lock
 
 # Environment variables
-/simr-back/.env*
+# /simr-back/.env* # ACTIVAR EN PRODUCCIÓN
 
 
 #========================================
