@@ -14,7 +14,7 @@ const base_url = environment.base_url;
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  loading = false;
+  isLoading = false;
   errorMessage = '';
 
   constructor(
@@ -28,14 +28,19 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Si ya está autenticado, redirigir
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.isLoading = true;
     this.errorMessage = '';
     const { username, password } = this.loginForm.value;
     // console.log('onSubmit(loginComponent)', username, password);
@@ -97,7 +102,7 @@ export class LoginComponent implements OnInit {
         this.errorMessage =
           error.message ||
           'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
-        this.loading = false;
+        this.isLoading = false;
 
         // Acciones adicionales basadas en el tipo de error
         if (error.status === 401) {
@@ -106,8 +111,16 @@ export class LoginComponent implements OnInit {
         }
       },
       complete: () => {
-        this.loading = false;
+        this.isLoading = false;
       },
     });
+  }
+
+  redirectToAngularJS(): void {
+    if (this.authService.isAuthenticated()) {
+      this.authService.redirectToAngularJS();
+    } else {
+      this.errorMessage = 'Debes iniciar sesión primero';
+    }
   }
 }
