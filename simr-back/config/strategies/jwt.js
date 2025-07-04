@@ -33,6 +33,8 @@ module.exports = function () {
   // Estrategia JWT con múltiples extractores para autenticación con tokens
   passport.use(new JwtStrategy(opts, async (payload, done) => {
     try {
+      console.log('Payload recibido del token:', payload);
+
       const user = await User.findById(payload.id);
 
       // TODO: Revisar si esto es necesario
@@ -41,10 +43,14 @@ module.exports = function () {
       // }
 
       if (user) {
+        console.log('Usuario encontrado:', user.username);
         return done(null, user);
+      } else {
+        console.log('No se encontró el usuario');
+        return done(null, false);
       }
-      return done(null, false);
     } catch (error) {
+      console.error('Error en la estrategia JWT:', error);
       return done(error, false);
     }
   }));

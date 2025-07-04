@@ -5,13 +5,13 @@ const generateTokens = (userId) => {
   const jti = crypto.randomUUID();
 
   const accessToken = jwt.sign(
-    { userId, type: 'access' },
+    { id: userId, type: 'access' },
     process.env.JWT_SECRET,
     { expiresIn: Number(process.env.JWT_EXPIRATION) }
   );
 
   const refreshToken = jwt.sign(
-    { userId, type: 'refresh', jti },
+    { id: userId, type: 'refresh', jti },
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: Number(process.env.JWT_REFRESH_EXPIRATION) }
   );

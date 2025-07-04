@@ -189,9 +189,9 @@ exports.logout = async (req, res) => {
       console.log('(user.controller) LOGOUT: decoded:', decoded);
 
       // Remover refresh token de la base de datos
-      if (decoded && decoded.userId && decoded.jti) {
+      if (decoded && decoded.id && decoded.jti) {
         // Buscar usuario y remover el refresh token por JTI
-        const user = await User.findById(decoded.userId);
+        const user = await User.findById(decoded.id);
         if (user && user.refreshTokens) {
           const initialLength = user.refreshTokens.length;
 
@@ -239,9 +239,10 @@ exports.logout = async (req, res) => {
 };
 
 //* VERIFY TOKEN - Verificar autenticación
-exports.verifyToken = (req, res) => {
-  passport.authenticate('jwt', { session: false }), (req, res) => {
-    if (!req.user) {
+exports.verifyToken = (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
       return res.status(401).json({
         success: false,
         message: 'Token inválido o expirado'
@@ -250,9 +251,9 @@ exports.verifyToken = (req, res) => {
 
     res.json({
       success: true,
-      user: getSafeUser(req.user)
+      user: getSafeUser(user)
     });
-  }
+  })(req, res, next);
 };
 
 
