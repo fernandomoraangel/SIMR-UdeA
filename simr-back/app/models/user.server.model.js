@@ -71,10 +71,10 @@ UserSchema.pre('save', async function (next) {
 
 	// Verificar si la contraseña ya fue hasheada manualmente
 	if (this._skipHashing) {
-        console.log('Saltando hashing (ya fue hasheada manualmente)');
-        delete this._skipHashing;
-        return next();
-    }
+		console.log('Saltando hashing (ya fue hasheada manualmente)');
+		delete this._skipHashing;
+		return next();
+	}
 
 	// Solo hashear si la contraseña fue modificada
 	// if (!this.isModified('password')) return next();
@@ -139,11 +139,73 @@ UserSchema.methods.verifyPassword = async function (candidatePassword) {
 	}
 };
 
+// Devolver el refresh token válido
+UserSchema.methods.findValidRefreshToken = function (jti) {
+	return this.refreshTokens.find(
+		token => token.jti === jti && token.expiresAt > new Date()
+	);
+};
+
+// Agregar nuevo token
+UserSchema.methods.addRefreshToken = async function (token, jti, expiresAt) {
+	this.refreshTokens.push({
+		token,
+		jti,
+		expiresAt
+	});
+};
+
+UserSchema.methods.rotateRefreshToken = function ({
+	oldJti,
+	newToken,
+	newJti,
+	newExpiresAt,
+	allowInsertIfMissing = false
+}) {
+	const index = this.refreshTokens.findIndex(token => token.jti === oldJti);
+	if (index !== -1) {
+		this.refreshTokens[index] = {
+			token: newToken,
+			jti: newJti,
+			expiresAt: newExpiresAt,
+			createdAt: new Date()
+		};
+		return 'replaced';
+	}
+
+	// Si no se encuentra el token viejo, puedes agregar el nuevo (si 'allowInsertIfMissing' es verdadero)
+	if (allowInsertIfMissing) {
+		this.refreshTokens.push({
+			token: newToken,
+			jti: newJti,
+			expiresAt: newExpiresAt,
+			createdAt: new Date()
+		});
+		return 'inserted';
+	}
+
+	return 'not_found';
+};
+
+
 // Limpiar refresh tokens expirados
-UserSchema.methods.cleanExpiredTokens = function () {
+UserSchema.methods.cleanExpiredTokens = async function () {
+	const initialCount = this.refreshTokens.length;
 	this.refreshTokens = this.refreshTokens.filter(
 		tokenObj => tokenObj.expiresAt > new Date()
 	);
+};
+
+UserSchema.methods.invalidateRefreshToken = async function (jti) {
+	const initialCount = this.refreshTokens.length;
+	this.refreshTokens = this.refreshTokens.filter(
+		token => token.jti !== jti
+	);
+};
+
+// Invalidar todos los tokens (para logout completo)
+UserSchema.methods.invalidateAllRefreshTokens = async function () {
+	this.refreshTokens = [];
 };
 
 // Encontrar posibles username no usados

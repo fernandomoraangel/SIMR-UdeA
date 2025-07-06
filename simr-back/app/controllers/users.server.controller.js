@@ -48,7 +48,7 @@ exports.login = (req, res, next) => {
 
     try {
       // Limpiar refresh tokens expirados
-      user.cleanExpiredTokens();
+      await user.cleanExpiredTokens();
 
       // Generar nuevos tokens
       const { accessToken, refreshToken, jti } = generateTokens(user._id);
@@ -116,7 +116,7 @@ exports.refreshToken = async (req, res) => {
     }
 
     // Buscar usuario y verificar que el token existe
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -124,25 +124,29 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    // Verificar si el jti existe en la base de datos, y extrae el token correspondiente
-    const validToken = user.refreshTokens.find(
-      token => token.jti === decoded.jti && token.expiresAt > new Date()
-    );
+    // Limpiar refresh tokens expirados
+    await user.cleanExpiredTokens();
+
+    // Verificar si el JTI existe en la base de datos, y extrae el token correspondiente
+    const validToken = user.findValidRefreshToken(decoded.jti);
+
+    console.log('(user.controller) validToken:', validToken);
 
     if (!validToken) {
       return res.status(403).json({ message: 'Refresh token revocado o expirado' });
     }
 
-    // Limpiar tokens expirados
-    user.cleanExpiredTokens();
-
     // Generar nuevos tokens
     const { accessToken, refreshToken: newRefreshToken, jti: newJti } = generateTokens(user._id);
 
-    // Reemplazar el token anterior
-    validToken.token = newRefreshToken;
-    validToken.jti = newJti;
-    validToken.expiresAt = getTokenExpiration(newRefreshToken);
+    // Reemplazar el token anterior del campo refreshTokens del Usuario
+    const result = user.rotateRefreshToken({
+      oldJti: decoded.jti,
+      newToken: newRefreshToken,
+      newJti,
+      newExpiresAt: getTokenExpiration(newRefreshToken),
+      allowInsertIfMissing: false
+    })
 
     await user.save();
 
@@ -152,12 +156,6 @@ exports.refreshToken = async (req, res) => {
     if (!cookiesUpdated) {
       console.warn('Hubo problemas actualizando las cookies');
     }
-    // res.cookie('accessToken', accessToken, {
-    //   ...cookieOptions,
-    //   maxAge: COOKIE_MAX_AGE
-    // });
-
-    // res.cookie('refreshToken', newRefreshToken, cookieOptions);
 
     // Responder al cliente con los nuevos tokens
     res.json({
@@ -169,6 +167,20 @@ exports.refreshToken = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Error al refrescar el token:', error);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token expirado'
+      });
+    } else if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token inválido'
+      });
+    }
+
+    // Error genérico
     console.error('Error al refrescar el token:', error);
     res.status(500).json({
       success: false,
