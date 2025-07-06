@@ -6,17 +6,6 @@ const jwt = require('jsonwebtoken');
 const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/tokenUtils');
 const { cookieHelpers } = require('../../config/cookieConfig');
 
-// const COOKIE_MAX_AGE = parseInt(process.env.JWT_EXPIRATION) * 1000; // Convertir a milisegundos
-// const COOKIE_REFRESH_MAX_AGE = parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
-
-// //* Configuración de cookies seguras
-// const cookieOptions = {
-//   httpOnly: true,
-//   secure: process.env.NODE_ENV === 'production', // HTTPS en producción
-//   sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
-//   maxAge: COOKIE_REFRESH_MAX_AGE
-// };
-
 //* Función para obtener un usuario seguro
 // Esta función se usa para evitar enviar información sensible del usuario al cliente
 const getSafeUser = (user) => {
@@ -54,12 +43,12 @@ exports.login = (req, res, next) => {
       const { accessToken, refreshToken, jti } = generateTokens(user._id);
 
       // Guardar refresh token en la base de datos
-      user.refreshTokens.push({
+      user.addRefreshToken({
         token: refreshToken,
         jti,
         expiresAt: getTokenExpiration(refreshToken)
       });
-
+  
       await user.save();
 
       // Configurar cookies seguras
@@ -68,14 +57,6 @@ exports.login = (req, res, next) => {
       if (!cookiesSaved) {
         console.warn('Hubo problemas configurando las cookies');
       }
-      // // Cookie de acceso
-      // res.cookie('accessToken', accessToken, {
-      //   ...cookieOptions,
-      //   maxAge: COOKIE_MAX_AGE
-      // });
-
-      // // Cookie de refresh
-      // res.cookie('refreshToken', refreshToken, cookieOptions);
 
       // Respuesta para el cliente
       res.json({
@@ -703,6 +684,7 @@ exports.requiresLogin = (req, res, next) => {
   if (!token) {
     console.log('[Acceso no autorizado] Token no proporcionado en la solicitud.');
     return res.status(401).json({
+      success: false,
       message: "Acceso no autorizado. Token no proporcionado.",
     });
   }
@@ -723,6 +705,7 @@ exports.requiresLogin = (req, res, next) => {
     next();
   } catch (error) {
     return res.status(401).json({
+      success: false,
       message: "Token inválido o expirado",
       error: error.message
     });

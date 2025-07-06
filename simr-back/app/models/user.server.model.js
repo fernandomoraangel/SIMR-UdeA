@@ -147,7 +147,7 @@ UserSchema.methods.findValidRefreshToken = function (jti) {
 };
 
 // Agregar nuevo token
-UserSchema.methods.addRefreshToken = async function (token, jti, expiresAt) {
+UserSchema.methods.addRefreshToken = function ({ token, jti, expiresAt }) {
 	this.refreshTokens.push({
 		token,
 		jti,
@@ -190,14 +190,12 @@ UserSchema.methods.rotateRefreshToken = function ({
 
 // Limpiar refresh tokens expirados
 UserSchema.methods.cleanExpiredTokens = async function () {
-	const initialCount = this.refreshTokens.length;
 	this.refreshTokens = this.refreshTokens.filter(
 		tokenObj => tokenObj.expiresAt > new Date()
 	);
 };
 
 UserSchema.methods.invalidateRefreshToken = async function (jti) {
-	const initialCount = this.refreshTokens.length;
 	this.refreshTokens = this.refreshTokens.filter(
 		token => token.jti !== jti
 	);
