@@ -147,7 +147,7 @@ UserSchema.methods.findValidRefreshToken = function (jti) {
 };
 
 // Agregar nuevo token
-UserSchema.methods.addRefreshToken = async function (token, jti, expiresAt) {
+UserSchema.methods.addRefreshToken = async function ({ token, jti, expiresAt }) {
 	this.refreshTokens.push({
 		token,
 		jti,
