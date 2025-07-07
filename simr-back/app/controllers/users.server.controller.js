@@ -128,7 +128,7 @@ exports.login = (req, res, next) => {
         jti,
         expiresAt: getTokenExpiration(refreshToken)
       });
-
+  
       await user.save();
 
       // Configurar cookies seguras
