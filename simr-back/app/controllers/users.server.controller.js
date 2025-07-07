@@ -10,7 +10,7 @@ const {
   getTokenExpiration
 } = require('../../utils/tokenUtils');
 const { successResponse, errorResponse } = require('../../utils/responseHelpers');
-const { cookieHelpers } = require('../../config/cookieConfig'); //TODO Implementar helpers
+const { cookieHelpers } = require('../../config/cookieConfig');
 
 //* Función para obtener un usuario seguro
 // Esta función se usa para evitar enviar información sensible del usuario al cliente
@@ -53,10 +53,6 @@ exports.signup = async (req, res, next) => {
   // Si user no esta conectado, crear y hacer login a un nuevo usuario
   if (req.user) {
     return errorResponse(res, 'Usuario ya conectado', 403);
-    // return res.status(403).json({
-    //   success: false,
-    //   message: 'Usuario ya registrado'
-    // });
   }
 
   try {
@@ -83,24 +79,12 @@ exports.signup = async (req, res, next) => {
       },
       redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
     });
-
-    // res.status(201).json({
-    //   success: true,
-    //   message: 'Usuario registrado exitosamente',
-    //   user: getSafeUser(user),
-    //   tokens: {
-    //     accessToken: tokens.accessToken,
-    //     expiresIn: tokens.expiresIn
-    //   },
-    //   redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
-    // });
   } catch (error) {
     console.error('Error en signup:', error);
 
     // Si ocurre un error, obtenemos el mensaje de error
     const message = getErrorMessage(error);
     errorResponse(res, message, 400, { error: error.message || 'Error al registrar usuario' });
-    // res.status(400).json({ success: false, message, error });
   }
 };
 
@@ -113,21 +97,12 @@ exports.login = (req, res, next) => {
 
     if (err) {
       return errorResponse(res, 'Error de autenticación', 500);
-      // return res.status(500).json({
-      //   success: false,
-      //   message: 'Error interno del servidor'
-      // });
-
       // return next(err);
     }
 
     if (!user) {
       console.warn('LOGIN: Usuario no encontrado o credenciales inválidas');
       return errorResponse(res, info?.message || 'Credenciales inválidas', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: info?.message || 'Credenciales inválidas'
-      // });
     }
 
     try {
@@ -161,15 +136,6 @@ exports.login = (req, res, next) => {
           expiresIn: process.env.JWT_EXPIRATION
         }
       });
-      // res.json({
-      //   success: true,
-      //   message: 'Inicio de sesión exitoso',
-      //   user: getSafeUser(user),
-      //   tokens: {
-      //     accessToken,
-      //     expiresIn: process.env.JWT_EXPIRATION
-      //   }
-      // });
     } catch (error) {
       next(error);
     }
@@ -182,10 +148,6 @@ exports.refreshToken = async (req, res) => {
 
   if (!refreshToken) {
     return errorResponse(res, 'Refresh token no encontrado', 401);
-    // return res.status(401).json({
-    //   success: false,
-    //   message: 'Refresh token no encontrado'
-    // });
   }
 
   try {
@@ -194,20 +156,12 @@ exports.refreshToken = async (req, res) => {
     console.log('(user.controller) REFRESH TOKEN: decoded:', decoded);
     if (!decoded) {
       return errorResponse(res, 'Refresh token inválido', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: 'Refresh token inválido'
-      // });
     }
 
     // Buscar usuario y verificar que el token existe
     const user = await User.findById(decoded.id);
     if (!user) {
       return errorResponse(res, 'Usuario no encontrado', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: 'Usuario no encontrado'
-      // });
     }
 
     // Limpiar refresh tokens expirados
@@ -220,7 +174,6 @@ exports.refreshToken = async (req, res) => {
 
     if (!validToken) {
       return errorResponse(res, 'Refresh token revocado o expirado', 403);
-      // return res.status(403).json({ message: 'Refresh token revocado o expirado' });
     }
 
     // Generar nuevos tokens
@@ -237,7 +190,6 @@ exports.refreshToken = async (req, res) => {
 
     if (result === 'not_found') {
       return errorResponse(res, 'Refresh token no renovado', 403);
-      // return res.status(403).json({ message: 'Refresh token no renovado' });
     }
 
     await user.save();
@@ -256,37 +208,17 @@ exports.refreshToken = async (req, res) => {
         expiresIn: process.env.JWT_EXPIRATION
       }
     });
-    // res.json({
-    //   success: true,
-    //   message: 'Token actualizado exitosamente',
-    //   tokens: {
-    //     accessToken,
-    //     expiresIn: process.env.JWT_EXPIRATION
-    //   }
-    // });
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     if (error.name === 'TokenExpiredError') {
       return errorResponse(res, 'Refresh token expirado', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: 'Refresh token expirado'
-      // });
     } else if (error.name === 'JsonWebTokenError') {
       return errorResponse(res, 'Refresh token inválido', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: 'Refresh token inválido'
-      // });
     }
 
     // Error genérico
     console.error('Error al refrescar el token:', error);
     errorResponse(res, 'Error interno del servidor', 500);
-    // res.status(500).json({
-    //   success: false,
-    //   message: 'Error interno del servidor'
-    // });
   }
 };
 
@@ -308,9 +240,6 @@ exports.logout = async (req, res) => {
         if (user && user.refreshTokens) {
           // Invalidar refreshtoken
           const wasTokenInvalidated = user.invalidateRefreshToken(decoded.jti);
-
-          // Solo guardar si realmente se eliminó algo
-          // if (user.refreshTokens.length < initialLength) {
           if (wasTokenInvalidated) {
             await user.save();
             console.log(`Token con JTI ${decoded.jti} eliminado para usuario ${user._id}`);
@@ -333,7 +262,6 @@ exports.logout = async (req, res) => {
 
     // Responder al cliente
     successResponse(res, 'Cierre de sesión exitoso', 200);
-    // res.json({ success: true, message: 'Cierre de sesión exitoso' });
   } catch (error) {
     console.error('Error durante logout:', error);
 
@@ -342,10 +270,6 @@ exports.logout = async (req, res) => {
     res.clearCookie('refreshToken');
 
     errorResponse(res, 'Error durante logout, pero sesión cerrada localmente', 500);
-    // res.status(500).json({
-    //   success: false,
-    //   message: 'Error durante logout, pero sesión cerrada localmente'
-    // });
   }
 };
 
@@ -356,34 +280,29 @@ exports.verifyToken = (req, res, next) => {
 
     if (!user) {
       return errorResponse(res, 'Token inválido o expirado', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: 'Token inválido o expirado'
-      // });
     }
 
     // Responder con el usuario seguro
     successResponse(res, 'Token verificado exitosamente', 200, {
       user: getSafeUser(user)
     });
-    // res.json({
-    //   success: true,
-    //   user: getSafeUser(user)
-    // });
   })(req, res, next);
 };
 
 //* CREATE - Crear un nuevo usuario
 exports.create = async (req, res, next) => {
   try {
-    // Crear una nueva instancia del model Mongoose 'User', que se puebla usando la petición body del request
-    const user = new User(req.body);
-    await user.save();
+    const user = await User.createUser(req.body);
+    if (!user) {
+      return errorResponse(res, 'Error al crear usuario', 400);
+    };
+
+    console.log('Usuario creado:', user);
     successResponse(res, 'Usuario creado exitosamente', 201, getSafeUser(user));
-    // res.json(user);
   } catch (err) {
+    errorResponse(res, getErrorMessage(err), 400, { error: err.message || 'Error al crear usuario' });
     // Llamar al siguiente middleware con un mensaje de error
-    return next(err);
+    // return next(err);
   }
 };
 

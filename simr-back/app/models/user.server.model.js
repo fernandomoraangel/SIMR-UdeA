@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
 	lastName: String,
 	email: {
 		required: true,
-		// TODO: Para que funcione único email, primero se debe eliminar emails duplicados de la BD
+		// TODO: Para que funcione único email, primero se deben eliminar emails duplicados de la BD
 		// unique: true,
 		type: String,
 		// Validación
@@ -99,11 +99,12 @@ UserSchema.pre('save', async function (next) {
 });
 
 // Función para hacer Hashing a la Contraseña
-UserSchema.methods.hashPassword = async (plainPassword) => {
+UserSchema.methods.hashPassword = async function (plainPassword) {
 	const saltRounds = 12;
 	return await bcrypt.hash(plainPassword, saltRounds);
 };
 
+// Método para verificar si la contraseña está en formato bcrypt
 UserSchema.methods.isBcryptHash = function (hash) {
 	console.log('Verificando hash:', hash);
 	const bcryptRegex = /^\$2[abxy]\$\d{2}\$.{53}$/; // bcrypt tiene un formato específico: $2a$, $2b$, $2x$, $2y$
@@ -143,6 +144,23 @@ UserSchema.methods.verifyPassword = async function (candidatePassword) {
 		return isMatch;
 	}
 };
+
+// Método estático para crear un usuario
+UserSchema.statics.createUser = async function (userData) {
+	try {
+		const User = this;
+		const user = new User(userData);
+		user.provider = 'local';
+
+		// Guardar usuario
+		await user.save();
+
+		return user;
+	} catch (error) {
+		console.error('Error creating user:', error);
+		throw error;
+	}
+}
 
 // Método estático para crear usuario con tokens
 UserSchema.statics.createUserWithTokens = async function (userData) {
