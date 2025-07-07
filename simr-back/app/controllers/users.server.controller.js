@@ -3,8 +3,14 @@
 const User = require("mongoose").model("User");
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
-const { generateTokens, verifyRefreshToken, getTokenExpiration } = require('../../utils/tokenUtils');
-const { cookieHelpers } = require('../../config/cookieConfig');
+const {
+  generateTokens,
+  verifyAccessToken,
+  verifyRefreshToken,
+  getTokenExpiration
+} = require('../../utils/tokenUtils');
+const { successResponse, errorResponse } = require('../../utils/responseHelpers');
+const { cookieHelpers } = require('../../config/cookieConfig'); //TODO Implementar helpers
 
 //* Función para obtener un usuario seguro
 // Esta función se usa para evitar enviar información sensible del usuario al cliente
@@ -16,6 +22,77 @@ const getSafeUser = (user) => {
   };
 }
 
+// Manejador de errores
+const getErrorMessage = (err) => {
+  // Definir variable de error message
+  let message = "";
+  // Si ocurre un error interno de MongoDB
+  if (err.code) {
+    switch (err.code) {
+      case 11000:
+      case 11001:
+        message = "El usuario ya existe";
+        break;
+      // si un error general ocurre
+      default:
+        message = "Se ha producido un error";
+    }
+  } else {
+    // Grabar el error en una lista de posibles errores
+    for (let errName in err.errors) {
+      if (err.errors[errName].message) message = err.errors[errName].message;
+    }
+  }
+  // Devolver el mensaje de error
+  return message;
+};
+
+
+//* SIGNUP - Registro de usuario
+exports.signup = async (req, res, next) => {
+  // Si user no esta conectado, crear y hacer login a un nuevo usuario
+  if (req.user) {
+    return res.status(403).json({
+      success: false,
+      message: 'Usuario ya registrado'
+    });
+  }
+
+  try {
+    // Crear usuario con tokens
+    const { user, tokens } = await User.createUserWithTokens(req.body);
+
+    // Configurar cookies seguras
+    const cookiesSaved = cookieHelpers.setAuthCookies(
+      res,
+      tokens.accessToken,
+      tokens.refreshToken
+    );
+
+    if (!cookiesSaved) {
+      console.warn('Hubo problemas configurando las cookies');
+    }
+
+    // Devolvemos el token y los datos del usuario
+    res.status(201).json({
+      success: true,
+      message: 'Usuario registrado exitosamente',
+      user: getSafeUser(user),
+      tokens: {
+        accessToken: tokens.accessToken,
+        expiresIn: tokens.expiresIn
+      },
+      redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
+    });
+  } catch (error) {
+    console.error('Error en signup:', error);
+
+    // Si ocurre un error, obtenemos el mensaje de error
+    const message = getErrorMessage(error);
+    res.status(400).json({ success: false, message, error });
+  }
+};
+
 //* LOGIN - Inicio de sesión
 exports.login = (req, res, next) => {
   passport.authenticate('local', { session: false }, async (err, user, info) => {
@@ -24,7 +101,10 @@ exports.login = (req, res, next) => {
     console.log('LOGIN: passport.authenticate (backend) - info:', info);
 
     if (err) {
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      return res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
       // return next(err);
     }
 
@@ -37,7 +117,7 @@ exports.login = (req, res, next) => {
 
     try {
       // Limpiar refresh tokens expirados
-      await user.cleanExpiredTokens();
+      user.cleanExpiredTokens();
 
       // Generar nuevos tokens
       const { accessToken, refreshToken, jti } = generateTokens(user._id);
@@ -48,7 +128,7 @@ exports.login = (req, res, next) => {
         jti,
         expiresAt: getTokenExpiration(refreshToken)
       });
-  
+
       await user.save();
 
       // Configurar cookies seguras
@@ -106,7 +186,7 @@ exports.refreshToken = async (req, res) => {
     }
 
     // Limpiar refresh tokens expirados
-    await user.cleanExpiredTokens();
+    user.cleanExpiredTokens();
 
     // Verificar si el JTI existe en la base de datos, y extrae el token correspondiente
     const validToken = user.findValidRefreshToken(decoded.jti);
@@ -128,6 +208,10 @@ exports.refreshToken = async (req, res) => {
       newExpiresAt: getTokenExpiration(newRefreshToken),
       allowInsertIfMissing: false
     })
+
+    if (result === 'not_found') {
+      return res.status(403).json({ message: 'Refresh token no renovado' });
+    }
 
     await user.save();
 
@@ -186,15 +270,12 @@ exports.logout = async (req, res) => {
         // Buscar usuario y remover el refresh token por JTI
         const user = await User.findById(decoded.id);
         if (user && user.refreshTokens) {
-          const initialLength = user.refreshTokens.length;
-
-          // Filtrar token por JTI 
-          user.refreshTokens = user.refreshTokens.filter(
-            tokenObj => tokenObj.jti !== decoded.jti
-          );
+          // Invalidar refreshtoken
+          const wasTokenInvalidated = user.invalidateRefreshToken(decoded.jti);
 
           // Solo guardar si realmente se eliminó algo
-          if (user.refreshTokens.length < initialLength) {
+          // if (user.refreshTokens.length < initialLength) {
+          if (wasTokenInvalidated) {
             await user.save();
             console.log(`Token con JTI ${decoded.jti} eliminado para usuario ${user._id}`);
           } else {
@@ -209,8 +290,6 @@ exports.logout = async (req, res) => {
 
     // Limpiar cookies
     const cookiesCleared = cookieHelpers.clearAuthCookies(res);
-    // res.clearCookie('accessToken');
-    // res.clearCookie('refreshToken');
 
     if (!cookiesCleared) {
       console.warn('Hubo problemas limpiando las cookies');
@@ -235,6 +314,7 @@ exports.logout = async (req, res) => {
 exports.verifyToken = (req, res, next) => {
   passport.authenticate('jwt', { session: false }, (err, user, info) => {
     if (err) return next(err);
+
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -322,30 +402,7 @@ exports.userByID = async (req, res, next, id) => {
   }
 };
 
-// Crear controller manejador de errores
-const getErrorMessage = (err) => {
-  // Definir variable de error message
-  let message = "";
-  // Si ocurre un error interno de MongoDB
-  if (err.code) {
-    switch (err.code) {
-      case 11000:
-      case 11001:
-        message = "El usuario ya existe";
-        break;
-      // si un error general ocurre
-      default:
-        message = "Se ha producido un error";
-    }
-  } else {
-    // Grabar el error en una lista de posibles errores
-    for (let errName in err.errors) {
-      if (err.errors[errName].message) message = err.errors[errName].message;
-    }
-  }
-  // Devolver el mensaje de error
-  return message;
-};
+
 
 // Generar token JWT para el usuario
 // const generateToken = (user) => {
@@ -414,245 +471,14 @@ exports.renderSignup = (req, res, next) => {
 // };
 
 
-// * [Metodo original de signin]
-// exports.signin = (req, res, next) => {
-//   passport.authenticate('local', (err, user) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     if (!user) {
-//       return res.status(401).json({ message: 'Authentication failed' });
-//     }
-//     req.logIn(user, (err) => {
-//       if (err) {
-//         return next(err);
-//       }
-//       const safeUser = {
-//         id: user._id,
-//         username: user.username,
-//         email: user.email,
-//       };
-//       // res.json({ message: 'Authentication successful', user: safeUser });
-//       // res.status(200).json({ message: 'Authentication successful', user: safeUser });
-//       return res.redirect("/");
-//       // res.status(200).json({
-//       //   message: 'Authentication successful',
-//       //   user: safeUser,
-//       //   redirectUrl: '/home' // Cambia esta URL según sea necesario
-//       // });
-//     });
-//   })(req, res, next);
-// };
 
 
-// exports.signin = (req, res, next) => {
-//   passport.authenticate('local', (err, user, info) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     if (!user) {
-//       return res.status(401).json({ message: 'Autenticación fallida', info });
-//     }
-
-//     req.login(user, { session: false }, (err) => {
-//       if (err) {
-//         return next(err);
-//       }
-
-//       // Generamos el token JWT
-//       const token = generateToken(user);
-
-//       // Configuramos los datos seguros del usuario para devolver
-// const safeUser = {
-//   id: user._id,
-//   username: user.username,
-//   email: user.email,
-//   fullName: user.fullName
-// };
-
-//       // Devolvemos el token y los datos del usuario
-//       return res.status(200).json({
-//         message: 'Autenticación exitosa',
-//         token,
-//         user: safeUser
-//       });
-//     });
-//   })(req, res, next);
-// };
 
 // Controller para Google OAuth con JWT
 exports.googleCallback = (req, res) => {
   // Después de la autenticación exitosa con Google
   const token = generateToken(req.user);
   const safeUser = getSafeUser(req.user);
-
-  // const safeUser = {
-  //   id: req.user._id,
-  //   username: req.user.username,
-  //   email: req.user.email,
-  //   fullName: req.user.fullName
-  // };
-
-  // Redireccionar a la página principal con el token como parámetro de consulta
-  // En el frontend, puedes capturar este token y almacenarlo en localStorage
-  res.redirect(`/?token=${token}&user=${encodeURIComponent(JSON.stringify(safeUser))}`);
-};
-
-
-// {
-//   successRedirect: '/',
-//   failureRedirect: '/signin',
-//   failureFlash: true
-// }
-
-// // Ruta Protegida
-// app.get('/profile', (req, res) => {
-//   if (!req.isAuthenticated()) {
-//     return res.redirect('/login');
-//   }
-//   res.send(`Hola ${req.user.username}`);
-// });
-
-// Controller para signout
-// * [Metodo original de signout]
-// exports.signout = (req, res, next) => {
-//   // Usa el método logout de passport con respectivo callback para salir
-//   req.logout((err) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     // Redirecciona al usuario de vuelta a la página principal
-//     res.redirect('/');
-//   });
-// };
-
-// exports.signout = (req, res) => {
-//   // Con JWT, el logout es principalmente manejado por el cliente
-//   // Solo necesitamos responder con un mensaje de éxito
-//   res.status(200).json({ message: 'Sesión cerrada exitosamente' });
-// };
-
-
-// Obtener usuario actual
-// exports.currentUser = (req, res) => {
-//   passport.authenticate('jwt-access', { session: false }),
-//     (req, res) => {
-//       res.json({
-//         user: getSafeUser(req.user)
-//       });
-
-//       // (req, res) => {
-//       //   res.json({
-//       //     user: {
-//       //       id: req.user._id,
-//       //       username: req.user.username,
-//       //       email: req.user.email,
-//       //       fullName: req.user.fullName
-//       //     }
-//       //   });
-
-//     }
-// }
-
-// Controller para crear nuevo usuario
-// * [Metodo original de signup]
-// exports.signup = async (req, res, next) => {
-//   // Si user no esta conectado, crear y hacer login a un nuevo usuario
-//   if (!req.user) {
-//     try {
-//       // Crear una nueva instancia del modelo 'User'
-//       // console.log(req.body);
-//       const user = new User(req.body);
-//       // Configurar la propiedad user provider
-//       user.provider = "local";
-//       // Intenta salvar el documento user
-//       await user.save();
-//       req.login(user, function (err) {
-//         // Si ocurre error de login moverse al siguiente middleware
-//         if (err) return next(err);
-//         // Redirecciona de nuevo a la página principal
-//         return res.redirect("/");
-//         // return res.status(200).json({ message: 'Registro exitoso', user });
-
-//         // const { _id, username, email } = user;
-//         // return res.status(200).json({ message: 'Registro exitoso', user: { _id, username, email } });
-//       });
-//     } catch (err) {
-//       // Si ocurre un error, lo reporta usando el mensaje flash
-//       // Usa el método de manejo de errores para obtener el error
-//       const message = getErrorMessage(err);
-//       // Configura los mensajes flash
-//       req.flash("error", message);
-//       // Redirecciona al usuario de vuelta a signup
-//       // return res.redirect("/signup");
-//       return res.status(500).json({ message: 'Error en el registro', err });
-//     }
-//   } else {
-//     // return res.redirect("/");
-//     // return res.status(200).json({ message: 'Registro exitoso', user });
-//     // return res.status(200).json({ message: 'Registro exitoso', user: { id, username, email } });
-//     return res.status(405).send({ message: 'Usuario ya registrado' });
-//   }
-// };
-
-// exports.signup = async (req, res, next) => {
-exports.signup = async (req, res, next) => {
-  // Si user no esta conectado, crear y hacer login a un nuevo usuario
-  if (!req.user) {
-    try {
-      // Crear una nueva instancia del modelo 'User'
-      const user = new User(req.body);
-      // Configurar la propiedad user provider
-      user.provider = "local";
-
-      // Generar tokens para login automático después del registro
-      const { accessToken, refreshToken, jti } = generateTokens(user._id);
-
-      // Guardar refresh token en la base de datos
-      user.refreshTokens.push({
-        token: refreshToken,
-        jti,
-        expiresAt: getTokenExpiration(refreshToken)
-      });
-
-      // Intenta salvar el documento user
-      await user.save();
-
-      // Configurar cookies seguras
-      // authService.setSecureCookies(res, accessToken, refreshToken);
-      const cookiesSaved = cookieHelpers.setAuthCookies(res, accessToken, refreshToken);
-
-      if (!cookiesSaved) {
-        console.warn('Hubo problemas configurando las cookies');
-      }
-
-      // Devolvemos el token y los datos del usuario
-      // return res.status(201).json({
-      res.status(201).json({
-        success: true,
-        message: 'Usuario registrado exitosamente',
-        user: getSafeUser(user),
-        tokens: {
-          accessToken,
-          expiresIn: process.env.JWT_EXPIRATION
-        },
-        redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
-      });
-    } catch (err) {
-      console.error('Error en signup:', error);
-
-      // Si ocurre un error, obtenemos el mensaje de error
-      const message = getErrorMessage(err);
-      // return res.status(400).json({ message: message, error: err });
-      res.status(400).json({ success: false, message: message, error: err });
-    }
-  } else {
-    // return res.status(403).json({
-    res.status(403).json({
-      success: false,
-      message: 'Usuario ya registrado'
-    });
-  }
 };
 
 // Middleware controller para autorizar operaciones
@@ -668,47 +494,35 @@ exports.signup = async (req, res, next) => {
 //   next();
 // };
 
-// Middleware controller para autorizar operaciones basado en JWT
+//* REQUIRES LOGIN - Middleware controller para autorizar operaciones basado en JWT
 exports.requiresLogin = (req, res, next) => {
   console.log('Entrando al middleware requiresLogin...');
-  // console.log('req.headers: ', req.headers);
 
-  // Verificar si existe un token en la solicitud
-  // const token = req.headers.authorization?.split(' ')[1] || req.query.token;
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    if (err) return next(err);
 
-  const token = req.cookies['accessToken'];
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Acceso no autorizado. Token inválido o expirado'
+      });
+    }
 
-  // console.log('req: ', req);
-  console.log('req.isAuthenticated(): ', req.isAuthenticated());
-
-  if (!token) {
-    console.log('[Acceso no autorizado] Token no proporcionado en la solicitud.');
-    return res.status(401).json({
-      success: false,
-      message: "Acceso no autorizado. Token no proporcionado.",
-    });
-  }
-
-  try {
-    // Verificar y decodificar el token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    console.log('Token decodificado: ', decoded);
-
-    // Adjuntar la información del usuario decodificada a la solicitud
-    req.user = decoded;
-
-    console.log('req.user: ', req.user);
-    console.log('Continuando con el siguiente middleware...');
-
-    // Continuar con el siguiente middleware
+    req.user = user;
     next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Token inválido o expirado",
-      error: error.message
+  })(req, res, next);
+};
+
+//* HAS AUTHORIZATION - Controller middleware para autorizar una operación
+// TODO: Remover este método de los demás controllers
+exports.hasAuthorization = (req, res, next) => {
+  // Si el usuario actual, no es el creador, enviar el mensaje de error
+  if (req.idioma.creador.id !== req.user.id) {
+    return res.status(403).send({
+      message: "Usuario no autorizado",
     });
   }
+  // Llamar sgte middleware
+  next();
 };
 

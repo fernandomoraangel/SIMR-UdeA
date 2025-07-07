@@ -19,6 +19,14 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken, jti };
 };
 
+const verifyAccessToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    return null;
+  }
+};
+
 const verifyRefreshToken = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
@@ -40,6 +48,7 @@ const getTokenExpiration = (token) => {
 
 module.exports = {
   generateTokens,
+  verifyAccessToken,
   verifyRefreshToken,
   getTokenExpiration
 };

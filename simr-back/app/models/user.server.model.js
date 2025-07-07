@@ -4,13 +4,18 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const {
+	generateTokens,
+	getTokenExpiration
+} = require('../../utils/tokenUtils');
 
 const UserSchema = new mongoose.Schema({
 	firstName: String,
 	lastName: String,
 	email: {
 		required: true,
-		unique: true,
+		// TODO: Para que funcione único email, primero se debe eliminar emails duplicados de la BD
+		// unique: true,
 		type: String,
 		// Validación
 		match: [/.+\@.+\..+/, "Escriba una dirección de correo válida"]
@@ -139,6 +144,40 @@ UserSchema.methods.verifyPassword = async function (candidatePassword) {
 	}
 };
 
+// Método estático para crear usuario con tokens
+UserSchema.statics.createUserWithTokens = async function (userData) {
+	try {
+		const User = this;
+		const user = new User(userData);
+		user.provider = 'local';
+
+		// Generar tokens
+		const { accessToken, refreshToken, jti } = generateTokens(user._id);
+
+		// Agregar refresh token al usuario
+		user.addRefreshToken({
+			token: refreshToken,
+			jti,
+			expiresAt: getTokenExpiration(refreshToken)
+		});
+
+		// Guardar usuario
+		await user.save();
+
+		return {
+			user,
+			tokens: {
+				accessToken,
+				refreshToken,
+				expiresIn: process.env.JWT_EXPIRATION
+			}
+		};
+	} catch (error) {
+		console.error('Error creating user with tokens:', error);
+		throw error;
+	}
+};
+
 // Devolver el refresh token válido
 UserSchema.methods.findValidRefreshToken = function (jti) {
 	return this.refreshTokens.find(
@@ -155,6 +194,7 @@ UserSchema.methods.addRefreshToken = function ({ token, jti, expiresAt }) {
 	});
 };
 
+// Rotar refresh token (renovar)
 UserSchema.methods.rotateRefreshToken = function ({
 	oldJti,
 	newToken,
@@ -187,22 +227,30 @@ UserSchema.methods.rotateRefreshToken = function ({
 	return 'not_found';
 };
 
-
 // Limpiar refresh tokens expirados
-UserSchema.methods.cleanExpiredTokens = async function () {
+UserSchema.methods.cleanExpiredTokens = function () {
 	this.refreshTokens = this.refreshTokens.filter(
 		tokenObj => tokenObj.expiresAt > new Date()
 	);
 };
 
-UserSchema.methods.invalidateRefreshToken = async function (jti) {
+UserSchema.methods.invalidateRefreshToken = function (jti) {
+	let wasInvalidated = false;
+	const initialLength = this.refreshTokens.length;
+
 	this.refreshTokens = this.refreshTokens.filter(
 		token => token.jti !== jti
 	);
+
+	if (this.refreshTokens.length < initialLength) {
+		wasInvalidated = true;
+	}
+
+	return wasInvalidated;
 };
 
 // Invalidar todos los tokens (para logout completo)
-UserSchema.methods.invalidateAllRefreshTokens = async function () {
+UserSchema.methods.invalidateAllRefreshTokens = function () {
 	this.refreshTokens = [];
 };
 

@@ -36,12 +36,6 @@ module.exports = function () {
       console.log('Payload recibido del token:', payload);
 
       const user = await User.findById(payload.id);
-
-      // TODO: Revisar si esto es necesario
-      // if (user && user.isActive) {
-      //   return done(null, user);
-      // }
-
       if (user) {
         console.log('Usuario encontrado:', user.username);
         return done(null, user);
