@@ -1,8 +1,8 @@
-function successResponse(res, message = 'Operación exitosa', data = {}, statusCode = 200) {
+function successResponse(res, message = 'Operación exitosa', statusCode = 200, data = {}) {
   return res.status(statusCode).json({
     success: true,
     message,
-    ...data
+    data
   });
 }
 
@@ -10,7 +10,7 @@ function errorResponse(res, message = 'Error interno del servidor', statusCode =
   return res.status(statusCode).json({
     success: false,
     message,
-    ...data
+    data
   });
 }
 

@@ -14,9 +14,11 @@ module.exports = function () {
     password: 'password'
   }, async (username, password, done) => {
     try {
+      const badCredentials = 'Credenciales incorrectas';
       const user = await User.findOne({ username: username });
       if (!user) {
-        return done(null, false, { message: 'Usuario desconocido' });
+        // Bad username
+        return done(null, false, { message: badCredentials });
       }
 
       // const isMatch = await user.comparePassword(password);
@@ -24,7 +26,8 @@ module.exports = function () {
       console.log('Comparando contraseña:', password, 'con', user.password);
       console.log('Contraseña verificada:', isMatch);
       if (!isMatch) {
-        return done(null, false, { message: 'Contraseña incorrecta' });
+        // Bad password
+        return done(null, false, { message: badCredentials });
       }
 
       console.log('local strategy (backend):', user);

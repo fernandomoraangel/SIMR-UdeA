@@ -52,10 +52,11 @@ const getErrorMessage = (err) => {
 exports.signup = async (req, res, next) => {
   // Si user no esta conectado, crear y hacer login a un nuevo usuario
   if (req.user) {
-    return res.status(403).json({
-      success: false,
-      message: 'Usuario ya registrado'
-    });
+    return errorResponse(res, 'Usuario ya conectado', 403);
+    // return res.status(403).json({
+    //   success: false,
+    //   message: 'Usuario ya registrado'
+    // });
   }
 
   try {
@@ -74,9 +75,7 @@ exports.signup = async (req, res, next) => {
     }
 
     // Devolvemos el token y los datos del usuario
-    res.status(201).json({
-      success: true,
-      message: 'Usuario registrado exitosamente',
+    successResponse(res, 'Usuario registrado exitosamente', 201, {
       user: getSafeUser(user),
       tokens: {
         accessToken: tokens.accessToken,
@@ -84,12 +83,24 @@ exports.signup = async (req, res, next) => {
       },
       redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
     });
+
+    // res.status(201).json({
+    //   success: true,
+    //   message: 'Usuario registrado exitosamente',
+    //   user: getSafeUser(user),
+    //   tokens: {
+    //     accessToken: tokens.accessToken,
+    //     expiresIn: tokens.expiresIn
+    //   },
+    //   redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
+    // });
   } catch (error) {
     console.error('Error en signup:', error);
 
     // Si ocurre un error, obtenemos el mensaje de error
     const message = getErrorMessage(error);
-    res.status(400).json({ success: false, message, error });
+    errorResponse(res, message, 400, { error: error.message || 'Error al registrar usuario' });
+    // res.status(400).json({ success: false, message, error });
   }
 };
 
@@ -101,18 +112,22 @@ exports.login = (req, res, next) => {
     console.log('LOGIN: passport.authenticate (backend) - info:', info);
 
     if (err) {
-      return res.status(500).json({
-        success: false,
-        message: 'Error interno del servidor'
-      });
+      return errorResponse(res, 'Error de autenticación', 500);
+      // return res.status(500).json({
+      //   success: false,
+      //   message: 'Error interno del servidor'
+      // });
+
       // return next(err);
     }
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: info?.message || 'Credenciales inválidas'
-      });
+      console.warn('LOGIN: Usuario no encontrado o credenciales inválidas');
+      return errorResponse(res, info?.message || 'Credenciales inválidas', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: info?.message || 'Credenciales inválidas'
+      // });
     }
 
     try {
@@ -128,7 +143,7 @@ exports.login = (req, res, next) => {
         jti,
         expiresAt: getTokenExpiration(refreshToken)
       });
-  
+
       await user.save();
 
       // Configurar cookies seguras
@@ -139,15 +154,22 @@ exports.login = (req, res, next) => {
       }
 
       // Respuesta para el cliente
-      res.json({
-        success: true,
-        message: 'Inicio de sesión exitoso',
+      successResponse(res, 'Inicio de sesión exitoso', 200, {
         user: getSafeUser(user),
         tokens: {
           accessToken,
           expiresIn: process.env.JWT_EXPIRATION
         }
       });
+      // res.json({
+      //   success: true,
+      //   message: 'Inicio de sesión exitoso',
+      //   user: getSafeUser(user),
+      //   tokens: {
+      //     accessToken,
+      //     expiresIn: process.env.JWT_EXPIRATION
+      //   }
+      // });
     } catch (error) {
       next(error);
     }
@@ -159,10 +181,11 @@ exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
-    return res.status(401).json({
-      success: false,
-      message: 'Refresh token no encontrado'
-    });
+    return errorResponse(res, 'Refresh token no encontrado', 401);
+    // return res.status(401).json({
+    //   success: false,
+    //   message: 'Refresh token no encontrado'
+    // });
   }
 
   try {
@@ -170,19 +193,21 @@ exports.refreshToken = async (req, res) => {
     const decoded = verifyRefreshToken(refreshToken);
     console.log('(user.controller) REFRESH TOKEN: decoded:', decoded);
     if (!decoded) {
-      return res.status(401).json({
-        success: false,
-        message: 'Refresh token inválido'
-      });
+      return errorResponse(res, 'Refresh token inválido', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: 'Refresh token inválido'
+      // });
     }
 
     // Buscar usuario y verificar que el token existe
     const user = await User.findById(decoded.id);
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Usuario no encontrado'
-      });
+      return errorResponse(res, 'Usuario no encontrado', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: 'Usuario no encontrado'
+      // });
     }
 
     // Limpiar refresh tokens expirados
@@ -194,7 +219,8 @@ exports.refreshToken = async (req, res) => {
     console.log('(user.controller) validToken:', validToken);
 
     if (!validToken) {
-      return res.status(403).json({ message: 'Refresh token revocado o expirado' });
+      return errorResponse(res, 'Refresh token revocado o expirado', 403);
+      // return res.status(403).json({ message: 'Refresh token revocado o expirado' });
     }
 
     // Generar nuevos tokens
@@ -210,7 +236,8 @@ exports.refreshToken = async (req, res) => {
     })
 
     if (result === 'not_found') {
-      return res.status(403).json({ message: 'Refresh token no renovado' });
+      return errorResponse(res, 'Refresh token no renovado', 403);
+      // return res.status(403).json({ message: 'Refresh token no renovado' });
     }
 
     await user.save();
@@ -223,34 +250,43 @@ exports.refreshToken = async (req, res) => {
     }
 
     // Responder al cliente con los nuevos tokens
-    res.json({
-      success: true,
-      message: 'Token actualizado exitosamente',
+    successResponse(res, 'Token actualizado exitosamente', 200, {
       tokens: {
         accessToken,
         expiresIn: process.env.JWT_EXPIRATION
       }
     });
+    // res.json({
+    //   success: true,
+    //   message: 'Token actualizado exitosamente',
+    //   tokens: {
+    //     accessToken,
+    //     expiresIn: process.env.JWT_EXPIRATION
+    //   }
+    // });
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Refresh token expirado'
-      });
+      return errorResponse(res, 'Refresh token expirado', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: 'Refresh token expirado'
+      // });
     } else if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Refresh token inválido'
-      });
+      return errorResponse(res, 'Refresh token inválido', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: 'Refresh token inválido'
+      // });
     }
 
     // Error genérico
     console.error('Error al refrescar el token:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
+    errorResponse(res, 'Error interno del servidor', 500);
+    // res.status(500).json({
+    //   success: false,
+    //   message: 'Error interno del servidor'
+    // });
   }
 };
 
@@ -295,7 +331,9 @@ exports.logout = async (req, res) => {
       console.warn('Hubo problemas limpiando las cookies');
     }
 
-    res.json({ success: true, message: 'Cierre de sesión exitoso' });
+    // Responder al cliente
+    successResponse(res, 'Cierre de sesión exitoso', 200);
+    // res.json({ success: true, message: 'Cierre de sesión exitoso' });
   } catch (error) {
     console.error('Error durante logout:', error);
 
@@ -303,10 +341,11 @@ exports.logout = async (req, res) => {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 
-    res.status(500).json({
-      success: false,
-      message: 'Error durante logout, pero sesión cerrada localmente'
-    });
+    errorResponse(res, 'Error durante logout, pero sesión cerrada localmente', 500);
+    // res.status(500).json({
+    //   success: false,
+    //   message: 'Error durante logout, pero sesión cerrada localmente'
+    // });
   }
 };
 
@@ -316,75 +355,88 @@ exports.verifyToken = (req, res, next) => {
     if (err) return next(err);
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token inválido o expirado'
-      });
+      return errorResponse(res, 'Token inválido o expirado', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: 'Token inválido o expirado'
+      // });
     }
 
-    res.json({
-      success: true,
+    // Responder con el usuario seguro
+    successResponse(res, 'Token verificado exitosamente', 200, {
       user: getSafeUser(user)
     });
+    // res.json({
+    //   success: true,
+    //   user: getSafeUser(user)
+    // });
   })(req, res, next);
 };
 
-
-// Crear un nuevo método controler 'create'
+//* CREATE - Crear un nuevo usuario
 exports.create = async (req, res, next) => {
   try {
     // Crear una nueva instancia del model Mongoose 'User', que se puebla usando la petición body del request
     const user = new User(req.body);
     await user.save();
-    res.json(user);
+    successResponse(res, 'Usuario creado exitosamente', 201, getSafeUser(user));
+    // res.json(user);
   } catch (err) {
     // Llamar al siguiente middleware con un mensaje de error
     return next(err);
   }
 };
 
-// Crear un nuevo método controller 'list'
+//* LIST - Recuperar una lista de usuarios
 exports.list = async (req, res, next) => {
   try {
     // Usa el método static 'User' 'find' para recuperar la lista de usuarios
     // 'username email',{skip: 10, limit: 10}
     const users = await User.find({});
     // Usa el objeto 'response para enviar una respuesta JSON'
-    res.json(users);
+    successResponse(res, 'Lista de usuarios recuperada exitosamente', 200, users);
+    // res.json(users);
   } catch (err) {
     // Llama al siguiente middleware con un mensaje de error
     return next(err);
   }
 };
 
+//* READ - Recuperar un usuario específico
 exports.read = (req, res) => {
   // Usa el objeto 'response' para enviar una respuesta JSON
+  successResponse(res, 'Usuario recuperado exitosamente', 200, getSafeUser(req.user));
   res.json(req.user);
 };
 
+//* UPDATE - Actualizar un usuario específico
 exports.update = async (req, res, next) => {
   try {
     // Usa el método static 'findByIdAndUpdate' de 'User' para actualizar
     const user = await User.findByIdAndUpdate(req.user.id, req.body, { new: true });
     // Usa el objeto 'response para enviar una respuesta JSON'
-    res.json(user);
+    successResponse(res, 'Usuario actualizado exitosamente', 200, getSafeUser(user));
+    // res.json(user);
   } catch (err) {
     // Llama al sgte middleware
     return next(err);
   }
 };
 
+//* DELETE - Eliminar un usuario específico
 exports.delete = async (req, res, next) => {
   try {
     // Usamos el método 'remove' de la instancia 'User' para eliminar un dcto
     // await req.user.remove();
     await req.user.deleteOne();
-    res.json(req.user);
+    successResponse(res, 'Usuario eliminado exitosamente', 200);
+    // res.json(req.user);
   } catch (err) {
     return next(err);
   }
 };
 
+//* USER BY ID - Middleware para recuperar un usuario por ID
 exports.userByID = async (req, res, next, id) => {
   try {
     // Usa el método static 'findOne' de 'User' para recuperar un usuario específico
@@ -402,32 +454,7 @@ exports.userByID = async (req, res, next, id) => {
   }
 };
 
-
-
-// Generar token JWT para el usuario
-// const generateToken = (user) => {
-//   const payload = getSafeUser(user);
-//   // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
-
-//   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-// };
-
-// (backup de generateToken)
-// const generateToken = (user) => {
-//   const payload = {
-//     id: user._id,
-//     username: user.username,
-//     email: user.email,
-//     fullName: user.fullName
-//   };
-//   // Si el usuario cambia su fullName, no se reflejará hasta que genere un nuevo token (típicamente en el próximo login)
-
-//   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-// };
-
-
-// Controller que renderiza la página signin
-// exports.renderSignin = (req, res, next) => {
+//* RENDER LOGIN - Renderizar la página de inicio de sesión
 exports.renderLogin = (req, res, next) => {
   // Si el usuario no está conectado, renderizar signin, en otro caso redireccionar al usuario
   if (!req.user) {
@@ -445,7 +472,7 @@ exports.renderLogin = (req, res, next) => {
   }
 };
 
-// Controller que renderiza la página signup
+//* RENDER SIGNUP - Controller que renderiza la página signup
 exports.renderSignup = (req, res, next) => {
   // Si el usuario no está conectado, renderizar la página signin, en otro caso, redireccionar al usuario
   if (!req.user) {
@@ -461,38 +488,12 @@ exports.renderSignup = (req, res, next) => {
   }
 };
 
-// Controller para signin
-// exports.signin = () => {
-//   passport.authenticate('local',{
-// 		successRedirect:'/',
-// 		failureRedirect:'/signin',
-// 		failureFlash:true
-// 	})
-// };
-
-
-
-
-
 // Controller para Google OAuth con JWT
 exports.googleCallback = (req, res) => {
   // Después de la autenticación exitosa con Google
   const token = generateToken(req.user);
   const safeUser = getSafeUser(req.user);
 };
-
-// Middleware controller para autorizar operaciones
-// * [Metodo original de requiresLogin]
-// exports.requiresLogin = (req, res, next) => {
-//   if (!req.isAuthenticated()) {
-//     return res.status(401).send({
-//       message: "Usuario no autorizado",
-//       redirect: "/",
-//     });
-//   }
-//   // Llamar siguiente middleware
-//   next();
-// };
 
 //* REQUIRES LOGIN - Middleware controller para autorizar operaciones basado en JWT
 exports.requiresLogin = (req, res, next) => {
@@ -502,10 +503,11 @@ exports.requiresLogin = (req, res, next) => {
     if (err) return next(err);
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Acceso no autorizado. Token inválido o expirado'
-      });
+      return errorResponse(res, 'Acceso no autorizado. Token inválido o expirado', 401);
+      // return res.status(401).json({
+      //   success: false,
+      //   message: 'Acceso no autorizado. Token inválido o expirado'
+      // });
     }
 
     req.user = user;
@@ -518,9 +520,10 @@ exports.requiresLogin = (req, res, next) => {
 exports.hasAuthorization = (req, res, next) => {
   // Si el usuario actual, no es el creador, enviar el mensaje de error
   if (req.idioma.creador.id !== req.user.id) {
-    return res.status(403).send({
-      message: "Usuario no autorizado",
-    });
+    return errorResponse(res, 'Usuario no autorizado', 403);
+    // return res.status(403).send({
+    //   message: "Usuario no autorizado",
+    // });
   }
   // Llamar sgte middleware
   next();
