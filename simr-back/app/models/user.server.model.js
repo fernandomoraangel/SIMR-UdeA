@@ -196,6 +196,22 @@ UserSchema.statics.createUserWithTokens = async function (userData) {
 	}
 };
 
+UserSchema.methods.getSafeUser = function () {
+	console.log('(getSafeUser) Obteniendo usuario seguro:', this.username);
+	const obj = this.toObject(); // Convierte el documento a objeto plano
+	console.log('Objeto plano del usuario:', obj);
+
+	delete obj.password;
+	delete obj.refreshTokens;
+	delete obj.__v;
+	delete obj.provider;
+
+	obj.id = obj._id;
+	delete obj._id;
+
+	return obj;
+};
+
 // Devolver el refresh token válido
 UserSchema.methods.findValidRefreshToken = function (jti) {
 	return this.refreshTokens.find(

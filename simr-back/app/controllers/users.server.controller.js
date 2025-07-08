@@ -2,25 +2,13 @@
 
 const User = require("mongoose").model("User");
 const passport = require("passport");
-const jwt = require('jsonwebtoken');
 const {
   generateTokens,
-  verifyAccessToken,
   verifyRefreshToken,
   getTokenExpiration
 } = require('../../utils/tokenUtils');
 const { successResponse, errorResponse } = require('../../utils/responseHelpers');
 const { cookieHelpers } = require('../../config/cookieConfig');
-
-//* Función para obtener un usuario seguro
-// Esta función se usa para evitar enviar información sensible del usuario al cliente
-const getSafeUser = (user) => {
-  return {
-    id: user._id,
-    username: user.username,
-    email: user.email
-  };
-}
 
 // Manejador de errores
 const getErrorMessage = (err) => {
@@ -47,7 +35,6 @@ const getErrorMessage = (err) => {
   return message;
 };
 
-
 //* SIGNUP - Registro de usuario
 exports.signup = async (req, res, next) => {
   // Si user no esta conectado, crear y hacer login a un nuevo usuario
@@ -72,7 +59,7 @@ exports.signup = async (req, res, next) => {
 
     // Devolvemos el token y los datos del usuario
     successResponse(res, 'Usuario registrado exitosamente', 201, {
-      user: getSafeUser(user),
+      user: user.getSafeUser(),
       tokens: {
         accessToken: tokens.accessToken,
         expiresIn: tokens.expiresIn
@@ -130,7 +117,7 @@ exports.login = (req, res, next) => {
 
       // Respuesta para el cliente
       successResponse(res, 'Inicio de sesión exitoso', 200, {
-        user: getSafeUser(user),
+        user: user.getSafeUser(),
         tokens: {
           accessToken,
           expiresIn: process.env.JWT_EXPIRATION
@@ -284,7 +271,7 @@ exports.verifyToken = (req, res, next) => {
 
     // Responder con el usuario seguro
     successResponse(res, 'Token verificado exitosamente', 200, {
-      user: getSafeUser(user)
+      user: user.getSafeUser()
     });
   })(req, res, next);
 };
@@ -298,7 +285,7 @@ exports.create = async (req, res, next) => {
     };
 
     console.log('Usuario creado:', user);
-    successResponse(res, 'Usuario creado exitosamente', 201, getSafeUser(user));
+    successResponse(res, 'Usuario creado exitosamente', 201, user.getSafeUser());
   } catch (err) {
     errorResponse(res, getErrorMessage(err), 400, { error: err.message || 'Error al crear usuario' });
     // Llamar al siguiente middleware con un mensaje de error
@@ -314,7 +301,6 @@ exports.list = async (req, res, next) => {
     const users = await User.find({});
     // Usa el objeto 'response para enviar una respuesta JSON'
     successResponse(res, 'Lista de usuarios recuperada exitosamente', 200, users);
-    // res.json(users);
   } catch (err) {
     // Llama al siguiente middleware con un mensaje de error
     return next(err);
@@ -322,10 +308,23 @@ exports.list = async (req, res, next) => {
 };
 
 //* READ - Recuperar un usuario específico
-exports.read = (req, res) => {
-  // Usa el objeto 'response' para enviar una respuesta JSON
-  successResponse(res, 'Usuario recuperado exitosamente', 200, getSafeUser(req.user));
-  res.json(req.user);
+exports.read = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return errorResponse(res, 'Usuario no autenticado', 401);
+    }
+
+    console.log('Recuperando usuario con ID:', req.requestedUser);
+
+    const safeUser = req.requestedUser.getSafeUser();
+
+    console.log('Usuario recuperado:', safeUser);
+
+    return successResponse(res, 'Usuario recuperado exitosamente', 200, safeUser);
+  } catch (err) {
+    console.error('Error al recuperar el usuario:', err);
+    return errorResponse(res, 'Error al recuperar el usuario', 500, { error: err.message || 'Error interno del servidor' });
+  }
 };
 
 //* UPDATE - Actualizar un usuario específico
@@ -334,8 +333,7 @@ exports.update = async (req, res, next) => {
     // Usa el método static 'findByIdAndUpdate' de 'User' para actualizar
     const user = await User.findByIdAndUpdate(req.user.id, req.body, { new: true });
     // Usa el objeto 'response para enviar una respuesta JSON'
-    successResponse(res, 'Usuario actualizado exitosamente', 200, getSafeUser(user));
-    // res.json(user);
+    successResponse(res, 'Usuario actualizado exitosamente', 200, user.getSafeUser());
   } catch (err) {
     // Llama al sgte middleware
     return next(err);
@@ -358,13 +356,15 @@ exports.delete = async (req, res, next) => {
 //* USER BY ID - Middleware para recuperar un usuario por ID
 exports.userByID = async (req, res, next, id) => {
   try {
-    // Usa el método static 'findOne' de 'User' para recuperar un usuario específico
+    console.log('Entrando al middleware userByID con ID:', id);
     const user = await User.findOne({ _id: id });
     if (!user) {
       return next(new Error("Error al cargar usuario " + id));
     }
+
+    console.log('(userByID) Usuario encontrado:', user);
     // Configura la propiedad ´req.user'
-    req.user = user;
+    req.requestedUser = user;
     // Llama al siguiente middleware
     next();
   } catch (err) {
@@ -410,8 +410,7 @@ exports.renderSignup = (req, res, next) => {
 // Controller para Google OAuth con JWT
 exports.googleCallback = (req, res) => {
   // Después de la autenticación exitosa con Google
-  const token = generateToken(req.user);
-  const safeUser = getSafeUser(req.user);
+  return null;
 };
 
 //* REQUIRES LOGIN - Middleware controller para autorizar operaciones basado en JWT
@@ -423,10 +422,6 @@ exports.requiresLogin = (req, res, next) => {
 
     if (!user) {
       return errorResponse(res, 'Acceso no autorizado. Token inválido o expirado', 401);
-      // return res.status(401).json({
-      //   success: false,
-      //   message: 'Acceso no autorizado. Token inválido o expirado'
-      // });
     }
 
     req.user = user;
@@ -440,9 +435,6 @@ exports.hasAuthorization = (req, res, next) => {
   // Si el usuario actual, no es el creador, enviar el mensaje de error
   if (req.idioma.creador.id !== req.user.id) {
     return errorResponse(res, 'Usuario no autorizado', 403);
-    // return res.status(403).send({
-    //   message: "Usuario no autorizado",
-    // });
   }
   // Llamar sgte middleware
   next();
