@@ -98,25 +98,35 @@ UserSchema.pre('save', async function (next) {
 	}
 });
 
-// Función para hacer Hashing a la Contraseña
+//* GET SAFE USER - Método para devolver un objeto de usuario seguro (sin contraseña)
+UserSchema.methods.getSafeUser = function () {
+	return {
+		id: this._id,
+		email: this.email,
+		username: this.username,
+		fullname: `${this.firstName} ${this.lastName}`.trim()
+	};
+};
+
+//* HASH PASSWORD - Función para hacer Hashing a la Contraseña
 UserSchema.methods.hashPassword = async function (plainPassword) {
 	const saltRounds = 12;
 	return await bcrypt.hash(plainPassword, saltRounds);
 };
 
-// Método para verificar si la contraseña está en formato bcrypt
+//* IS BCRYPT HASH - Método para verificar si la contraseña está en formato bcrypt
 UserSchema.methods.isBcryptHash = function (hash) {
 	console.log('Verificando hash:', hash);
 	const bcryptRegex = /^\$2[abxy]\$\d{2}\$.{53}$/; // bcrypt tiene un formato específico: $2a$, $2b$, $2x$, $2y$
 	return bcryptRegex.test(hash);
 }
 
-// Método para comparar contraseñas (solo para bcrypt)
+//* COMPARE PASSWORD - Método para comparar contraseñas (solo para bcrypt)
 // UserSchema.methods.comparePassword = async function (candidatePassword) {
 // 	return await bcrypt.compare(candidatePassword, this.password);
 // };
 
-// Método híbrido para verificar la contraseña, migrando de pbkdf2 a bcrypt si es necesario
+//* VERIFY PASSWORD - Método híbrido para verificar la contraseña, migrando de pbkdf2 a bcrypt si es necesario
 UserSchema.methods.verifyPassword = async function (candidatePassword) {
 	console.log('Verifying password for user:', this.username, candidatePassword);
 	if (this.isBcryptHash(this.password)) {
@@ -145,7 +155,7 @@ UserSchema.methods.verifyPassword = async function (candidatePassword) {
 	}
 };
 
-// Método estático para crear un usuario
+//* CREATE USER - Método estático para crear un usuario (sin tokens)
 UserSchema.statics.createUser = async function (userData) {
 	try {
 		const User = this;
@@ -162,7 +172,7 @@ UserSchema.statics.createUser = async function (userData) {
 	}
 }
 
-// Método estático para crear usuario con tokens
+//* CREATE USER WITH TOKENS - Método estático para crear usuario con tokens (Access y Refresh)
 UserSchema.statics.createUserWithTokens = async function (userData) {
 	try {
 		const User = this;
@@ -196,30 +206,14 @@ UserSchema.statics.createUserWithTokens = async function (userData) {
 	}
 };
 
-UserSchema.methods.getSafeUser = function () {
-	console.log('(getSafeUser) Obteniendo usuario seguro:', this.username);
-	const obj = this.toObject(); // Convierte el documento a objeto plano
-	console.log('Objeto plano del usuario:', obj);
-
-	delete obj.password;
-	delete obj.refreshTokens;
-	delete obj.__v;
-	delete obj.provider;
-
-	obj.id = obj._id;
-	delete obj._id;
-
-	return obj;
-};
-
-// Devolver el refresh token válido
+//* FIND VALID REFRESH TOKEN - Devolver el refresh token válido
 UserSchema.methods.findValidRefreshToken = function (jti) {
 	return this.refreshTokens.find(
 		token => token.jti === jti && token.expiresAt > new Date()
 	);
 };
 
-// Agregar nuevo token
+//* ADD REFRESH TOKEN - Agregar nuevo token
 UserSchema.methods.addRefreshToken = function ({ token, jti, expiresAt }) {
 	this.refreshTokens.push({
 		token,
@@ -228,7 +222,7 @@ UserSchema.methods.addRefreshToken = function ({ token, jti, expiresAt }) {
 	});
 };
 
-// Rotar refresh token (renovar)
+//* ROTATE REFRESH TOKEN - Rotar refresh token (renovar)
 UserSchema.methods.rotateRefreshToken = function ({
 	oldJti,
 	newToken,
@@ -261,13 +255,14 @@ UserSchema.methods.rotateRefreshToken = function ({
 	return 'not_found';
 };
 
-// Limpiar refresh tokens expirados
+//* CLEAN EXPIRED TOKENS -  Limpiar refresh tokens expirados
 UserSchema.methods.cleanExpiredTokens = function () {
 	this.refreshTokens = this.refreshTokens.filter(
 		tokenObj => tokenObj.expiresAt > new Date()
 	);
 };
 
+//* INVALIDATE TOKENS - Invalidar un refresh token específico
 UserSchema.methods.invalidateRefreshToken = function (jti) {
 	let wasInvalidated = false;
 	const initialLength = this.refreshTokens.length;
@@ -283,12 +278,12 @@ UserSchema.methods.invalidateRefreshToken = function (jti) {
 	return wasInvalidated;
 };
 
-// Invalidar todos los tokens (para logout completo)
+//* INVALIDATE ALL REFRESH TOKENS - Invalidar todos los tokens (para logout completo)
 UserSchema.methods.invalidateAllRefreshTokens = function () {
 	this.refreshTokens = [];
 };
 
-// Encontrar posibles username no usados
+//* FIND UNIQUE USERNAME - Encontrar posibles username no usados
 UserSchema.statics.findUniqueUserName = function (username, suffix, callback) {
 	var _this = this;
 	//Añadir un sufijo 'username'
