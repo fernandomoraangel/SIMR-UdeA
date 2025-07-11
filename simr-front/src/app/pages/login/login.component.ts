@@ -131,6 +131,8 @@ export class LoginComponent implements OnInit {
     }
   }
 
+
+  // TEST AREA
   testRefreshToken(): void {
     this.authService.refreshToken().subscribe({
       next: (response) => {
@@ -163,7 +165,7 @@ export class LoginComponent implements OnInit {
     this.authService.logout().subscribe({
       next: () => {
         console.log('Sesión cerrada exitosamente');
-        this.router.navigate(['/']);
+        // this.router.navigate(['/']);
       },
       error: (error) => {
         console.error('Error al cerrar sesión', error);
@@ -172,6 +174,22 @@ export class LoginComponent implements OnInit {
       },
     });
   } 
+
+  testGetAllUsers(): void {
+    this.authService.testGetAllUsers().subscribe({
+      next: (response) => {
+        console.log('Usuarios obtenidos exitosamente', response);
+        // Aquí podrías manejar la lista de usuarios si es necesario
+      },
+      error: (error) => {
+        console.error('Error al obtener usuarios', error);
+        this.errorMessage =
+          error.message || 'Error al obtener usuarios. Por favor, inténtalo de nuevo1.';
+      },
+    });
+  }
+
+  // End of TEST AREA
 
 
 

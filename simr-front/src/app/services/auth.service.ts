@@ -385,4 +385,17 @@ export class AuthService {
   //   return throwError(() => errorMessage);
   // }
   //! End of former code
+
+  // Test Area
+  testGetAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`http://localhost:3000/api/users`, {
+      withCredentials: true,
+    }).pipe(
+      tap((users) => {
+        console.log('Usuarios obtenidos:', users);
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }  
+  // End of Test Area
 }
