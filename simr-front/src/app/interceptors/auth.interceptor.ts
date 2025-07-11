@@ -26,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
     // '/reset-password',
   ];
 
-  // Caso 2: URLs que usan refresh token, no access token
+  // Caso 2: URLs que usan refresh token (cookies), no access token
   private readonly refreshOnlyUrls = ['/refresh', '/logout', '/verify'];
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -81,32 +81,6 @@ export class AuthInterceptor implements HttpInterceptor {
     });
   }
 
-  private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
-    return request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  }
-
-  private addToken1(request: HttpRequest<any>): HttpRequest<any> {
-    const token = this.authService.getAccessToken();
-
-    let modifiedRequest = request.clone({
-      withCredentials: true,
-    });
-
-    if (token) {
-      modifiedRequest = modifiedRequest.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-
-    return modifiedRequest;
-  }
-
   private handleAuthError(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -117,8 +91,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
       return this.authService.refreshToken().pipe(
         switchMap((response: any) => {
-          if (response?.success && response?.tokens?.accessToken) {
-            const newToken = response.tokens.accessToken;
+          if (response?.success && response?.data?.tokens?.accessToken) {
+            const newToken = response.data.tokens.accessToken;
             this.refreshTokenSubject.next(newToken);
             return next.handle(this.addTokenToRequest(request, newToken));
           }

@@ -45,39 +45,30 @@ export class AuthService {
 
   private refreshTimer: any;
 
-  //! former code below
-  // private currentUserSubject: BehaviorSubject<User | null>;
-  // public currentUser: Observable<User | null>;
-  // private tokenKey = 'auth_token';
-  // private userKey = 'user_data';
-
-  // private currentUserSubject = new BehaviorSubject<User | null>(null);
-  // public currentUser$ = this.currentUserSubject.asObservable();
-
-  // private accessToken: string | null = null;
-  // private isRefreshing = false;
-  //! end of former code
-
   constructor(private http: HttpClient, private router: Router) {
-    this.initializeAuth();
+    // No inicializar automáticamente para evitar dependencia circular
   }
 
-  // constructor(private http: HttpClient) {
-  //   this.currentUserSubject = new BehaviorSubject<User | null>(
-  //     this.getUserFromStorage()
-  //   );
-  //   this.currentUser = this.currentUserSubject.asObservable();
+  /**
+   * Inicializar el servicio de autenticación
+   * Debe ser llamado desde AppComponent después de que todos los servicios estén listos
+   */
+  public init(): void {
+    this.initializeAuth().catch((error) => {
+      console.error('Error initializing AuthService:', error);
+    });
+  }
 
-  //   // Verificar token al iniciar
-  //   this.verifyToken().subscribe();
-  // }
-
-  // Inicializar autenticación
+  /**
+   * Inicializar autenticación al cargar la aplicación
+   */
   private async initializeAuth(): Promise<void> {
     try {
+      console.log('(initializeAuth) Inicializando autenticación en AuthService');
       // Verificar si hay una sesión activa
       await firstValueFrom(this.verifyAuth());
     } catch (error) {
+      console.error('Error al verificar autenticación al iniciar:', error);
       // Si la verificación falla, intentar refresh
       this.refreshToken().subscribe({
         error: () => {
@@ -88,6 +79,9 @@ export class AuthService {
     }
   }
 
+  /**
+   * Verificar autenticación actual
+   */
   verifyAuth(): Observable<AuthVerifyResponse> {
     return this.http
       .get<AuthVerifyResponse>(`${this.BASE_URL}/verify`, {
@@ -95,11 +89,12 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          if (response.success && response.user) {
+          console.log('Verificación de autenticación:', response);
+          if (response.success && response.data.user) {
             // Solo establecer usuario si no tenemos estado de auth
             const currentState = this.authStateSubject.value;
             if (!currentState.isAuthenticated) {
-              this.setAuthState(response.user, null);
+              this.setAuthState(response.data.user, null);
             }
           }
         }),
@@ -107,7 +102,9 @@ export class AuthService {
       );
   }
 
-  // Registrar usuario
+  /**
+   * Registrar usuario
+   */
   signup(credentials: SignupCredentials): Observable<SignupResponse> {
     // Limpiar cualquier sesión previa
     this.clearAuthState();
@@ -119,18 +116,24 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          if (response.success && response.user && response.tokens) {
+          if (response.success && response.data.user && response.data.tokens) {
             // Si el registro incluye login automático
-            this.setAuthState(response.user, response.tokens.accessToken);
-            this.scheduleTokenRefresh(response.tokens.expiresIn);
+            this.setAuthState(
+              response.data.user,
+              response.data.tokens.accessToken
+            );
+            this.scheduleTokenRefresh(response.data.tokens.expiresIn);
           }
           // Si requiere verificación de email, no establecer auth state
         }),
-        catchError(this.handleError)
+        catchError(this.handleError.bind(this))
+        // catchError(this.handleError)
       );
   }
 
-  // Iniciar sesión
+  /**
+   * Iniciar sesión
+   */
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(
@@ -143,12 +146,17 @@ export class AuthService {
       )
       .pipe(
         tap((response) => {
-          if (response.success && response.user && response.tokens) {
-            this.setAuthState(response.user, response.tokens.accessToken);
-            this.scheduleTokenRefresh(response.tokens.expiresIn);
+          console.log('Login response:', response);
+          if (response.success && response.data.user && response.data.tokens) {
+            this.setAuthState(
+              response.data.user,
+              response.data.tokens.accessToken
+            );
+            this.scheduleTokenRefresh(response.data.tokens.expiresIn);
           }
         }),
-        catchError(this.handleError)
+        catchError(this.handleError.bind(this))
+        // catchError(this.handleError)
       );
   }
 
@@ -158,9 +166,7 @@ export class AuthService {
       .post(
         `${this.BASE_URL}/logout`,
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       )
       .pipe(
         tap(() => {
@@ -168,39 +174,47 @@ export class AuthService {
           this.clearRefreshTimer();
           // this.router.navigate(['/login']); // TODO: Cambiar a la ruta de inicio
         }),
-        catchError(this.handleError)
+        catchError(this.handleError.bind(this))
+        // catchError(this.handleError)
       );
   }
 
-  // Actualizar token
-  refreshToken(): Observable<any> {
+  /**
+   * Actualizar token de acceso
+   */
+  refreshToken(): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(
         `${this.BASE_URL}/refresh`,
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       )
       .pipe(
         tap((response) => {
-          if (response.success && response.tokens) {
+          console.log('Refresh token response:', response);
+          if (response.success && response.data.tokens) {
             // Solo actualizar el token, mantener el usuario actual
             const currentState = this.authStateSubject.value;
             if (currentState.user) {
-              this.setAuthState(currentState.user, response.tokens.accessToken);
-              this.scheduleTokenRefresh(response.tokens.expiresIn);
+              this.setAuthState(
+                currentState.user,
+                response.data.tokens.accessToken
+              );
+              this.scheduleTokenRefresh(response.data.tokens.expiresIn);
             }
           }
         }),
         catchError((error) => {
+          console.error('Error al refrescar token:', error);
           this.clearAuthState();
           throw error;
         })
       );
   }
 
-  // Redirigir a aplicación AngularJS
+  /**
+   * Redirigir a aplicación AngularJS legacy
+   */
   redirectToLegacyApp(): void {
     // Verificar que el usuario esté autenticado
     if (this.isAuthenticated()) {
@@ -220,7 +234,9 @@ export class AuthService {
     });
   }
 
-  // Limpiar estado de autenticación
+  /**
+   * Limpiar estado de autenticación
+   */
   private clearAuthState(): void {
     this.authStateSubject.next({
       user: null,
@@ -230,11 +246,13 @@ export class AuthService {
     this.clearRefreshTimer();
   }
 
-  // Programar temporadizador del refresh token
+  /**
+   * Programar refresh automático del token
+   */
   private scheduleTokenRefresh(expiresIn: number): void {
     this.clearRefreshTimer();
 
-    // Programar refresh 2 minutos antes de que expire
+    // Refresh 2 minutos antes de expirar
     const refreshTime = (expiresIn - 120) * 1000;
 
     if (refreshTime > 0) {
@@ -249,7 +267,9 @@ export class AuthService {
     }
   }
 
-  // Limpiar el temporizador de refresh
+  /**
+   * Limpiar temporizador de refresh
+   */
   private clearRefreshTimer(): void {
     if (this.refreshTimer) {
       this.refreshTimer.unsubscribe();
@@ -263,7 +283,7 @@ export class AuthService {
     const currentState = this.authStateSubject.value;
     if (currentState.isAuthenticated) {
       // Redireccionar a la aplicación AngularJS
-      window.location.href = 'http://localhost:8080'; // Cambia por tu URL de AngularJS
+      window.location.href = 'http://localhost:3000'; // Cambia por tu URL de AngularJS
     } else {
       console.error('Usuario no autenticado');
     }
@@ -298,15 +318,12 @@ export class AuthService {
     return throwError(() => errorMessage);
   }
 
-  //! (former code) // Método centralizado para manejar errores HTTP
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
 
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del backend
       const serverError = error.error?.message || 'Error desconocido';
       errorMessage = `Código: ${error.status}, Mensaje: ${serverError}`;
 
@@ -321,13 +338,51 @@ export class AuthService {
         case 404:
           errorMessage = 'Recurso no encontrado';
           break;
-        case 500:
-          errorMessage = 'Error del servidor';
+        case 422:
+          errorMessage = serverError; // Errores de validación
           break;
+        case 500:
+          errorMessage = 'Error interno del servidor';
+          break;
+        default:
+          errorMessage = `Código: ${error.status}, Mensaje: ${serverError}`;
       }
     }
+
     console.error('Error en AuthService:', errorMessage);
     return throwError(() => errorMessage);
   }
+
+  //! (former code) // Método centralizado para manejar errores HTTP
+  // private handleError(error: HttpErrorResponse) {
+  //   let errorMessage = '';
+
+  //   if (error.error instanceof ErrorEvent) {
+  //     // Error del lado del cliente
+  //     errorMessage = `Error: ${error.error.message}`;
+  //   } else {
+  //     // Error del backend
+  //     const serverError = error.error?.message || 'Error desconocido';
+  //     errorMessage = `Código: ${error.status}, Mensaje: ${serverError}`;
+
+  //     // Manejo específico según código de estado
+  //     switch (error.status) {
+  //       case 401:
+  //         errorMessage = 'Credenciales inválidas';
+  //         break;
+  //       case 403:
+  //         errorMessage = 'Acceso prohibido';
+  //         break;
+  //       case 404:
+  //         errorMessage = 'Recurso no encontrado';
+  //         break;
+  //       case 500:
+  //         errorMessage = 'Error del servidor';
+  //         break;
+  //     }
+  //   }
+  //   console.error('Error en AuthService:', errorMessage);
+  //   return throwError(() => errorMessage);
+  // }
   //! End of former code
 }

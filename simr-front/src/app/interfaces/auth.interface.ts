@@ -5,7 +5,6 @@ export interface User {
   //   roles: string[];
 }
 
-
 export interface SignupCredentials {
   username: string;
   email: string;
@@ -17,27 +16,34 @@ export interface SignupCredentials {
 export interface SignupResponse {
   success: boolean;
   message: string;
-  user?: User;
-  tokens?: {
-    accessToken: string;
-    expiresIn: number;
+  data: {
+    user?: User;
+    tokens?: {
+      accessToken: string;
+      expiresIn: number;
+    };
+    redirectUrl?: string; // URL to redirect after signup, if applicable
   };
-  redirectUrl?: string; // URL to redirect after signup, if applicable
 }
 
 export interface LoginResponse {
   success: boolean;
   message: string;
-  user?: User;
-  tokens?: {
-    accessToken: string;
-    expiresIn: number;
+  data: {
+    user?: User;
+    tokens?: {
+      accessToken: string;
+      expiresIn: number;
+    };
   };
 }
 
 export interface AuthVerifyResponse {
   success: boolean;
+  message: string;
+  data: {
   user: User;
+  };
 }
 
 export interface AuthState {

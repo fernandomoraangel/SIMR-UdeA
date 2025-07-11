@@ -9,7 +9,8 @@
         id="username"
         formControlName="username"
         [class.error]="
-          loginForm.get('username')?.invalid && loginForm.get('username')?.touched
+          loginForm.get('username')?.invalid &&
+          loginForm.get('username')?.touched
         "
       />
     </div>
@@ -34,7 +35,35 @@
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
+
+    <!-- <div *ngIf="showTest" class="test-button-container">
+      <button (click)="redirectToAngularJS()" class="redirect-btn">
+        Ir a Aplicación AngularJS
+      </button>
+      <button (click)="testRefreshToken()" class="redirect-btn">
+        Refresh Token
+      </button>
+      <button (click)="testVerifyToken()" class="redirect-btn">
+        Verify Token
+      </button>
+      <button (click)="testLogout()" class="redirect-btn">
+        Logout
+      </button>
+    </div> -->
   </form>
+
+  <div *ngIf="showTest" class="test-button-container">
+    <button (click)="redirectToAngularJS()" class="redirect-btn">
+      Ir a Aplicación AngularJS
+    </button>
+    <button (click)="testRefreshToken()" class="redirect-btn">
+      Refresh Token
+    </button>
+    <button (click)="testVerifyToken()" class="redirect-btn">
+      Verify Token
+    </button>
+    <button (click)="testLogout()" class="redirect-btn">Logout</button>
+  </div>
 
   <!-- <button (click)="redirectToAngularJS()" class="redirect-btn">
     Ir a Aplicación AngularJS
