@@ -182,9 +182,9 @@ export class LoginComponent implements OnInit {
         // Aquí podrías manejar la lista de usuarios si es necesario
       },
       error: (error) => {
-        console.error('Error al obtener usuarios', error);
+        console.error('Error al obtener usuarios:', error);
         this.errorMessage =
-          error.message || 'Error al obtener usuarios. Por favor, inténtalo de nuevo1.';
+          error.message || 'Error al obtener usuarios. Por favor verifique autenticación.';
       },
     });
   }
