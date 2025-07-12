@@ -5,6 +5,26 @@ angular.module("example").controller("ExampleController", [
   function ($scope, Authentication) {
     $scope.authentication = Authentication;
     console.log("ExampleController - authentication: ", $scope.authentication);
+
+    // Verifica si está autenticado al cargar
+    Authentication.checkAuthStatus()
+      .then(function () {
+        console.log("Usuario autenticado:", Authentication.getCurrentUser());
+        Authentication.startRefreshTimer(4 * 60 * 1000); // cada 4 minutos
+      })
+      .catch(function () {
+        console.warn('Usuario no autenticado');
+      });
+
+    // Prueba manual
+    $scope.testVerifyToken = function () {
+      Authentication.checkAuthStatus()
+        .then(user => console.log('Token válido:', user))
+        .catch(err => console.warn('Token inválido:', err));
+    };
+
+
+
     $scope.acercaDe = function () {
       Swal.fire({
         html: "SISTEMA DE INFORMACIÓN MUSICAS REGIONALES-SIMR<br />Versión: 1.0<br />Grupo de investigación Músicas Regionales<br />Universidad de Antioquia<br /> Conceptualización: Grupo de Investigación Músicas Regionales<br />Desarrollo: Fernando Mora Ángel<br />2022",
@@ -16,24 +36,25 @@ angular.module("example").controller("ExampleController", [
         showConfirmButton: false,
       });
     };
-    $scope.testVerifyToken = function () {
-      console.log("Verifying token...");
-      Authentication.checkAuthStatus()
-        .then(function (user) {
-          console.log('Usuario autenticado:', user);
-        })
-        .catch(function (err) {
-          console.log('No autenticado:', err);
-        });
 
-      // Authentication.checkAuthStatus().then(
-      //   function (response) {
-      //     console.log("Token verification successful:", response);
-      //   },
-      //   function (error) {
-      //     console.error("Token verification failed:", error);
-      //   }
-      // );
-    }
+    // $scope.testVerifyToken = function () {
+    //   console.log("Verifying token...");
+    //   Authentication.checkAuthStatus()
+    //     .then(function (user) {
+    //       console.log('Usuario autenticado:', user);
+    //     })
+    //     .catch(function (err) {
+    //       console.log('No autenticado:', err);
+    //     });
+
+    //   Authentication.checkAuthStatus().then(
+    //     function (response) {
+    //       console.log("Token verification successful:", response);
+    //     },
+    //     function (error) {
+    //       console.error("Token verification failed:", error);
+    //     }
+    //   );
+    // }
   },
 ]);
