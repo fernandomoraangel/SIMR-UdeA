@@ -16,5 +16,24 @@ angular.module("example").controller("ExampleController", [
         showConfirmButton: false,
       });
     };
+    $scope.testVerifyToken = function () {
+      console.log("Verifying token...");
+      Authentication.checkAuthStatus()
+        .then(function (user) {
+          console.log('Usuario autenticado:', user);
+        })
+        .catch(function (err) {
+          console.log('No autenticado:', err);
+        });
+
+      // Authentication.checkAuthStatus().then(
+      //   function (response) {
+      //     console.log("Token verification successful:", response);
+      //   },
+      //   function (error) {
+      //     console.error("Token verification failed:", error);
+      //   }
+      // );
+    }
   },
 ]);
