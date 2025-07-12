@@ -104,7 +104,7 @@ UserSchema.methods.getSafeUser = function () {
 		id: this._id,
 		email: this.email,
 		username: this.username,
-		fullname: `${this.firstName} ${this.lastName}`.trim()
+		fullName: `${this.firstName} ${this.lastName}`.trim()
 	};
 };
 
