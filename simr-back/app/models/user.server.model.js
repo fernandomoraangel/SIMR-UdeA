@@ -6,7 +6,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const {
 	generateTokens,
-	getTokenExpiration
+	getTokenExpirationDate,
+	getTokenExpirationInSeconds
 } = require('../../utils/tokenUtils');
 
 const UserSchema = new mongoose.Schema({
@@ -186,7 +187,7 @@ UserSchema.statics.createUserWithTokens = async function (userData) {
 		user.addRefreshToken({
 			token: refreshToken,
 			jti,
-			expiresAt: getTokenExpiration(refreshToken)
+			expiresAt: getTokenExpirationDate(refreshToken)
 		});
 
 		// Guardar usuario
@@ -197,9 +198,17 @@ UserSchema.statics.createUserWithTokens = async function (userData) {
 			tokens: {
 				accessToken,
 				refreshToken,
-				expiresIn: process.env.JWT_EXPIRATION
+				expiresIn: getTokenExpirationInSeconds(accessToken)
 			}
 		};
+		// return {
+		// 	user,
+		// 	tokens: {
+		// 		accessToken,
+		// 		refreshToken,
+		// 		expiresIn: process.env.JWT_EXPIRATION
+		// 	}
+		// };
 	} catch (error) {
 		console.error('Error creating user with tokens:', error);
 		throw error;

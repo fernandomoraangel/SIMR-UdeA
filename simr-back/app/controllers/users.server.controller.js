@@ -5,7 +5,8 @@ const passport = require("passport");
 const {
   generateTokens,
   verifyRefreshToken,
-  getTokenExpiration
+  getTokenExpirationDate,
+  getTokenExpirationInSeconds
 } = require('../../utils/tokenUtils');
 const { successResponse, errorResponse } = require('../../utils/responseHelpers');
 const { cookieHelpers } = require('../../config/cookieConfig');
@@ -103,7 +104,7 @@ exports.login = (req, res, next) => {
       user.addRefreshToken({
         token: refreshToken,
         jti,
-        expiresAt: getTokenExpiration(refreshToken)
+        expiresAt: getTokenExpirationDate(refreshToken)
       });
 
       await user.save();
@@ -115,15 +116,12 @@ exports.login = (req, res, next) => {
         console.warn('Hubo problemas configurando las cookies');
       }
 
-      const accessTokenExpiresAt = getTokenExpiration(accessToken);
-      const accessTokenExpiresIn = accessTokenExpiresAt.getTime() - Date.now();
-
       // Respuesta para el cliente
       successResponse(res, 'Inicio de sesión exitoso', 200, {
         user: user.getSafeUser(),
         tokens: {
           accessToken,
-          expiresIn: accessTokenExpiresIn
+          expiresIn: getTokenExpirationInSeconds(accessToken)
         }
       });
       // successResponse(res, 'Inicio de sesión exitoso', 200, {
@@ -181,7 +179,7 @@ exports.refreshToken = async (req, res) => {
       oldJti: decoded.jti,
       newToken: newRefreshToken,
       newJti,
-      newExpiresAt: getTokenExpiration(newRefreshToken),
+      newExpiresAt: getTokenExpirationDate(newRefreshToken),
       allowInsertIfMissing: false
     })
 
@@ -198,14 +196,11 @@ exports.refreshToken = async (req, res) => {
       console.warn('Hubo problemas actualizando las cookies');
     }
 
-    const accessTokenExpiresAt = getTokenExpiration(accessToken);
-    const accessTokenExpiresIn = accessTokenExpiresAt.getTime() - Date.now();
-
     // Responder al cliente con los nuevos tokens
     successResponse(res, 'Token actualizado exitosamente', 200, {
       tokens: {
         accessToken,
-        expiresIn: accessTokenExpiresIn
+        expiresIn: getTokenExpirationInSeconds(accessToken)
       }
     });
     // successResponse(res, 'Token actualizado exitosamente', 200, {
@@ -458,4 +453,3 @@ exports.hasAuthorization = (req, res, next) => {
   // Llamar sgte middleware
   next();
 };
-

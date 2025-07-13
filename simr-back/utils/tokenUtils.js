@@ -35,20 +35,35 @@ const verifyRefreshToken = (token) => {
   }
 };
 
-const getTokenExpiration = (token) => {
+const getTokenExpirationDate = (token) => {
   try {
     const decoded = jwt.decode(token);
     console.log('(getTokenExpiration) Expiration date for token: ', decoded);
     console.log('Date now: ', new Date());
-    return new Date(decoded.exp * 1000); // Convertir a milisegundos
+
+    // Expiration date
+    return new Date(decoded.exp * 1000); // Convertir 'exp' a milisegundos
   } catch (error) {
     return null;
   }
 };
 
+const getTokenExpirationInSeconds = (token) => {
+  try {
+    const decoded = jwt.decode(token);
+    console.log('(getTokenExpirationInSeconds) Expiration in seconds for token: ', decoded.exp);
+
+    // Expiration in seconds
+    return decoded.exp - Math.floor(Date.now() / 1000);
+  } catch (error) {
+    return null;
+  }
+}
+
 module.exports = {
   generateTokens,
   verifyAccessToken,
   verifyRefreshToken,
-  getTokenExpiration
+  getTokenExpirationDate,
+  getTokenExpirationInSeconds
 };
