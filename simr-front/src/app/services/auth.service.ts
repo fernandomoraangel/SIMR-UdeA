@@ -64,7 +64,9 @@ export class AuthService {
    */
   private async initializeAuth(): Promise<void> {
     try {
-      console.log('(initializeAuth) Inicializando autenticación en AuthService');
+      console.log(
+        '(initializeAuth) Inicializando autenticación en AuthService'
+      );
       // Verificar si hay una sesión activa
       await firstValueFrom(this.verifyAuth());
     } catch (error) {
@@ -152,6 +154,10 @@ export class AuthService {
               response.data.user,
               response.data.tokens.accessToken
             );
+            console.log(
+              '(auth.service.ts) Expiration in seconds:',
+              response.data.tokens.expiresIn
+            );
             this.scheduleTokenRefresh(response.data.tokens.expiresIn);
           }
         }),
@@ -163,11 +169,7 @@ export class AuthService {
   // Cerrar sesión
   logout(): Observable<any> {
     return this.http
-      .post(
-        `${this.BASE_URL}/logout`,
-        {},
-        { withCredentials: true }
-      )
+      .post(`${this.BASE_URL}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
           this.clearAuthState();
@@ -252,8 +254,11 @@ export class AuthService {
   private scheduleTokenRefresh(expiresIn: number): void {
     this.clearRefreshTimer();
 
+    console.log(`Programando refresh automático en ${expiresIn} segundos`);
+
     // Refresh 2 minutos antes de expirar
-    const refreshTime = (expiresIn - 120) * 1000;
+    const refreshTime = (expiresIn - 2 * 60) * 1000;
+    // const refreshTime = 5 * 1000; // 5 segundos para pruebas
 
     if (refreshTime > 0) {
       this.refreshTimer = timer(refreshTime)
@@ -388,14 +393,16 @@ export class AuthService {
 
   // Test Area
   testGetAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`http://localhost:3000/api/users`, {
-      withCredentials: true,
-    }).pipe(
-      tap((users) => {
-        console.log('Usuarios obtenidos:', users);
-      }),
-      catchError(this.handleError.bind(this))
-    );
-  }  
+    return this.http
+      .get<User[]>(`http://localhost:3000/api/users`, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap((users) => {
+          console.log('Usuarios obtenidos:', users);
+        }),
+        catchError(this.handleError.bind(this))
+      );
+  }
   // End of Test Area
 }
