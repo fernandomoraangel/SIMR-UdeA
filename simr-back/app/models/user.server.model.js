@@ -201,14 +201,6 @@ UserSchema.statics.createUserWithTokens = async function (userData) {
 				expiresIn: getTokenExpirationInSeconds(accessToken)
 			}
 		};
-		// return {
-		// 	user,
-		// 	tokens: {
-		// 		accessToken,
-		// 		refreshToken,
-		// 		expiresIn: process.env.JWT_EXPIRATION
-		// 	}
-		// };
 	} catch (error) {
 		console.error('Error creating user with tokens:', error);
 		throw error;

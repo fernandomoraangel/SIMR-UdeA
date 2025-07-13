@@ -124,13 +124,6 @@ exports.login = (req, res, next) => {
           expiresIn: getTokenExpirationInSeconds(accessToken)
         }
       });
-      // successResponse(res, 'Inicio de sesión exitoso', 200, {
-      //   user: user.getSafeUser(),
-      //   tokens: {
-      //     accessToken,
-      //     expiresIn: process.env.JWT_EXPIRATION
-      //   }
-      // });
     } catch (error) {
       next(error);
     }
@@ -203,12 +196,6 @@ exports.refreshToken = async (req, res) => {
         expiresIn: getTokenExpirationInSeconds(accessToken)
       }
     });
-    // successResponse(res, 'Token actualizado exitosamente', 200, {
-    //   tokens: {
-    //     accessToken,
-    //     expiresIn: process.env.JWT_EXPIRATION
-    //   }
-    // });
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     if (error.name === 'TokenExpiredError') {
