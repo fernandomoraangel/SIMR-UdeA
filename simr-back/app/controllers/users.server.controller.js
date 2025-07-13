@@ -115,14 +115,24 @@ exports.login = (req, res, next) => {
         console.warn('Hubo problemas configurando las cookies');
       }
 
+      const accessTokenExpiresAt = getTokenExpiration(accessToken);
+      const accessTokenExpiresIn = accessTokenExpiresAt.getTime() - Date.now();
+
       // Respuesta para el cliente
       successResponse(res, 'Inicio de sesión exitoso', 200, {
         user: user.getSafeUser(),
         tokens: {
           accessToken,
-          expiresIn: process.env.JWT_EXPIRATION
+          expiresIn: accessTokenExpiresIn
         }
       });
+      // successResponse(res, 'Inicio de sesión exitoso', 200, {
+      //   user: user.getSafeUser(),
+      //   tokens: {
+      //     accessToken,
+      //     expiresIn: process.env.JWT_EXPIRATION
+      //   }
+      // });
     } catch (error) {
       next(error);
     }
@@ -188,13 +198,22 @@ exports.refreshToken = async (req, res) => {
       console.warn('Hubo problemas actualizando las cookies');
     }
 
+    const accessTokenExpiresAt = getTokenExpiration(accessToken);
+    const accessTokenExpiresIn = accessTokenExpiresAt.getTime() - Date.now();
+
     // Responder al cliente con los nuevos tokens
     successResponse(res, 'Token actualizado exitosamente', 200, {
       tokens: {
         accessToken,
-        expiresIn: process.env.JWT_EXPIRATION
+        expiresIn: accessTokenExpiresIn
       }
     });
+    // successResponse(res, 'Token actualizado exitosamente', 200, {
+    //   tokens: {
+    //     accessToken,
+    //     expiresIn: process.env.JWT_EXPIRATION
+    //   }
+    // });
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     if (error.name === 'TokenExpiredError') {
