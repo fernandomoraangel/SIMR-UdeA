@@ -3,12 +3,13 @@ angular.module("users").factory("Authentication", [
   '$q',
   '$rootScope',
   '$interval',
-  function ($http, $q, $rootScope, $interval) {
-    var API_URL = 'http://localhost:3000/api/auth'; // Ajusta según tu configuración
+  '$window',
+  function ($http, $q, $rootScope, $interval, $window) {
+    var API_URL = 'http://localhost:3000/api/auth';
+    // var API_URL = '/api/auth';
 
     // Configuración por defecto para incluir cookies
     // $http.defaults.withCredentials = true;
-
 
     const service = {
       currentUser: null,
@@ -50,16 +51,23 @@ angular.module("users").factory("Authentication", [
 
     // Saber si está autenticado
     service.isAuthenticatedFn = function () {
-      console.log("isAuthenticatedFn called:", service.isAuthenticated);
+      // console.log("isAuthenticatedFn called:", service.isAuthenticated);
       return service.isAuthenticated;
     };
 
     // Intentar renovar token automáticamente
     service.refreshToken = function () {
+      console.log('Renovando token de acceso...');
       return $http.post('/api/auth/refresh', {})
         .then(function (res) {
+          console.log('(service.refreshToken()) res:', res);
+          console.log('res.data.success:', res.data.success);
           if (res.data.success) {
             console.log('Access token renovado');
+            if (res.data.data.tokens.expiresIn) {
+              // Reajustar el temporizador si el backend da info
+              service.startRefreshTimer(res.data.data.tokens.expiresIn);
+            }
             return res.data;
           } else {
             service.clearUser();
@@ -72,7 +80,11 @@ angular.module("users").factory("Authentication", [
         });
     };
 
-    service.startRefreshTimer = function (intervalMs) {
+    service.startRefreshTimer = function (expiresIn) {
+      console.log('Iniciando temporizador de renovación de token');
+      // Renovar token un poco antes de que expire
+      const refreshBeforeInSeconds = 60; // 1 minuto antes de expirar
+      const intervalMs = (expiresIn - refreshBeforeInSeconds) * 1000; // Convertir a milisegundos
       if (service.refreshTimer) {
         $interval.cancel(service.refreshTimer);
       }
@@ -89,8 +101,27 @@ angular.module("users").factory("Authentication", [
       }
     };
 
+    // Login (generalmente no se usará en AngularJS ya que se hace desde Angular)
+    service.login = function (username, password) {
+      return $http.post(API_URL + '/login', {
+        username: username,
+        password: password
+      })
+        .then(function (response) {
+          if (response.data.success && response.data.user) {
+            service.currentUser = response.data.user;
+            service.isAuthenticated = true;
+            $rootScope.$broadcast('auth:loginSuccess', service.currentUser);
+            return $q.resolve(response.data);
+          } else {
+            return $q.reject(response.data.message || 'Error de login');
+          }
+        })
+        .catch(function (error) {
+          return $q.reject(error.data?.message || 'Error de conexión');
+        });
+    };
 
-    //TODO: Revisar este método para incluirlo
     // Logout
     service.logout = function () {
       return $http.post(API_URL + '/logout', {})
@@ -105,7 +136,18 @@ angular.module("users").factory("Authentication", [
           service.clearUser();
           $rootScope.$broadcast('auth:logoutSuccess');
           return $q.reject(error);
+        })
+        .finally(function () {
+          // Detener el temporizador de renovación
+          service.stopRefreshTimer();
+          service.redirectToAngularApp();
         });
+    };
+
+    // Redirigir a aplicación Angular
+    service.redirectToAngularApp = function () {
+      var angularAppUrl = 'http://localhost:4200'; // Ajusta según tu configuración
+      $window.location.href = angularAppUrl;
     };
 
     return {
@@ -119,185 +161,3 @@ angular.module("users").factory("Authentication", [
     };
   }
 ]);
-
-
-
-// angular.module("users").factory("Authentication", ['$http', '$q', '$timeout', '$window', '$rootScope',
-//   function ($http, $q, $timeout, $window, $rootScope) {
-
-//     var API_URL = 'http://localhost:3000/api/auth'; // Cambia por tu URL
-//     var currentUser = null;
-
-//     this.user = window.user;
-//     $window.user = null;
-
-//     var service = {
-//       currentUser: null,
-//       isAuthenticated: false,
-//       accessToken: null,
-
-//       // Métodos públicos
-//       // login: login,
-//       // logout: logout,
-//       // refreshToken: refreshToken,
-//       // verifyAuth: verifyAuth,
-//       // getCurrentUser: getCurrentUser,
-//       // isUserAuthenticated: isUserAuthenticated,
-//       // getAccessToken: getAccessToken,
-//       // redirectToAngular: redirectToAngular,
-
-//       // Inicialización
-//       // init: init
-//     };
-
-//     var refreshTimer;
-
-//     // Inicializar el servicio
-//     // init();
-
-//     // function init() {
-//     //   // Verificar autenticación al cargar la aplicación
-//     //   verifyAuth()
-//     //     .then(function (response) {
-//     //       if (response.data.success) {
-//     //         setAuthState(response.data.user, null);
-//     //         $rootScope.$broadcast('auth:loginSuccess', response.data.user);
-//     //         deferred.resolve(response.data);
-//     //       } else {
-//     //         deferred.reject(response.data.message || 'Error en el login');
-//     //       }
-//     //     }, function (error) {
-//     //       var errorMessage = error.data && error.data.message ? error.data.message : 'Error de conexión';
-//     //       deferred.reject(errorMessage);
-//     //     });
-
-//     //   return deferred.promise;
-//     // }
-
-//     return {
-
-//       // init: function () {
-//       //   // Verificar autenticación al cargar la aplicación
-//       //   verifyAuth()
-//       //     .then(function(response) {
-//       //       if (response.data.success) {
-//       //         setAuthState(response.data.user, null);
-//       //         $rootScope.$broadcast('auth:loginSuccess', response.data.user);
-//       //       deferred.resolve(response.data);
-//       //     } else {
-//       //       deferred.reject(response.data.message || 'Error en el login');
-//       //     }
-//       //   }, function(error) {
-//       //     var errorMessage = error.data && error.data.message ? error.data.message : 'Error de conexión';
-//       //     deferred.reject(errorMessage);
-//       //   });
-
-//       //   return deferred.promise;
-//       // },
-
-//       checkAuthStatus: function () {
-//         return $http.get('/api/auth/verify')
-//           .then(function (response) {
-//             console.log("Token verification response:", response);
-//             if (response.data.success && response.data.data.user) {
-//               service.currentUser = response.data.data.user;
-//               currentUser = service.currentUser; // Actualizar currentUser global
-//               $window.user = currentUser.fullname || currentUser.email || 'Usuario sin nombre';
-//               this.user = currentUser.fullname || currentUser.email || 'Usuario sin nombre';
-//               console.log('user:', user);
-//               console.log('Window user:', window.user);
-//               service.isAuthenticated = true;
-//               $rootScope.$broadcast('auth:loginSuccess', service.currentUser.fullname);
-//               return service.currentUser; // ← Esto es equivalente a deferred.resolve(...)
-//             } else {
-//               return $q.reject('No autenticado'); // ← Esto es equivalente a deferred.reject(...)
-//             }
-//           })
-//           .catch(function (error) {
-//             console.error("Error during token verification:", error);
-//             return $q.reject(error);
-//           });
-//       },
-
-//       user: this.currentUser,
-
-//       // Verificar si el usuario está autenticado
-//       isAuthenticated: function () {
-//         return service.isAuthenticated;
-//         // return !!localStorage.getItem(TOKEN_KEY_NAME);
-//       },
-
-//       // // Obtener información del usuario actual
-//       // getCurrentUser: function () {
-//       //   if (!currentUser) {
-//       //     var userData = localStorage.getItem(USER_KEY_NAME);
-//       //     if (userData) {
-//       //       currentUser = JSON.parse(userData);
-//       //     }
-//       //   }
-//       //   return currentUser;
-//       // },
-
-//       // // Obtener el token actual
-//       // getToken: function () {
-//       //   return localStorage.getItem(TOKEN_KEY_NAME);
-//       // },
-
-//       // // Establecer sesión con token y datos de usuario
-//       // setSession: function (token, userData) {
-//       //   localStorage.setItem(TOKEN_KEY_NAME, token);
-//       //   localStorage.setItem(USER_KEY_NAME, JSON.stringify(userData));
-//       //   currentUser = userData;
-//       // },
-
-//       // // Validar el token contra el backend
-//       // validateToken: function () {
-//       //   var deferred = $q.defer();
-//       //   var token = this.getToken();
-
-//       //   if (!token) {
-//       //     deferred.reject('No hay token almacenado');
-//       //     return deferred.promise;
-//       //   }
-
-//       //   $http({
-//       //     method: 'GET',
-//       //     url: '/api/auth/verify',
-//       //     headers: {
-//       //       'Authorization': 'Bearer ' + token
-//       //     }
-//       //   }).then(function (response) {
-//       //     if (response.data.valid) {
-//       //       // Actualizar datos del usuario si se devuelven
-//       //       if (response.data.user) {
-//       //         // localStorage.setItem('userData', JSON.stringify(response.data.user));
-//       //         localStorage.setItem(USER_KEY_NAME, JSON.stringify(response.data.user));
-//       //         currentUser = response.data.user;
-//       //         this.user = currentUser;
-//       //       }
-//       //       deferred.resolve(response.data);
-//       //     } else {
-//       //       // Token inválido, limpiar sesión
-//       //       this.clearSession();
-//       //       deferred.reject('Token inválido');
-//       //     }
-//       //   }.bind(this)).catch(function (error) {
-//       //     // Error en la verificación, limpiar sesión
-//       //     this.clearSession();
-//       //     deferred.reject(error);
-//       //   }.bind(this));
-
-//       //   return deferred.promise;
-//       // },
-
-//       // // Limpiar sesión (logout)
-//       // clearSession: function () {
-//       //   // localStorage.removeItem('authToken');
-//       //   // localStorage.removeItem('userData');
-//       //   localStorage.removeItem(TOKEN_KEY_NAME);
-//       //   localStorage.removeItem(USER_KEY_NAME);
-//       //   currentUser = null;
-//       // }
-//     };
-
-//   }]);

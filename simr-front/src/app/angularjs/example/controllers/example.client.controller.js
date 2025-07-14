@@ -10,7 +10,7 @@ angular.module("example").controller("ExampleController", [
     Authentication.checkAuthStatus()
       .then(function () {
         console.log("Usuario autenticado:", Authentication.getCurrentUser());
-        Authentication.startRefreshTimer(4 * 60 * 1000); // cada 4 minutos
+        Authentication.startRefreshTimer(); //TODO cambiar por init()
       })
       .catch(function () {
         console.warn('Usuario no autenticado');
@@ -37,24 +37,5 @@ angular.module("example").controller("ExampleController", [
       });
     };
 
-    // $scope.testVerifyToken = function () {
-    //   console.log("Verifying token...");
-    //   Authentication.checkAuthStatus()
-    //     .then(function (user) {
-    //       console.log('Usuario autenticado:', user);
-    //     })
-    //     .catch(function (err) {
-    //       console.log('No autenticado:', err);
-    //     });
-
-    //   Authentication.checkAuthStatus().then(
-    //     function (response) {
-    //       console.log("Token verification successful:", response);
-    //     },
-    //     function (error) {
-    //       console.error("Token verification failed:", error);
-    //     }
-    //   );
-    // }
   },
 ]);

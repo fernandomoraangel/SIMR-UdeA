@@ -16,6 +16,12 @@
         <!-- <div data-ng-show="authentication.user"> -->
         <!-- <div data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
         <div data-ng-if="authentication.isAuthenticated()">
+          <!-- <img
+            src="img/logomr2.png"
+            alt="Logo"
+            class="img-resize"
+            style="max-width: 40%"
+          /> -->
           <img
             src="img/logomr2.png"
             alt="Logo"
@@ -251,7 +257,7 @@
               data-ng-if="authentication.isAuthenticated()"
             >
               <!-- <li><a href="/signout">Terminar sesión</a></li> -->
-              <li><a href="/logout">Terminar sesión</a></li>
+              <li><a ng-click="authentication.logout()">Terminar sesión</a></li>
             </ul>
           </li>
         </ul>
