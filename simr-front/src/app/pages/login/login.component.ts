@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit {
         //   );
         // }
 
-        const accessToken = response.data.tokens?.accessToken;
+        // const accessToken = response.data.tokens?.accessToken;
         // Redireccionar con el token como parámetro
         // window.location.href = `http://localhost:3000/#!/login-externo/?token=${accessToken}`;
         this.showTest = true;

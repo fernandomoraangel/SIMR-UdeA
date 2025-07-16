@@ -18,25 +18,46 @@ export interface SignupResponse {
   message: string;
   data: {
     user?: User;
-    tokens?: {
-      accessToken: string;
+    tokenInfo?: {
       expiresIn: number;
     };
     redirectUrl?: string; // URL to redirect after signup, if applicable
   };
 }
+// export interface SignupResponse {
+//   success: boolean;
+//   message: string;
+//   data: {
+//     user?: User;
+//     tokens?: {
+//       accessToken: string;
+//       expiresIn: number;
+//     };
+//     redirectUrl?: string; // URL to redirect after signup, if applicable
+//   };
+// }
 
 export interface LoginResponse {
   success: boolean;
   message: string;
   data: {
     user?: User;
-    tokens?: {
-      accessToken: string;
+    tokenInfo?: {
       expiresIn: number;
     };
   };
 }
+// export interface LoginResponse {
+//   success: boolean;
+//   message: string;
+//   data: {
+//     user?: User;
+//     tokens?: {
+//       accessToken: string;
+//       expiresIn: number;
+//     };
+//   };
+// }
 
 export interface AuthVerifyResponse {
   success: boolean;
@@ -49,8 +70,12 @@ export interface AuthVerifyResponse {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  accessToken: string | null;
 }
+// export interface AuthState {
+//   user: User | null;
+//   isAuthenticated: boolean;
+//   accessToken: string | null;
+// }
 
 export interface LoginCredentials {
   username: string;

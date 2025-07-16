@@ -34,7 +34,6 @@ export class AuthService {
   private authStateSubject = new BehaviorSubject<AuthState>({
     user: null,
     isAuthenticated: false,
-    accessToken: null,
   });
 
   public authState$ = this.authStateSubject.asObservable();
@@ -96,7 +95,7 @@ export class AuthService {
             // Solo establecer usuario si no tenemos estado de auth
             const currentState = this.authStateSubject.value;
             if (!currentState.isAuthenticated) {
-              this.setAuthState(response.data.user, null);
+              this.setAuthState(response.data.user);
             }
           }
         }),
@@ -118,13 +117,10 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          if (response.success && response.data.user && response.data.tokens) {
+          if (response.success && response.data.user && response.data.tokenInfo) {
             // Si el registro incluye login automático
-            this.setAuthState(
-              response.data.user,
-              response.data.tokens.accessToken
-            );
-            this.scheduleTokenRefresh(response.data.tokens.expiresIn);
+            this.setAuthState(response.data.user);
+            this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
           }
           // Si requiere verificación de email, no establecer auth state
         }),
@@ -149,16 +145,13 @@ export class AuthService {
       .pipe(
         tap((response) => {
           console.log('Login response:', response);
-          if (response.success && response.data.user && response.data.tokens) {
-            this.setAuthState(
-              response.data.user,
-              response.data.tokens.accessToken
-            );
+          if (response.success && response.data.user && response.data.tokenInfo) {
+            this.setAuthState(response.data.user);
             console.log(
               '(auth.service.ts) Expiration in seconds:',
-              response.data.tokens.expiresIn
+              response.data.tokenInfo.expiresIn
             );
-            this.scheduleTokenRefresh(response.data.tokens.expiresIn);
+            this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
           }
         }),
         catchError(this.handleError.bind(this))
@@ -194,15 +187,12 @@ export class AuthService {
       .pipe(
         tap((response) => {
           console.log('Refresh token response:', response);
-          if (response.success && response.data.tokens) {
+          if (response.success && response.data.tokenInfo) {
             // Solo actualizar el token, mantener el usuario actual
             const currentState = this.authStateSubject.value;
             if (currentState.user) {
-              this.setAuthState(
-                currentState.user,
-                response.data.tokens.accessToken
-              );
-              this.scheduleTokenRefresh(response.data.tokens.expiresIn);
+              this.setAuthState(currentState.user);
+              this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
             }
           }
         }),
@@ -228,11 +218,10 @@ export class AuthService {
   }
 
   // Verificar si el usuario está autenticado
-  private setAuthState(user: User, accessToken: string | null): void {
+  private setAuthState(user: User): void {
     this.authStateSubject.next({
       user,
       isAuthenticated: true,
-      accessToken,
     });
   }
 
@@ -243,7 +232,6 @@ export class AuthService {
     this.authStateSubject.next({
       user: null,
       isAuthenticated: false,
-      accessToken: null,
     });
     this.clearRefreshTimer();
   }
@@ -254,13 +242,16 @@ export class AuthService {
   private scheduleTokenRefresh(expiresIn: number): void {
     this.clearRefreshTimer();
 
-    console.log(`Programando refresh automático en ${expiresIn} segundos`);
+    console.log(`Token expira en ${expiresIn} segundos`);
 
     const refreshBeforeInSeconds = 2 * 60; // 2 minutos antes de expirar
 
     // Refresh 2 minutos antes de expirar
-    const refreshTime = (expiresIn - refreshBeforeInSeconds) * 1000;
-    // const refreshTime = 5 * 1000; // 5 segundos para pruebas
+    // const refreshTime = (expiresIn - refreshBeforeInSeconds) * 1000;
+    const refreshTime = 5 * 1000; // 5 segundos para pruebas
+    console.log(
+      `Programando refresh automático en ${refreshTime / 1000} segundos`
+    );
 
     if (refreshTime > 0) {
       this.refreshTimer = timer(refreshTime)
@@ -304,11 +295,6 @@ export class AuthService {
   // Obtener el usuario actual
   getCurrentUser(): User | null {
     return this.authStateSubject.value.user;
-  }
-
-  // Obtener el token de acceso actual
-  getAccessToken(): string | null {
-    return this.authStateSubject.value.accessToken;
   }
 
   // Método centralizado para manejar errores HTTP
