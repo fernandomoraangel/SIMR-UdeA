@@ -8,8 +8,15 @@ const {
   getTokenExpirationDate,
   getTokenExpirationInSeconds
 } = require('../../utils/tokenUtils');
-const { successResponse, errorResponse } = require('../../utils/responseHelpers');
+const {
+  successResponse,
+  errorResponse,
+  authSuccessResponse,
+  tokenRefreshResponse,
+  tokenVerificationResponse
+} = require('../../utils/responseHelpers');
 const { cookieHelpers } = require('../../config/cookieConfig');
+const e = require("express");
 
 // Manejador de errores
 const getErrorMessage = (err) => {
@@ -58,15 +65,17 @@ exports.signup = async (req, res, next) => {
       console.warn('Hubo problemas configurando las cookies');
     }
 
-    // Devolvemos el token y los datos del usuario
-    successResponse(res, 'Usuario registrado exitosamente', 201, {
-      user: user.getSafeUser(),
-      tokens: {
-        accessToken: tokens.accessToken,
-        expiresIn: tokens.expiresIn
-      },
-      redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
-    });
+    // Devolvemos los datos del usuario y la info de token
+    const safeUser = user.getSafeUser();
+    const accessTokenExpiresIn = tokens.expiresIn;
+    authSuccessResponse(res, 'Usuario registrado exitosamente', 201, safeUser, accessTokenExpiresIn);
+    // successResponse(res, 'Usuario registrado exitosamente', 201, {
+    //   user: user.getSafeUser(),
+    //   token: {
+    //     expiresIn: tokens.expiresIn
+    //   },
+    //   redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
+    // });
   } catch (error) {
     console.error('Error en signup:', error);
 
@@ -116,14 +125,17 @@ exports.login = (req, res, next) => {
         console.warn('Hubo problemas configurando las cookies');
       }
 
+
       // Respuesta para el cliente
-      successResponse(res, 'Inicio de sesión exitoso', 200, {
-        user: user.getSafeUser(),
-        tokens: {
-          accessToken,
-          expiresIn: getTokenExpirationInSeconds(accessToken)
-        }
-      });
+      const safeUser = user.getSafeUser();
+      const tokenExpiresIn = getTokenExpirationInSeconds(accessToken);
+      authSuccessResponse(res, 'Autenticación exitosa', 200, safeUser, tokenExpiresIn);
+      // successResponse(res, 'Inicio de sesión exitoso', 200, {
+      //   user: user.getSafeUser(),
+      //   token: {
+      //     expiresIn: getTokenExpirationInSeconds(accessToken)
+      //   }
+      // });
     } catch (error) {
       next(error);
     }
@@ -168,7 +180,7 @@ exports.refreshToken = async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken, jti: newJti } = generateTokens(user._id);
 
     // Reemplazar el token anterior del campo refreshTokens del Usuario
-    const result = user.rotateRefreshToken({
+    const rotationResult = user.rotateRefreshToken({
       oldJti: decoded.jti,
       newToken: newRefreshToken,
       newJti,
@@ -176,7 +188,7 @@ exports.refreshToken = async (req, res) => {
       allowInsertIfMissing: false
     })
 
-    if (result === 'not_found') {
+    if (rotationResult === 'not_found') {
       return errorResponse(res, 'Refresh token no renovado', 403);
     }
 
@@ -189,13 +201,14 @@ exports.refreshToken = async (req, res) => {
       console.warn('Hubo problemas actualizando las cookies');
     }
 
-    // Responder al cliente con los nuevos tokens
-    successResponse(res, 'Token actualizado exitosamente', 200, {
-      tokens: {
-        accessToken,
-        expiresIn: getTokenExpirationInSeconds(accessToken)
-      }
-    });
+    // Responder al cliente con info de token
+    const accessTokenExpiresIn = getTokenExpirationInSeconds(accessToken);
+    tokenRefreshResponse(res, 'Token actualizado exitosamente', 200, accessTokenExpiresIn);
+    // successResponse(res, 'Token actualizado exitosamente', 200, {
+    //   token: {
+    //     expiresIn: getTokenExpirationInSeconds(accessToken)
+    //   }
+    // });
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     if (error.name === 'TokenExpiredError') {
@@ -208,6 +221,30 @@ exports.refreshToken = async (req, res) => {
     console.error('Error al refrescar el token:', error);
     errorResponse(res, 'Error interno del servidor', 500);
   }
+};
+
+//* VERIFY TOKEN - Verificar autenticación
+exports.verifyToken = (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    if (err) return next(err);
+
+    if (!user) {
+      return errorResponse(res, 'Token inválido o expirado', 401);
+    }
+
+    // Responder con el usuario seguro
+    console.log('Token verificado, usuario:', user);
+    console.log('Token verificado, usuario (safeUser):', user.getSafeUser());
+    const safeUser = user.getSafeUser();
+    const accessTokenExpiresIn = getTokenExpirationInSeconds(req.cookies.accessToken);
+    tokenVerificationResponse(res, 'Token verificado exitosamente', 200, safeUser, accessTokenExpiresIn);
+    // successResponse(res, 'Token verificado exitosamente', 200, {
+    //   user: user.getSafeUser(),
+    //   token: {
+    //     expiresIn: getTokenExpirationInSeconds(req.cookies.accessToken)
+    //   }
+    // });
+  })(req, res, next);
 };
 
 //* LOGOUT - Cierre de sesión
@@ -249,7 +286,7 @@ exports.logout = async (req, res) => {
     }
 
     // Responder al cliente
-    successResponse(res, 'Cierre de sesión exitoso', 200);
+    successResponse(res, 'Sesión cerrada exitosamente', 200);
   } catch (error) {
     console.error('Error durante logout:', error);
 
@@ -259,22 +296,6 @@ exports.logout = async (req, res) => {
 
     errorResponse(res, 'Error durante logout, pero sesión cerrada localmente', 500);
   }
-};
-
-//* VERIFY TOKEN - Verificar autenticación
-exports.verifyToken = (req, res, next) => {
-  passport.authenticate('jwt', { session: false }, (err, user, info) => {
-    if (err) return next(err);
-
-    if (!user) {
-      return errorResponse(res, 'Token inválido o expirado', 401);
-    }
-
-    // Responder con el usuario seguro
-    successResponse(res, 'Token verificado exitosamente', 200, {
-      user: user.getSafeUser()
-    });
-  })(req, res, next);
 };
 
 //* CREATE - Crear un nuevo usuario
