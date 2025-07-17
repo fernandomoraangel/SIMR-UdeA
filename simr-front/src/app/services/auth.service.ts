@@ -247,8 +247,8 @@ export class AuthService {
     const refreshBeforeInSeconds = 2 * 60; // 2 minutos antes de expirar
 
     // Refresh 2 minutos antes de expirar
-    // const refreshTime = (expiresIn - refreshBeforeInSeconds) * 1000;
-    const refreshTime = 5 * 1000; // 5 segundos para pruebas
+    const refreshTime = (expiresIn - refreshBeforeInSeconds) * 1000;
+    // const refreshTime = 5 * 1000; // 5 segundos para pruebas
     console.log(
       `Programando refresh automático en ${refreshTime / 1000} segundos`
     );
