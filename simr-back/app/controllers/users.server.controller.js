@@ -69,13 +69,6 @@ exports.signup = async (req, res, next) => {
     const safeUser = user.getSafeUser();
     const accessTokenExpiresIn = tokens.expiresIn;
     authSuccessResponse(res, 'Usuario registrado exitosamente', 201, safeUser, accessTokenExpiresIn);
-    // successResponse(res, 'Usuario registrado exitosamente', 201, {
-    //   user: user.getSafeUser(),
-    //   token: {
-    //     expiresIn: tokens.expiresIn
-    //   },
-    //   redirectUrl: process.env.ANGULARJS_APP_URL || 'http://localhost:3000'
-    // });
   } catch (error) {
     console.error('Error en signup:', error);
 
@@ -130,12 +123,6 @@ exports.login = (req, res, next) => {
       const safeUser = user.getSafeUser();
       const tokenExpiresIn = getTokenExpirationInSeconds(accessToken);
       authSuccessResponse(res, 'Autenticación exitosa', 200, safeUser, tokenExpiresIn);
-      // successResponse(res, 'Inicio de sesión exitoso', 200, {
-      //   user: user.getSafeUser(),
-      //   token: {
-      //     expiresIn: getTokenExpirationInSeconds(accessToken)
-      //   }
-      // });
     } catch (error) {
       next(error);
     }
@@ -204,11 +191,6 @@ exports.refreshToken = async (req, res) => {
     // Responder al cliente con info de token
     const accessTokenExpiresIn = getTokenExpirationInSeconds(accessToken);
     tokenRefreshResponse(res, 'Token actualizado exitosamente', 200, accessTokenExpiresIn);
-    // successResponse(res, 'Token actualizado exitosamente', 200, {
-    //   token: {
-    //     expiresIn: getTokenExpirationInSeconds(accessToken)
-    //   }
-    // });
   } catch (error) {
     console.error('Error al refrescar el token:', error);
     if (error.name === 'TokenExpiredError') {
@@ -233,17 +215,9 @@ exports.verifyToken = (req, res, next) => {
     }
 
     // Responder con el usuario seguro
-    console.log('Token verificado, usuario:', user);
-    console.log('Token verificado, usuario (safeUser):', user.getSafeUser());
     const safeUser = user.getSafeUser();
     const accessTokenExpiresIn = getTokenExpirationInSeconds(req.cookies.accessToken);
     tokenVerificationResponse(res, 'Token verificado exitosamente', 200, safeUser, accessTokenExpiresIn);
-    // successResponse(res, 'Token verificado exitosamente', 200, {
-    //   user: user.getSafeUser(),
-    //   token: {
-    //     expiresIn: getTokenExpirationInSeconds(req.cookies.accessToken)
-    //   }
-    // });
   })(req, res, next);
 };
 
