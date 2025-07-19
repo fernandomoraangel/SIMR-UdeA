@@ -10,7 +10,6 @@ angular.module("example").controller("ExampleController", [
     Authentication.checkAuthStatus()
       .then(function () {
         console.log("Usuario autenticado:", Authentication.getCurrentUser());
-        // Authentication.startRefreshTimer(); //TODO cambiar por init()
         Authentication.init(); // Iniciar autenticación y temporizador
       })
       .catch(function () {
