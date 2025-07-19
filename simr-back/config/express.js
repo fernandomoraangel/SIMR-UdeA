@@ -277,8 +277,7 @@ module.exports = function () {
   require('../app/routes/archivos.server.routes.js')(app);
 
   // Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
-  // app.use(express.static('./public'));
-  app.use(express.static('../simr-front/src/app/angularjs'));
+  app.use(express.static('./public'));
 
   // Devuelve la instancia de la aplicación
   return app;

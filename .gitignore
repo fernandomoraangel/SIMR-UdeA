@@ -26,6 +26,7 @@
 /simr-front/tmp
 /simr-front/out-tsc
 /simr-front/bazel-out
+/simr-front/src/app/angularjsX
 
 # Node
 /simr-front/npm-debug.log
