@@ -21,6 +21,7 @@ import { AppRoutingModule } from './app-routing.module';
 // Components
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
@@ -37,6 +38,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     PageNotFoundComponent,
     LoginComponent,
     SignupComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
