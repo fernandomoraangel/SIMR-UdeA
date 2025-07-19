@@ -6,8 +6,8 @@ import {
   RouterStateSnapshot,
   Router,
 } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, take, switchMap } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
@@ -20,26 +20,27 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
-    return this.checkAuth(state.url);
-  }
-
-  canActivateChild(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
-    return this.checkAuth(state.url);
-  }
-
-  private checkAuth(url: string): Observable<boolean> {
-    return this.authService.isAuthenticated$.pipe(
-      take(1),
-      map((isAuthenticated) => {
-        if (isAuthenticated) {
+    console.log('🛡️ AuthGuard: Verificando acceso a', state.url);
+    
+    // Esperar a que el servicio esté listo y luego verificar autenticación
+    return this.authService.ready$.pipe(
+      take(1), // Solo tomar el primer valor cuando esté listo
+      map(authState => {
+        console.log('🛡️ AuthGuard: Estado de auth', {
+          isAuthenticated: authState.isAuthenticated,
+          user: authState.user?.username
+        });
+        
+        if (authState.isAuthenticated) {
           return true;
-        } else {
-          this.router.navigate(['/login'], { queryParams: { returnUrl: url } });
-          return false;
         }
+
+        // Redirigir al login si no está autenticado
+        console.log('🛡️ AuthGuard: Redirigiendo a login');
+        this.router.navigate(['/login'], { 
+          queryParams: { returnUrl: state.url } 
+        });
+        return false;
       })
     );
   }

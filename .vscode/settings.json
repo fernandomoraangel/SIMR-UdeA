@@ -1,6 +1,7 @@
 {
   "conventionalCommits.scopes": [
     "Backend",
-    "Frontend"
+    "Frontend",
+    "AngularJS"
   ]
 }

@@ -10,8 +10,10 @@ import {
   throwError,
   timer,
   firstValueFrom,
+  of,
+  EMPTY,
 } from 'rxjs';
-import { tap, catchError, switchMap, map } from 'rxjs/operators';
+import { tap, catchError, switchMap, map, shareReplay, filter } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
@@ -25,24 +27,53 @@ import {
   AuthState,
 } from '../interfaces/auth.interface';
 
+export interface AuthStateExtended extends AuthState {
+  isInitialized: boolean;
+  isLoading: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly BASE_URL = `${environment.base_url}/api/auth`;
 
-  private authStateSubject = new BehaviorSubject<AuthState>({
+  // Estado extendido con información de inicialización
+  private authStateSubject = new BehaviorSubject<AuthStateExtended>({
     user: null,
     isAuthenticated: false,
+    isInitialized: false,
+    isLoading: false,
   });
 
+  // Observable público para el estado completo
   public authState$ = this.authStateSubject.asObservable();
 
+  // Observables derivados para casos específicos
   public isAuthenticated$ = this.authState$.pipe(
     map((state) => state.isAuthenticated)
   );
 
+  public user$ = this.authState$.pipe(
+    map((state) => state.user)
+  );
+
+  public isInitialized$ = this.authState$.pipe(
+    map((state) => state.isInitialized)
+  );
+
+  public isLoading$ = this.authState$.pipe(
+    map((state) => state.isLoading)
+  );
+
+  // Observable que emite solo cuando el servicio está inicializado
+  public ready$ = this.authState$.pipe(
+    filter((state) => state.isInitialized),
+    shareReplay(1)
+  );
+
   private refreshTimer: any;
+  private initializationPromise: Promise<void> | null = null;
 
   constructor(private http: HttpClient, private router: Router) {
     // No inicializar automáticamente para evitar dependencia circular
@@ -50,67 +81,111 @@ export class AuthService {
 
   /**
    * Inicializar el servicio de autenticación
-   * Debe ser llamado desde AppComponent después de que todos los servicios estén listos
+   * Solo debe llamarse UNA VEZ al inicio de la aplicación
    */
-  public init(): void {
-    this.initializeAuth().catch((error) => {
-      console.error('Error initializing AuthService:', error);
-    });
+  public init(): Promise<void> {
+    if (this.authStateSubject.value.isInitialized) {
+      return Promise.resolve();
+    }
+
+    if (this.initializationPromise) {
+      return this.initializationPromise;
+    }
+
+    this.initializationPromise = this.initializeAuth();
+    return this.initializationPromise;
   }
 
   /**
    * Inicializar autenticación al cargar la aplicación
    */
   private async initializeAuth(): Promise<void> {
+    console.log('🔄 Inicializando AuthService...');
+    
+    this.updateAuthState({ isLoading: true });
+
     try {
-      console.log(
-        '(initializeAuth) Inicializando autenticación en AuthService'
-      );
       // Verificar si hay una sesión activa
-      await firstValueFrom(this.verifyAuth());
+      const response = await firstValueFrom(this.verifyAuthInternal());
+      
+      if (response.success && response.data.user) {
+        this.setAuthState(response.data.user);
+        console.log('✅ Usuario autenticado:', response.data.user.username);
+      } else {
+        this.clearAuthState();
+        console.log('❌ No hay sesión activa');
+      }
     } catch (error) {
-      console.error('Error al verificar autenticación al iniciar:', error);
-      // Si la verificación falla, intentar refresh
-      this.refreshToken().subscribe({
-        error: () => {
-          // Si el refresh también falla, limpiar estado
+      console.log('⚠️ Error al verificar, intentando refresh...');
+      
+      try {
+        await firstValueFrom(this.refreshToken());
+        console.log('✅ Sesión restaurada via refresh token');
+      } catch (refreshError) {
+        console.log('❌ No se pudo restaurar la sesión');
           this.clearAuthState();
-        },
+      }
+    } finally {
+      this.updateAuthState({ 
+        isLoading: false, 
+        isInitialized: true 
       });
+      console.log('🎉 AuthService inicializado');
     }
   }
 
   /**
-   * Verificar autenticación actual
+   * Verificación interna (privada) - NO usar en componentes
    */
-  verifyAuth(): Observable<AuthVerifyResponse> {
+  private verifyAuthInternal(): Observable<AuthVerifyResponse> {
     return this.http
       .get<AuthVerifyResponse>(`${this.BASE_URL}/verify`, {
         withCredentials: true,
       })
       .pipe(
         tap((response) => {
-          console.log('Verificación de autenticación:', response);
-          if (response.success && response.data.user) {
-            // Solo establecer usuario si no tenemos estado de auth
-            const currentState = this.authStateSubject.value;
-            if (!currentState.isAuthenticated) {
-              this.setAuthState(response.data.user);
-            }
-          }
+          console.log('🔍 Verificación interna:', response.success ? '✅' : '❌');
         }),
         catchError(this.handleError)
       );
   }
 
   /**
+   * Verificación pública (solo para casos específicos como guards)
+   * Los componentes NO deberían usar esto directamente
+   */
+  public verifyAuth(): Observable<AuthVerifyResponse> {
+    return this.verifyAuthInternal().pipe(
+      tap((response) => {
+        if (response.success && response.data.user) {
+          this.setAuthState(response.data.user);
+        } else {
+          this.clearAuthState();
+        }
+      })
+    );
+  }
+
+  /**
+   * Obtener el estado actual de forma síncrona
+   */
+  public getCurrentAuthState(): AuthStateExtended {
+    return this.authStateSubject.value;
+  }
+
+  /**
+   * Esperar a que el servicio esté listo
+   */
+  public waitForReady(): Observable<AuthStateExtended> {
+    return this.ready$;
+  }
+
+  /**
    * Registrar usuario
    */
   signup(credentials: SignupCredentials): Observable<SignupResponse> {
-    // Limpiar cualquier sesión previa
-    this.clearAuthState();
+    this.updateAuthState({ isLoading: true });
 
-    // Enviar solicitud de registro
     return this.http
       .post<SignupResponse>(`${this.BASE_URL}/signup`, credentials, {
         withCredentials: true,
@@ -118,14 +193,15 @@ export class AuthService {
       .pipe(
         tap((response) => {
           if (response.success && response.data.user && response.data.tokenInfo) {
-            // Si el registro incluye login automático
             this.setAuthState(response.data.user);
             this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
           }
-          // Si requiere verificación de email, no establecer auth state
+          this.updateAuthState({ isLoading: false });
         }),
-        catchError(this.handleError.bind(this))
-        // catchError(this.handleError)
+        catchError((error) => {
+          this.updateAuthState({ isLoading: false });
+          return this.handleError(error);
+        })
       );
   }
 
@@ -133,18 +209,16 @@ export class AuthService {
    * Iniciar sesión
    */
   login(username: string, password: string): Observable<LoginResponse> {
+    this.updateAuthState({ isLoading: true });
+    
     return this.http
       .post<LoginResponse>(
         `${this.BASE_URL}/login`,
-        {
-          username,
-          password,
-        },
+        { username, password },
         { withCredentials: true }
       )
       .pipe(
         tap((response) => {
-          console.log('Login response:', response);
           if (response.success && response.data.user && response.data.tokenInfo) {
             this.setAuthState(response.data.user);
             console.log(
@@ -153,24 +227,36 @@ export class AuthService {
             );
             this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
           }
+          this.updateAuthState({ isLoading: false });
         }),
-        catchError(this.handleError.bind(this))
-        // catchError(this.handleError)
+        catchError((error) => {
+          this.updateAuthState({ isLoading: false });
+          return this.handleError(error);
+        })
       );
   }
 
-  // Cerrar sesión
+  /**
+   * Cerrar sesión
+   */
   logout(): Observable<any> {
+    this.updateAuthState({ isLoading: true });
+    
     return this.http
       .post(`${this.BASE_URL}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
           this.clearAuthState();
           this.clearRefreshTimer();
-          // this.router.navigate(['/login']); // TODO: Cambiar a la ruta de inicio
+          this.updateAuthState({ isLoading: false });
         }),
-        catchError(this.handleError.bind(this))
-        // catchError(this.handleError)
+        catchError((error) => {
+          // Limpiar estado local incluso si falla la llamada al servidor
+          this.clearAuthState();
+          this.clearRefreshTimer();
+          this.updateAuthState({ isLoading: false });
+          return this.handleError(error);
+        })
       );
   }
 
@@ -188,16 +274,14 @@ export class AuthService {
         tap((response) => {
           console.log('Refresh token response:', response);
           if (response.success && response.data.tokenInfo) {
-            // Solo actualizar el token, mantener el usuario actual
-            const currentState = this.authStateSubject.value;
-            if (currentState.user) {
-              this.setAuthState(currentState.user);
+            const currentUser = this.authStateSubject.value.user;
+            if (currentUser) {
               this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
             }
           }
         }),
         catchError((error) => {
-          console.error('Error al refrescar token:', error);
+          console.error('❌ Error al refrescar token:', error);
           this.clearAuthState();
           throw error;
         })
@@ -205,21 +289,10 @@ export class AuthService {
   }
 
   /**
-   * Redirigir a aplicación AngularJS legacy
+   * Establecer estado de autenticación
    */
-  redirectToLegacyApp(): void {
-    // Verificar que el usuario esté autenticado
-    if (this.isAuthenticated()) {
-      // Redirigir al endpoint que maneja la redirección
-      window.location.href = `${this.BASE_URL}/redirect-to-legacy`;
-    } else {
-      console.error('Usuario no autenticado');
-    }
-  }
-
-  // Verificar si el usuario está autenticado
   private setAuthState(user: User): void {
-    this.authStateSubject.next({
+    this.updateAuthState({
       user,
       isAuthenticated: true,
     });
@@ -229,11 +302,22 @@ export class AuthService {
    * Limpiar estado de autenticación
    */
   private clearAuthState(): void {
-    this.authStateSubject.next({
+    this.updateAuthState({
       user: null,
       isAuthenticated: false,
     });
     this.clearRefreshTimer();
+  }
+
+  /**
+   * Actualizar estado parcialmente
+   */
+  private updateAuthState(partialState: Partial<AuthStateExtended>): void {
+    const currentState = this.authStateSubject.value;
+    this.authStateSubject.next({
+      ...currentState,
+      ...partialState,
+    });
   }
 
   /**
@@ -242,26 +326,22 @@ export class AuthService {
   private scheduleTokenRefresh(expiresIn: number): void {
     this.clearRefreshTimer();
 
-    console.log(`Token expira en ${expiresIn} segundos`);
-
     const refreshBeforeInSeconds = 2 * 60; // 2 minutos antes de expirar
-
-    // Refresh 2 minutos antes de expirar
-    const refreshTime = (expiresIn - refreshBeforeInSeconds) * 1000;
-    // const refreshTime = 5 * 1000; // 5 segundos para pruebas
-    console.log(
-      `Programando refresh automático en ${refreshTime / 1000} segundos`
-    );
+    const refreshTime = Math.max(0, (expiresIn - refreshBeforeInSeconds) * 1000);
 
     if (refreshTime > 0) {
+      console.log(`🔄 Programando refresh en ${refreshTime / 1000} segundos`);
+      
       this.refreshTimer = timer(refreshTime)
-        .pipe(switchMap(() => this.refreshToken()))
-        .subscribe({
-          error: (error) => {
-            console.error('Error en refresh automático:', error);
+        .pipe(
+          switchMap(() => this.refreshToken()),
+          catchError((error) => {
+            console.error('❌ Error en refresh automático:', error);
             this.clearAuthState();
-          },
-        });
+            return EMPTY;
+          })
+        )
+        .subscribe();
     }
   }
 
@@ -275,42 +355,32 @@ export class AuthService {
     }
   }
 
-  // Método para redireccionar a AngularJS
+  /**
+   * Métodos de conveniencia
+   */
   redirectToAngularJS(): void {
-    // Asegurar que el usuario esté autenticado
-    const currentState = this.authStateSubject.value;
-    if (currentState.isAuthenticated) {
-      // Redireccionar a la aplicación AngularJS
-      window.location.href = 'http://localhost:3000'; // Cambia por tu URL de AngularJS
-    } else {
-      console.error('Usuario no autenticado');
+    if (this.isAuthenticated()) {
+      window.location.href = 'http://localhost:3000';
     }
   }
 
-  // Verificar si el usuario está autenticado
+  redirectToLegacyApp(): void {
+    if (this.isAuthenticated()) {
+      window.location.href = `${this.BASE_URL}/redirect-to-legacy`;
+    }
+  }
+
   isAuthenticated(): boolean {
     return this.authStateSubject.value.isAuthenticated;
   }
 
-  // Obtener el usuario actual
   getCurrentUser(): User | null {
     return this.authStateSubject.value.user;
   }
 
-  // Método centralizado para manejar errores HTTP
-  private handleError1(error: HttpErrorResponse) {
-    let errorMessage = 'Ocurrió un error desconocido';
-
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      errorMessage = error.error?.message || `Error: ${error.status}`;
-    }
-
-    console.error('Error en AuthService:', errorMessage);
-    return throwError(() => errorMessage);
-  }
-
+  /**
+   * Manejo de errores
+   */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
 
@@ -318,9 +388,7 @@ export class AuthService {
       errorMessage = `Error: ${error.error.message}`;
     } else {
       const serverError = error.error?.message || 'Error desconocido';
-      errorMessage = `Código: ${error.status}, Mensaje: ${serverError}`;
 
-      // Manejo específico según código de estado
       switch (error.status) {
         case 401:
           errorMessage = 'Credenciales inválidas';
@@ -332,7 +400,7 @@ export class AuthService {
           errorMessage = 'Recurso no encontrado';
           break;
         case 422:
-          errorMessage = serverError; // Errores de validación
+          errorMessage = serverError;
           break;
         case 500:
           errorMessage = 'Error interno del servidor';
@@ -342,55 +410,20 @@ export class AuthService {
       }
     }
 
-    console.error('Error en AuthService:', errorMessage);
+    console.error('❌ Error en AuthService:', errorMessage);
     return throwError(() => errorMessage);
   }
 
-  //! (former code) // Método centralizado para manejar errores HTTP
-  // private handleError(error: HttpErrorResponse) {
-  //   let errorMessage = '';
-
-  //   if (error.error instanceof ErrorEvent) {
-  //     // Error del lado del cliente
-  //     errorMessage = `Error: ${error.error.message}`;
-  //   } else {
-  //     // Error del backend
-  //     const serverError = error.error?.message || 'Error desconocido';
-  //     errorMessage = `Código: ${error.status}, Mensaje: ${serverError}`;
-
-  //     // Manejo específico según código de estado
-  //     switch (error.status) {
-  //       case 401:
-  //         errorMessage = 'Credenciales inválidas';
-  //         break;
-  //       case 403:
-  //         errorMessage = 'Acceso prohibido';
-  //         break;
-  //       case 404:
-  //         errorMessage = 'Recurso no encontrado';
-  //         break;
-  //       case 500:
-  //         errorMessage = 'Error del servidor';
-  //         break;
-  //     }
-  //   }
-  //   console.error('Error en AuthService:', errorMessage);
-  //   return throwError(() => errorMessage);
-  // }
-  //! End of former code
-
-  // Test Area
+  /**
+   * Test methods
+   */
   testGetAllUsers(): Observable<User[]> {
     return this.http
       .get<User[]>(`http://localhost:3000/api/users`, {
         withCredentials: true,
       })
       .pipe(
-        tap((users) => {
-          console.log('Usuarios obtenidos:', users);
-        }),
         catchError(this.handleError.bind(this))
       );
   }
-  // End of Test Area
 }
