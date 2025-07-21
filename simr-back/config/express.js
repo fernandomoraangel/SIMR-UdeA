@@ -90,7 +90,7 @@ module.exports = function () {
   app.use(cors({
     origin: process.env.NODE_ENV === 'production'
       ? ['https://tudominio.com', 'https://www.tudominio.com']
-      : ['http://localhost:4200', 'http://localhost:3000'],
+      : ['http://localhost:4200', 'http://localhost:3000', 'http://localhost'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
