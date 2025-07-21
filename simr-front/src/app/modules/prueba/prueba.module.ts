@@ -5,8 +5,6 @@ import { PruebaComponent } from './components/prueba.component';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ActorCreateComponent } from '../actor/components/actor-create/actor-create.component';
-import { DirectivaPruebaDirective } from './directives/directiva-prueba.directive';
-import { AngularJSComponentDirective } from './directives/angular-jscomponent.directive';
 
 const routes: Routes = [
   { path: 'prueba', component: PruebaComponent },
@@ -16,8 +14,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     PruebaComponent,
-    DirectivaPruebaDirective,
-    AngularJSComponentDirective,
   ],
   imports: [
     CommonModule,
