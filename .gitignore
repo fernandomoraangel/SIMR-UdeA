@@ -60,3 +60,5 @@
 # System files
 /simr-front/.DS_Store
 /simr-front/Thumbs.db
+simr-back/public/core/.DS_Store
+.DS_Store
