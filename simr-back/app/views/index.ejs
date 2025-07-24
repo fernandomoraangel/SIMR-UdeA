@@ -22,17 +22,16 @@
     </script>
 
     <script type="text/javascript" nonce="<%= nonce %>">
-    src="/lib/requirejs/bin/r.js"
+      src = "/lib/requirejs/bin/r.js";
     </script>
-    
+
     <script src="/lib/jquery/dist/jquery.min.js"></script>
     <script src="/lib/bootstrap-css/js/bootstrap.min.js"></script>
-
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-resource.min.js"></script> -->
-    
+
     <!-- AngularJS@1.5.8 -->
     <!--
       <script type="text/javascript" src="/lib/angular/angular.js"></script>
@@ -46,7 +45,10 @@
       ></script>
     -->
 
-    <script type="text/javascript" src="/lib/angular@1.8.2/angular/angular.js"></script>
+    <script
+      type="text/javascript"
+      src="/lib/angular@1.8.2/angular/angular.js"
+    ></script>
     <script
       type="text/javascript"
       src="/lib/angular@1.8.2/angular-route/angular-route.js"
@@ -56,11 +58,16 @@
       src="/lib/angular@1.8.2/angular-resource/angular-resource.js"
     ></script>
 
-
     <!-- Modulo 'archivos' -->
     <!-- <script type="text/javascript" src="/archivos/archivos2.client.service.js"></script> -->
-    <script type="text/javascript" src="/archivos/archivos.client.service.js"></script>
-    <script type="text/javascript" src="/archivos/archivo-manager.client.directive.js"></script>
+    <script
+      type="text/javascript"
+      src="/archivos/archivos.client.service.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/archivos/archivo-manager.client.directive.js"
+    ></script>
 
     <script type="text/javascript" src="/obras/obras.client.module.js"></script>
     <script
@@ -281,22 +288,22 @@
       src="/actores/config/actores.client.routes.js"
     ></script>
 
+    <script type="text/javascript" src="/core/core.client.module.js"></script>
     <script
       type="text/javascript"
-      src="/example/example.client.module.js"
+      src="/core/controllers/core.client.controller.js"
     ></script>
     <script
       type="text/javascript"
-      src="/example/controllers/example.client.controller.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="/example/config/example.client.routes.js"
+      src="/core/config/core.client.routes.js"
     ></script>
 
     <!-- Listas auxiliares -->
     <!-- Idiomas -->
-    <script type="text/javascript" src="idiomas/idiomas.client.module.js"></script>
+    <script
+      type="text/javascript"
+      src="idiomas/idiomas.client.module.js"
+    ></script>
     <script
       type="text/javascript"
       src="/idiomas/controllers/idiomas.client.controller.js"
@@ -311,8 +318,10 @@
     ></script>
 
     <!-- Diccionarios -->
-    <script type="text/javascript" 
-    src="diccionarios/diccionarios.client.module.js"></script>
+    <script
+      type="text/javascript"
+      src="diccionarios/diccionarios.client.module.js"
+    ></script>
     <script
       type="text/javascript"
       src="/diccionarios/controllers/diccionarios.client.controller.js"
@@ -324,38 +333,29 @@
     <script
       type="text/javascript"
       src="/diccionarios/config/diccionarios.client.routes.js"
-    ></script> 
-
-    
-<!-- Usuarios -->
-    <!-- <script type="text/javascript" src="/users.client.module.js"></script> -->
-    <script
-      type="text/javascript"
-      src="/users/users.client.module.js"
     ></script>
 
-    
-    <script
-    type="text/javascript"
-    src="/users/controllers/login-externo.client.controller.js"
-    ></script>
-    
-    <script
-    type="text/javascript"
-    src="/users/controllers/dashboard.client.controller.js"
-    ></script>
-    
+    <!-- Autenticación -->
     <script
       type="text/javascript"
-      src="/users/services/authentication.client.service.js"
+      src="/authentication/authentication.client.module.js"
     ></script>
-    
+
     <script
       type="text/javascript"
-      src="/users/config/users.client.routes.js"
+      src="/authentication/controllers/authentication.client.controller.js"
+    ></script>
+
+    <script
+      type="text/javascript"
+      src="/authentication/services/authentication.client.service.js"
+    ></script>
+
+    <script
+      type="text/javascript"
+      src="/authentication/config/authentication.client.routes.js"
     ></script>
 
     <script type="text/javascript" src="/application.js"></script>
- 
   </body>
 </html>

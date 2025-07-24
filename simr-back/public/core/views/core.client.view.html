@@ -1,0 +1,316 @@
+<section ng-controller="CoreController">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button
+          type="button"
+          class="navbar-toggle collapsed"
+          data-toggle="collapse"
+          data-target="#bs-core-navbar-collapse-1"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+        </button>
+        <!-- <div data-ng-show="authentication.user"> -->
+        <!-- <div data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+        <div data-ng-if="authentication.isAuthenticated()">
+          <!-- <img
+            src="img/logomr2.png"
+            alt="Logo"
+            class="img-resize"
+            style="max-width: 40%"
+          /> -->
+          <img
+            src="img/logomr2.png"
+            alt="Logo"
+            class="img-resize"
+            style="max-width: 40%"
+          />
+        </div>
+        <!-- <span class="glyphicon glyphicon-home" href="/"></span> -->
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-core-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <!-- <li class="active"><a href="#"><span class="sr-only">(current)</span></a></li>-->
+          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
+          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >Obras y actores<span class="caret"></span
+            ></a>
+            <ul class="dropdown-menu">
+              <li><a href="/#!/obras/create">Crear obra</a></li>
+              <li><a href="/#!/obras">Listar obras</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/actores/create">Crear actor</a></li>
+              <li><a href="/#!/actores">Listar actores</a></li>
+            </ul>
+          </li>
+
+          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
+          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >Recursos y ejemplares<span class="caret"></span
+            ></a>
+            <ul class="dropdown-menu">
+              <li><a href="/#!/recursos/create">Crear Recurso</a></li>
+              <li><a href="/#!/recursos">Listar Recursos</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/ejemplares/create">Crear Ejemplar</a></li>
+              <li><a href="#!/ejemplares">Listar Ejemplares</a></li>
+            </ul>
+          </li>
+
+          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
+          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >Proyectos<span class="caret"></span
+            ></a>
+            <ul class="dropdown-menu">
+              <li><a href="/#!/proyectos/create">Crear Proyecto</a></li>
+              <li><a href="#!/proyectos">Listar Proyectos</a></li>
+            </ul>
+          </li>
+
+          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
+          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >Fondos y Colecciones<span class="caret"></span
+            ></a>
+            <ul class="dropdown-menu">
+              <li><a href="/#!/fondos/create">Crear Fondo documental</a></li>
+              <li><a href="/#!/fondos">Listar Fondos documentales</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/colecciones/create">Crear Colección</a></li>
+              <li><a href="/#!/colecciones">Listar Colecciones</a></li>
+            </ul>
+          </li>
+
+          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
+          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >Términos<span class="caret"></span
+            ></a>
+            <ul class="dropdown-menu">
+              <li><a href="/#!/instrumentos/create">Crear Instrumento</a></li>
+              <li><a href="/#!/instrumentos">Listar Instrumentos</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/medios/create">Crear Medio sonoro</a></li>
+              <li><a href="/#!/medios">Listar Medios sonoros</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/sistemas/create">Crear Sistema sonoro</a></li>
+              <li><a href="/#!/sistemas">Listar Sistemas sonoros</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/materias/create">Crear Materia</a></li>
+              <li><a href="/#!/materias">Listar Materias</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/generos/create">Crear Género o Forma</a></li>
+              <li><a href="/#!/generos">Listar Géneros o Formas</a></li>
+              <li role="separator" class="divider"></li>
+              <li>
+                <a href="/#!/generosnomusicales/create"
+                  >Crear Género o Forma no musical</a
+                >
+              </li>
+              <li>
+                <a href="/#!/generosnomusicales"
+                  >Listar Géneros o Formas no musicales</a
+                >
+              </li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/#!/idiomas/create">Crear idioma</a></li>
+              <li><a href="/#!/idiomas">Listar idiomas</a></li>
+              <li role="separator" class="divider"></li>
+              <li>
+                <a href="/#!/diccionarios/create">Crear campo en diccionario</a>
+              </li>
+              <li>
+                <a href="/#!/diccionarios">Listar Diccionario de datos</a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- <li class="dropdown" data-ng-show="authentication.user">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Circulación<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/">Hacer préstamo</a></li>
+            <li><a href="/">Renovar préstamo</a></li>
+            <li><a href="/">Finalizar préstamo</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="/">Alertas</a></li>
+            <li><a href="/">Reservas</a></li>
+          </ul>
+          </li> -->
+
+          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
+          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
+          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >Administración<span class="caret"></span
+            ></a>
+            <ul class="dropdown-menu">
+              <!-- <li><a href="/">Crear usuario y roles</a></li>
+              <li><a href="/">Editar usuarios y roles</a></li> -->
+
+              <!-- <li role="separator" class="divider"></li>
+              <li><a href="/">Auditoría</a></li> -->
+              <li>
+                <a
+                  href="https://github.com/fernandomoraangel/simr/wiki"
+                  target="_blank"
+                  >Manual de usuario</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/fernandomoraangel/simr/issues"
+                  target="_blank"
+                  >Reportar novedad</a
+                >
+              </li>
+              <!-- <li role="separator" class="divider"></li> -->
+              <li>
+                <a style="cursor: pointer" ng-click="acercaDe()">Acerca de</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <!--  <form class="navbar-form navbar-left"role="..." .col-md-1 data-ng-show="authentication.user">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Buscar">
+        </div>
+        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></button>
+      </form> -->
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <small>{{ authentication.getCurrentUser().fullName }}</small>
+              <!-- <small
+                data-ng-if="authentication.isAuthenticated()"
+                data-ng-bind="authentication.getCurrentUser().fullName"
+              ></small> -->
+              <span class="caret"></span
+            ></a>
+            <!-- <ul class="dropdown-menu" data-ng-show="!authentication.user"> -->
+            <ul
+              class="dropdown-menu"
+              data-ng-if="!authentication.isAuthenticated()"
+            >
+              <li><a href="#!/login">Iniciar sesión</a></li>
+              <li><a href="#!/signup">Registrarse</a></li>
+            </ul>
+            <ul
+              class="dropdown-menu"
+              data-ng-if="authentication.isAuthenticated()"
+            >
+              <!-- <li><a href="/signout">Terminar sesión</a></li> -->
+              <!-- <li><a ng-click="authentication.logout()">Terminar sesión</a></li> -->
+              <li>
+                <a style="cursor: pointer" ng-click="logoutUser()"
+                  >Terminar sesión</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
+  <!-- <div data-ng-show="!authentication.user"> -->
+  <!-- <div data-ng-show="authentication.isAuthenticated() == false"> -->
+  <div data-ng-if="!authentication.isAuthenticated()">
+    <img
+      src="img/sello.png"
+      alt="Logo"
+      class="img-resize"
+      style="max-width: 100%"
+    />
+    <h2>Bienvenido a nuestro Sistema de Información</h2>
+    <!-- <a href="/signin">Iniciar sesión</a> -->
+    <a href="#!/login">Iniciar sesión</a>
+    <!-- <a href="/signup">Registrarse</a> -->
+    <a href="#!/signup">Registrarse</a>
+    <a href="https://github.com/fernandomoraangel/simr/wiki" target="_blank"
+      >Manual de usuario</a
+    >
+    <a href="https://github.com/fernandomoraangel/simr/issues" target="_blank"
+      >Reportar situación</a
+    >
+    <a ng-click="acercaDe()">Acerca de</a>
+    <a
+      style="
+        cursor: pointer;
+        color: deeppink;
+        border: 1px solid deeppink;
+        padding: 2px;
+      "
+      ng-click="testVerifyToken()"
+      >Test Verify Token</a
+    >
+    <a
+      style="
+        cursor: pointer;
+        color: deeppink;
+        border: 1px solid deeppink;
+        padding: 2px;
+      "
+      ng-click="testRefreshToken()"
+      >Test Refresh Token</a
+    >
+  </div>
+</section>

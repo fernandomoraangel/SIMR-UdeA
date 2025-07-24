@@ -3,8 +3,8 @@ var mainApplicationModuleName = "simr";
 var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "ngResource",
   "ngRoute",
-  "users",
-  "example",
+  "authentication",
+  "core",
   "obras",
   "actores",
   "recursos",
