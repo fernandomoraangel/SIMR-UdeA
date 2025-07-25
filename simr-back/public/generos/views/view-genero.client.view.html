@@ -1,5 +1,5 @@
 <!-- View genero-->
-<ng-include src="'example/views/example.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'" /></ng-include>
 <section data-ng-controller="GenerosController" data-ng-init="findOne()">
 	<div class="jumbotron">
 		<div class="wrapper2">
@@ -11,7 +11,7 @@
 				<!-- Default panel contents -->
 				<div class="tituloVistaView" data-ng-bind="genero.nombre | uppercase"></div>
 				<!-- Mostrar los botones de edición para el creador del artículo-->
-				<div data-ng-show="authentication.user._id==genero.creador._id">
+				<div data-ng-show="authentication.getCurrentUser().id==genero.creador._id">
 					<a href="/#!/generos/{{genero._id}}/edit"><span class="glyphicon glyphicon-pencil" </span></a></a>
 					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove" </span></a>
 				</div>

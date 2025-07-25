@@ -1,10 +1,10 @@
 <!-- View crear obras -->
-<ng-include src="'example/views/example.client.view.html'" />
+<ng-include src="'core/views/core.client.view.html'" />
 
 </ng-include>
 <div class="jumbotron">
 	<div class="container">
-		<section data-ng-controller="ObrasController" ng-show="authentication.user">
+		<section data-ng-controller="ObrasController" ng-show="authentication.getCurrentUser().fullName">
 			<!-- Ayuda al nivel de toda la página -->
 			<div>
 				<!-- Botón modal ayuda -->
