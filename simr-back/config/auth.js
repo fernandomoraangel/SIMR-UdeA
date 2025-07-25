@@ -1,3 +1,4 @@
+//! Revisar si es necesario este archivo
 // const passport = require('../config/passport');
 const passport = require("passport");
 
