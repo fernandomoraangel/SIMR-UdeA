@@ -16,7 +16,11 @@ angular.module("core").controller("CoreController", [
       });
     };
 
-    $scope.authentication = Authentication;
+    // $scope.isUserAuthenticated = Authentication.isAuthenticated();
+
+    $scope.auth = Authentication.state;
+
+    // $scope.authentication = Authentication;
     // console.log("AuthController - authentication: ", $scope.authentication);
 
     // Verifica si está autenticado al cargar

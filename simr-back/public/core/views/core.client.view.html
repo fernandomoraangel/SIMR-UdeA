@@ -14,8 +14,9 @@
           <span class="icon-bar"></span>
         </button>
         <!-- <div data-ng-show="authentication.user"> -->
-        <!-- <div data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-        <div data-ng-if="authentication.isAuthenticated()">
+        <!-- <div data-ng-if="auth.isAuthenticated" data-ng-bind="auth.currentUser.fullName"> -->
+        <!-- <div data-ng-if="auth.isAuthenticated"> -->
+        <div data-ng-if="auth.isAuthenticated">
           <!-- <img
             src="img/logomr2.png"
             alt="Logo"
@@ -37,8 +38,8 @@
         <ul class="nav navbar-nav">
           <!-- <li class="active"><a href="#"><span class="sr-only">(current)</span></a></li>-->
           <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
-          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+          <!-- <li class="dropdown" data-ng-if="auth.isAuthenticated" data-ng-bind="auth.currentUser.fullName"> -->
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
             <a
               href="#"
               class="dropdown-toggle"
@@ -58,8 +59,8 @@
           </li>
 
           <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
-          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+          <!-- <li class="dropdown" data-ng-if="auth.isAuthenticated" data-ng-bind="auth.currentUser.fullName"> -->
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
             <a
               href="#"
               class="dropdown-toggle"
@@ -79,8 +80,8 @@
           </li>
 
           <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
-          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+          <!-- <li class="dropdown" data-ng-if="auth.isAuthenticated" data-ng-bind="auth.currentUser.fullName"> -->
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
             <a
               href="#"
               class="dropdown-toggle"
@@ -97,8 +98,8 @@
           </li>
 
           <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
-          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+          <!-- <li class="dropdown" data-ng-if="auth.isAuthenticated" data-ng-bind="auth.currentUser.fullName"> -->
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
             <a
               href="#"
               class="dropdown-toggle"
@@ -118,8 +119,8 @@
           </li>
 
           <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
-          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+          <!-- <li class="dropdown" data-ng-if="auth.isAuthenticated" data-ng-bind="auth.currentUser.fullName"> -->
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
             <a
               href="#"
               class="dropdown-toggle"
@@ -168,21 +169,7 @@
             </ul>
           </li>
 
-          <!-- <li class="dropdown" data-ng-show="authentication.user">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Circulación<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="/">Hacer préstamo</a></li>
-            <li><a href="/">Renovar préstamo</a></li>
-            <li><a href="/">Finalizar préstamo</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="/">Alertas</a></li>
-            <li><a href="/">Reservas</a></li>
-          </ul>
-          </li> -->
-
-          <!-- <li class="dropdown" data-ng-show="authentication.user"> -->
-          <!-- <li class="dropdown" data-ng-if="authentication.isAuthenticated()" data-ng-bind="authentication.getCurrentUser().fullName"> -->
-          <li class="dropdown" data-ng-if="authentication.isAuthenticated()">
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
             <a
               href="#"
               class="dropdown-toggle"
@@ -193,11 +180,6 @@
               >Administración<span class="caret"></span
             ></a>
             <ul class="dropdown-menu">
-              <!-- <li><a href="/">Crear usuario y roles</a></li>
-              <li><a href="/">Editar usuarios y roles</a></li> -->
-
-              <!-- <li role="separator" class="divider"></li>
-              <li><a href="/">Auditoría</a></li> -->
               <li>
                 <a
                   href="https://github.com/fernandomoraangel/simr/wiki"
@@ -220,13 +202,6 @@
           </li>
         </ul>
 
-        <!--  <form class="navbar-form navbar-left"role="..." .col-md-1 data-ng-show="authentication.user">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Buscar">
-        </div>
-        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></button>
-      </form> -->
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
             <a
@@ -237,27 +212,16 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <small>{{ authentication.getCurrentUser().fullName }}</small>
-              <!-- <small
-                data-ng-if="authentication.isAuthenticated()"
-                data-ng-bind="authentication.getCurrentUser().fullName"
-              ></small> -->
+              <!-- <small>{{ auth.currentUser.fullName }}</small> -->
+              <small>{{ auth.currentUser.fullName }}</small>
               <span class="caret"></span
             ></a>
             <!-- <ul class="dropdown-menu" data-ng-show="!authentication.user"> -->
-            <ul
-              class="dropdown-menu"
-              data-ng-if="!authentication.isAuthenticated()"
-            >
+            <ul class="dropdown-menu" data-ng-if="!auth.isAuthenticated">
               <li><a href="#!/login">Iniciar sesión</a></li>
               <li><a href="#!/signup">Registrarse</a></li>
             </ul>
-            <ul
-              class="dropdown-menu"
-              data-ng-if="authentication.isAuthenticated()"
-            >
-              <!-- <li><a href="/signout">Terminar sesión</a></li> -->
-              <!-- <li><a ng-click="authentication.logout()">Terminar sesión</a></li> -->
+            <ul class="dropdown-menu" data-ng-if="auth.isAuthenticated">
               <li>
                 <a style="cursor: pointer" ng-click="logoutUser()"
                   >Terminar sesión</a
@@ -272,8 +236,8 @@
     <!-- /.container-fluid -->
   </nav>
   <!-- <div data-ng-show="!authentication.user"> -->
-  <!-- <div data-ng-show="authentication.isAuthenticated() == false"> -->
-  <div data-ng-if="!authentication.isAuthenticated()">
+  <!-- <div data-ng-show="auth.isAuthenticated == false"> -->
+  <div data-ng-if="auth.isAuthenticated == false">
     <img
       src="img/sello.png"
       alt="Logo"
