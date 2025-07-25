@@ -1,23 +1,104 @@
 angular.module("authentication").controller("AuthenticationController", [
   "$scope",
+  '$timeout',
   "Authentication",
-  function ($scope, Authentication) {
+  function ($scope, $timeout, Authentication) {
+    console.log('[AuthController] Inicializando controlador de autenticación');
+
+    // Estado inicial
+    $scope.isUserAuthenticated = false;
+    $scope.isCheckingAuth = true; // Para mostrar loading si es necesario
+    $scope.currentUser = null;
     // $scope.authentication = Auth.getAuth();
 
-    $scope.authentication = Authentication;
-    console.log("AuthController - authentication: ", $scope.authentication);
+    // $scope.authentication = Authentication;
+    // console.log("AuthController - authentication: ", $scope.authentication);
 
-    // Inicializar el estado
-    $scope.isUserAuthenticated = Authentication.isAuthenticated();
+    // // Inicializar el estado
+    // $scope.isUserAuthenticated = Authentication.isAuthenticated();
+
+    // Función para actualizar el estado
+    function updateAuthState() {
+      $scope.isUserAuthenticated = Authentication.isAuthenticated();
+      $scope.currentUser = Authentication.getCurrentUser();
+      console.log('[AuthController] Estado actualizado:', {
+        isAuthenticated: $scope.isUserAuthenticated,
+        user: $scope.currentUser
+      });
+    }
+
+    // Verificar estado inicial
+    function checkInitialAuthState() {
+      console.log('[AuthController] Verificando estado inicial de autenticación');
+
+      Authentication.checkAuthStatus()
+        .then(function (user) {
+          console.log('[AuthController] Usuario autenticado:', user);
+          updateAuthState();
+          $scope.isCheckingAuth = false;
+        })
+        .catch(function (error) {
+          console.log('[AuthController] No autenticado:', error);
+          $scope.isUserAuthenticated = false;
+          $scope.currentUser = null;
+          $scope.isCheckingAuth = false;
+        });
+    }
 
     // Escuchar eventos de autenticación
-    $scope.$on('auth:loginSuccess', function () {
-      $scope.isUserAuthenticated = true;
+    // Escuchar eventos de autenticación
+    $scope.$on('auth:loginSuccess', function (event, user) {
+      console.log('[AuthController] Login exitoso recibido:', user);
+      $timeout(function () {
+        updateAuthState();
+        $scope.isCheckingAuth = false;
+      });
+    });
+
+    $scope.$on('auth:signupSuccess', function (event, user) {
+      console.log('[AuthController] Signup exitoso recibido:', user);
+      $timeout(function () {
+        updateAuthState();
+        $scope.isCheckingAuth = false;
+      });
     });
 
     $scope.$on('auth:logout', function () {
-      $scope.isUserAuthenticated = false;
+      console.log('[AuthController] Logout recibido');
+      $timeout(function () {
+        $scope.isUserAuthenticated = false;
+        $scope.currentUser = null;
+        $scope.isCheckingAuth = false;
+      });
     });
+
+    $scope.$on('auth:logoutSuccess', function () {
+      console.log('[AuthController] Logout exitoso recibido');
+      $timeout(function () {
+        $scope.isUserAuthenticated = false;
+        $scope.currentUser = null;
+        $scope.isCheckingAuth = false;
+      });
+    });
+
+    // Verificar estado inicial cuando se carga el controlador
+    checkInitialAuthState();
+
+    // Método público para refrescar manualmente el estado
+    $scope.refreshAuthState = function () {
+      console.log('[AuthController] Refrescando estado manualmente');
+      checkInitialAuthState();
+    };
+
+
+
+    // $scope.$on('auth:loginSuccess', function () {
+    //   $scope.isUserAuthenticated = true;
+    // });
+
+    // $scope.$on('auth:logout', function () {
+    //   $scope.isUserAuthenticated = false;
+    // });
 
     // Verificar periódicamente (opcional)
     $scope.$watch(function () {
@@ -105,6 +186,11 @@ angular.module("authentication").controller("AuthenticationController", [
       }
     };
 
+
+
+
+
+    //*** OLD CODE ***
     // $scope.logoutUser = function () {
     //   Authentication.logout()
     //     .then(function () {
@@ -168,6 +254,6 @@ angular.module("authentication").controller("AuthenticationController", [
     // };
 
 
-    console.log("AuthenticationController - authentication: ", $scope.authentication);
+    // console.log("AuthenticationController - authentication: ", $scope.authentication);
   },
 ]);
