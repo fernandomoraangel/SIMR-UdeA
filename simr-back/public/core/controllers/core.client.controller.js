@@ -26,7 +26,7 @@ angular.module("core").controller("CoreController", [
     // Verifica si está autenticado al cargar
     Authentication.checkAuthStatus()
       .then(function () {
-        console.log("Usuario autenticado:", Authentication.getCurrentUser());
+        console.log("Usuario autenticado:", Authentication.state.currentUser);
         Authentication.init(); // Iniciar autenticación y temporizador
       })
       .catch(function () {
