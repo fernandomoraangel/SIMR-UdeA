@@ -9,7 +9,10 @@ angular.module("idiomas").controller("IdiomasController", [
   "Idiomas",
   function ($scope, $routeParams, $location, Authentication, Idiomas) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+
+    $scope.auth = Authentication.state;
+    
     $scope.idEstados = [];
     //Preparar datos
     $scope.actualizarTodo = function () {
