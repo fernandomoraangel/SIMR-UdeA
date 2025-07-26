@@ -14,7 +14,6 @@ angular.module("authentication").factory("Authentication", [
     };
 
     let refreshTimer = null;
-    let sessionExpiration = 0;
 
     function setUser(user, expiresIn) {
       state.currentUser = user || null;
@@ -34,6 +33,7 @@ angular.module("authentication").factory("Authentication", [
 
     function startRefreshTimer(expiresIn) {
       const refreshBefore = 60; // Renovar 60s antes de expirar
+      // const intervalMs = (expiresIn - refreshBefore) * 1000;
       const intervalMs = Math.max((expiresIn - refreshBefore) * 1000, 5000);
 
       if (refreshTimer) {
@@ -145,7 +145,7 @@ angular.module("authentication").factory("Authentication", [
     }
 
     return {
-      state, // ← Objeto que siempre refleja el estado actual
+      state, // Objeto que siempre refleja el estado actual
       init,
       checkAuthStatus,
       signup,
