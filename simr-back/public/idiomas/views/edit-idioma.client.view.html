@@ -1,8 +1,8 @@
 <!-- View editar idioma -->
-<ng-include src="'example/views/example.client.view.html'"></ng-include>
-<div class="jumbotron">
-  <div class="container">
-    <section data-ng-controller="IdiomasController" data-ng-init="findOne()">
+<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<section data-ng-controller="IdiomasController" data-ng-init="findOne()">
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="container">
       <label class="tituloVista">EDITAR IDIOMA</label>
 
       <form class="form-principal" data-ng-submit="update()" novalidate>
@@ -12,16 +12,25 @@
         </div>
 
         <div ng-if="idioma">
-          <input type="text" class="form-control" ng-model="idioma.idioma" required>
+          <input
+            type="text"
+            class="form-control"
+            ng-model="idioma.idioma"
+            required
+          />
         </div>
 
         <div>
-          <input type="submit" class="btn btn-primary pull-right" value="Actualizar">
+          <input
+            type="submit"
+            class="btn btn-primary pull-right"
+            value="Actualizar"
+          />
           <div data-ng-show="error">
             <strong class="error" data-ng-bind="error"></strong>
           </div>
         </div>
       </form>
-    </section>
+    </div>
   </div>
-</div>
+</section>

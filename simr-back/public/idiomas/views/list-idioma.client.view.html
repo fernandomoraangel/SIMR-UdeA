@@ -1,52 +1,67 @@
 <!-- View listar ejemplars-->
-<ng-include src="'example/views/example.client.view.html'" /></ng-include>
-<section data-ng-controller="IdiomasController" class="bodyList" data-ng-init="find()">
-	<label class="tituloVista">IDIOMAS</label>
-	<ul>
-		<div class="wrapper">
-			<table class="table table-striped">
-				<thead>
-					<th> <span class="glyphicon glyphicon-filter"> </span> <input type="text" class="campoList" ng-model="search">
-						<!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
-					</th>
-				</thead>
-			</table>
-			<!-- Table -->
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>
-							<!-- Columna sin título -->
-						</th>
-						<th>
-							<button class="btn-lg3" ng-click="sortBy('idioma')">IDIOMA</button>
-							<span class="sortorder" ng-show="propertyName === 'idioma'" ng-class="{reverse: reverse}"></span>
-						</th>
-					</tr>
-				</thead>
+<ng-include src="'core/views/core.client.view.html'" /></ng-include>
 
-				<tbody>
-					<tr data-ng-repeat="idioma in idiomas | orderBy:propertyName:reverse|filter:search">
+<section
+  data-ng-controller="IdiomasController"
+  data-ng-init="find()"
+>
+  <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
+    <label class="tituloVista">IDIOMAS</label>
+    <ul>
+      <div class="wrapper">
+        <table class="table table-striped">
+          <thead>
+            <th>
+              <span class="glyphicon glyphicon-filter"> </span>
+              <input type="text" class="campoList" ng-model="search" />
+              <!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
+            </th>
+          </thead>
+        </table>
+        <!-- Table -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>
+                <!-- Columna sin título -->
+              </th>
+              <th>
+                <button class="btn-lg3" ng-click="sortBy('idioma')">
+                  IDIOMA
+                </button>
+                <span
+                  class="sortorder"
+                  ng-show="propertyName === 'idioma'"
+                  ng-class="{reverse: reverse}"
+                ></span>
+              </th>
+            </tr>
+          </thead>
 
-						<!-- idiomas es el modelo-->
-						<td>
-							<a href="/#!/idiomas/{{idioma._id}}"><span class="glyphicon glyphicon-sunglasses"></a>
-						</td>
-						<td class="descripcion" data-ng-bind="idioma.idioma"></td>
-						<td data-ng-show="authentication.user._id == idioma.creador._id">
-							<a href="/#!/idiomas/{{idioma._id}}/edit"><span class="glyphicon glyphicon-pencil"></a>
-						</td>
-					</tr>
+          <tbody>
+            <tr
+              data-ng-repeat="idioma in idiomas | orderBy:propertyName:reverse|filter:search"
+            >
+              <!-- idiomas es el modelo-->
+              <td>
+                <a href="/#!/idiomas/{{idioma._id}}"
+                  ><span class="glyphicon glyphicon-sunglasses"></span
+                ></a>
+              </td>
+              <td class="descripcion" data-ng-bind="idioma.idioma"></td>
+              <td data-ng-show="auth.currentUser.id == idioma.creador.id">
+                <a href="/#!/idiomas/{{idioma._id}}/edit">
+                  <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ul>
 
-				</tbody>
-			</table>
-		</div>
-
-		</div>
-	</ul>
-
-	<div data-ng-hide="!idiomas || idiomas.length">
-		<a href="/#!/idiomas/create"></a>
-	</div>
-
+    <div data-ng-hide="!idiomas || idiomas.length">
+      <a href="/#!/idiomas/create"></a>
+    </div>
+  </div>
 </section>
