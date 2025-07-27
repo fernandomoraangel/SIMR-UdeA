@@ -33,8 +33,9 @@ angular.module("authentication").factory("Authentication", [
 
     function startRefreshTimer(expiresIn) {
       const refreshBefore = 60; // Renovar 60s antes de expirar
-      // const intervalMs = (expiresIn - refreshBefore) * 1000;
       const intervalMs = Math.max((expiresIn - refreshBefore) * 1000, 5000);
+      // const intervalMs = (expiresIn - refreshBefore) * 1000;
+      // const intervalMs = 12 * 1000;
 
       if (refreshTimer) {
         $interval.cancel(refreshTimer);

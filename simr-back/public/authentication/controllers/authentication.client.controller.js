@@ -4,28 +4,30 @@ angular.module("authentication").controller("AuthenticationController", [
   "Authentication",
   function ($scope, $timeout, Authentication) {
     console.log('[AuthController] Inicializando controlador de autenticación');
+    $scope.auth = Authentication.state;
 
     // Estado inicial
-    $scope.isUserAuthenticated = false;
-    $scope.isCheckingAuth = true; // Para mostrar loading si es necesario
-    $scope.currentUser = null;
+    // $scope.isUserAuthenticated = false;
+    // $scope.isCheckingAuth = true; // Para mostrar loading si es necesario
+    // $scope.currentUser = null;
+
     // $scope.authentication = Auth.getAuth();
 
     // $scope.authentication = Authentication;
     // console.log("AuthController - authentication: ", $scope.authentication);
 
     // // Inicializar el estado
-    // $scope.isUserAuthenticated = Authentication.isAuthenticated();
+    // $scope.isUserAuthenticated = Authentication.state.isAuthenticated;
 
-    // Función para actualizar el estado
-    function updateAuthState() {
-      $scope.isUserAuthenticated = Authentication.isAuthenticated();
-      $scope.currentUser = Authentication.getCurrentUser();
-      console.log('[AuthController] Estado actualizado:', {
-        isAuthenticated: $scope.isUserAuthenticated,
-        user: $scope.currentUser
-      });
-    }
+    // // Función para actualizar el estado
+    // function updateAuthState() {
+    //   $scope.isUserAuthenticated = Authentication.state.isAuthenticated;
+    //   $scope.currentUser = Authentication.getCurrentUser();
+    //   console.log('[AuthController] Estado actualizado:', {
+    //     isAuthenticated: $scope.isUserAuthenticated,
+    //     user: $scope.currentUser
+    //   });
+    // }
 
     // Verificar estado inicial
     function checkInitialAuthState() {
@@ -34,52 +36,16 @@ angular.module("authentication").controller("AuthenticationController", [
       Authentication.checkAuthStatus()
         .then(function (user) {
           console.log('[AuthController] Usuario autenticado:', user);
-          updateAuthState();
-          $scope.isCheckingAuth = false;
+          // updateAuthState();
+          // $scope.isCheckingAuth = false;
         })
         .catch(function (error) {
           console.log('[AuthController] No autenticado:', error);
-          $scope.isUserAuthenticated = false;
-          $scope.currentUser = null;
-          $scope.isCheckingAuth = false;
+          // $scope.isUserAuthenticated = false;
+          // $scope.currentUser = null;
+          // $scope.isCheckingAuth = false;
         });
     }
-
-    // Escuchar eventos de autenticación
-    // Escuchar eventos de autenticación
-    $scope.$on('auth:loginSuccess', function (event, user) {
-      console.log('[AuthController] Login exitoso recibido:', user);
-      $timeout(function () {
-        updateAuthState();
-        $scope.isCheckingAuth = false;
-      });
-    });
-
-    $scope.$on('auth:signupSuccess', function (event, user) {
-      console.log('[AuthController] Signup exitoso recibido:', user);
-      $timeout(function () {
-        updateAuthState();
-        $scope.isCheckingAuth = false;
-      });
-    });
-
-    $scope.$on('auth:logout', function () {
-      console.log('[AuthController] Logout recibido');
-      $timeout(function () {
-        $scope.isUserAuthenticated = false;
-        $scope.currentUser = null;
-        $scope.isCheckingAuth = false;
-      });
-    });
-
-    $scope.$on('auth:logoutSuccess', function () {
-      console.log('[AuthController] Logout exitoso recibido');
-      $timeout(function () {
-        $scope.isUserAuthenticated = false;
-        $scope.currentUser = null;
-        $scope.isCheckingAuth = false;
-      });
-    });
 
     // Verificar estado inicial cuando se carga el controlador
     checkInitialAuthState();
@@ -92,20 +58,12 @@ angular.module("authentication").controller("AuthenticationController", [
 
 
 
-    // $scope.$on('auth:loginSuccess', function () {
-    //   $scope.isUserAuthenticated = true;
+    // // Verificar periódicamente (opcional)
+    // $scope.$watch(function () {
+    //   return Authentication.state.isAuthenticated;
+    // }, function (newValue) {
+    //   $scope.isUserAuthenticated = newValue;
     // });
-
-    // $scope.$on('auth:logout', function () {
-    //   $scope.isUserAuthenticated = false;
-    // });
-
-    // Verificar periódicamente (opcional)
-    $scope.$watch(function () {
-      return Authentication.isAuthenticated();
-    }, function (newValue) {
-      $scope.isUserAuthenticated = newValue;
-    });
 
     // Verifica si está autenticado al cargar
     Authentication.checkAuthStatus()
@@ -188,8 +146,6 @@ angular.module("authentication").controller("AuthenticationController", [
 
 
 
-
-
     //*** OLD CODE ***
     // $scope.logoutUser = function () {
     //   Authentication.logout()
@@ -208,52 +164,7 @@ angular.module("authentication").controller("AuthenticationController", [
     //     });
     // };
 
-    // // Prueba manual
-    // $scope.testVerifyToken = function () {
-    //   Authentication.checkAuthStatus()
-    //     .then(user => {
-    //       console.log('Token válido:', user);
-    //       Swal.fire({
-    //         title: "Token válido",
-    //         text: "El token es válido.",
-    //         icon: "success",
-    //         confirmButtonText: "Aceptar",
-    //       });
-    //     })
-    //     .catch(err => {
-    //       console.warn('Token inválido:', err);
-    //       Swal.fire({
-    //         title: "Token inválido",
-    //         text: "El token no es válido.",
-    //         icon: "error",
-    //         confirmButtonText: "Aceptar",
-    //       });
-    //     });
-    // };
-
-    // $scope.testRefreshToken = function () {
-    //   Authentication.refreshToken()
-    //     .then(user => {
-    //       console.log('Token actualizado:', user);
-    //       Swal.fire({
-    //         title: "Token actualizado",
-    //         text: "El token se ha actualizado correctamente.",
-    //         icon: "success",
-    //         confirmButtonText: "Aceptar",
-    //       });
-    //     })
-    //     .catch(err => {
-    //       console.warn('Error al actualizar el token:', err);
-    //       Swal.fire({
-    //         title: "Error al actualizar el token",
-    //         text: "No se pudo actualizar el token. Por favor, inténtalo de nuevo.",
-    //         icon: "error",
-    //         confirmButtonText: "Aceptar",
-    //       });
-    //     })
-    // };
 
 
-    // console.log("AuthenticationController - authentication: ", $scope.authentication);
   },
 ]);
