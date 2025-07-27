@@ -1,7 +1,8 @@
 <!-- View crear obras -->
-<ng-include src="'core/views/core.client.view.html'"/></ng-include>
-  <section class="jumbotron" data-ng-controller="IdiomasController">
-    <div class="container" data-ng-if="auth.isAuthenticated">
+<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<section data-ng-controller="IdiomasController">
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="container">
       <div data-ng-if="!auth.isAuthenticated">
         <p>Hola, bienvenida</p>
       </div>
@@ -33,4 +34,5 @@
         </div>
       </form>
     </div>
-  </section>
+  </div>
+</section>
