@@ -31,8 +31,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .dashboard-container {
@@ -118,9 +123,17 @@
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .actions {
@@ -209,6 +222,28 @@
   padding: 25px;
 }
 
+.lista-actores {
+  background: #cc9dce;
+  border: 1px solid #1f4061;
+  border-radius: 12px;
+  padding: 25px;
+}
+
+table {
+  width: 100%;
+  border: 1px solid #498647;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+/* table tr:nth-child(even) {
+  background-color: #661414;
+}
+
+table tr:nth-child(odd) {
+  background-color: #ffffff;
+} */
+
 .data-summary {
   margin-bottom: 20px;
 }
@@ -219,7 +254,7 @@
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stat-number {
@@ -247,10 +282,10 @@
 }
 
 pre {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 4px;
-    overflow-x: auto;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
 }
 
 .btn-primary:hover:not(:disabled) {
