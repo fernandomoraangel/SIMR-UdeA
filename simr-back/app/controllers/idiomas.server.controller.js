@@ -125,8 +125,6 @@ exports.idiomaByID = async (req, res, next, id) => {
   }
 };
 
-
-
 // Controller middleware para autorizar una operación sobre idioma
 exports.hasAuthorization = (req, res, next) => {
   // Si el usuario actual, no es el creador, enviar el mensaje de error
