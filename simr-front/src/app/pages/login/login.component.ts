@@ -52,56 +52,14 @@ export class LoginComponent implements OnInit {
       credentials.username,
       credentials.password
     );
-    // this.authService.login(username, password).subscribe({
-    // this.authService.login(credentials).subscribe({
+
     this.authService.login(username, password).subscribe({
       next: (response) => {
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
-        // this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard']);
         // this.router.navigate([base_url]);
 
-        // const token = response.token;
-        // Redireccionar con el token como parámetro
-        // window.location.href = `http://localhost:3000/?token=${token}`;
-
-        // Redireccionar a la aplicación AngularJS
-        // window.location.href = 'http://localhost:3000';
-        // Alternativa: window.location.replace('http://localhost:3000');
-
-        // Guarda temporalmente los datos de autenticación
-        // sessionStorage.setItem(
-        //   'temp_auth_transfer',
-        //   JSON.stringify({
-        //     token: response.token,
-        //     user: response.user,
-        //   })
-        // );
-
-        // Crea y envía un formulario POST automáticamente
-        // this.redirectWithPostData('http://localhost:3000/auth-receiver', {
-        //   transferKey: 'temp_auth_transfer',
-        // });
-
-        // const sessionData = {
-        //   token: response.token,
-        //   user: response.user,
-        // };
-
-        // const iframe = document.getElementById(
-        //   'angularjs-frame'
-        // ) as HTMLIFrameElement;
-
-        // if (iframe && iframe.contentWindow) {
-        //   iframe.contentWindow.postMessage(
-        //     sessionData,
-        //     'http://localhost:3000'
-        //   );
-        // }
-
-        // const accessToken = response.data.tokens?.accessToken;
-        // Redireccionar con el token como parámetro
-        // window.location.href = `http://localhost:3000/#!/login-externo/?token=${accessToken}`;
         this.showTest = true;
       },
       error: (error) => {
@@ -131,7 +89,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-
   // TEST AREA
   testRefreshToken(): void {
     this.authService.refreshToken().subscribe({
@@ -142,7 +99,8 @@ export class LoginComponent implements OnInit {
       error: (error) => {
         console.error('Error al refrescar el token', error);
         this.errorMessage =
-          error.message || 'Error al refrescar el token. Por favor, inténtalo de nuevo.';
+          error.message ||
+          'Error al refrescar el token. Por favor, inténtalo de nuevo.';
       },
     });
   }
@@ -156,7 +114,8 @@ export class LoginComponent implements OnInit {
       error: (error) => {
         console.error('Error al verificar el token', error);
         this.errorMessage =
-          error.message || 'Error al verificar el token. Por favor, inténtalo de nuevo.';
+          error.message ||
+          'Error al verificar el token. Por favor, inténtalo de nuevo.';
       },
     });
   }
@@ -170,10 +129,11 @@ export class LoginComponent implements OnInit {
       error: (error) => {
         console.error('Error al cerrar sesión', error);
         this.errorMessage =
-          error.message || 'Error al cerrar sesión. Por favor, inténtalo de nuevo.';
+          error.message ||
+          'Error al cerrar sesión. Por favor, inténtalo de nuevo.';
       },
     });
-  } 
+  }
 
   testGetAllUsers(): void {
     this.authService.testGetAllUsers().subscribe({
@@ -184,13 +144,11 @@ export class LoginComponent implements OnInit {
       error: (error) => {
         console.error('Error al obtener usuarios:', error);
         this.errorMessage =
-          error.message || 'Error al obtener usuarios. Por favor verifique autenticación.';
+          error.message ||
+          'Error al obtener usuarios. Por favor verifique autenticación.';
       },
     });
   }
 
   // End of TEST AREA
-
-
-
 }

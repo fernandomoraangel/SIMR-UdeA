@@ -44,7 +44,8 @@ button:disabled {
 }
 
 .redirect-btn {
-    background-color: #28a745;
+    /* background-color: #28a745; */
+    background-color: #a728a1;
 }
 
 .error-message {
