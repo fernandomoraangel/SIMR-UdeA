@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist/out-tsc/app",
-    "types": ["angular"],
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "bundler",
@@ -19,6 +18,9 @@
     "declaration": false,
     "experimentalDecorators": true,
     "importHelpers": true
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
   },
   "exclude": [
     "src/test.ts",
