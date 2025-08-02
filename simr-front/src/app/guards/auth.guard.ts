@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
   CanActivate,
-  CanActivateChild,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   Router,
+  UrlTree,
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { map, take, switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
@@ -19,28 +19,27 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean> {
+  ): Observable<boolean | UrlTree> {
     console.log('🛡️ AuthGuard: Verificando acceso a', state.url);
-    
-    // Esperar a que el servicio esté listo y luego verificar autenticación
-    return this.authService.ready$.pipe(
-      take(1), // Solo tomar el primer valor cuando esté listo
-      map(authState => {
+
+    return this.authService.authState$.pipe(
+      take(1), // Solo necesitamos el primer valor
+      switchMap((authState) => {
         console.log('🛡️ AuthGuard: Estado de auth', {
           isAuthenticated: authState.isAuthenticated,
-          user: authState.user?.username
+          user: authState.user?.username,
         });
-        
+
         if (authState.isAuthenticated) {
-          return true;
+          console.log('🛡️ AuthGuard: Acceso permitido');
+          return of(true);
         }
 
-        // Redirigir al login si no está autenticado
         console.log('🛡️ AuthGuard: Redirigiendo a login');
-        this.router.navigate(['/login'], { 
-          queryParams: { returnUrl: state.url } 
+        const urlTree = this.router.createUrlTree(['/login'], {
+          queryParams: { returnUrl: state.url },
         });
-        return false;
+        return of(urlTree);
       })
     );
   }
