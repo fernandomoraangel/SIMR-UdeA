@@ -6,9 +6,9 @@ import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
 
 // Rutas
 const routes: Routes = [
-  { path: 'files', component: ArchivoListaComponent },
-  { path: 'files/upload', component: ArchivoSubidaComponent },
-  { path: 'files/preview', component: ArchivoVistaComponent },
+  { path: '', component: ArchivoListaComponent },
+  { path: 'upload', component: ArchivoSubidaComponent },
+  { path: 'preview', component: ArchivoVistaComponent },
 ];
 
 @NgModule({

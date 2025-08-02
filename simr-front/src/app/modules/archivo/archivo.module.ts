@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
 
 // Servicios
 import { ArchivoService } from './archivo.service';
@@ -14,13 +13,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { ArchivoListaComponent } from './archivo-lista/archivo-lista.component';
 import { ArchivoSubidaComponent } from './archivo-subida/archivo-subida.component';
 import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
-
-// // Rutas
-// const routes: Routes = [
-//   { path: 'files', component: ArchivoListaComponent },
-//   { path: 'files/upload', component: ArchivoSubidaComponent },
-//   { path: 'files/preview', component: ArchivoVistaComponent },
-// ];
+import { ArchivoRoutingModule } from './archivo.routes';
 
 // Interfaces
 export interface FileBasicInfo {
@@ -52,14 +45,13 @@ export interface FileDocumentInfo {
     ArchivoListaComponent,
     ArchivoSubidaComponent,
     ArchivoVistaComponent,
-    RouterModule,
   ],
   imports: [
     CommonModule,
-    // RouterModule.forChild(routes),
     MatDialogModule,
     MatButtonModule,
     SharedModule,
+    ArchivoRoutingModule,
   ],
   providers: [ArchivoService],
 })
