@@ -13,15 +13,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
 // Feature Modules
-import { ActorModule } from './modules/actor/actor.module';
-import { ArchivoModule } from './modules/archivo/archivo.module';
-import { PruebaModule } from './modules/prueba/prueba.module';
+// import { ActorModule } from './modules/actor/actor.module';
+// import { ArchivoModule } from './modules/archivo/archivo.module';
+// import { PruebaModule } from './modules/prueba/prueba.module';
 import { AppRoutingModule } from './app-routing.module';
 
 // Components
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+// import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
@@ -37,8 +37,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HomeComponent,
     PageNotFoundComponent,
     LoginComponent,
-    SignupComponent,
-    DashboardComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
@@ -46,12 +45,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    ArchivoModule,
-    ActorModule,
-    PruebaModule,
     MatDialogModule,
     MatButtonModule,
-    AppRoutingModule // siempre el último en 'imports'
+    AppRoutingModule, // siempre el último en 'imports'
   ],
   providers: [
     AuthService,
