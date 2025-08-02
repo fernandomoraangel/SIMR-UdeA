@@ -50,10 +50,12 @@ mainApplicationModule.config([
 ]);
 
 mainApplicationModule.run([
-  '$http',
-  function ($http) {
-    // NOTA: Descomentar la siguiente línea si AngularJS se sirve desde un dominio y puerto diferente al del Backend
-    // $http.defaults.withCredentials = true; // Incluir cookies en todas las peticiones HTTP
+  "Authentication",
+  function (Authentication) {
+    Authentication.init();
+
+    // Exponer a la consola del navegador
+    // window.AuthService = Authentication;
   },
 ]);
 

@@ -1,17 +1,17 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const generateTokens = (userId) => {
   const jti = crypto.randomUUID();
 
   const accessToken = jwt.sign(
-    { id: userId, type: 'access' },
+    { id: userId, type: "access" },
     process.env.JWT_SECRET,
     { expiresIn: Number(process.env.JWT_EXPIRATION) }
   );
 
   const refreshToken = jwt.sign(
-    { id: userId, type: 'refresh', jti },
+    { id: userId, type: "refresh", jti },
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: Number(process.env.JWT_REFRESH_EXPIRATION) }
   );
@@ -38,8 +38,8 @@ const verifyRefreshToken = (token) => {
 const getTokenExpirationDate = (token) => {
   try {
     const decoded = jwt.decode(token);
-    console.log('(getTokenExpiration) Expiration date for token: ', decoded);
-    console.log('Date now: ', new Date());
+    // console.log('(getTokenExpiration) Expiration date for token: ', decoded);
+    // console.log('Date now: ', new Date());
 
     // Expiration date
     return new Date(decoded.exp * 1000); // Convertir 'exp' a milisegundos
@@ -51,19 +51,22 @@ const getTokenExpirationDate = (token) => {
 const getTokenExpirationInSeconds = (token) => {
   try {
     const decoded = jwt.decode(token);
-    console.log('(getTokenExpirationInSeconds) Expiration in seconds for token: ', decoded.exp);
+    console.log(
+      "(getTokenExpirationInSeconds) Expiration in seconds for token: ",
+      decoded.exp
+    );
 
     // Expiration in seconds
     return decoded.exp - Math.floor(Date.now() / 1000);
   } catch (error) {
     return null;
   }
-}
+};
 
 module.exports = {
   generateTokens,
   verifyAccessToken,
   verifyRefreshToken,
   getTokenExpirationDate,
-  getTokenExpirationInSeconds
+  getTokenExpirationInSeconds,
 };
