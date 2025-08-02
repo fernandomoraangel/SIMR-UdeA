@@ -1,4 +1,4 @@
-// "use Strict";
+"use strict";
 
 //Controller idiomas
 angular.module("idiomas").controller("IdiomasController", [
@@ -12,7 +12,8 @@ angular.module("idiomas").controller("IdiomasController", [
     // $scope.authentication = Authentication;
 
     $scope.auth = Authentication.state;
-    
+    console.log("IdiomasController - authentication: ", $scope.auth);
+
     $scope.idEstados = [];
     //Preparar datos
     $scope.actualizarTodo = function () {
@@ -86,10 +87,13 @@ angular.module("idiomas").controller("IdiomasController", [
     //   });
     // };
     $scope.findOne = function () {
-      $scope.idioma = Idiomas.get({ idiomaId: $routeParams.idiomaId }, function (response) {
-        console.log(response); // Depuración
-        $scope.idioma = response;
-      });
+      $scope.idioma = Idiomas.get(
+        { idiomaId: $routeParams.idiomaId },
+        function (response) {
+          console.log(response); // Depuración
+          $scope.idioma = response;
+        }
+      );
     };
 
     //Método controller para actualizar una único idioma

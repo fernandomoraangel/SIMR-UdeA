@@ -23,7 +23,8 @@ angular.module("materias").controller("MateriasController", [
     ArchivoService
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.dEtiquetas = dEtiquetas;
     $scope.idActores = [];
     $scope.idAnotacionesCartograficoTemporales = [];
@@ -140,7 +141,7 @@ angular.module("materias").controller("MateriasController", [
     };
 
     $scope.verAlias = function (x) {
-      y = "";
+      let y = "";
 
       for (var i in x) {
         y = y + x[i].nombre;
@@ -153,7 +154,7 @@ angular.module("materias").controller("MateriasController", [
     };
 
     $scope.verMaterias = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.materiaAux(x[i].id);
         //Poner coma al final
@@ -184,7 +185,7 @@ angular.module("materias").controller("MateriasController", [
     };
 
     $scope.verDescriptor = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].etiqueta + ": " + x[i].contenido;
         //Poner coma al final
@@ -196,7 +197,7 @@ angular.module("materias").controller("MateriasController", [
     };
 
     $scope.verRecurso = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = $scope.recursoAux(x);
       }
@@ -700,7 +701,9 @@ angular.module("materias").controller("MateriasController", [
 
     //Crear método controller para crear nuevas materias
     $scope.create = function () {
-      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      const idArchivos = $scope.archivosCargados.map((archivo) => ({
+        _id: archivo.id,
+      }));
 
       // Revisa si los campos de enlace (etiqueta y url) contienen datos.
       // Si los tienen, los agrega al listado de enlaces
@@ -724,7 +727,7 @@ angular.module("materias").controller("MateriasController", [
         descripcion: this.descripcion,
         descriptorLibre: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
-        archivosAdjuntos: idArchivos
+        archivosAdjuntos: idArchivos,
       });
 
       //Usar el método '$save' de obra para enviar una petición POST apropiada
@@ -770,7 +773,6 @@ angular.module("materias").controller("MateriasController", [
 
     $scope.update = async function () {
       try {
-
         //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
         if ($scope.idAlias.length != 0) {
           $scope.materia.alias = $scope.idAlias;
@@ -796,7 +798,12 @@ angular.module("materias").controller("MateriasController", [
           $scope.materia.vinculoRelacionado = $scope.idEnlaces;
         }
 
-        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('materias', $scope.documentId, $scope.archivosCargados);
+        const archivosActualizados =
+          await ArchivoService.actualizarListadoArchivos(
+            "materias",
+            $scope.documentId,
+            $scope.archivosCargados
+          );
         $scope.materia.archivosAdjuntos = archivosActualizados || [];
 
         //Usa el método $update de obra para enviar la petición PUT adecuada
@@ -822,7 +829,7 @@ angular.module("materias").controller("MateriasController", [
           }
         );
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error("Error al actualizar:", error);
       }
     };
 

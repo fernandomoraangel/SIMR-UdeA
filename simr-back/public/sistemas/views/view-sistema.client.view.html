@@ -1,94 +1,103 @@
 <!-- View obra-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="SistemasController" data-ng-init="findOne()">
-	<div class="jumbotron">
-		<div class="wrapper2">
-			<!-- Identificador de la vista -->
-			<div class="idVista">
-				<em>Sistema sonoro</em>
-			</div>
-			<div class="panel panel-default">
-				<!-- Default panel contents -->
-				<div class="tituloVistaView" data-ng-bind="sistema.nombre | uppercase"></div>
-				<!-- Mostrar los botones de edición para el creador del artículo-->
-				<div data-ng-show="authentication.user._id==sistema.creador._id">
-					<a href="/#!/sistemas/{{sistema._id}}/edit"><span class="glyphicon glyphicon-pencil"></a></a>
-					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove"></a>
-				</div>
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="wrapper2">
+      <!-- Identificador de la vista -->
+      <div class="idVista">
+        <em>Sistema sonoro</em>
+      </div>
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div
+          class="tituloVistaView"
+          data-ng-bind="sistema.nombre | uppercase"
+        ></div>
+        <!-- Mostrar los botones de edición para el creador del artículo-->
+        <div data-ng-show="auth.currentUser.id == sistema.creador.id">
+          <a href="/#!/sistemas/{{sistema._id}}/edit"
+            ><span class="glyphicon glyphicon-pencil"></span
+          ></a>
+          <a href="#" data-ng-click="delete();"
+            ><span class="glyphicon glyphicon-remove"></span
+          ></a>
+        </div>
 
-				<!-- Table -->
-				<table class="table table-striped text-left">
+        <!-- Table -->
+        <table class="table table-striped text-left">
+          <tbody>
+            <tr>
+              <td>Descripción</td>
+              <td data-ng-bind="sistema.descripcion"></td>
+            </tr>
 
-					<tbody>
-						<tr>
-							<td>Descripción</td>
-							<td data-ng-bind="sistema.descripcion"></td>
-						</tr>
+            <tr>
+              <td>Nombres alternativos (Alias)</td>
+              <td data-ng-bind="verAlias(sistema.alias)"></td>
+            </tr>
 
-						<tr>
-							<td>Nombres alternativos (Alias)</td>
-							<td data-ng-bind="verAlias(sistema.alias)"></td>
-						</tr>
+            <tr>
+              <td>Sistemas relacionados</td>
+              <td data-ng-bind="verSistemas(sistema.sistemasRelacionados)"></td>
+            </tr>
 
-						<tr>
-							<td>Sistemas relacionados</td>
-							<td data-ng-bind="verSistemas(sistema.sistemasRelacionados)"></td>
-						</tr>
+            <tr>
+              <td>Sistemas padres</td>
+              <td data-ng-bind="verSistemas(sistema.padres)"></td>
+            </tr>
 
-						<tr>
-							<td>Sistemas padres</td>
-							<td data-ng-bind="verSistemas(sistema.padres)"></td>
-						</tr>
+            <tr>
+              <td>Sistemas hijos</td>
+              <td data-ng-bind="verSistemas(sistema.hijos)"></td>
+            </tr>
 
-						<tr>
-							<td>Sistemas hijos</td>
-							<td data-ng-bind="verSistemas(sistema.hijos)"></td>
-						</tr>
+            <tr>
+              <td>Proyectos asociados</td>
+              <td data-ng-bind="verProyecto(sistema.proyectosAsociados)"></td>
+            </tr>
 
+            <tr>
+              <td>Anotaciones cartográfico-temporales</td>
+              <td
+                data-ng-bind="verAnotacion(sistema.anotacionCartograficoTemporal)"
+              ></td>
+            </tr>
 
+            <tr>
+              <td>Descriptor libre</td>
+              <td data-ng-bind="verDescriptor(sistema.descriptorLibre)"></td>
+            </tr>
 
-						<tr>
-							<td>Proyectos asociados</td>
-							<td data-ng-bind="verProyecto(sistema.proyectosAsociados)"></td>
-						</tr>
+            <tr>
+              <td>Enlaces y archivos</td>
+              <td
+                id="enlaces"
+                data-ng-bind="verVinculo(sistema.vinculoRelacionado)"
+              ></td>
+            </tr>
 
-						<tr>
-							<td>Anotaciones cartográfico-temporales</td>
-							<td data-ng-bind="verAnotacion(sistema.anotacionCartograficoTemporal)"></td>
-						</tr>
+            <tr>
+              <td class="campo">ARCHIVOS</td>
+              <td>
+                <archivo-manager
+                  template-type="detail-view"
+                  document-id="{{sistema.id}}"
+                  document-name="{{sistema.nombre}}"
+                  db-collection="sistemas"
+                >
+                </archivo-manager>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-						<tr>
-							<td>Descriptor libre</td>
-							<td data-ng-bind="verDescriptor(sistema.descriptorLibre)"></td>
-						</tr>
-
-						<tr>
-							<td>Enlaces y archivos</td>
-							<td id="enlaces" data-ng-bind="verVinculo(sistema.vinculoRelacionado)"></td>
-						</tr>
-
-						<tr>
-							<td class="campo">ARCHIVOS</td>
-							<td>
-								<archivo-manager template-type="detail-view" document-id="{{sistema.id}}"
-									document-name="{{sistema.nombre}}" db-collection="sistemas">
-								</archivo-manager>
-							</td>
-						</tr>
-
-					</tbody>
-
-				</table>
-
-			</div>
-
-
-			<div class="creador">
-				<em>Creada en </em>
-				<em data-ng-bind="sistema.creado |date:'mediumDate'"></em>
-				<em>por</em>
-				<em data-ng-bind="sistema.creador.fullName"></em>
-			</div>
-		</div>
-	</div>
+      <div class="creador">
+        <em>Creada en </em>
+        <em data-ng-bind="sistema.creado |date:'mediumDate'"></em>
+        <em>por</em>
+        <em data-ng-bind="sistema.creador.fullName"></em>
+      </div>
+    </div>
+  </div>
 </section>

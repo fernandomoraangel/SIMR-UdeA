@@ -26,10 +26,11 @@ angular.module("recursos").controller("RecursosController", [
     Proyectos,
     Idiomas,
     Diccionarios,
-    ArchivoService,
+    ArchivoService
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.roles = roles;
     $scope.validarFecha = (fecha, id) => validarFecha(fecha, id);
     $scope.formatDateYMD = (date, precision = "AMD") =>
@@ -67,7 +68,6 @@ angular.module("recursos").controller("RecursosController", [
     var control = 0;
     $scope.archivosCargados = [];
     $scope.documentId = $routeParams.recursoId;
-
 
     //Carga vectores
 
@@ -264,7 +264,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //Ver
     $scope.verActores = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.actorAux(x[i].actor) + " (" + x[i].tipoDeMencion + ")";
         //Poner coma al final
@@ -276,7 +276,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verFuente = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -297,7 +297,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verTipos = function (x) {
-      y = "";
+      let y = "";
 
       for (var i in x) {
         y = y + x[i].id;
@@ -310,7 +310,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verNNormalizado = function (x) {
-      y = "";
+      let y = "";
 
       for (var i in x) {
         y = y + x[i].nombre + ": " + x[i].numero;
@@ -323,7 +323,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verDTecnica = function (x) {
-      y = "";
+      let y = "";
 
       for (var i in x) {
         y = y + x[i].criterio + ": " + x[i].valor;
@@ -336,7 +336,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verObras = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.obraAux(x[i].id);
         //Poner coma al final
@@ -348,7 +348,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verContenedores = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.contenedorAux(x[i].id);
         //Poner coma al final
@@ -360,7 +360,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verMaterias = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.materiaAux(x[i].id);
         //Poner coma al final
@@ -372,7 +372,7 @@ angular.module("recursos").controller("RecursosController", [
     };
     //TODO: Difundir formato puntuación
     $scope.verAnotacion = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -398,7 +398,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verIdiomas = function (x) {
-      y = "";
+      let y = "";
 
       for (var i in x) {
         y = y + $scope.idiomasAux(x[i].id);
@@ -411,7 +411,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verProyecto = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.proyectoAux(x[i].id);
         //Poner coma al final
@@ -442,7 +442,7 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.verDescriptor = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].etiqueta + ": " + x[i].contenido;
         //Poner coma al final
@@ -1413,9 +1413,9 @@ angular.module("recursos").controller("RecursosController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-              this.lugar ||
+                this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-              this.evento
+                this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -1507,9 +1507,9 @@ angular.module("recursos").controller("RecursosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1553,9 +1553,9 @@ angular.module("recursos").controller("RecursosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1866,7 +1866,9 @@ angular.module("recursos").controller("RecursosController", [
 
     //Crear método controller para crear nuevos registros
     $scope.create = function () {
-      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      const idArchivos = $scope.archivosCargados.map((archivo) => ({
+        _id: archivo.id,
+      }));
 
       // Revisa si los campos de enlace (etiqueta y url) contienen datos.
       // Si los tienen, los agrega al listado de enlaces
@@ -1902,7 +1904,7 @@ angular.module("recursos").controller("RecursosController", [
         proyectos: $scope.idProyectos,
         vinculoRelacionado: $scope.idEnlaces,
         descriptorLibre: $scope.idDescriptores,
-        archivosAdjuntos: idArchivos
+        archivosAdjuntos: idArchivos,
       });
 
       if (this.titulo == undefined) {
@@ -1952,7 +1954,6 @@ angular.module("recursos").controller("RecursosController", [
     //Método controller para actualizar una única obra
     $scope.update = async function () {
       try {
-
         //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
         if ($scope.idObrasRelacionadas.length != 0) {
           $scope.recurso.obrasRelacionadas = $scope.idObrasRelacionadas;
@@ -2007,7 +2008,12 @@ angular.module("recursos").controller("RecursosController", [
           $scope.recurso.vinculoRelacionado = $scope.idEnlaces;
         }
 
-        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('recursos', $scope.documentId, $scope.archivosCargados);
+        const archivosActualizados =
+          await ArchivoService.actualizarListadoArchivos(
+            "recursos",
+            $scope.documentId,
+            $scope.archivosCargados
+          );
         $scope.recurso.archivosAdjuntos = archivosActualizados || [];
 
         //Usa el método $update de recurso para enviar la petición PUT adecuada
@@ -2033,7 +2039,7 @@ angular.module("recursos").controller("RecursosController", [
           }
         );
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error("Error al actualizar:", error);
       }
     };
 

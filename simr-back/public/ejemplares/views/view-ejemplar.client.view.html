@@ -1,65 +1,65 @@
 <!-- View obra-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="EjemplaresController" data-ng-init="findOne()">
-	<div class="jumbotron">
-		<div class="wrapper2">
-			<!-- Identificador de la vista -->
-			<div class="idVista">
-				<em>Ejemplar</em>
-			</div>
-			<div class="panel panel-default">
-				<!-- Default panel contents -->
-				<div class="tituloVistaView" data-ng-bind="verRecurso(ejemplar.recurso) | uppercase"></div>
-				<!-- Mostrar los botones de edición para el creador del artículo-->
-				<div data-ng-show="authentication.user._id==ejemplar.creador._id">
-					<a href="/#!/ejemplares/{{ejemplar._id}}/edit"><span class="glyphicon glyphicon-pencil"></a>
-					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove"></a>
-				</div>
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="wrapper2">
+      <!-- Identificador de la vista -->
+      <div class="idVista">
+        <em>Ejemplar</em>
+      </div>
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div
+          class="tituloVistaView"
+          data-ng-bind="verRecurso(ejemplar.recurso) | uppercase"
+        ></div>
+        <!-- Mostrar los botones de edición para el creador del artículo-->
+        <div data-ng-show="auth.currentUser.id == ejemplar.creador.id">
+          <a href="/#!/ejemplares/{{ejemplar._id}}/edit"
+            ><span class="glyphicon glyphicon-pencil"></span
+          ></a>
+          <a href="#" data-ng-click="delete();"
+            ><span class="glyphicon glyphicon-remove"></span
+          ></a>
+        </div>
 
-				<!-- Table -->
-				<table class="table table-striped text-left">
-					<tbody>
-						<tr>
-							<td class="campo">IDENTIFICADOR DE EJEMPLAR</td>
-							<td data-ng-bind="ejemplar.numeroEjemplar"></td>
-						</tr>
-						<tr>
-							<td class="campo">FONDO</td>
-							<td data-ng-bind="verFondo(ejemplar.fondo)"></td>
-						</tr>
-						<tr>
-							<td class="campo">COLECCIÓN</td>
-							<td data-ng-bind="verColeccion(ejemplar.coleccion)"></td>
-						</tr>
-						<tr>
-							<td class="campo">PROCEDENCIA</td>
-							<td data-ng-bind="ejemplar.procedencia"></td>
-						</tr>
-						<tr>
-							<td class="campo">ESTADOS</td>
-							<td data-ng-bind="verEstados(ejemplar.estados)"></td>
-						</tr>
-						<tr>
-							<td class="campo">DISPONIBILIDAD</td>
-							<td data-ng-bind="ejemplar.disponibilidad"></td>
-						</tr>
+        <!-- Table -->
+        <table class="table table-striped text-left">
+          <tbody>
+            <tr>
+              <td class="campo">IDENTIFICADOR DE EJEMPLAR</td>
+              <td data-ng-bind="ejemplar.numeroEjemplar"></td>
+            </tr>
+            <tr>
+              <td class="campo">FONDO</td>
+              <td data-ng-bind="verFondo(ejemplar.fondo)"></td>
+            </tr>
+            <tr>
+              <td class="campo">COLECCIÓN</td>
+              <td data-ng-bind="verColeccion(ejemplar.coleccion)"></td>
+            </tr>
+            <tr>
+              <td class="campo">PROCEDENCIA</td>
+              <td data-ng-bind="ejemplar.procedencia"></td>
+            </tr>
+            <tr>
+              <td class="campo">ESTADOS</td>
+              <td data-ng-bind="verEstados(ejemplar.estados)"></td>
+            </tr>
+            <tr>
+              <td class="campo">DISPONIBILIDAD</td>
+              <td data-ng-bind="ejemplar.disponibilidad"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-
-
-
-
-					</tbody>
-
-				</table>
-
-			</div>
-
-			<div class="creador">
-				<em>Creada en </em>
-				<em data-ng-bind="ejemplar.creado |date:'mediumDate'"></em>
-				<em>por</em>
-				<em data-ng-bind="ejemplar.creador.fullName"></em>
-			</div>
-		</div>
-	</div>
+      <div class="creador">
+        <em>Creada en </em>
+        <em data-ng-bind="ejemplar.creado |date:'mediumDate'"></em>
+        <em>por</em>
+        <em data-ng-bind="ejemplar.creador.fullName"></em>
+      </div>
+    </div>
+  </div>
 </section>

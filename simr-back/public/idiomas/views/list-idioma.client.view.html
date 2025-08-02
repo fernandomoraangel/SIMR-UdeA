@@ -1,10 +1,7 @@
 <!-- View listar ejemplars-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
 
-<section
-  data-ng-controller="IdiomasController"
-  data-ng-init="find()"
->
+<section data-ng-controller="IdiomasController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
     <label class="tituloVista">IDIOMAS</label>
     <ul>

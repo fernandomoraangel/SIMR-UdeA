@@ -1,72 +1,85 @@
 <!-- View obra-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="ProyectosController" data-ng-init="findOne()">
-	<div class="jumbotron">
-		<div class="wrapper2">
-			<!-- Identificador de la vista -->
-			<div class="idVista">
-				<em>Proyecto</em>
-			</div>
-			<div class="panel panel-default">
-				<!-- Default panel contents -->
-				<div class="tituloVistaView" data-ng-bind="proyecto.nombre | uppercase"></div>
-				<!-- Mostrar los botones de edición para el creador del artículo-->
-				<div data-ng-show="authentication.user._id==proyecto.creador._id">
-					<a href="/#!/proyectos/{{proyecto._id}}/edit"><span class="glyphicon glyphicon-pencil"></a></a>
-					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove"></a>
-				</div>
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="wrapper2">
+      <!-- Identificador de la vista -->
+      <div class="idVista">
+        <em>Proyecto</em>
+      </div>
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div
+          class="tituloVistaView"
+          data-ng-bind="proyecto.nombre | uppercase"
+        ></div>
+        <!-- Mostrar los botones de edición para el creador del artículo-->
+        <div data-ng-show="auth.currentUser.id == proyecto.creador.id">
+          <a href="/#!/proyectos/{{proyecto._id}}/edit"
+            ><span class="glyphicon glyphicon-pencil"></span
+          ></a>
+          <a href="#" data-ng-click="delete();"
+            ><span class="glyphicon glyphicon-remove"></span
+          ></a>
+        </div>
 
-				<!-- Table -->
-				<table class="table table-striped text-left">
+        <!-- Table -->
+        <table class="table table-striped text-left">
+          <tbody>
+            <tr>
+              <td class="campo">ACTORES</td>
+              <td
+                data-ng-bind="verInvestigadores(proyecto.investigadores)"
+              ></td>
+            </tr>
+          </tbody>
 
-					<tbody>
-						<tr>
-							<td class="campo">ACTORES</td>
-							<td data-ng-bind="verInvestigadores(proyecto.investigadores)"></td>
-						</tr>
+          <tbody>
+            <tr>
+              <td class="campo">FECHAS ASOCIADAS</td>
+              <td data-ng-bind="verFechas(proyecto.fechasAsociadas)"></td>
+            </tr>
+            <tr>
+              <td class="campo">ESTADO</td>
+              <td data-ng-bind="proyecto.estado"></td>
+            </tr>
+            <tr>
+              <td class="campo">DESCRIPTORES LIBRES</td>
+              <td
+                data-ng-bind="verDescriptor(proyecto.descriptoresLibres)"
+              ></td>
+            </tr>
 
-					<tbody>
-						<tr>
-							<td class="campo">FECHAS ASOCIADAS</td>
-							<td data-ng-bind="verFechas(proyecto.fechasAsociadas)"></td>
-						</tr>
-						<tr>
-							<td class="campo">ESTADO</td>
-							<td data-ng-bind="proyecto.estado"></td>
-						</tr>
-						<tr>
-							<td class="campo">DESCRIPTORES LIBRES</td>
-							<td data-ng-bind="verDescriptor(proyecto.descriptoresLibres)"></td>
-						</tr>
+            <tr>
+              <td class="campo">VÍNCULOS Y ARCHIVOS</td>
+              <td
+                id="enlaces"
+                data-ng-bind="verVinculo(proyecto.vinculoRelacionado)"
+              ></td>
+            </tr>
 
-						<tr>
-							<td class="campo">VÍNCULOS Y ARCHIVOS</td>
-							<td id="enlaces" data-ng-bind="verVinculo(proyecto.vinculoRelacionado)"></td>
-						</tr>
+            <tr>
+              <td class="campo">ARCHIVOS</td>
+              <td>
+                <archivo-manager
+                  template-type="detail-view"
+                  document-id="{{proyecto.id}}"
+                  document-name="{{proyecto.nombre}}"
+                  db-collection="proyectos"
+                >
+                </archivo-manager>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-						<tr>
-							<td class="campo">ARCHIVOS</td>
-							<td>
-								<archivo-manager template-type="detail-view" document-id="{{proyecto.id}}"
-									document-name="{{proyecto.nombre}}" db-collection="proyectos">
-								</archivo-manager>
-							</td>
-						</tr>
-
-					</tbody>
-
-				</table>
-
-
-
-			</div>
-
-			<div class="creador">
-				<em>Creada en </em>
-				<em data-ng-bind="proyecto.creado |date:'mediumDate'"></em>
-				<em>por</em>
-				<em data-ng-bind="proyecto.creador.fullName"></em>
-			</div>
-		</div>
-	</div>
+      <div class="creador">
+        <em>Creada en </em>
+        <em data-ng-bind="proyecto.creado |date:'mediumDate'"></em>
+        <em>por</em>
+        <em data-ng-bind="proyecto.creador.fullName"></em>
+      </div>
+    </div>
+  </div>
 </section>

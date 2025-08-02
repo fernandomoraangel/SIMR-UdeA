@@ -1,76 +1,99 @@
 <!-- View listar instrumentos-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
-<section class="bodyList" data-ng-controller="InstrumentosController" class="bodyList" data-ng-init="find()">
-	<label class="tituloVista">INSTRUMENTOS MUSICALES</label>
-	<ul>
-		<div class="wrapper">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th> <span class="glyphicon glyphicon-filter"> </span> <input type="text" class="campoList"
-								ng-model="search">
-							<!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
-						</th>
-					</tr>
-				</thead>
-			</table>
-			<!-- Table -->
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>
-							<!-- Columna sin título -->
-						</th>
-						<th>
-							<button class="btn-lg3" ng-click="sortBy('nombre')">NOMBRE</button>
-							<span class="sortorder" ng-show="propertyName === 'nombre'"
-								ng-class="{reverse: reverse}"></span>
-						</th>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
+<section data-ng-controller="InstrumentosController" data-ng-init="find()">
+  <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
+    <label class="tituloVista">INSTRUMENTOS MUSICALES</label>
+    <ul>
+      <div class="wrapper">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>
+                <span class="glyphicon glyphicon-filter"> </span>
+                <input type="text" class="campoList" ng-model="search" />
+                <!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
+              </th>
+            </tr>
+          </thead>
+        </table>
+        <!-- Table -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>
+                <!-- Columna sin título -->
+              </th>
+              <th>
+                <button class="btn-lg3" ng-click="sortBy('nombre')">
+                  NOMBRE
+                </button>
+                <span
+                  class="sortorder"
+                  ng-show="propertyName === 'nombre'"
+                  ng-class="{reverse: reverse}"
+                ></span>
+              </th>
 
-						<th>
-							<button class="btn-lg3" ng-click="sortBy('clasificacion')">CLASIFICACIÓN</button>
-							<span class="sortorder" ng-show="propertyName === 'clasificacion'"
-								ng-class="{reverse: reverse}"></span>
-						</th>
+              <th>
+                <button class="btn-lg3" ng-click="sortBy('clasificacion')">
+                  CLASIFICACIÓN
+                </button>
+                <span
+                  class="sortorder"
+                  ng-show="propertyName === 'clasificacion'"
+                  ng-class="{reverse: reverse}"
+                ></span>
+              </th>
 
-						<th>
-							<button class="btn-lg3" ng-click="sortBy('alias')">ALIAS</button>
-							<span class="sortorder" ng-show="propertyName === 'alias'"
-								ng-class="{reverse: reverse}"></span>
-						</th>
+              <th>
+                <button class="btn-lg3" ng-click="sortBy('alias')">
+                  ALIAS
+                </button>
+                <span
+                  class="sortorder"
+                  ng-show="propertyName === 'alias'"
+                  ng-class="{reverse: reverse}"
+                ></span>
+              </th>
 
-						<th>
-							<button class="btn-lg3" ng-click="sortBy('proyectosAsociados')">PROYECTOS</button>
-							<span class="sortorder" ng-show="propertyName === 'proyectosAsociados'"
-								ng-class="{reverse: reverse}"></span>
-						</th>
-					</tr>
-				</thead>
+              <th>
+                <button class="btn-lg3" ng-click="sortBy('proyectosAsociados')">
+                  PROYECTOS
+                </button>
+                <span
+                  class="sortorder"
+                  ng-show="propertyName === 'proyectosAsociados'"
+                  ng-class="{reverse: reverse}"
+                ></span>
+              </th>
+            </tr>
+          </thead>
 
-				<tbody>
-					<tr data-ng-repeat="instrumento in instrumentos | orderBy:propertyName:reverse|filter:search">
-
-						<!-- instrumentos es el modelo-->
-						<td>
-							<a href="/#!/instrumentos/{{instrumento._id}}"><span
-									class="glyphicon glyphicon-sunglasses"></a>
-
-						</td>
-						<td data-ng-bind="instrumento.nombre"></td>
-						<td data-ng-bind="instrumento.clasificacion"></td>
-						<td data-ng-bind="verAlias(instrumento.alias)"></td>
-						<td data-ng-bind="verProyecto(instrumento.proyectosAsociados)"></td>
-						<td data-ng-show="authentication.user._id == instrumento.creador._id">
-							<a href="/#!/instrumentos/{{instrumento._id}}/edit"><span
-									class="glyphicon glyphicon-pencil"></a>
-						</td>
-					</tr>
-
-				</tbody>
-			</table>
-		</div>
-
-
-		</div>
-	</ul>
+          <tbody>
+            <tr
+              data-ng-repeat="instrumento in instrumentos | orderBy:propertyName:reverse|filter:search"
+            >
+              <!-- instrumentos es el modelo-->
+              <td>
+                <a href="/#!/instrumentos/{{instrumento._id}}"
+                  ><span class="glyphicon glyphicon-sunglasses"></span
+                ></a>
+              </td>
+              <td data-ng-bind="instrumento.nombre"></td>
+              <td data-ng-bind="instrumento.clasificacion"></td>
+              <td data-ng-bind="verAlias(instrumento.alias)"></td>
+              <td
+                data-ng-bind="verProyecto(instrumento.proyectosAsociados)"
+              ></td>
+              <td data-ng-show="auth.currentUser.id == instrumento.creador.id">
+                <a href="/#!/instrumentos/{{instrumento._id}}/edit"
+                  ><span class="glyphicon glyphicon-pencil"></span
+                ></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ul>
+  </div>
 </section>

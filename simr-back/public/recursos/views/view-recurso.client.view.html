@@ -1,117 +1,135 @@
 <!-- View obra-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="RecursosController" data-ng-init="findOne()">
-	<div class="jumbotron">
-		<div class="wrapper2">
-			<!-- Identificador de la vista -->
-			<div class="idVista">
-				<em>Recurso</em>
-			</div>
-			<div class="panel panel-default">
-				<!-- Default panel contents -->
-				<div class="tituloVistaView" data-ng-bind="recurso.titulo | uppercase"></div>
-				<!-- Mostrar los botones de edición para el creador del artículo-->
-				<div data-ng-show="authentication.user._id==recurso.creador._id">
-					<a href="/#!/recursos/{{recurso._id}}/edit"><span class="glyphicon glyphicon-pencil"></a></a>
-					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove"></a>
-				</div>
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="wrapper2">
+      <!-- Identificador de la vista -->
+      <div class="idVista">
+        <em>Recurso</em>
+      </div>
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div
+          class="tituloVistaView"
+          data-ng-bind="recurso.titulo | uppercase"
+        ></div>
+        <!-- Mostrar los botones de edición para el creador del artículo-->
+        <div data-ng-show="auth.currentUser.id == recurso.creador.id">
+          <a href="/#!/recursos/{{recurso._id}}/edit"
+            ><span class="glyphicon glyphicon-pencil"></span
+          ></a>
+          <a href="#" data-ng-click="delete();"
+            ><span class="glyphicon glyphicon-remove"></span
+          ></a>
+        </div>
 
-				<!-- Table -->
-				<table class="table table-striped text-left">
+        <!-- Table -->
+        <table class="table table-striped text-left">
+          <tbody>
+            <tr>
+              <td class="campo">DESCRIPCION</td>
+              <td data-ng-bind="recurso.descripcion"></td>
+            </tr>
 
-					<tbody>
-						<tr>
-							<td class="campo">DESCRIPCION</td>
-							<td data-ng-bind="recurso.descripcion"></td>
-						</tr>
+            <tr>
+              <td class="campo">TIPOS DE RECURSO</td>
+              <td data-ng-bind="verTipos(recurso.tiposDeRecurso)"></td>
+            </tr>
+            <tr>
+              <td class="campo">OBRAS RELACIONADAS</td>
+              <td data-ng-bind="verObras(recurso.obrasRelacionadas)"></td>
+            </tr>
+            <tr>
+              <td class="campo">CONTENEDOR (RECURSOS)</td>
+              <td data-ng-bind="verContenedores(recurso.contenedores)"></td>
+            </tr>
 
-						<tr>
-							<td class="campo">TIPOS DE RECURSO</td>
-							<td data-ng-bind="verTipos(recurso.tiposDeRecurso)"></td>
-						</tr>
-						<tr>
-							<td class="campo">OBRAS RELACIONADAS</td>
-							<td data-ng-bind="verObras(recurso.obrasRelacionadas)"></td>
-						</tr>
-						<tr>
-							<td class="campo">CONTENEDOR (RECURSOS)</td>
-							<td data-ng-bind="verContenedores(recurso.contenedores)"></td>
-						</tr>
+            <tr>
+              <td class="campo">FUENTE</td>
+              <td data-ng-bind="verFuente(recurso.fuente)"></td>
+            </tr>
+            <tr>
+              <td class="campo">NÚMEROS NORMALIZADOS</td>
+              <td
+                data-ng-bind="verNNormalizado(recurso.numeroNormalizado)"
+              ></td>
+            </tr>
+            <tr>
+              <td class="campo">FACETA</td>
+              <td data-ng-bind="recurso.faceta"></td>
+            </tr>
+            <tr>
+              <td class="campo">MENCIONES DE RESPONSABILIDAD</td>
+              <td
+                data-ng-bind="verActores(recurso.mencionResponsabilidad)"
+              ></td>
+            </tr>
 
-						<tr>
-							<td class="campo">FUENTE</td>
-							<td data-ng-bind="verFuente(recurso.fuente)"></td>
-						</tr>
-						<tr>
-							<td class="campo">NÚMEROS NORMALIZADOS</td>
-							<td data-ng-bind="verNNormalizado(recurso.numeroNormalizado)"></td>
-						</tr>
-						<tr>
-							<td class="campo">FACETA</td>
-							<td data-ng-bind="recurso.faceta"></td>
-						</tr>
-						<tr>
-							<td class="campo">MENCIONES DE RESPONSABILIDAD</td>
-							<td data-ng-bind="verActores(recurso.mencionResponsabilidad)"></td>
-						</tr>
+            <tr>
+              <td class="campo">ANOTACIONES CARTOGRÁFICO-TEMPORALES</td>
+              <td
+                data-ng-bind="verAnotacion(recurso.anotacionCartograficoTemporal)"
+              ></td>
+            </tr>
+            <tr>
+              <td class="campo">MATERIAS ASOCIADAS</td>
+              <td data-ng-bind="verMaterias(recurso.materia)"></td>
+            </tr>
+            <tr>
+              <td class="campo">IDIOMAS</td>
+              <td data-ng-bind="verIdiomas(recurso.idiomas)"></td>
+            </tr>
+            <tr>
+              <td class="campo">DESCRIPCIÓN TÉCNICA</td>
+              <td data-ng-bind="verDTecnica(recurso.descripcionTecnica)"></td>
+            </tr>
+            <tr>
+              <td class="campo">MATERIAL ACOMPAÑANTE</td>
+              <td data-ng-bind="recurso.materialAcompanante"></td>
+            </tr>
+            <tr>
+              <td class="campo">MENCIÓN DE SERIE</td>
+              <td data-ng-bind="recurso.mencionDeSerie"></td>
+            </tr>
+            <tr>
+              <td class="campo">PROYECTOS ASOCIADOS</td>
+              <td data-ng-bind="verProyecto(recurso.proyectos)"></td>
+            </tr>
+            <tr>
+              <td class="campo">DESCRIPTORES LIBRES</td>
+              <td data-ng-bind="verDescriptor(recurso.descriptorLibre)"></td>
+            </tr>
+            <tr>
+              <!-- TODO: Difundir id="enlaces" -->
+              <td class="campo">VÍNCULOS RELACIONADOS</td>
+              <td
+                id="enlaces"
+                data-ng-bind="verVinculo(recurso.vinculoRelacionado)"
+              ></td>
+            </tr>
+            <tr>
+              <td class="campo">ARCHIVOS</td>
+              <td>
+                <archivo-manager
+                  template-type="detail-view"
+                  document-id="{{recurso.id}}"
+                  document-name="{{recurso.titulo}}"
+                  db-collection="recursos"
+                >
+                </archivo-manager>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-						<tr>
-							<td class="campo">ANOTACIONES CARTOGRÁFICO-TEMPORALES</td>
-							<td data-ng-bind="verAnotacion(recurso.anotacionCartograficoTemporal)"></td>
-						</tr>
-						<tr>
-							<td class="campo">MATERIAS ASOCIADAS</td>
-							<td data-ng-bind="verMaterias(recurso.materia)"></td>
-						</tr>
-						<tr>
-							<td class="campo">IDIOMAS</td>
-							<td data-ng-bind="verIdiomas(recurso.idiomas)"></td>
-						</tr>
-						<tr>
-							<td class="campo">DESCRIPCIÓN TÉCNICA</td>
-							<td data-ng-bind="verDTecnica(recurso.descripcionTecnica)"></td>
-						</tr>
-						<tr>
-							<td class="campo">MATERIAL ACOMPAÑANTE</td>
-							<td data-ng-bind="recurso.materialAcompanante"></td>
-						</tr>
-						<tr>
-							<td class="campo">MENCIÓN DE SERIE</td>
-							<td data-ng-bind="recurso.mencionDeSerie"></td>
-						</tr>
-						<tr>
-							<td class="campo">PROYECTOS ASOCIADOS</td>
-							<td data-ng-bind="verProyecto(recurso.proyectos)"></td>
-						</tr>
-						<tr>
-							<td class="campo">DESCRIPTORES LIBRES</td>
-							<td data-ng-bind="verDescriptor(recurso.descriptorLibre)"></td>
-						</tr>
-						<tr>
-							<!-- TODO: Difundir id="enlaces" -->
-							<td class="campo">VÍNCULOS RELACIONADOS</td>
-							<td id="enlaces" data-ng-bind="verVinculo(recurso.vinculoRelacionado)"></td>
-						</tr>
-						<tr>
-							<td class="campo">ARCHIVOS</td>
-							<td>
-								<archivo-manager template-type="detail-view" document-id="{{recurso.id}}"
-									document-name="{{recurso.titulo}}" db-collection="recursos">
-								</archivo-manager>
-							</td>
-						</tr>
-					</tbody>
-
-				</table>
-			</div>
-
-			<div class="creador">
-				<em>Creada en </em>
-				<em data-ng-bind="recurso.creado |date:'mediumDate'"></em>
-				<em>por</em>
-				<!-- FIXME: Aparece undefinied -->
-				<em data-ng-bind="recurso.creador.fullName"></em>
-			</div>
-		</div>
-	</div>
+      <div class="creador">
+        <em>Creada en </em>
+        <em data-ng-bind="recurso.creado |date:'mediumDate'"></em>
+        <em>por</em>
+        <!-- FIXME: Aparece undefinied -->
+        <em data-ng-bind="recurso.creador.fullName"></em>
+      </div>
+    </div>
+  </div>
 </section>

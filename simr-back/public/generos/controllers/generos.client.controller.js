@@ -27,7 +27,8 @@ angular.module("generos").controller("GenerosController", [
     ArchivoService
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.medios = Medios.query();
     $scope.sistemas = Sistemas.query();
     $scope.idiomas = Idiomas.query();
@@ -190,7 +191,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verAnotacion = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -215,7 +216,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verIdiomas = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.idiomasAux(x[i].id);
         //Poner coma al final
@@ -227,7 +228,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verAlias = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].nombre;
         //Poner coma al final
@@ -239,7 +240,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verGeneros = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.generoAux(x[i].id);
         //Poner coma al final
@@ -251,7 +252,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verMedios = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.medioAux(x[i].id);
         //Poner coma al final
@@ -263,7 +264,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verSistemas = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.sistemaAux(x[i].id);
         //Poner coma al final
@@ -275,7 +276,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verDescriptor = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].etiqueta + ": " + x[i].contenido;
         //Poner coma al final
@@ -306,7 +307,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verProyecto = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.proyectoAux(x[i].proyecto);
         //Poner coma al final
@@ -318,7 +319,7 @@ angular.module("generos").controller("GenerosController", [
     };
 
     $scope.verRecurso = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = $scope.recursoAux(x);
       }
@@ -1015,9 +1016,9 @@ angular.module("generos").controller("GenerosController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-              this.lugar ||
+                this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-              this.evento
+                this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -1111,9 +1112,9 @@ angular.module("generos").controller("GenerosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1158,9 +1159,9 @@ angular.module("generos").controller("GenerosController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1392,7 +1393,9 @@ angular.module("generos").controller("GenerosController", [
 
     //Crear método controller para crear nuevos géneros
     $scope.create = function () {
-      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      const idArchivos = $scope.archivosCargados.map((archivo) => ({
+        _id: archivo.id,
+      }));
 
       // Revisa si los campos de enlace (etiqueta y url) contienen datos.
       // Si los tienen, los agrega al listado de enlaces
@@ -1422,7 +1425,7 @@ angular.module("generos").controller("GenerosController", [
         descriptorLibre: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
         proyectosAsociados: $scope.idProyectos,
-        archivosAdjuntos: idArchivos
+        archivosAdjuntos: idArchivos,
       });
 
       //Usar el método '$save' de obra para enviar una petición POST apropiada
@@ -1468,7 +1471,6 @@ angular.module("generos").controller("GenerosController", [
     //Método controller para actualizar una única obra
     $scope.update = async function () {
       try {
-
         //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
         if ($scope.idAlias.length != 0) {
           $scope.genero.alias = $scope.idAlias;
@@ -1519,7 +1521,12 @@ angular.module("generos").controller("GenerosController", [
           $scope.genero.vinculoRelacionado = $scope.idEnlaces;
         }
 
-        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('generos', $scope.documentId, $scope.archivosCargados);
+        const archivosActualizados =
+          await ArchivoService.actualizarListadoArchivos(
+            "generos",
+            $scope.documentId,
+            $scope.archivosCargados
+          );
         $scope.genero.archivosAdjuntos = archivosActualizados || [];
 
         //Usa el método $update de obra para enviar la petición PUT adecuada
@@ -1545,7 +1552,7 @@ angular.module("generos").controller("GenerosController", [
           }
         );
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error("Error al actualizar:", error);
       }
     };
 

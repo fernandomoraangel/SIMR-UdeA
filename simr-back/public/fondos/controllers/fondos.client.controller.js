@@ -21,7 +21,8 @@ angular.module("fondos").controller("FondosController", [
     Diccionarios
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.tiposFondosColecciones = tiposFondosColecciones;
     $scope.idActores = [];
     $scope.idFechas = [];
@@ -124,7 +125,7 @@ angular.module("fondos").controller("FondosController", [
     };
 
     $scope.verFecha = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.formatDate(x[i].fechaDeCreacion, x[i].precision);
         if (i != x.length - 1) {
@@ -135,7 +136,7 @@ angular.module("fondos").controller("FondosController", [
     };
 
     $scope.verRecurso = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = $scope.recursoAux(x);
       }

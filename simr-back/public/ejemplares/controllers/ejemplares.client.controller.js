@@ -23,7 +23,8 @@ angular.module("ejemplares").controller("EjemplaresController", [
     Diccionarios
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.estados = estados;
     $scope.disponibilidades = disponibilidades;
     $scope.idEstados = [];
@@ -94,7 +95,7 @@ angular.module("ejemplares").controller("EjemplaresController", [
       $scope.idEstados = [].concat(d);
     };
     $scope.verRecurso = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = $scope.recursoAux(x);
       }
@@ -110,7 +111,7 @@ angular.module("ejemplares").controller("EjemplaresController", [
     };
 
     $scope.verFondo = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = $scope.fondoAux(x);
       }
@@ -126,7 +127,7 @@ angular.module("ejemplares").controller("EjemplaresController", [
     };
 
     $scope.verColeccion = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = $scope.coleccionAux(x);
       }
@@ -142,7 +143,8 @@ angular.module("ejemplares").controller("EjemplaresController", [
     };
 
     $scope.verEstados = function (x) {
-      y = "";
+      let y = "";
+      let c = "";
       for (var i in x) {
         //FIXME: Hacer que no muestre undefinied
         if (x[i].contenido === undefined) {
@@ -162,7 +164,7 @@ angular.module("ejemplares").controller("EjemplaresController", [
     //Menú descriptores libres
     $scope.estadoAdd = function () {
       existe = false;
-      x =
+      let x =
         "etiqueta:" +
         this.estadoEtiqueta +
         ",contenido:" +

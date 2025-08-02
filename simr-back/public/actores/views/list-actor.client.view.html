@@ -1,71 +1,96 @@
 <!-- View listar actores-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
-<section data-ng-controller="ActoresController" class="bodyList" data-ng-init="find()">
-	<label class="tituloVista">ACTORES</label>
-	<ul>
-		<div class="wrapper">
-			<table class="table table-striped">
-				<thead>
-					<th> <span class="glyphicon glyphicon-filter"> </span> <input type="text" ng-model="search">
-						<!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
-					</th>
-				</thead>
-			</table>
-			<!-- Table -->
-			<table class="table table-striped">
-				<thead>
-					<th>
-						<!-- Columna sin título -->
-					</th>
-					<th>
-						<button class="btn-lg3" ng-click="sortBy('nombres')">NOMBRES</button>
-						<span class="sortorder" ng-show="propertyName === 'nombres'"
-							ng-class="{reverse: reverse}"></span>
-					</th>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
+<section data-ng-controller="ActoresController" data-ng-init="find()">
+  <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
+    <label class="tituloVista">ACTORES</label>
+    <ul>
+      <div class="wrapper">
+        <table class="table table-striped">
+          <thead>
+            <th>
+              <span class="glyphicon glyphicon-filter"> </span>
+              <input type="text" ng-model="search" />
+              <!-- <button ng-click="propertyName = null; reverse = false">NO ORDENAR</button> -->
+            </th>
+          </thead>
+        </table>
+        <!-- Table -->
+        <table class="table table-striped">
+          <thead>
+            <th>
+              <!-- Columna sin título -->
+            </th>
+            <th>
+              <button class="btn-lg3" ng-click="sortBy('nombres')">
+                NOMBRES
+              </button>
+              <span
+                class="sortorder"
+                ng-show="propertyName === 'nombres'"
+                ng-class="{reverse: reverse}"
+              ></span>
+            </th>
 
-					<th>
-						<button class="btn-lg3" ng-click="sortBy('apellidos')">APELLIDOS</button>
-						<span class="sortorder" ng-show="propertyName === 'apellidos'"
-							ng-class="{reverse: reverse}"></span>
-					</th>
+            <th>
+              <button class="btn-lg3" ng-click="sortBy('apellidos')">
+                APELLIDOS
+              </button>
+              <span
+                class="sortorder"
+                ng-show="propertyName === 'apellidos'"
+                ng-class="{reverse: reverse}"
+              ></span>
+            </th>
 
-					<th>
-						<button class="btn-lg3" ng-click="sortBy('nombreReunion')">REUNIÓN</button>
-						<span class="sortorder" ng-show="propertyName === 'nombreReunion'"
-							ng-class="{reverse: reverse}"></span>
-					</th>
+            <th>
+              <button class="btn-lg3" ng-click="sortBy('nombreReunion')">
+                REUNIÓN
+              </button>
+              <span
+                class="sortorder"
+                ng-show="propertyName === 'nombreReunion'"
+                ng-class="{reverse: reverse}"
+              ></span>
+            </th>
 
-					<th>
-						<button class="btn-lg3" ng-click="sortBy('contenedor')">CONTENEDOR</button>
-						<span class="sortorder" ng-show="propertyName === 'contenedor'"
-							ng-class="{reverse: reverse}"></span>
-					</th>
-				</thead>
-				<tbody>
-					<tr data-ng-repeat="actor in actores | orderBy:propertyName:reverse|filter:search">
+            <th>
+              <button class="btn-lg3" ng-click="sortBy('contenedor')">
+                CONTENEDOR
+              </button>
+              <span
+                class="sortorder"
+                ng-show="propertyName === 'contenedor'"
+                ng-class="{reverse: reverse}"
+              ></span>
+            </th>
+          </thead>
+          <tbody>
+            <tr
+              data-ng-repeat="actor in actores | orderBy:propertyName:reverse|filter:search"
+            >
+              <!-- actores es el modelo-->
+              <td>
+                <a href="/#!/actores/{{actor._id}}"
+                  ><span class="glyphicon glyphicon-sunglasses"></span
+                ></a>
+              </td>
+              <td data-ng-bind="actor.nombres"></td>
+              <td data-ng-bind="actor.apellidos"></td>
+              <td data-ng-bind="actor.nombreReunion"></td>
+              <td data-ng-bind="verContenedores(actor.contenedor)"></td>
+              <td data-ng-show="auth.currentUser.id == actor.creador.id">
+                <a href="/#!/actores/{{actor._id}}/edit"
+                  ><span class="glyphicon glyphicon-pencil"></span
+                ></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ul>
 
-						<!-- actores es el modelo-->
-						<td>
-							<a href="/#!/actores/{{actor._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
-						</td>
-						<td data-ng-bind="actor.nombres"></td>
-						<td data-ng-bind="actor.apellidos"></td>
-						<td data-ng-bind="actor.nombreReunion"></td>
-						<td data-ng-bind="verContenedores(actor.contenedor)"></td>
-						<td data-ng-show="authentication.user._id == actor.creador._id">
-							<a href="/#!/actores/{{actor._id}}/edit"><span class="glyphicon glyphicon-pencil"></a>
-
-						</td>
-					</tr>
-
-				</tbody>
-			</table>
-		</div>
-
-
-		</div>
-	</ul>
-
-	<div data-ng-hide="!actor || actor.length">
-		<a href="/#!/actores/create"></a>
+    <div data-ng-hide="!actor || actor.length">
+      <a href="/#!/actores/create"></a>
+    </div>
+  </div>
 </section>

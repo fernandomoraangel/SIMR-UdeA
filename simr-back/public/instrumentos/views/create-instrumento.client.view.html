@@ -1,435 +1,685 @@
 <!-- View crear obras -->
-<ng-include src="'core/views/core.client.view.html'" />
-</ng-include>
-<div class="jumbotron">
-	<div class="container">
-		<section data-ng-controller="InstrumentosController">
-			<!-- Ayuda al nivel de toda la página -->
-			<div>
-				<!-- Botón modal ayuda -->
-				<button type="button" class="glyphicon glyphicon-eye-open" style="font-size: 16px; top:-5px"
-					ng-click="mostrarAyuda('Instrumento','Instrumento');" data-toggle="modal" data-target="#ayudaTitulo"></button>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
+<section data-ng-controller="InstrumentosController">
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="container">
+      <!-- Ayuda al nivel de toda la página -->
+      <div>
+        <!-- Botón modal ayuda -->
+        <button
+          type="button"
+          class="glyphicon glyphicon-eye-open"
+          style="font-size: 16px; top: -5px"
+          ng-click="mostrarAyuda('Instrumento','Instrumento');"
+          data-toggle="modal"
+          data-target="#ayudaTitulo"
+        ></button>
 
-				<!-- Modal Ayuda-->
-				<div style="text-align: left" class="modal fade" id="ayudaTitulo" tabindex="-1" role="dialog"
-					aria-labelledby="ayudaTituloLabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-							</div>
-							<div class="modal-body">
-								{{campo}}
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<label class="tituloVista">CREAR INSTRUMENTO MUSICAL</label>
-				<form class="form-principal" data-ng-submit="create()" novalidate>
-					<!-- Mensaje de error-->
-					<div data-ng-show="error">
-						<strong class="error" data-ng-bind="error"></strong>
-					</div>
-					<!-- Nombre -->
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','NombreInstrumento');" data-toggle="modal"
-							data-target="#ayudaNombreInstrumento"></button>
+        <!-- Modal Ayuda-->
+        <div
+          style="text-align: left"
+          class="modal fade"
+          id="ayudaTitulo"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="ayudaTituloLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+              </div>
+              <div class="modal-body">{{campo}}</div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-dismiss="modal"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <label class="tituloVista">CREAR INSTRUMENTO MUSICAL</label>
+        <form class="form-principal" data-ng-submit="create()" novalidate>
+          <!-- Mensaje de error-->
+          <div data-ng-show="error">
+            <strong class="error" data-ng-bind="error"></strong>
+          </div>
+          <!-- Nombre -->
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','NombreInstrumento');"
+              data-toggle="modal"
+              data-target="#ayudaNombreInstrumento"
+            ></button>
 
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaNombreInstrumento" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaNombreInstrumentoLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<label>NOMBRE DEL INSTRUMENTO*</label>
-					</div>
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaNombreInstrumento"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="ayudaNombreInstrumentoLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <label>NOMBRE DEL INSTRUMENTO*</label>
+          </div>
 
+          <input type="text" class="form-control" ng-model="nombre" required />
 
+          <!-- Clasificación -->
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','clasificacionInstrumento');"
+              data-toggle="modal"
+              data-target="#ayudaClasificacionInstrumento"
+            ></button>
 
-					<input type="text" class="form-control" ng-model="nombre" required>
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaClasificacionInstrumento"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="ayudaClasificacionInstrumentoLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <label>CLASIFICACIÓN HORNBOSTEL-SACHS</label>
+          </div>
 
+          <!-- TODO: Validar clasificación-->
+          <input type="text" class="form-control" ng-model="clasificacion" />
 
-					<!-- Clasificación -->
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','clasificacionInstrumento');" data-toggle="modal"
-							data-target="#ayudaClasificacionInstrumento"></button>
+          <!-- Nombres alternativos (Alias) -->
 
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaClasificacionInstrumento" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaClasificacionInstrumentoLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<label>CLASIFICACIÓN HORNBOSTEL-SACHS</label>
-					</div>
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','nombresAlternativos');"
+              data-toggle="modal"
+              data-target="#ayudaNombresAlternativos"
+            ></button>
 
-					<!-- TODO: Validar clasificación-->
-					<input type="text" class="form-control" ng-model="clasificacion">
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaNombresAlternativos"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="nombresAlternativosLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="glyphicon glyphicon-arrow-right"
+              data-toggle="collapse"
+              href="#collapseNombresA"
+              role="button"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            ></button>
+            <label class="campo">NOMBRES ALTERNATIVOS (ALIAS)</label>
+          </div>
+          <div class="collapse" id="collapseNombresA">
+            <div class="campo">
+              <input type="text" class="form-control" ng-model="alias" />
+            </div>
 
+            <div>
+              <h2 class="glyphicon glyphicon-plus" ng-click="aliasAdd();">
+                Agregar
+              </h2>
+            </div>
 
-					<!-- Nombres alternativos (Alias) -->
+            <div
+              ng-model="todoerase"
+              ng-repeat="n in idAlias track by $index"
+              class="campo"
+            >
+              <h2
+                class="glyphicon glyphicon-remove"
+                ng-model="n"
+                ng-click="aliasRemove(n);"
+                style="color: red"
+              ></h2>
+              <em> {{n.nombre}} </em>
+            </div>
+          </div>
+          <!-- Proyectos asociados -->
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','proyectosAsociadosInstrumento');"
+              data-toggle="modal"
+              data-target="#ayudaProyectosAsociadosInstrumento"
+            ></button>
 
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','nombresAlternativos');" data-toggle="modal"
-							data-target="#ayudaNombresAlternativos"></button>
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaProyectosAsociadosInstrumento"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="ayudaProyectosAsociadosInstrumentoLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="glyphicon glyphicon-arrow-right"
+              data-toggle="collapse"
+              href="#collapseProyectosA"
+              role="button"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            ></button>
+            <label class="campo">PROYECTOS ASOCIADOS</label>
+          </div>
 
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaNombresAlternativos" tabindex="-1" role="dialog"
-							aria-labelledby="nombresAlternativosLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseNombresA"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
-						<label class="campo">NOMBRES ALTERNATIVOS (ALIAS)</label>
-					</div>
-					<div class="collapse" id="collapseNombresA">
+          <div class="collapse" id="collapseProyectosA">
+            <label class="campo"></label>
+            <select
+              class="form-control"
+              ng-model="proyecto"
+              ng-mouseup="updateProyectos();"
+            >
+              <option
+                ng-repeat="proyecto in proyectos track by $index"
+                value="{{proyecto.id}}"
+              >
+                {{proyecto.nombre}}
+              </option>
+              <option value="">-----</option>
+            </select>
 
-						<div class="campo">
+            <div>
+              <h2 class="glyphicon glyphicon-plus" ng-click="proyectoAdd();">
+                Agregar
+              </h2>
+              <h2
+                class="glyphicon glyphicon-modal-window"
+                ng-click="abrirVentana('/#!/proyectos/create')"
+              >
+                Crear
+              </h2>
+            </div>
 
-							<input type="text" class="form-control" ng-model="alias">
+            <div
+              ng-model="todoerase"
+              ng-repeat="p in idProyectos track by $index"
+              class="campo"
+            >
+              <h2
+                class="glyphicon glyphicon-remove"
+                ng-model="f"
+                ng-click="proyectoRemove(p.proyecto)"
+                style="color: red"
+              ></h2>
+              <em> {{proyectoAux(p.proyecto)}} </em>
+            </div>
+          </div>
+          <!-- Anotaciones cartográfico-temporales -->
 
-						</div>
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','AnotacionesCartograficoTemporalesIntrumento');"
+              data-toggle="modal"
+              data-target="#ayudaAnotacionesCartograficoTemporalesIntrumento"
+            ></button>
 
-						<div>
-							<h2 class="glyphicon glyphicon-plus" ng-click="aliasAdd();">Agregar</h2>
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaAnotacionesCartograficoTemporalesIntrumento"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="ayudaAnotacionesCartograficoTemporalesIntrumentoLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="glyphicon glyphicon-arrow-right"
+              data-toggle="collapse"
+              href="#collapseAnotacionesCT"
+              role="button"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            ></button>
+            <label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
+          </div>
+          <div>
+            <div class="collapse" id="collapseAnotacionesCT">
+              <hr />
+              <label class="campo">Lugar</label>
+              <hr />
+              <select id="lugarId" ng-model="lugar" class="form-control">
+                <option
+                  ng-repeat="sitio in sitios track by $index"
+                  value="{{sitio}}"
+                >
+                  {{sitio}}
+                </option>
+                <option value="">-----</option>
+              </select>
+              <label class="campo">Evento</label>
+              <input
+                type="text"
+                id="eventoId"
+                class="form-control"
+                ng-model="evento"
+              />
+              <label class="campo">Amplitud o cobertura</label>
+              <select
+                id="coberturaId"
+                ng-model="coberturaAmplitud"
+                class="form-control"
+              >
+                <option
+                  ng-repeat="cobertura in coberturas track by $index"
+                  value="{{cobertura}}"
+                >
+                  {{cobertura}}
+                </option>
+                <option value="">-----</option>
+              </select>
 
-						</div>
+              <label class="campo">Fecha de inicio</label>
+              <input
+                class="form-control"
+                id="fInicio"
+                type="text"
+                ng-model="fechaDeInicio"
+                ng-blur="validarFecha(fechaDeInicio,'fInicio')"
+              />
 
-						<div ng-model="todoerase" ng-repeat="n in idAlias track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="aliasRemove(n);" style="color:red">
-							</h2>
-							<em>
-								{{n.nombre}}
-							</em>
-						</div>
-					</div>
-					<!-- Proyectos asociados -->
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','proyectosAsociadosInstrumento');" data-toggle="modal"
-							data-target="#ayudaProyectosAsociadosInstrumento"></button>
+              <label class="campo">Fecha de finalización</label>
+              <input
+                class="form-control"
+                ng-model="fechaDeFin"
+                id="fFin"
+                ng-blur="validarFecha(fechaDeFin,'fFin')"
+              />
+              <label class="campo" for="descripcion">Evidencia</label>
+              <input
+                id="evidenciaId"
+                class="form-control"
+                ng-model="evidencia"
+              />
+              <h2
+                class="glyphicon glyphicon-plus"
+                ng-click="anotacionCartograficoTemporalAdd()"
+              >
+                Agregar
+              </h2>
+            </div>
 
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaProyectosAsociadosInstrumento" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaProyectosAsociadosInstrumentoLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseProyectosA"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
-						<label class="campo">PROYECTOS ASOCIADOS</label>
-					</div>
+            <div
+              ng-model="todoerase"
+              ng-repeat="c in idAnotacionesCartograficoTemporales track by $index"
+              class="campo"
+            >
+              <h2
+                class="glyphicon glyphicon-remove"
+                ng-model="f"
+                ng-click="anotacionCartograficoTemporalRemove(c.lugar)"
+                style="color: red"
+              ></h2>
+              <em>
+                {{nombrarSi("Lugar", c.lugar)}}; {{nombrarSi("Cobertura",
+                c.coberturaAmplitud)}}; {{nombrarSi("Evento", c.evento)}};
+                {{nombrarSi("Inicio", formatDate(c.fechaInicio,
+                c.precisionInicio))}}; {{nombrarSi("Finalización",
+                formatDate(c.fechaFin,c.precisionFin))}};
+                {{nombrarSi("Evidencia", c.evidencia)}};
+              </em>
+              <!-- Agregar edición -->
+              <h2
+                class="glyphicon glyphicon-pencil"
+                style="color: blue"
+                ng-model="c"
+                ng-click="anotacionCartograficoTemporalEdit(c.lugar,c.coberturaAmplitud,c.evento,c.fechaInicio,c.fechaFin,c.evidencia);"
+              ></h2>
+            </div>
+          </div>
+          <!-- Fin Anotaciones cartográficas -->
+          <!-- Descriptores libres -->
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','descriptorLibreInstrumento');"
+              data-toggle="modal"
+              data-target="#ayudaDescriptorLibreInstrumento"
+            ></button>
 
-					<div class="collapse" id="collapseProyectosA">
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaDescriptorLibreInstrumento"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="ayudaDescriptorLibreInstrumentoLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="glyphicon glyphicon-arrow-right"
+              data-toggle="collapse"
+              href="#collapseDescriptoresL"
+              role="button"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            ></button>
+            <label class="campo">DESCRIPTORES LIBRES</label>
+          </div>
 
-						<label class="campo"></label>
-						<select class="form-control" ng-model="proyecto" ng-mouseup="updateProyectos();">
-							<option ng-repeat="proyecto in proyectos track by $index" value="{{proyecto.id}}">
-								{{proyecto.nombre}}
-							</option>
-							<option value="">-----</option>
-						</select>
+          <div class="collapse" id="collapseDescriptoresL">
+            <hr />
+            <label class="campo">Etiqueta</label>
+            <hr />
+            <select
+              id="descEtiquetaId"
+              ng-model="dEtiqueta"
+              class="form-control"
+            >
+              <option ng-repeat="d in dEtiquetas track by $index" value="{{d}}">
+                {{d}}
+              </option>
+              <option value="">-----</option>
+              <tt>tipoSelect={{d}}</tt>
+            </select>
 
-						<div>
-							<h2 class="glyphicon glyphicon-plus" ng-click="proyectoAdd();">Agregar</h2>
-							<h2 class="glyphicon glyphicon-modal-window" ng-click="abrirVentana('/#!/proyectos/create')">
-								Crear
-							</h2>
+            <div>
+              <label class="campo">Contenido</label>
+              <input
+                id="descContenidoId"
+                type="text"
+                class="form-control"
+                ng-model="dContenido"
+              />
+            </div>
 
-						</div>
+            <div>
+              <h2 class="glyphicon glyphicon-plus" ng-click="dDescriptorAdd();">
+                Agregar
+              </h2>
+            </div>
 
-						<div ng-model="todoerase" ng-repeat="p in idProyectos track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="f" ng-click="proyectoRemove(p.proyecto)"
-								style="color:red">
-							</h2>
-							<em>
-								{{proyectoAux(p.proyecto)}}
-							</em>
-						</div>
-					</div>
-					<!-- Anotaciones cartográfico-temporales -->
+            <div
+              ng-model="todoerase"
+              ng-repeat="n in idDescriptores track by $index"
+              class="campo"
+            >
+              <h2
+                class="glyphicon glyphicon-remove"
+                ng-model="n"
+                ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
+                style="color: red"
+              ></h2>
+              <em>
+                {{nombrarSi("Etiqueta", n.etiqueta)}} {{nombrarSi("Contenido",
+                n.contenido)}}
+              </em>
+              <!-- Agregar edición -->
+              <h2
+                class="glyphicon glyphicon-pencil"
+                style="color: blue"
+                ng-model="n"
+                ng-click="descriptorEdit(n.etiqueta,n.contenido);"
+              ></h2>
+            </div>
+          </div>
+          <!-- Fin descriptores libres -->
 
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','AnotacionesCartograficoTemporalesIntrumento');" data-toggle="modal"
-							data-target="#ayudaAnotacionesCartograficoTemporalesIntrumento"></button>
+          <!-- Vínculos y archivos -->
+          <div>
+            <!-- Botón modal ayuda -->
+            <button
+              type="button"
+              class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('instrumento','enlacesYArchivos');"
+              data-toggle="modal"
+              data-target="#ayudaEnlacesYArchivos"
+            ></button>
 
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaAnotacionesCartograficoTemporalesIntrumento" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaAnotacionesCartograficoTemporalesIntrumentoLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAnotacionesCT"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
-						<label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
-					</div>
-					<div>
-						<div class="collapse" id="collapseAnotacionesCT">
-							<hr><label class="campo">Lugar</label></hr>
-							<select id="lugarId" ng-model="lugar" class="form-control">
-								<option ng-repeat="sitio in sitios track by $index" value="{{sitio}}">
-									{{sitio}}
-								</option>
-								<option value="">-----</option>
-							</select>
-							<labelclass="campo">Evento</label>
-								<input type="text" id="eventoId" class="form-control" ng-model="evento"></input>
-								<label class="campo">Amplitud o cobertura</label>
-								<select id="coberturaId" ng-model="coberturaAmplitud" class="form-control">
-									<option ng-repeat="cobertura in coberturas track by $index" value="{{cobertura}}">
-										{{cobertura}}
-									</option>
-									<option value="">-----</option>
-								</select>
+            <!-- Modal Ayuda-->
+            <div
+              class="modal fade"
+              id="ayudaEnlacesYArchivos"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="ayudaEnlacesYArchivosLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
+                  </div>
+                  <div class="modal-body">{{campo}}</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="glyphicon glyphicon-arrow-right"
+              data-toggle="collapse"
+              href="#collapseVyA"
+              role="button"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            ></button>
+            <label class="campo">ENLACES Y ARCHIVOS</label>
+          </div>
+          <div class="collapse" id="collapseVyA">
+            <h3>Enlaces</h3>
 
-								<label class="campo">Fecha de inicio</label>
-								<input class="form-control" id="fInicio" type="text" ng-model="fechaDeInicio"
-									ng-blur="validarFecha(fechaDeInicio,'fInicio')">
+            <div>
+              <label class="campo">Nombre (descripción)</label>
+              <input
+                type="text"
+                class="form-control"
+                ng-model="eEtiqueta"
+                id="nombreEnlace"
+              />
+            </div>
 
-								<label class="campo">Fecha de finalización</label>
-								<input class="form-control" ng-model="fechaDeFin" id="fFin" ng-blur="validarFecha(fechaDeFin,'fFin')">
-								<label class="campo" for="descripcion">Evidencia</label>
-								<input id="evidenciaId" class="form-control" ng-model="evidencia">
-								<h2 class="glyphicon glyphicon-plus" ng-click="anotacionCartograficoTemporalAdd()">
-									Agregar
-								</h2>
-						</div>
+            <div>
+              <label class="campo">URL</label>
+              <input
+                type="text"
+                class="form-control"
+                ng-model="eUrl"
+                id="urlEnlace"
+                ng-blur="validarUrloRuta(eUrl,'urlEnlace')"
+              />
+            </div>
 
-						<div ng-model="todoerase" ng-repeat="c in idAnotacionesCartograficoTemporales track by $index"
-							class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="f"
-								ng-click="anotacionCartograficoTemporalRemove(c.lugar)" style="color:red">
-							</h2>
-							<em>
-								{{nombrarSi("Lugar", c.lugar)}};
-								{{nombrarSi("Cobertura", c.coberturaAmplitud)}};
-								{{nombrarSi("Evento", c.evento)}};
-								{{nombrarSi("Inicio", formatDate(c.fechaInicio, c.precisionInicio))}};
-								{{nombrarSi("Finalización", formatDate(c.fechaFin,c.precisionFin))}};
-								{{nombrarSi("Evidencia", c.evidencia)}};
-							</em>
-							<!-- Agregar edición -->
-							<h2 class="glyphicon glyphicon-pencil" style="color:blue" ng-model="c"
-								ng-click="anotacionCartograficoTemporalEdit(c.lugar,c.coberturaAmplitud,c.evento,c.fechaInicio,c.fechaFin,c.evidencia);">
-							</h2>
-						</div>
-					</div>
-					<!-- Fin Anotaciones cartográficas -->
-					<!-- Descriptores libres -->
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','descriptorLibreInstrumento');" data-toggle="modal"
-							data-target="#ayudaDescriptorLibreInstrumento"></button>
+            <div>
+              <h2 class="glyphicon glyphicon-plus" ng-click="enlaceAdd();">
+                Agregar
+              </h2>
+            </div>
 
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaDescriptorLibreInstrumento" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaDescriptorLibreInstrumentoLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDescriptoresL"
-							role="button" aria-expanded="false" aria-controls="collapseExample"></button>
-						<label class="campo">DESCRIPTORES LIBRES</label>
-					</div>
+            <div
+              ng-model="todoerase"
+              ng-repeat="n in idEnlaces track by $index"
+              class="campo"
+            >
+              <h2
+                class="glyphicon glyphicon-remove"
+                style="color: red"
+                ng-model="n"
+                ng-click="enlaceRemove(n.etiqueta,n.url);"
+              ></h2>
+              <em>
+                {{nombrarSi("Etiqueta", n.etiqueta)}} {{nombrarSi("URL",
+                n.url)}}
+              </em>
 
-					<div class="collapse" id="collapseDescriptoresL">
-						<hr><label class="campo">Etiqueta</label></hr>
-						<select id="descEtiquetaId" ng-model="dEtiqueta" class="form-control">
-							<option ng-repeat="d in dEtiquetas track by $index" value="{{d}}">
-								{{d}}
-							</option>
-							<option value="">-----</option>
-							<tt>tipoSelect={{d}}</tt>
-						</select>
+              <!-- Agregar edición -->
+              <h2
+                class="glyphicon glyphicon-pencil"
+                style="color: blue"
+                ng-model="n"
+                ng-click="enlaceEdit(n.etiqueta,n.url);"
+              ></h2>
+            </div>
 
-						<div>
-							<label class="campo">Contenido</label>
-							<input id="descContenidoId" type="text" class="form-control" ng-model="dContenido">
-						</div>
+            <hr />
 
-						<div>
-							<h2 class="glyphicon glyphicon-plus" ng-click="dDescriptorAdd();">Agregar</h2>
-						</div>
+            <h3>Archivos</h3>
+            <archivo-manager
+              template-type="create-view"
+              archivos-cargados="archivosCargados"
+            >
+            </archivo-manager>
 
-						<div ng-model="todoerase" ng-repeat="n in idDescriptores track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" ng-model="n" ng-click="dDescriptorRemove(n.etiqueta,n.contenido);"
-								style="color:red">
-							</h2>
-							<em>
-								{{nombrarSi("Etiqueta", n.etiqueta)}}
-								{{nombrarSi("Contenido", n.contenido)}}
-							</em>
-							<!-- Agregar edición -->
-							<h2 class="glyphicon glyphicon-pencil" style="color:blue" ng-model="n"
-								ng-click="descriptorEdit(n.etiqueta,n.contenido);">
-							</h2>
-						</div>
-					</div>
-					<!-- Fin descriptores libres -->
+            <hr />
+          </div>
+          <!-- Vínculos y archivos -->
 
-
-					<!-- Vínculos y archivos -->
-					<div>
-						<!-- Botón modal ayuda -->
-						<button type="button" class="glyphicon glyphicon-eye-open"
-							ng-click="mostrarAyuda('instrumento','enlacesYArchivos');" data-toggle="modal"
-							data-target="#ayudaEnlacesYArchivos"></button>
-
-						<!-- Modal Ayuda-->
-						<div class="modal fade" id="ayudaEnlacesYArchivos" tabindex="-1" role="dialog"
-							aria-labelledby="ayudaEnlacesYArchivosLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="Ayuda">{{campoLargo}}</h5>
-									</div>
-									<div class="modal-body">
-										{{campo}}
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseVyA" role="button"
-							aria-expanded="false" aria-controls="collapseExample"></button>
-						<label class="campo">ENLACES Y ARCHIVOS</label>
-					</div>
-					<div class="collapse" id="collapseVyA">
-
-						<h3>Enlaces</h3>
-
-						<div>
-							<label class="campo">Nombre (descripción)</label>
-							<input type="text" class="form-control" ng-model="eEtiqueta" id="nombreEnlace"">
-					</div>
-
-					<div>
-						<label class=" campo">URL</label>
-							<input type="text" class="form-control" ng-model="eUrl" id="urlEnlace"
-								ng-blur="validarUrloRuta(eUrl,'urlEnlace')">
-						</div>
-
-						<div>
-							<h2 class="glyphicon glyphicon-plus" ng-click="enlaceAdd();">Agregar</h2>
-						</div>
-
-						<div ng-model="todoerase" ng-repeat="n in idEnlaces track by $index" class="campo">
-							<h2 class="glyphicon glyphicon-remove" style="color:red" ng-model="n"
-								ng-click="enlaceRemove(n.etiqueta,n.url);">
-							</h2>
-							<em>
-								{{nombrarSi("Etiqueta", n.etiqueta)}}
-								{{nombrarSi("URL", n.url)}}
-							</em>
-
-							<!-- Agregar edición -->
-							<h2 class="glyphicon glyphicon-pencil" style="color:blue" ng-model="n"
-								ng-click="enlaceEdit(n.etiqueta,n.url);">
-							</h2>
-						</div>
-
-						<hr>
-
-						<h3>Archivos</h3>
-						<archivo-manager template-type="create-view" archivos-cargados="archivosCargados">
-						</archivo-manager>
-
-						<hr>
-
-					</div>
-					<!-- Vínculos y archivos -->
-
-
-					<div>
-						<input type="submit" class="btn btn-primary btn-lg2" value="Crear">
-						<div data-ng-show="error">
-							<!-- <strong class="error" data-ng-bind="error"></strong> -->
-						</div>
-					</div>
-				</form>
-		</section>
-	</div>
-
-</div>
+          <div>
+            <input
+              type="submit"
+              class="btn btn-primary btn-lg2"
+              value="Crear"
+            />
+            <div data-ng-show="error">
+              <!-- <strong class="error" data-ng-bind="error"></strong> -->
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

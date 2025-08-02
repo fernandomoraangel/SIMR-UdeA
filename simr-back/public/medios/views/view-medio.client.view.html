@@ -1,79 +1,88 @@
 <!-- View obra-->
-<ng-include src="'core/views/core.client.view.html'" /></ng-include>
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="MediosController" data-ng-init="findOne()">
-	<div class="jumbotron">
-		<div class="wrapper2">
-			<!-- Identificador de la vista -->
-			<div class="idVista">
-				<em>Medio sonoro</em>
-			</div>
-			<div class="panel panel-default">
-				<!-- Default panel contents -->
-				<div class="tituloVistaView" data-ng-bind="medio.nombre| uppercase"></div>
-				<!-- Mostrar los botones de edición para el creador del artículo-->
-				<div data-ng-show="authentication.user._id==medio.creador._id">
-					<a href="/#!/medios/{{medio._id}}/edit"><span class="glyphicon glyphicon-pencil" </span></a></a>
-					<a href="#" data-ng-click="delete();"><span class="glyphicon glyphicon-remove" </span></a>
-				</div>
+  <div class="jumbotron" data-ng-if="auth.isAuthenticated">
+    <div class="wrapper2">
+      <!-- Identificador de la vista -->
+      <div class="idVista">
+        <em>Medio sonoro</em>
+      </div>
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div
+          class="tituloVistaView"
+          data-ng-bind="medio.nombre| uppercase"
+        ></div>
+        <!-- Mostrar los botones de edición para el creador del artículo-->
+        <div data-ng-show="auth.currentUser.id == medio.creador.id">
+          <a href="/#!/medios/{{medio._id}}/edit"
+            ><span class="glyphicon glyphicon-pencil"></span
+          ></a>
+          <a href="#" data-ng-click="delete();"
+            ><span class="glyphicon glyphicon-remove"></span
+          ></a>
+        </div>
 
-				<!-- Table -->
-				<table class="table table-striped text-left">
+        <!-- Table -->
+        <table class="table table-striped text-left">
+          <tbody>
+            <tr>
+              <td>Nombres alternativos (Alias)</td>
+              <td data-ng-bind="verAlias(medio.alias)"></td>
+            </tr>
 
-					<tbody>
-						<tr>
-							<td>Nombres alternativos (Alias)</td>
-							<td data-ng-bind="verAlias(medio.alias)"></td>
-						</tr>
+            <tr>
+              <td>Instrumentos</td>
+              <td data-ng-bind="verInstrumento(medio.instrumentos)"></td>
+            </tr>
 
-						<tr>
-							<td>Instrumentos</td>
-							<td data-ng-bind="verInstrumento(medio.instrumentos)"></td>
-						</tr>
+            <tr>
+              <td>Proyectos asociados</td>
+              <td data-ng-bind="verProyecto(medio.proyectosAsociados)"></td>
+            </tr>
 
-						<tr>
-							<td>Proyectos asociados</td>
-							<td data-ng-bind="verProyecto(medio.proyectosAsociados)"></td>
-						</tr>
+            <tr>
+              <td>Anotaciones cartográfico-temporales</td>
+              <td
+                data-ng-bind="verAnotacion(medio.anotacionCartograficoTemporal)"
+              ></td>
+            </tr>
 
-						<tr>
-							<td>Anotaciones cartográfico-temporales</td>
-							<td data-ng-bind="verAnotacion(medio.anotacionCartograficoTemporal)"></td>
-						</tr>
+            <tr>
+              <td>Descriptores libres</td>
+              <td data-ng-bind="verDescriptor(medio.descriptorLibre)"></td>
+            </tr>
 
-						<tr>
-							<td>Descriptores libres</td>
-							<td data-ng-bind="verDescriptor(medio.descriptorLibre)"></td>
-						</tr>
+            <tr>
+              <td>Enlaces y archivos</td>
+              <td
+                id="enlaces"
+                data-ng-bind="verVinculo(medio.vinculoRelacionado)"
+              ></td>
+            </tr>
 
-						<tr>
-							<td>Enlaces y archivos</td>
-							<td id="enlaces" data-ng-bind="verVinculo(medio.vinculoRelacionado)"></td>
-						</tr>
+            <tr>
+              <td class="campo">ARCHIVOS</td>
+              <td>
+                <archivo-manager
+                  template-type="detail-view"
+                  document-id="{{medio.id}}"
+                  document-name="{{medio.nombre}}"
+                  db-collection="medios"
+                >
+                </archivo-manager>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-						<tr>
-							<td class="campo">ARCHIVOS</td>
-							<td>
-								<archivo-manager template-type="detail-view" document-id="{{medio.id}}" document-name="{{medio.nombre}}"
-									db-collection="medios">
-								</archivo-manager>
-							</td>
-						</tr>
-
-
-					</tbody>
-
-				</table>
-
-
-
-			</div>
-
-			<div class="creador">
-				<em>Creada en </em>
-				<em data-ng-bind="medio.creado |date:'mediumDate'"></em>
-				<em>por</em>
-				<em data-ng-bind="medio.creador.fullName"></em>
-			</div>
-		</div>
-	</div>
+      <div class="creador">
+        <em>Creada en </em>
+        <em data-ng-bind="medio.creado |date:'mediumDate'"></em>
+        <em>por</em>
+        <em data-ng-bind="medio.creador.fullName"></em>
+      </div>
+    </div>
+  </div>
 </section>

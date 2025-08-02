@@ -46,7 +46,8 @@ angular.module("obras").controller("ObrasController", [
     });
 
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.roles = roles;
     $scope.tipos = [
       "Ballet",
@@ -123,7 +124,6 @@ angular.module("obras").controller("ObrasController", [
     var control = 0;
     $scope.archivosCargados = [];
     $scope.documentId = $routeParams.obraId;
-
 
     // Funciones auxiliares
     //Cargar los campos que tienen vectores para la vista de edición
@@ -286,7 +286,7 @@ angular.module("obras").controller("ObrasController", [
 
     //Ver
     $scope.verActores = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.actorAux(x[i].id) + " (" + x[i].rol + ")";
         //Poner coma al final
@@ -298,7 +298,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verDenominaciones = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y + x[i].denominacionRegional + " (" + x[i].fuenteDenominacion + ")";
@@ -311,7 +311,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verGeneros = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.generoAux(x[i].id);
         //Poner coma al final
@@ -324,7 +324,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verGenerosNoMusicales = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.generoNoMusicalAux(x[i].id);
         //Poner coma al final
@@ -337,7 +337,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verContenedores = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.obraAux(x[i].id);
         //Poner coma al final
@@ -349,7 +349,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verAsientoLigado = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -374,7 +374,7 @@ angular.module("obras").controller("ObrasController", [
       return $scope.darFormato(y);
     };
     $scope.verMaterias = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.materiaAux(x[i].id);
         //Poner coma al final
@@ -386,7 +386,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verMedios = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.medioAux(x[i].id);
         //Poner coma al final
@@ -398,7 +398,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verSistemas = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.sistemaAux(x[i].id) + " " + x[i].centro;
         //Poner coma al final
@@ -410,7 +410,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verAnotacion = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -435,7 +435,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verDescriptor = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].etiqueta + ": " + x[i].contenido;
         //Poner coma al final
@@ -447,7 +447,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verIdiomas = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.idiomasAux(x[i].id);
         //Poner coma al final
@@ -459,7 +459,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.verProyecto = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.proyectoAux(x[i].id);
         //Poner coma al final
@@ -600,9 +600,9 @@ angular.module("obras").controller("ObrasController", [
           for (var i in $scope.idDenominacionesRegionales) {
             if (
               $scope.idDenominacionesRegionales[i].denominacionRegional ===
-              this.denominacionRegional &&
+                this.denominacionRegional &&
               $scope.idDenominacionesRegionales[i].fuenteDenominacion ===
-              this.fuenteDenominacion
+                this.fuenteDenominacion
             ) {
               //Mensaje de error
               Swal.fire({
@@ -795,10 +795,10 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAsientosLigados[i].id === asientoligado &&
           $scope.idAsientosLigados[i].tipoDeRelacion === tipoDeRelacion &&
           $scope.idAsientosLigados[i].direccionDeRelacion ===
-          direccionDeRelacion &&
+            direccionDeRelacion &&
           $scope.idAsientosLigados[i].fuenteAutorRelacion === fuenteRelacion &&
           $scope.idAsientosLigados[i].proyectoRelacionado ===
-          proyectoRelacion &&
+            proyectoRelacion &&
           $scope.idAsientosLigados[i].notaGeneral === notaGeneral
         ) {
           $scope.idAsientosLigados.splice(i, 1);
@@ -1459,9 +1459,9 @@ angular.module("obras").controller("ObrasController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-              this.lugar ||
+                this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-              this.evento
+                this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -1555,9 +1555,9 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1602,9 +1602,9 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -1824,7 +1824,6 @@ angular.module("obras").controller("ObrasController", [
     // });
     // // ===(Fin de EVENT LISTENER)===
 
-
     // // (Testing)
     // $scope.pruebaArchivoService = function () {
     //   ArchivoService.sayHello();
@@ -1832,7 +1831,6 @@ angular.module("obras").controller("ObrasController", [
     //   console.log('archivosCargados', $scope.archivosCargados);
     // };
     // // (Fin de Testing)
-
 
     // $scope.subirArchivo = function () {
     //   ArchivoService.subirArchivo();
@@ -1899,7 +1897,6 @@ angular.module("obras").controller("ObrasController", [
     // };
 
     // *** (Fin de Archivos) ***
-
 
     $scope.enlaceAdd = function () {
       existe = false;
@@ -2003,7 +2000,9 @@ angular.module("obras").controller("ObrasController", [
 
     //Crear método controller para crear nuevos registros
     $scope.create = function () {
-      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      const idArchivos = $scope.archivosCargados.map((archivo) => ({
+        _id: archivo.id,
+      }));
 
       // Revisa si los campos de enlace (etiqueta y url) contienen datos.
       // Si los tienen, los agrega al listado de enlaces
@@ -2038,7 +2037,7 @@ angular.module("obras").controller("ObrasController", [
         proyectos: $scope.idProyectos,
         vinculosRelacionados: $scope.idEnlaces,
         descriptores: $scope.idDescriptores,
-        archivosAdjuntos: idArchivos
+        archivosAdjuntos: idArchivos,
       });
       //Usar el método '$save' de obra para enviar una petición POST apropiada
       obra.$save(
@@ -2081,7 +2080,6 @@ angular.module("obras").controller("ObrasController", [
     //Método controller para actualizar una única obra
     $scope.update = async function () {
       try {
-
         //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
         if ($scope.idDenominacionesRegionales.length != 0) {
           $scope.obra.denominacionRegional = $scope.idDenominacionesRegionales;
@@ -2138,7 +2136,12 @@ angular.module("obras").controller("ObrasController", [
           $scope.obra.vinculosRelacionados = $scope.idEnlaces;
         }
 
-        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('obras', $scope.documentId, $scope.archivosCargados);
+        const archivosActualizados =
+          await ArchivoService.actualizarListadoArchivos(
+            "obras",
+            $scope.documentId,
+            $scope.archivosCargados
+          );
         $scope.obra.archivosAdjuntos = archivosActualizados || [];
 
         //Usa el método $update de obra para enviar la petición PUT adecuada
@@ -2164,7 +2167,7 @@ angular.module("obras").controller("ObrasController", [
           }
         );
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error("Error al actualizar:", error);
       }
     };
 

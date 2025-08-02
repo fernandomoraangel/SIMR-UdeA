@@ -17,7 +17,8 @@ angular.module("colecciones").controller("ColeccionesController", [
     Diccionarios
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.tiposFondosColecciones = tiposFondosColecciones;
     $scope.idActores = [];
     $scope.idFechas = [];

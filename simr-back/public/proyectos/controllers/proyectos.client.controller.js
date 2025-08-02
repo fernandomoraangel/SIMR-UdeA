@@ -21,7 +21,8 @@ angular.module("proyectos").controller("ProyectosController", [
     ArchivoService
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     //Específicos de proyecto
     $scope.roles = [
       "Asesor",
@@ -149,8 +150,8 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     $scope.verInvestigadores = function (x) {
-      y = "";
-      for (var i in x) {
+      let y = "";
+      for (let i in x) {
         y =
           y +
           $scope.actorAux(x[i].id) +
@@ -188,7 +189,7 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     $scope.verFechas = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -203,7 +204,7 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     $scope.verDescriptor = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].etiqueta + ": " + x[i].contenido + ", ";
       }
@@ -628,15 +629,16 @@ angular.module("proyectos").controller("ProyectosController", [
       }
     };
 
-
-
     $scope.correrPrueba = function () {
-      console.log('Corriendo prueba');
-      console.log('Archivos cargados (controlador Proyectos):', $scope.archivosCargados);
+      console.log("Corriendo prueba");
+      console.log(
+        "Archivos cargados (controlador Proyectos):",
+        $scope.archivosCargados
+      );
     };
 
     $scope.cargarArchivos = function () {
-      console.log('(Controller) Cargando archivos');
+      console.log("(Controller) Cargando archivos");
       ArchivoService.loadFiles();
     };
 
@@ -754,8 +756,10 @@ angular.module("proyectos").controller("ProyectosController", [
 
     //Crear método controller para crear nuevas obras
     $scope.create = function () {
-      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
-      console.log('(Creando proyecto) idArchivos:', idArchivos);
+      const idArchivos = $scope.archivosCargados.map((archivo) => ({
+        _id: archivo.id,
+      }));
+      console.log("(Creando proyecto) idArchivos:", idArchivos);
 
       // Revisa si los campos de enlace (etiqueta y url) contienen datos.
       // Si los tienen, los agrega al listado de enlaces
@@ -777,12 +781,12 @@ angular.module("proyectos").controller("ProyectosController", [
         fechasAsociadas: $scope.idFechas,
         descriptoresLibres: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
-        archivosAdjuntos: idArchivos
+        archivosAdjuntos: idArchivos,
       });
       //Usar el método '$save' de obra para enviar una petición POST apropiada
       proyecto.$save(
         function (response) {
-          if (typeof Swal !== 'undefined') {
+          if (typeof Swal !== "undefined") {
             Swal.fire({
               title: "¡Registro correcto!",
               text: "El registro se ha creado correctamente",
@@ -790,7 +794,7 @@ angular.module("proyectos").controller("ProyectosController", [
               confirmButtonText: "Cerrar",
             });
           } else {
-            console.error('SweetAlert2 no está definido');
+            console.error("SweetAlert2 no está definido");
           }
           //Si la obra fue creada de la manera correcta, redireccionar a la página de la obra
           $location.path("proyectos/" + response._id);
@@ -816,7 +820,7 @@ angular.module("proyectos").controller("ProyectosController", [
     $scope.findOne = function () {
       //Usa el método 'get' de proyecto para enviar una petición GET apropiada
       $scope.proyecto = Proyectos.get({
-        proyectoId: $routeParams.proyectoId
+        proyectoId: $routeParams.proyectoId,
       });
     };
 
@@ -840,15 +844,23 @@ angular.module("proyectos").controller("ProyectosController", [
           $scope.proyecto.vinculoRelacionado = $scope.idEnlaces;
         }
 
-        console.log('1. (update) Archivos cargados:', $scope.archivosCargados);
+        console.log("1. (update) Archivos cargados:", $scope.archivosCargados);
 
-        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('proyectos', $scope.documentId, $scope.archivosCargados);
+        const archivosActualizados =
+          await ArchivoService.actualizarListadoArchivos(
+            "proyectos",
+            $scope.documentId,
+            $scope.archivosCargados
+          );
 
-        console.log('3. (update) archivosActualizados:', archivosActualizados);
+        console.log("3. (update) archivosActualizados:", archivosActualizados);
 
         $scope.proyecto.archivosAdjuntos = archivosActualizados || [];
 
-        console.log('4. (update) proyecto.archivosAdjuntos:', $scope.proyecto.archivosAdjuntos);
+        console.log(
+          "4. (update) proyecto.archivosAdjuntos:",
+          $scope.proyecto.archivosAdjuntos
+        );
 
         //Usa el método $update de proyecto para enviar la petición PUT adecuada
         $scope.proyecto.$update(
@@ -872,9 +884,8 @@ angular.module("proyectos").controller("ProyectosController", [
             $scope.error = errorResponse.data.message;
           }
         );
-
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error("Error al actualizar:", error);
       }
     };
 

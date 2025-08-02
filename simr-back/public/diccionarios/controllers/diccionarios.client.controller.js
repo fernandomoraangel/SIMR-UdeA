@@ -9,7 +9,8 @@ angular.module("diccionarios").controller("DiccionariosController", [
   "Diccionarios",
   function ($scope, $routeParams, $location, Authentication, Diccionarios) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.idEstados = [];
     $scope.diccionarios = Diccionarios.query();
     //Preparar datos

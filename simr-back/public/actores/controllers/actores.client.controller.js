@@ -1,4 +1,4 @@
-// "use strict";
+"use strict";
 
 //Controller Actores
 angular.module("actores").controller("ActoresController", [
@@ -19,7 +19,8 @@ angular.module("actores").controller("ActoresController", [
     ArchivoService
   ) {
     //Exponer el servicio Authentication
-    $scope.authentication = Authentication;
+    // $scope.authentication = Authentication;
+    $scope.auth = Authentication.state;
     $scope.diccionarios = Diccionarios.query();
     $scope.coberturas = coberturas;
     $scope.lugares = lugares;
@@ -38,13 +39,12 @@ angular.module("actores").controller("ActoresController", [
     vm.eliminarArchivo = function (filename) {
       Archivos.deleteFile(filename)
         .then(function (data) {
-          console.log('Archivo eliminado:', data.message);
+          console.log("Archivo eliminado:", data.message);
         })
         .catch(function (error) {
-          console.error('No se pudo eliminar el archivo', error);
+          console.error("No se pudo eliminar el archivo", error);
         });
     };
-
 
     var control = 0;
     // Funciones auxiliares
@@ -136,7 +136,7 @@ angular.module("actores").controller("ActoresController", [
     };
     // Ver
     $scope.verContenedores = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + $scope.actorAux(x[i].id);
         //Poner coma al final
@@ -148,7 +148,7 @@ angular.module("actores").controller("ActoresController", [
     };
 
     $scope.verAnotacion = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y =
           y +
@@ -173,7 +173,7 @@ angular.module("actores").controller("ActoresController", [
     };
 
     $scope.verDescriptor = function (x) {
-      y = "";
+      let y = "";
       for (var i in x) {
         y = y + x[i].etiqueta + ": " + x[i].contenido;
         //Poner coma al final
@@ -337,9 +337,9 @@ angular.module("actores").controller("ActoresController", [
           for (var i in $scope.idAnotacionesCartograficoTemporales) {
             if (
               $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-              this.lugar ||
+                this.lugar ||
               $scope.idAnotacionesCartograficoTemporales[i].evento ===
-              this.evento
+                this.evento
               //TODO: Resolver comparación de fechas para usar &&
             ) {
               //Mensaje de error
@@ -431,9 +431,9 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -477,9 +477,9 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
           $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
           $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-          coberturaAmplitud &&
+            coberturaAmplitud &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-          fechaInicio &&
+            fechaInicio &&
           $scope.idAnotacionesCartograficoTemporales[i].fechaFin === fechaFin &&
           $scope.idAnotacionesCartograficoTemporales[i].evidencia === evidencia
         ) {
@@ -608,9 +608,9 @@ angular.module("actores").controller("ActoresController", [
     };
 
     //Menú enlaces
-    var angularAppOrigin = 'http://localhost:4200'; // Dominio de la app Angular
+    var angularAppOrigin = "http://localhost:4200"; // Dominio de la app Angular
     var angularWindowFileUpload;
-    var angularWindowFileList
+    var angularWindowFileList;
 
     /*
       filename,
@@ -623,12 +623,19 @@ angular.module("actores").controller("ActoresController", [
     // $scope.fileInfo;
 
     $scope.subirArchivo = function () {
-      console.log('Subir archivo (angularWindowFileUpload)', angularWindowFileUpload);
+      console.log(
+        "Subir archivo (angularWindowFileUpload)",
+        angularWindowFileUpload
+      );
       this.fileInfo = null;
       if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
         angularWindowFileUpload.focus();
       } else {
-        angularWindowFileUpload = window.open(angularAppOrigin + '/files/upload', 'AngularApp', 'width=563,height=365');
+        angularWindowFileUpload = window.open(
+          angularAppOrigin + "/files/upload",
+          "AngularApp",
+          "width=563,height=365"
+        );
       }
     };
 
@@ -639,10 +646,13 @@ angular.module("actores").controller("ActoresController", [
     $scope.sendMessageToAngular = function () {
       // const myMessage = {type: 'FILE_LIST', message: $scope.myMessageToAngular};
       if (angularWindowFileList && !angularWindowFileList.closed) {
-        console.log('Enviando mensaje de prueba a Angular:', $scope.myMessageToAngular);
-        $scope.sendMessage('FILE_LIST', $scope.myMessageToAngular);
+        console.log(
+          "Enviando mensaje de prueba a Angular:",
+          $scope.myMessageToAngular
+        );
+        $scope.sendMessage("FILE_LIST", $scope.myMessageToAngular);
       } else {
-        console.error('La ventana de Angular no está abierta');
+        console.error("La ventana de Angular no está abierta");
       }
     };
     // (Fin de Testing)
@@ -652,7 +662,11 @@ angular.module("actores").controller("ActoresController", [
       if (angularWindowFileList && !angularWindowFileList.closed) {
         angularWindowFileList.focus();
       } else {
-        angularWindowFileList = window.open(angularAppOrigin + '/files', 'AngularApp', '_blank');
+        angularWindowFileList = window.open(
+          angularAppOrigin + "/files",
+          "AngularApp",
+          "_blank"
+        );
         $scope.actorMessage = actorId;
       }
     };
@@ -702,7 +716,6 @@ angular.module("actores").controller("ActoresController", [
     // };
     // (Fin de Testing)
 
-
     // $scope.sendMessage = function () {
     //   // alert('Hola desde AngularJS');
     //   // Enviar mensaje a la aplicación Angular
@@ -715,44 +728,59 @@ angular.module("actores").controller("ActoresController", [
     //   iframe.contentWindow.postMessage('Hola desde AngularJS', angularAppOrigin);
     // };
 
+    window.addEventListener(
+      "message",
+      function (event) {
+        if (event.origin !== angularAppOrigin) return;
 
-    window.addEventListener('message', function (event) {
-      if (event.origin !== angularAppOrigin) return;
-
-      if (event.data.type === 'FILE_LIST' && event.data.status === 'READY') {
-        // Listado de Archivos
-        console.log('La aplicación Angular está lista para recibir mensajes');
-        console.log('Mensaje de Angular:', event);
-        console.log('Mensaje de Angular:', event.data);
-        $scope.sendMessage('FILE_LIST', $scope.actorMessage, 'actores');
-      } else if (event.data.type === 'FILE_UPLOAD') {
-        $scope.$apply(function () {
-          $scope.fileInfo = JSON.parse(event.data.message);
-          $scope.archivoAdd();
-        });
-      }
-    }, false);
+        if (event.data.type === "FILE_LIST" && event.data.status === "READY") {
+          // Listado de Archivos
+          console.log("La aplicación Angular está lista para recibir mensajes");
+          console.log("Mensaje de Angular:", event);
+          console.log("Mensaje de Angular:", event.data);
+          $scope.sendMessage("FILE_LIST", $scope.actorMessage, "actores");
+        } else if (event.data.type === "FILE_UPLOAD") {
+          $scope.$apply(function () {
+            $scope.fileInfo = JSON.parse(event.data.message);
+            $scope.archivoAdd();
+          });
+        }
+      },
+      false
+    );
 
     $scope.sendMessage = function (type, message, dbCollection) {
-      const messagePrepared = { type: type, message: message, dbCollection: dbCollection };
+      const messagePrepared = {
+        type: type,
+        message: message,
+        dbCollection: dbCollection,
+      };
       switch (type) {
-        case 'FILE_LIST':
+        case "FILE_LIST":
           if (angularWindowFileList && !angularWindowFileList.closed) {
-            console.log('Enviando mensaje a Angula(FILE_LIST):', messagePrepared);
-            angularWindowFileList.postMessage(messagePrepared, angularAppOrigin);
+            console.log(
+              "Enviando mensaje a Angula(FILE_LIST):",
+              messagePrepared
+            );
+            angularWindowFileList.postMessage(
+              messagePrepared,
+              angularAppOrigin
+            );
           }
           break;
-        case 'FILE_UPLOAD':
+        case "FILE_UPLOAD":
           if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
-            console.log('Enviando mensaje a Angular(FILE_UPLOAD):', message);
-            angularWindowFileUpload.postMessage(messagePrepared, angularAppOrigin);
+            console.log("Enviando mensaje a Angular(FILE_UPLOAD):", message);
+            angularWindowFileUpload.postMessage(
+              messagePrepared,
+              angularAppOrigin
+            );
           }
           break;
         default:
-          console.error('Tipo no reconocido:', type);
+          console.error("Tipo no reconocido:", type);
       }
-    }
-
+    };
 
     // // Escuchar mensajes de la aplicación Angular
     // window.addEventListener('message', function (event) {
@@ -774,8 +802,6 @@ angular.module("actores").controller("ActoresController", [
     //   //   $scope.archivoAdd();
     //   // });
 
-
-
     //   // var fileInfo = JSON.parse(event.data);
     //   // this.fileInfo = JSON.parse(event.data);
     //   // console.log('Información del archivo recibida:', this.fileInfo);
@@ -790,7 +816,6 @@ angular.module("actores").controller("ActoresController", [
     //     $scope.messageFromAngular = event.data;
     //   });
     // }, false);
-
 
     // $scope.archivoAdd = function () {
     //   if (this.fileInfo === undefined || this.fileInfo == null) {
@@ -846,7 +871,6 @@ angular.module("actores").controller("ActoresController", [
 
     // };
 
-
     $scope.enlaceAdd = function () {
       existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
@@ -897,7 +921,7 @@ angular.module("actores").controller("ActoresController", [
     };
 
     $scope.enlaceRemove = function (x) {
-      console.log('x', x);
+      console.log("x", x);
       for (var i in $scope.idEnlaces) {
         if ($scope.idEnlaces[i].etiqueta === x) {
           Swal.fire({
@@ -946,7 +970,9 @@ angular.module("actores").controller("ActoresController", [
 
     //Crear método controller para crear nuevas Actores
     $scope.create = function () {
-      const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+      const idArchivos = $scope.archivosCargados.map((archivo) => ({
+        _id: archivo.id,
+      }));
 
       // Revisa si los campos de enlace (etiqueta y url) contienen datos.
       // Si los tienen, los agrega al listado de enlaces
@@ -970,10 +996,10 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales,
         descriptores: $scope.idDescriptores,
         vinculoRelacionado: $scope.idEnlaces,
-        archivosAdjuntos: idArchivos
+        archivosAdjuntos: idArchivos,
       });
 
-      console.log('actor', actor);
+      console.log("actor", actor);
 
       //Usar el método '$save' de actor para enviar una petición POST apropiada
       actor.$save(
@@ -1034,9 +1060,13 @@ angular.module("actores").controller("ActoresController", [
           $scope.actor.vinculoRelacionado = $scope.idEnlaces;
         }
 
-        const archivosActualizados = await ArchivoService.actualizarListadoArchivos('actores', $scope.documentId, $scope.archivosCargados);
+        const archivosActualizados =
+          await ArchivoService.actualizarListadoArchivos(
+            "actores",
+            $scope.documentId,
+            $scope.archivosCargados
+          );
         $scope.actor.archivosAdjuntos = archivosActualizados || [];
-
 
         //Usa el método $update de actor para enviar la petición PUT adecuada
         $scope.actor.$update(
@@ -1061,7 +1091,7 @@ angular.module("actores").controller("ActoresController", [
           }
         );
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error("Error al actualizar:", error);
       }
     };
 
@@ -1124,14 +1154,13 @@ angular.module("actores").controller("ActoresController", [
     };
 
     // Limpiar el listener cuando se destruya el $scope
-    $scope.$on('$destroy', function () {
-      try{
-        window.removeEventListener('message', messageListener);
-        console.log('Listener de message removido');
+    $scope.$on("$destroy", function () {
+      try {
+        window.removeEventListener("message", messageListener);
+        console.log("Listener de message removido");
       } catch (error) {
-        console.error('Error al remover el listener de message:', error);
+        console.error("Error al remover el listener de message:", error);
       }
     });
-
   },
 ]);

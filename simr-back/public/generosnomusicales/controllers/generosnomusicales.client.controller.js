@@ -23,7 +23,8 @@ angular
       ArchivoService
     ) {
       //Exponer el servicio Authentication
-      $scope.authentication = Authentication;
+      // $scope.authentication = Authentication;
+      $scope.auth = Authentication.state;
       $scope.lugares = lugares;
       $scope.coberturas = coberturas;
       $scope.dEtiquetas = dEtiquetas;
@@ -42,7 +43,6 @@ angular
       $scope.generosNoMusicales = GenerosNoMusicales.query();
       $scope.archivosCargados = [];
       $scope.documentId = $routeParams.generoNoMusicalId;
-
 
       var control = 0;
       //Preparar datos
@@ -153,7 +153,7 @@ angular
       };
 
       $scope.verAlias = function (x) {
-        y = "";
+        let y = "";
         for (var i in x) {
           y = y + x[i].nombre;
           //Poner coma al final
@@ -165,7 +165,7 @@ angular
       };
 
       $scope.verGeneros = function (x) {
-        y = "";
+        let y = "";
         for (var i in x) {
           y = y + $scope.generoAux(x[i].id);
           //Poner coma al final
@@ -177,7 +177,7 @@ angular
       };
 
       $scope.verAnotacion = function (x) {
-        y = "";
+        let y = "";
         for (var i in x) {
           y =
             y +
@@ -204,7 +204,7 @@ angular
         window.open(url);
       };
       $scope.verDescriptor = function (x) {
-        y = "";
+        let y = "";
         for (var i in x) {
           y = y + x[i].etiqueta + ": " + x[i].contenido;
           //Poner coma al final
@@ -235,7 +235,7 @@ angular
       };
 
       $scope.verIdiomas = function (x) {
-        y = "";
+        let y = "";
         for (var i in x) {
           y = y + $scope.idiomasAux(x[i].id);
           //Poner coma al final
@@ -247,7 +247,7 @@ angular
       };
 
       $scope.verRecurso = function (x) {
-        y = "";
+        let y = "";
         for (var i in x) {
           y = $scope.recursoAux(x);
         }
@@ -696,9 +696,9 @@ angular
             for (var i in $scope.idAnotacionesCartograficoTemporales) {
               if (
                 $scope.idAnotacionesCartograficoTemporales[i].lugar ===
-                this.lugar ||
+                  this.lugar ||
                 $scope.idAnotacionesCartograficoTemporales[i].evento ===
-                this.evento
+                  this.evento
                 //TODO: Resolver comparación de fechas para usar &&
               ) {
                 //Mensaje de error
@@ -793,13 +793,13 @@ angular
             $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
             $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
             $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+              coberturaAmplitud &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+              fechaInicio &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaFin ===
-            fechaFin &&
+              fechaFin &&
             $scope.idAnotacionesCartograficoTemporales[i].evidencia ===
-            evidencia
+              evidencia
           ) {
             //Calcular precisión de las fechas
             precisionInicio =
@@ -842,13 +842,13 @@ angular
             $scope.idAnotacionesCartograficoTemporales[i].lugar === lugar &&
             $scope.idAnotacionesCartograficoTemporales[i].evento === evento &&
             $scope.idAnotacionesCartograficoTemporales[i].coberturaAmplitud ===
-            coberturaAmplitud &&
+              coberturaAmplitud &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaInicio ===
-            fechaInicio &&
+              fechaInicio &&
             $scope.idAnotacionesCartograficoTemporales[i].fechaFin ===
-            fechaFin &&
+              fechaFin &&
             $scope.idAnotacionesCartograficoTemporales[i].evidencia ===
-            evidencia
+              evidencia
           ) {
             precisionInicio =
               $scope.idAnotacionesCartograficoTemporales[i].precisionInicio;
@@ -1078,7 +1078,9 @@ angular
 
       //Crear método controller para crear nuevos géneros no musicales
       $scope.create = function () {
-        const idArchivos = $scope.archivosCargados.map(archivo => ({ _id: archivo.id }));
+        const idArchivos = $scope.archivosCargados.map((archivo) => ({
+          _id: archivo.id,
+        }));
 
         // Revisa si los campos de enlace (etiqueta y url) contienen datos.
         // Si los tienen, los agrega al listado de enlaces
@@ -1105,7 +1107,7 @@ angular
           idioma: $scope.idIdiomas,
           descriptorLibre: $scope.idDescriptores,
           vinculoRelacionado: $scope.idEnlaces,
-          archivosAdjuntos: idArchivos
+          archivosAdjuntos: idArchivos,
         });
 
         //Usar el método '$save' de genero no musical para enviar una petición POST apropiada
@@ -1150,7 +1152,6 @@ angular
       //Método controller para actualizar una única obra
       $scope.update = async function () {
         try {
-
           //Agregar vectores para que se actualicen, el  es porque si no se hace click en la carga, el vector queda vacío
           if ($scope.idAlias.length != 0) {
             $scope.generoNoMusical.alias = $scope.idAlias;
@@ -1186,7 +1187,12 @@ angular
             $scope.generoNoMusical.vinculoRelacionado = $scope.idEnlaces;
           }
 
-          const archivosActualizados = await ArchivoService.actualizarListadoArchivos('generosNoMusicales', $scope.documentId, $scope.archivosCargados);
+          const archivosActualizados =
+            await ArchivoService.actualizarListadoArchivos(
+              "generosNoMusicales",
+              $scope.documentId,
+              $scope.archivosCargados
+            );
           $scope.generoNoMusical.archivosAdjuntos = archivosActualizados || [];
 
           //Usa el método $update de obra para enviar la petición PUT adecuada
@@ -1199,7 +1205,9 @@ angular
                 icon: "success",
                 confirmButtonText: "Cerrar",
               });
-              $location.path("generosnomusicales/" + $scope.generoNoMusical._id);
+              $location.path(
+                "generosnomusicales/" + $scope.generoNoMusical._id
+              );
             },
             function (errorResponse) {
               Swal.fire({
@@ -1212,7 +1220,7 @@ angular
             }
           );
         } catch (error) {
-          console.error('Error al actualizar:', error);
+          console.error("Error al actualizar:", error);
         }
       };
 
