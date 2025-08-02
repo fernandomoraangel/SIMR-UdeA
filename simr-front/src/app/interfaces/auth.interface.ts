@@ -2,6 +2,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  fullName: string;
   //   roles: string[];
 }
 
@@ -39,7 +40,10 @@ export interface AuthVerifyResponse {
   success: boolean;
   message: string;
   data: {
-  user: User;
+    user: User;
+    tokenInfo?: {
+      expiresIn: number;
+    };
   };
 }
 
