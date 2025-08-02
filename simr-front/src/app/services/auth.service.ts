@@ -13,7 +13,14 @@ import {
   of,
   EMPTY,
 } from 'rxjs';
-import { tap, catchError, switchMap, map, shareReplay, filter } from 'rxjs/operators';
+import {
+  tap,
+  catchError,
+  switchMap,
+  map,
+  shareReplay,
+  filter,
+} from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
@@ -54,17 +61,13 @@ export class AuthService {
     map((state) => state.isAuthenticated)
   );
 
-  public user$ = this.authState$.pipe(
-    map((state) => state.user)
-  );
+  public user$ = this.authState$.pipe(map((state) => state.user));
 
   public isInitialized$ = this.authState$.pipe(
     map((state) => state.isInitialized)
   );
 
-  public isLoading$ = this.authState$.pipe(
-    map((state) => state.isLoading)
-  );
+  public isLoading$ = this.authState$.pipe(map((state) => state.isLoading));
 
   // Observable que emite solo cuando el servicio está inicializado
   public ready$ = this.authState$.pipe(
@@ -101,13 +104,13 @@ export class AuthService {
    */
   private async initializeAuth(): Promise<void> {
     console.log('🔄 Inicializando AuthService...');
-    
+
     this.updateAuthState({ isLoading: true });
 
     try {
       // Verificar si hay una sesión activa
       const response = await firstValueFrom(this.verifyAuthInternal());
-      
+
       if (response.success && response.data.user) {
         this.setAuthState(response.data.user);
         console.log('✅ Usuario autenticado:', response.data.user.username);
@@ -117,18 +120,18 @@ export class AuthService {
       }
     } catch (error) {
       console.log('⚠️ Error al verificar, intentando refresh...');
-      
+
       try {
         await firstValueFrom(this.refreshToken());
         console.log('✅ Sesión restaurada via refresh token');
       } catch (refreshError) {
         console.log('❌ No se pudo restaurar la sesión');
-          this.clearAuthState();
+        this.clearAuthState();
       }
     } finally {
-      this.updateAuthState({ 
-        isLoading: false, 
-        isInitialized: true 
+      this.updateAuthState({
+        isLoading: false,
+        isInitialized: true,
       });
       console.log('🎉 AuthService inicializado');
     }
@@ -144,7 +147,10 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          console.log('🔍 Verificación interna:', response.success ? '✅' : '❌');
+          console.log(
+            '🔍 Verificación interna:',
+            response.success ? '✅' : '❌'
+          );
         }),
         catchError(this.handleError)
       );
@@ -192,7 +198,11 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          if (response.success && response.data.user && response.data.tokenInfo) {
+          if (
+            response.success &&
+            response.data.user &&
+            response.data.tokenInfo
+          ) {
             this.setAuthState(response.data.user);
             this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
           }
@@ -210,7 +220,7 @@ export class AuthService {
    */
   login(username: string, password: string): Observable<LoginResponse> {
     this.updateAuthState({ isLoading: true });
-    
+
     return this.http
       .post<LoginResponse>(
         `${this.BASE_URL}/login`,
@@ -219,7 +229,11 @@ export class AuthService {
       )
       .pipe(
         tap((response) => {
-          if (response.success && response.data.user && response.data.tokenInfo) {
+          if (
+            response.success &&
+            response.data.user &&
+            response.data.tokenInfo
+          ) {
             this.setAuthState(response.data.user);
             console.log(
               '(auth.service.ts) Expiration in seconds:',
@@ -241,7 +255,7 @@ export class AuthService {
    */
   logout(): Observable<any> {
     this.updateAuthState({ isLoading: true });
-    
+
     return this.http
       .post(`${this.BASE_URL}/logout`, {}, { withCredentials: true })
       .pipe(
@@ -327,11 +341,14 @@ export class AuthService {
     this.clearRefreshTimer();
 
     const refreshBeforeInSeconds = 2 * 60; // 2 minutos antes de expirar
-    const refreshTime = Math.max(0, (expiresIn - refreshBeforeInSeconds) * 1000);
+    const refreshTime = Math.max(
+      0,
+      (expiresIn - refreshBeforeInSeconds) * 1000
+    );
 
     if (refreshTime > 0) {
       console.log(`🔄 Programando refresh en ${refreshTime / 1000} segundos`);
-      
+
       this.refreshTimer = timer(refreshTime)
         .pipe(
           switchMap(() => this.refreshToken()),
@@ -366,7 +383,7 @@ export class AuthService {
 
   redirectToLegacyApp(): void {
     if (this.isAuthenticated()) {
-      window.location.href = `${this.BASE_URL}/redirect-to-legacy`;
+      window.location.href = this.BASE_URL;
     }
   }
 
@@ -422,8 +439,14 @@ export class AuthService {
       .get<User[]>(`http://localhost:3000/api/users`, {
         withCredentials: true,
       })
-      .pipe(
-        catchError(this.handleError.bind(this))
-      );
+      .pipe(catchError(this.handleError.bind(this)));
+  }
+
+  testGetAllActores(): Observable<[]> {
+    return this.http
+      .get<[]>('http://localhost:3000/api/actores', {
+        withCredentials: true,
+      })
+      .pipe(catchError(this.handleError.bind(this)));
   }
 }
