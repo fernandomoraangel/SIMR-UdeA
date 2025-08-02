@@ -8,10 +8,11 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.css'
+  styleUrl: './signup.component.css',
 })
 export class SignupComponent implements OnInit {
   signupForm: FormGroup;
+  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -23,28 +24,36 @@ export class SignupComponent implements OnInit {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   onSubmit(): void {
-    if (this.signupForm.valid) {
-      console.log("signupForm Values:", this.signupForm.value);
-      // Aquí puedes agregar la lógica para enviar los datos al servidor
-      const newUser: SignupCredentials = this.signupForm.value;
-      // newUser.provider = 'local'; // o cualquier valor predeterminado
-      // this.authService.signup(newUser).subscribe({
-      this.authService.signup(newUser).subscribe({
-        next: response => {
-          // console.log('Registration successful', response);
-          this.router.navigate(['/mi-ruta-2']);
-        },
-        error: error => {
-          console.error('Error during registration', error);
-        }
-      });
+    if (this.signupForm.invalid) {
+      return;
     }
+
+    this.isLoading = true;
+    console.log('signupForm Values:', this.signupForm.value);
+    // Aquí puedes agregar la lógica para enviar los datos al servidor
+    const newUser: SignupCredentials = this.signupForm.value;
+    // newUser.provider = 'local'; // o cualquier valor predeterminado
+    // this.authService.signup(newUser).subscribe({
+    this.authService.signup(newUser).subscribe({
+      next: (response) => {
+        // console.log('Registration successful', response);
+        // Creación de cuenta exitosa
+        console.log('Creación de cuenta exitosa', response);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        console.error('Error during registration', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
 }
