@@ -6,10 +6,10 @@ import { ActorEditComponent } from './components/actor-edit/actor-edit.component
 import { ActorListComponent } from './components/actor-list/actor-list.component';
 
 const routes: Routes = [
-  { path: 'actores', component: ActorListComponent },
-  { path: 'actores/create', component: ActorCreateComponent },
-  { path: 'actores/:id', component: ActorDetailComponent },
-  { path: 'actores/edit/:id', component: ActorEditComponent }
+  { path: '', component: ActorListComponent },
+  { path: 'create', component: ActorCreateComponent },
+  { path: ':id', component: ActorDetailComponent },
+  { path: 'edit/:id', component: ActorEditComponent }
 ];
 
 @NgModule({
