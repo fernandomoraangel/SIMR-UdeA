@@ -8,18 +8,19 @@
 <div *ngIf="!(isLoading$ | async)" class="dashboard-container">
   <header class="dashboard-header">
     <h1>Dashboard</h1>
-    
+
     <!-- Información del usuario usando observable -->
     <div *ngIf="user$ | async as user" class="user-info">
       <div class="user-details">
-        <span class="username">{{ user.username }}</span>
+        <span class="username">{{ user.fullName }}</span>
         <!-- <span class="user-role" *ngIf="user.role">{{ user.role }}</span> -->
       </div>
-      <button 
-        (click)="logout()" 
+      <button
+        (click)="logout()"
         class="logout-btn"
-        [disabled]="isLoading$ | async">
-        {{ (isLoading$ | async) ? 'Cerrando...' : 'Cerrar Sesión' }}
+        [disabled]="isLoading$ | async"
+      >
+        {{ (isLoading$ | async) ? "Cerrando..." : "Cerrar Sesión" }}
       </button>
     </div>
   </header>
@@ -33,29 +34,49 @@
 
     <!-- Acciones principales -->
     <div class="actions">
-      <button 
+      <!-- <button 
         (click)="redirectToAngularJS()" 
         class="btn btn-primary"
         [disabled]="!(isAuthenticated$ | async)">
         <i class="icon-arrow-right"></i>
         Ir a AngularJS
-      </button>
-      
-      <button 
-        (click)="redirectToLegacyApp()" 
+      </button> -->
+
+      <button
+        (click)="redirectToAngularJS()"
         class="btn btn-secondary"
-        [disabled]="!(isAuthenticated$ | async)">
+        [disabled]="!(isAuthenticated$ | async)"
+      >
         <i class="icon-external-link"></i>
-        Ir a Legacy App
+        Ir a AngularJS
       </button>
-      
-      <button 
-        (click)="loadProtectedData()" 
-        class="btn btn-info" 
-        [disabled]="loadingData || !(isAuthenticated$ | async)">
+
+      <!-- <button
+        (click)="loadProtectedData()"
+        class="btn btn-info"
+        [disabled]="loadingData || !(isAuthenticated$ | async)"
+      >
         <i class="icon-download" *ngIf="!loadingData"></i>
         <div class="mini-spinner" *ngIf="loadingData"></div>
-        {{ loadingData ? 'Cargando...' : 'Cargar Datos' }}
+        {{ loadingData ? "Cargando..." : "Listado de Usuarios" }}
+      </button> -->
+
+      <button
+        (click)="loadActores()"
+        class="btn btn-info"
+        [disabled]="loadingData || !(isAuthenticated$ | async)"
+      >
+        <i class="icon-download" *ngIf="!loadingData"></i>
+        <div class="mini-spinner" *ngIf="loadingData"></div>
+        {{ loadingData ? "Cargando..." : "Listado de Actores" }}
+      </button>
+
+      <button (click)="testRefreshToken()" class="redirect-btn">
+        Refresh Token
+      </button>
+
+      <button (click)="testVerifyToken()" class="redirect-btn">
+        Verify Token
       </button>
     </div>
 
@@ -75,18 +96,42 @@
           <div class="stat-label">Usuarios</div>
         </div>
       </div>
-      
+
       <details class="data-details">
         <summary>Ver datos completos</summary>
         <pre class="data-json">{{ protectedData | json }}</pre>
       </details>
     </div>
 
+    <!-- Lista de actores -->
+    <div *ngIf="listaActores" class="lista-actores">
+      <h3>Lista de Actores</h3>
+      <!-- <table class="table"> -->
+      <table class="table-auto w-full">
+        <thead>
+          <tr>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="even:bg-gray-100 odd:bg-white"
+            *ngFor="let actor of listaActores.actores"
+          >
+            <td>{{ actor.nombres }}</td>
+            <td>{{ actor.apellidos }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- Estado vacío -->
-    <div *ngIf="!protectedData && !loadingData" class="empty-state">
+    <!-- <div *ngIf="!listaActores || !protectedData && !loadingData" class="empty-state"> -->
+    <div *ngIf="!listaActores" class="empty-state">
       <div class="empty-icon">📊</div>
       <h3>¡Bienvenido al Dashboard!</h3>
-      <p>Haz clic en "Cargar Datos" para ver información protegida.</p>
+      <p>Haz clic en las diferentes acciones para interactuar con la aplicación.</p>
     </div>
   </main>
 </div>

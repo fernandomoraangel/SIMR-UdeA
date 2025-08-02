@@ -1,20 +1,34 @@
 <!-- <h1>Home works!!!</h1> -->
+<div class="home-container">
+  <!-- <a href="/login/" target="_blank">Iniciar Sesión</a> -->
+  <a href="/login/">Iniciar Sesión</a>
+  <br />
+  <a href="/signup/">Registrarse</a>
+  <br />
+  <a href="/dashboard/">Dashboard</a>
+  <br />
+  <a href="http://localhost:3000">AngularJS</a>
+  <br />
+  <br />
+  <a href="#" (click)="logout(); $event.preventDefault()">Cerrar sesión</a>
 
-<a href="/actores/" target="_blank">Actores</a>
-<br>
-<!-- <a href="/login/" target="_blank">Iniciar Sesión</a> -->
-<a href="/login/">Iniciar Sesión</a>
-<br>
-<a href="/dashboard/">Dashboard</a>
-<br>
-<a href="http://localhost:3000">AngularJS</a>
-<br>
-<br>
+  <!-- <div class="vertical-container">
+    <button
+      (click)="redirectToAngularJS()"
+      class="redirect-btn vertical-element"
+    >
+      Ir a Aplicación AngularJS
+    </button>
+    <button (click)="testRefreshToken()" class="redirect-btn vertical-element">
+      Refresh Token
+    </button>
+    <button (click)="testVerifyToken()" class="redirect-btn vertical-element">
+      Verify Token
+    </button>
+    <button (click)="logout()" class="redirect-btn">Logout</button>
+  </div> -->
 
-<a href="#" (click)="logout(); $event.preventDefault()">Cerrar sesión</a>
-
-<!-- <button (click)="logout()">Cerrar sesión</button> -->
-
+</div>
 
 
 <!-- <iframe
