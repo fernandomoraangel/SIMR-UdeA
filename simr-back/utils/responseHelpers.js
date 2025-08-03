@@ -1,7 +1,7 @@
 // Respuesta exitosa genérica
 function successResponse(
   res,
-  message = "Operación exitosa",
+  message = 'Operación exitosa',
   statusCode = 200,
   data = {}
 ) {
@@ -15,7 +15,7 @@ function successResponse(
 // Respuesta de error genérica
 function errorResponse(
   res,
-  message = "Error interno del servidor",
+  message = 'Error interno del servidor',
   statusCode = 500,
   data = {}
 ) {

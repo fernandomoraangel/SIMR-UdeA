@@ -1,6 +1,6 @@
 //! Revisar si es necesario este archivo
 // const passport = require('../config/passport');
-const passport = require("passport");
+const passport = require('passport');
 
 //* Middleware para rutas protegidas
 const requireAuth = (req, res, next) => {
@@ -31,7 +31,6 @@ const requireAuth = (req, res, next) => {
 //   })(req, res, next);
 // };
 
-
 //* Middleware para verificar roles
 const requireRole = (roles) => {
   return (req, res, next) => {
@@ -40,7 +39,7 @@ const requireRole = (roles) => {
     }
 
     const userRoles = req.user.roles || [];
-    const hasRole = roles.some(role => userRoles.includes(role));
+    const hasRole = roles.some((role) => userRoles.includes(role));
 
     if (!hasRole) {
       return res.status(403).json({ message: 'Permisos insuficientes' });

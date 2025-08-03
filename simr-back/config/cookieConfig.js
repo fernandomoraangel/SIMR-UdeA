@@ -1,13 +1,14 @@
 // Constantes de configuración
 const COOKIE_ACCESS_MAX_AGE = parseInt(process.env.JWT_EXPIRATION) * 1000; // Convertir a milisegundos
-const COOKIE_REFRESH_MAX_AGE = parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
+const COOKIE_REFRESH_MAX_AGE =
+  parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
 
 // Configuración base de cookies seguras
 const baseCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // HTTPS en producción
   sameSite: 'lax', // Permite cookies entre subdominios. (Usar 'strict' si no se necesita compartir cookies entre subdominios)
-  path: '/' // Disponible en toda la app  
+  path: '/', // Disponible en toda la app
 };
 
 // Configuración de cookies para autenticación
@@ -15,7 +16,7 @@ const cookieConfig = {
   // Configuración específica para access tokens
   accessToken: {
     ...baseCookieOptions,
-    maxAge: COOKIE_ACCESS_MAX_AGE
+    maxAge: COOKIE_ACCESS_MAX_AGE,
   },
 
   // Configuración específica para refresh tokens
@@ -27,7 +28,7 @@ const cookieConfig = {
   clear: {
     ...baseCookieOptions,
     // domain: '.midominio.com' // Limpiar en todos los subdominios
-  }
+  },
 };
 
 // Funciones helper para manejar cookies
@@ -77,10 +78,10 @@ const cookieHelpers = {
       console.error(`Error configurando cookie ${name}:`, error);
       return false;
     }
-  }
+  },
 };
 
 module.exports = {
   cookieConfig,
-  cookieHelpers
+  cookieHelpers,
 };

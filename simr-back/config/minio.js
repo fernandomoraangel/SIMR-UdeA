@@ -24,7 +24,7 @@ const GeneroNoMusical = require('../app/models/generonomusical.server.model');
 
 // Previsualization
 const mime = require('mime-types');
-const rangeParser = require('range-parser'); // Para streaming de video y audio 
+const rangeParser = require('range-parser'); // Para streaming de video y audio
 // (fin previsualization)
 
 // Configurar cliente MinIO
@@ -33,7 +33,7 @@ const minioClient = new minio.Client({
   port: parseInt(process.env.MINIO_PORT),
   useSSL: process.env.MINIO_USE_SSL === 'true',
   accessKey: process.env.MINIO_ACCESS_KEY,
-  secretKey: process.env.MINIO_SECRET_KEY
+  secretKey: process.env.MINIO_SECRET_KEY,
 });
 
 const myBucketName = process.env.MINIO_BUCKET_NAME;
@@ -57,7 +57,6 @@ const client = new MongoClient(mongoUrl);
 const fileCollectionName = 'archivos';
 const filesProperty = 'archivosAdjuntos';
 
-
 // Función para inicializar el bucket
 const initializeBucket = async () => {
   const exists = await minioClient.bucketExists(myBucketName);
@@ -68,7 +67,6 @@ const initializeBucket = async () => {
     console.log('Bucket ' + myBucketName + ' already exists');
   }
 };
-
 
 // ### RUTAS ###
 
@@ -149,11 +147,10 @@ router.get('/document-files', async (req, res) => {
                 name: myFile.minioObjectName,
                 size: myFile.size,
                 lastModified: myFile.uploadDate,
-                id: myFile._id
-              }
+                id: myFile._id,
+              };
 
               documentFiles.push(myFileProcessed);
-
             } catch (error) {
               console.error(`Error processing file with id ${fileId}:`, error);
               // Decide si quieres continuar con el siguiente archivo o lanzar el error
@@ -165,7 +162,9 @@ router.get('/document-files', async (req, res) => {
           return res.json(documentFiles);
         }
       } else {
-        return res.status(404).json({ message: 'Property not found in document' });
+        return res
+          .status(404)
+          .json({ message: 'Property not found in document' });
       }
     } else {
       return res.status(404).json({ message: 'Document not found' });
@@ -179,7 +178,6 @@ router.get('/document-files', async (req, res) => {
   }
 });
 // *** (Fin de OBTENER LISTADO DE ARCHIVOS DE UNA COLECCION) ***
-
 
 // *** SUBIR ARCHIVOS ***
 // Ruta para subir archivos
@@ -209,7 +207,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       mimetype: req.file.mimetype,
       size: req.file.size,
       uploadDate: new Date().toISOString(),
-      minioObjectName: objectName
+      minioObjectName: objectName,
     };
 
     const result = await Archivo.create(fileData);
@@ -221,7 +219,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     res.status(200).json({
       message: 'Archivo subido con éxito',
       fileData: fileData,
-      documentId: documentId
+      documentId: documentId,
     });
   } catch (err) {
     console.error(err);
@@ -242,7 +240,7 @@ router.get('/files', async (req, res) => {
     files.push({
       name: obj.name,
       size: obj.size,
-      lastModified: obj.lastModified
+      lastModified: obj.lastModified,
     });
   });
 
@@ -263,7 +261,10 @@ router.get('/download/:filename', async (req, res) => {
 
   try {
     const fileStream = await minioClient.getObject(myBucketName, objectName);
-    res.setHeader('Content-Disposition', `attachment; filename="${objectName}"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${objectName}"`
+    );
     fileStream.pipe(res);
   } catch (err) {
     console.error(err);
@@ -274,7 +275,7 @@ router.get('/download/:filename', async (req, res) => {
 // *** ELIMINAR ARCHIVO ***
 // Ruta para eliminar un archivo
 router.delete('/:fileName', async (req, res) => {
-  console.log("Entering Delete!!!");
+  console.log('Entering Delete!!!');
   try {
     console.log('entrando a delete');
     console.log('req.params:', req.params);
@@ -282,7 +283,9 @@ router.delete('/:fileName', async (req, res) => {
     console.log('\n\n');
 
     if (!req.params.fileName) {
-      return res.status(400).json({ message: 'Se requiere un nombre de archivo' });
+      return res
+        .status(400)
+        .json({ message: 'Se requiere un nombre de archivo' });
     }
 
     const objectName = req.params.fileName;
@@ -315,35 +318,49 @@ router.delete('/:fileName', async (req, res) => {
           console.log('\ncollection:', collectionInfo);
 
           if (filesProperty in collectionInfo) {
-            console.log('\n\ncollection has filesProperty:', collectionInfo.name);
+            console.log(
+              '\n\ncollection has filesProperty:',
+              collectionInfo.name
+            );
           }
 
           // Actualizar documentos que tengan el archivo en "archivosAdjuntos"
           try {
-            const documentosConArchivo = await collection.find({ archivosAdjuntos: fileObjectId }).toArray();
-            console.log(`Documentos con el archivo en la colección ${collectionInfo.name}:`, documentosConArchivo);
+            const documentosConArchivo = await collection
+              .find({ archivosAdjuntos: fileObjectId })
+              .toArray();
+            console.log(
+              `Documentos con el archivo en la colección ${collectionInfo.name}:`,
+              documentosConArchivo
+            );
 
             const result = await collection.updateMany(
-              { archivosAdjuntos: { $elemMatch: { _id: fileObjectId } } },  // Usar $elemMatch para encontrar el archivo en el array
-              { $pull: { archivosAdjuntos: { _id: fileObjectId } } }  // Usar $pull con el objeto completo a eliminar
+              { archivosAdjuntos: { $elemMatch: { _id: fileObjectId } } }, // Usar $elemMatch para encontrar el archivo en el array
+              { $pull: { archivosAdjuntos: { _id: fileObjectId } } } // Usar $pull con el objeto completo a eliminar
             );
 
             console.log('result.modifiedCount:', result.modifiedCount);
             if (result.modifiedCount > 0) {
-              console.log(`Referencias al archivo eliminadas en la colección ${collectionInfo.name}`);
+              console.log(
+                `Referencias al archivo eliminadas en la colección ${collectionInfo.name}`
+              );
             }
           } catch (error) {
-            console.error(`Error al actualizar la colección ${collectionInfo.name}:`, error);
+            console.error(
+              `Error al actualizar la colección ${collectionInfo.name}:`,
+              error
+            );
           }
         }
       }
     }
 
     res.status(200).json({ message: 'Archivo eliminado con éxito' });
-
   } catch (error) {
     console.error('Error al eliminar el archivo y sus referencias:', error);
-    res.status(500).json({ message: 'Error al eliminar el archivo y sus referencias' });
+    res
+      .status(500)
+      .json({ message: 'Error al eliminar el archivo y sus referencias' });
     throw error;
   } finally {
     if (clientConnection) await clientConnection.close();
@@ -359,7 +376,9 @@ router.post('/delete-multiple', async (req, res) => {
     console.log('req.body:', req.body);
 
     if (!req.body.files || !Array.isArray(req.body.files)) {
-      return res.status(400).json({ message: 'Se requiere un array de información de archivos' });
+      return res
+        .status(400)
+        .json({ message: 'Se requiere un array de información de archivos' });
     }
 
     const files = req.body.files;
@@ -400,10 +419,15 @@ router.post('/delete-multiple', async (req, res) => {
                 );
 
                 if (result.modifiedCount > 0) {
-                  console.log(`Referencias al archivo ${fileName} eliminadas en la colección ${collectionInfo.name}`);
+                  console.log(
+                    `Referencias al archivo ${fileName} eliminadas en la colección ${collectionInfo.name}`
+                  );
                 }
               } catch (error) {
-                console.error(`Error al actualizar referencias en la colección ${collectionInfo.name}:`, error);
+                console.error(
+                  `Error al actualizar referencias en la colección ${collectionInfo.name}:`,
+                  error
+                );
               }
             }
           }
@@ -412,15 +436,14 @@ router.post('/delete-multiple', async (req, res) => {
         deletionResults.push({
           fileName,
           success: true,
-          message: 'Archivo eliminado con éxito'
+          message: 'Archivo eliminado con éxito',
         });
-
       } catch (error) {
         hasErrors = true;
         deletionResults.push({
           fileName: file.fileName,
           success: false,
-          message: error.message || 'Error al eliminar el archivo'
+          message: error.message || 'Error al eliminar el archivo',
         });
       }
     }
@@ -429,20 +452,19 @@ router.post('/delete-multiple', async (req, res) => {
     if (hasErrors) {
       res.status(207).json({
         message: 'Algunos archivos no pudieron ser eliminados',
-        results: deletionResults
+        results: deletionResults,
       });
     } else {
       res.status(200).json({
         message: 'Todos los archivos fueron eliminados con éxito',
-        results: deletionResults
+        results: deletionResults,
       });
     }
-
   } catch (error) {
     console.error('Error general en la eliminación múltiple:', error);
     res.status(500).json({
       message: 'Error en el servidor al procesar la eliminación múltiple',
-      error: error.message
+      error: error.message,
     });
   } finally {
     if (clientConnection) {
@@ -450,7 +472,6 @@ router.post('/delete-multiple', async (req, res) => {
     }
   }
 });
-
 
 // *** PREVISUALIZACION ***
 // Ruta para previsualizar archivos
@@ -473,12 +494,17 @@ router.get('/view/:filename', async (req, res) => {
 
       if (parts && parts.type === 'bytes' && parts.length === 1) {
         const [{ start, end }] = parts;
-        const chunksize = (end - start) + 1;
+        const chunksize = end - start + 1;
         res.setHeader('Content-Range', `bytes ${start}-${end}/${fileSize}`);
         res.setHeader('Content-Length', chunksize);
         res.status(206); // Partial Content
 
-        const stream = await minioClient.getPartialObject(myBucketName, objectName, start, end - start + 1);
+        const stream = await minioClient.getPartialObject(
+          myBucketName,
+          objectName,
+          start,
+          end - start + 1
+        );
         stream.pipe(res);
       } else {
         res.status(416).send('Range Not Satisfiable');
@@ -496,8 +522,7 @@ router.get('/view/:filename', async (req, res) => {
 
 // ###(Fin de RUTAS)###
 
-
 module.exports = {
   router,
-  initializeBucket
+  initializeBucket,
 };

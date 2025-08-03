@@ -1,17 +1,17 @@
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const generateTokens = (userId) => {
   const jti = crypto.randomUUID();
 
   const accessToken = jwt.sign(
-    { id: userId, type: "access" },
+    { id: userId, type: 'access' },
     process.env.JWT_SECRET,
     { expiresIn: Number(process.env.JWT_EXPIRATION) }
   );
 
   const refreshToken = jwt.sign(
-    { id: userId, type: "refresh", jti },
+    { id: userId, type: 'refresh', jti },
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: Number(process.env.JWT_REFRESH_EXPIRATION) }
   );
@@ -52,7 +52,7 @@ const getTokenExpirationInSeconds = (token) => {
   try {
     const decoded = jwt.decode(token);
     console.log(
-      "(getTokenExpirationInSeconds) Expiration in seconds for token: ",
+      '(getTokenExpirationInSeconds) Expiration in seconds for token: ',
       decoded.exp
     );
 
