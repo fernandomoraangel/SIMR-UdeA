@@ -13,7 +13,6 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const crypto = require('crypto');
 
-
 // Función para inicializar la aplicación express
 module.exports = function () {
   //* Instanciar la aplicación
@@ -36,20 +35,15 @@ module.exports = function () {
         scriptSrc: [
           "'self'",
           `'nonce-${res.locals.nonce}'`,
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+          'https://cdn.jsdelivr.net/npm/sweetalert2@11',
         ],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "https://fonts.googleapis.com",
-        ],
-        imgSrc: ["'self'", "data:"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        imgSrc: ["'self'", 'data:'],
         frameAncestors: ["'self'"],
-        upgradeInsecureRequests: []
-      }
+        upgradeInsecureRequests: [],
+      },
     })(req, res, next); // Llama al middleware generado por helmet
   });
-
 
   // Desactivar Helmet CSP si es necesario
   // app.use(helmet({
@@ -65,7 +59,6 @@ module.exports = function () {
   // 	extended: true
   // }));
   // app.use(bodyParser.json());
-
 
   // Configuración de cookies seguras
   // const cookieOptions = {
@@ -87,14 +80,21 @@ module.exports = function () {
   // });
 
   //* CORS con soporte para cookies
-  app.use(cors({
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://tudominio.com', 'https://www.tudominio.com']
-      : ['http://localhost:4200', 'http://localhost:3000', 'http://localhost'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-  }));
+  app.use(
+    cors({
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? ['https://tudominio.com', 'https://www.tudominio.com']
+          : [
+              'http://localhost:4200',
+              'http://localhost:3000',
+              'http://localhost',
+            ],
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    })
+  );
 
   // Usando el middleware CORS de Express (funcionando)
   // app.use(cors({
@@ -103,7 +103,6 @@ module.exports = function () {
   // 	allowedHeaders: ['Content-Type', 'Authorization'], // Especifica los encabezados permitidos
   // 	credentials: true // Permitir envío de cookies y credenciales si es necesario
   // }));
-
 
   // app.use(cors({
   // 	origin: 'http://localhost:4200',  // Permitir solicitudes solo desde http://localhost:4200
@@ -114,15 +113,14 @@ module.exports = function () {
 
   // ===================================================
 
-
   //! Revisar si es necesario este código
   if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
   } else if (process.env.NODE_ENV === 'production') {
     // Para subir a Heroku
-    require('dotenv').config()
-    const DB_URI = process.env.DB_URI
-    const PORT = process.env.PORT
+    require('dotenv').config();
+    const DB_URI = process.env.DB_URI;
+    const PORT = process.env.PORT;
     app.use(compress());
   }
 
@@ -130,7 +128,7 @@ module.exports = function () {
 
   // Configurar el middleware para manejo de sesiones, añade un objeto session a todos los objetos request
 
-  // Almacenar la sesión en MongoDB 
+  // Almacenar la sesión en MongoDB
   // const MongoStore = require('connect-mongo');
   // app.use(session({
   // 	secret: 'mi_clave_secreta',
@@ -167,7 +165,6 @@ module.exports = function () {
 
   //* end of (working 2025-06-08)
 
-
   // app.use(session({
   // 	secret: config.sessionSecret, // Reemplaza con una clave secreta segura
   // 	resave: true,
@@ -192,7 +189,6 @@ module.exports = function () {
   // 	}
   // }));
 
-
   //* Middleware para debug de autenticación
   // app.use((req, res, next) => {
   //   console.log('Auth Debug:', {
@@ -213,7 +209,6 @@ module.exports = function () {
   //   require('./middleware/auth').authenticate,
   //   require('./middleware/auth').requireRole(['admin'])
   // ], require('./routes/admin'));
-
 
   //* Configurar el directorio views
   app.set('views', './app/views');
@@ -255,7 +250,6 @@ module.exports = function () {
   //     }
   //   });
   // });
-
 
   // * Archivos de enrutamiento
   require('../app/routes/index.server.routes.js')(app);
