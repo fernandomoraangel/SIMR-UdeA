@@ -1,6 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@env/*": ["environments/*"]
+    },
     "outDir": "./dist/out-tsc/app",
     "target": "ES2022",
     "module": "ES2022",
@@ -22,11 +26,6 @@
   "angularCompilerOptions": {
     "strictTemplates": true
   },
-  "exclude": [
-    "src/test.ts",
-    "src/**/*.spec.ts"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "exclude": ["src/test.ts", "src/**/*.spec.ts"],
+  "include": ["src/**/*.ts"]
 }
