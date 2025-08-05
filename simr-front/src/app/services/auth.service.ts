@@ -23,7 +23,8 @@ import {
 } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-import { environment } from '../../environments/environment';
+// import { environment } from '../../environments/environment';
+import { environment } from '@env/environment';
 import {
   User,
   LoginResponse,
@@ -43,7 +44,7 @@ export interface AuthStateExtended extends AuthState {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly BASE_URL = `${environment.base_url}/api/auth`;
+  private readonly API_URL = `${environment.apiUrl}/auth`;
 
   // Estado extendido con información de inicialización
   private authStateSubject = new BehaviorSubject<AuthStateExtended>({
@@ -142,7 +143,7 @@ export class AuthService {
    */
   private verifyAuthInternal(): Observable<AuthVerifyResponse> {
     return this.http
-      .get<AuthVerifyResponse>(`${this.BASE_URL}/verify`, {
+      .get<AuthVerifyResponse>(`${this.API_URL}/verify`, {
         withCredentials: true,
       })
       .pipe(
@@ -193,7 +194,7 @@ export class AuthService {
     this.updateAuthState({ isLoading: true });
 
     return this.http
-      .post<SignupResponse>(`${this.BASE_URL}/signup`, credentials, {
+      .post<SignupResponse>(`${this.API_URL}/signup`, credentials, {
         withCredentials: true,
       })
       .pipe(
@@ -223,7 +224,7 @@ export class AuthService {
 
     return this.http
       .post<LoginResponse>(
-        `${this.BASE_URL}/login`,
+        `${this.API_URL}/login`,
         { username, password },
         { withCredentials: true }
       )
@@ -257,7 +258,7 @@ export class AuthService {
     this.updateAuthState({ isLoading: true });
 
     return this.http
-      .post(`${this.BASE_URL}/logout`, {}, { withCredentials: true })
+      .post(`${this.API_URL}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
           this.clearAuthState();
@@ -280,7 +281,7 @@ export class AuthService {
   refreshToken(): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(
-        `${this.BASE_URL}/refresh`,
+        `${this.API_URL}/refresh`,
         {},
         { withCredentials: true }
       )
@@ -383,7 +384,7 @@ export class AuthService {
 
   redirectToLegacyApp(): void {
     if (this.isAuthenticated()) {
-      window.location.href = this.BASE_URL;
+      window.location.href = this.API_URL;
     }
   }
 

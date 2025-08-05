@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Actor } from '../../../models/actor.model'; // Define your Actor model
 import { ErrorHandlerService } from '../../../services/error-handler.service'; // Implement error handling
+import { environment } from '@env/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActorService {
-  private apiUrl = 'http://localhost:3000/api/actores';
+  private readonly API_URL = `${environment.apiUrl}/actores`;
 
   constructor(
     private http: HttpClient,
@@ -18,7 +19,7 @@ export class ActorService {
 
   // Get all actors
   getActores(): Observable<Actor[]> {
-    return this.http.get<Actor[]>(this.apiUrl)
+    return this.http.get<Actor[]>(this.API_URL)
       .pipe(
         catchError(this.errorHandler.handleError)
       );
@@ -26,7 +27,7 @@ export class ActorService {
 
   // Get actor by ID
   getActorById(id: string): Observable<Actor> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.API_URL}/${id}`;
     return this.http.get<Actor>(url)
       .pipe(
         // catchError(handleError<Actor>(`getActor id=${id}`))
@@ -37,7 +38,7 @@ export class ActorService {
   // Create a new actor
   addActor(actor: Actor): Observable<Actor> {
     actor.creado = new Date(); // Asignar la fecha actual
-    return this.http.post<Actor>(this.apiUrl, actor, {
+    return this.http.post<Actor>(this.API_URL, actor, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
@@ -49,7 +50,7 @@ export class ActorService {
 
   // Update an existing actor
   updateActor(id: string, actor: Actor): Observable<any> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.API_URL}/${id}`;
     return this.http.put(url, actor)
       .pipe(
         // catchError(handleError<any>('updateActor'))
@@ -59,7 +60,7 @@ export class ActorService {
 
   // Delete an actor
   deleteActor(id: string): Observable<Actor> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.API_URL}/${id}`;
     return this.http.delete<Actor>(url)
       .pipe(
         // catchError(handleError<Actor>('deleteActor'))

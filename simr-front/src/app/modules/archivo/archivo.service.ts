@@ -1,28 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  HttpEvent,
+  HttpEventType,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import { FileBasicInfo, FileDeleteInfo, FileDocumentInfo } from './archivo.module';
-
+import {
+  FileBasicInfo,
+  FileDeleteInfo,
+  FileDocumentInfo,
+} from './archivo.module';
+import { environment } from '@env/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ArchivoService {
-  // private apiUrl = 'http://localhost:3000';
-  private apiUrl = 'http://localhost:3000/files';
+  private readonly API_URL = `${environment.apiUrl}/files`;
   private fileChangedSource = new Subject<void>();
 
   fileChanged$ = this.fileChangedSource.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getDocumentFiles(collection: string, documentId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/document-files`, {
+    return this.http.get<any[]>(`${this.API_URL}/document-files`, {
       params: {
         collection: collection,
-        documentId: documentId
-      }
+        documentId: documentId,
+      },
     });
   }
 
@@ -30,17 +39,19 @@ export class ArchivoService {
     const formData = new FormData();
     formData.append('file', file, file.name);
 
-    const req = new HttpRequest('POST', `${this.apiUrl}/upload`, formData, {
+    const req = new HttpRequest('POST', `${this.API_URL}/upload`, formData, {
       reportProgress: true,
-      responseType: 'json'
+      responseType: 'json',
     });
 
     return this.http.request(req).pipe(
       tap(() => this.fileChangedSource.next()),
-      map(event => {
+      map((event) => {
         switch (event.type) {
           case HttpEventType.UploadProgress:
-            const progress = Math.round(100 * event.loaded / (event.total || 1));
+            const progress = Math.round(
+              (100 * event.loaded) / (event.total || 1)
+            );
             return { type: 'progress', progress: progress };
           case HttpEventType.Response:
             return { type: 'response', body: event.body };
@@ -52,11 +63,11 @@ export class ArchivoService {
   }
 
   getFiles(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/files`);
+    return this.http.get<any[]>(`${this.API_URL}/files`);
   }
 
   downloadFile(filename: string): void {
-    const url = `${this.apiUrl}/download/${filename}`;
+    const url = `${this.API_URL}/download/${filename}`;
 
     // Crear un elemento <a> temporal
     const link = document.createElement('a');
@@ -75,42 +86,44 @@ export class ArchivoService {
   }
 
   deleteFile(file: FileDeleteInfo): Observable<any> {
-    const url = `${this.apiUrl}/${file.fileName}`;
+    const url = `${this.API_URL}/${file.fileName}`;
 
     // const additionalFileInfo = fileId && documentId ? { fileInfo: { id: fileId, documentId: documentId } } : {};
-    const additionalFileInfo = { fileInfo: { id: file.id, documentId: file.documentId } };
+    const additionalFileInfo = {
+      fileInfo: { id: file.id, documentId: file.documentId },
+    };
 
     const options = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }),
-      body: additionalFileInfo
+      body: additionalFileInfo,
     };
 
-    return this.http.delete<{ message: string }>(url, options)
-      .pipe(
-        tap(() => this.fileChangedSource.next())
-      );
+    return this.http
+      .delete<{ message: string }>(url, options)
+      .pipe(tap(() => this.fileChangedSource.next()));
   }
 
   deleteMultipleFiles(files: FileDeleteInfo[]): Observable<any> {
-    return this.http.post<{
-      message: string;
-      results: Array<{
-        fileName: string;
-        success: boolean;
+    return this.http
+      .post<{
         message: string;
-      }>;
-    }>(`${this.apiUrl}/delete-multiple`, { files })
+        results: Array<{
+          fileName: string;
+          success: boolean;
+          message: string;
+        }>;
+      }>(`${this.API_URL}/delete-multiple`, { files })
       .pipe(
         tap(() => this.fileChangedSource.next()),
-        map(response => {
+        map((response) => {
           // Verificar si hay algún error en los resultados
-          const hasErrors = response.results.some(result => !result.success);
+          const hasErrors = response.results.some((result) => !result.success);
           if (hasErrors) {
             const errorMessages = response.results
-              .filter(result => !result.success)
-              .map(result => `${result.fileName}: ${result.message}`)
+              .filter((result) => !result.success)
+              .map((result) => `${result.fileName}: ${result.message}`)
               .join('\n');
             throw new Error(errorMessages);
           }
@@ -121,7 +134,7 @@ export class ArchivoService {
 
   // Previsualization of files
   getFileUrl(filename: string): string {
-    return `${this.apiUrl}/view/${filename}`;
+    return `${this.API_URL}/view/${filename}`;
   }
 
   getFileType(filename: string): string {
@@ -141,5 +154,4 @@ export class ArchivoService {
     return 'other';
   }
   // End of previsualization of files
-
 }
