@@ -19,7 +19,7 @@ import { environment } from '@env/environment';
   providedIn: 'root',
 })
 export class ArchivoService {
-  private readonly API_URL = `${environment.apiUrl}/files`;
+  private readonly API_URL = `${environment.originUrl}/files`;
   private fileChangedSource = new Subject<void>();
 
   fileChanged$ = this.fileChangedSource.asObservable();

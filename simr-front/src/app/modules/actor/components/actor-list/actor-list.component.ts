@@ -4,9 +4,10 @@ import { ActorService } from '../../services/actor.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-actor-list',
-  templateUrl: './actor-list.component.html',
-  styleUrl: './actor-list.component.css'
+    selector: 'app-actor-list',
+    templateUrl: './actor-list.component.html',
+    styleUrl: './actor-list.component.css',
+    standalone: false
 })
 export class ActorListComponent {
   actores: Actor[] = [];

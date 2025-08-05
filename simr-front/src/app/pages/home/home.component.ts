@@ -3,9 +3,10 @@ import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css',
+    standalone: false
 })
 export class HomeComponent {
   errorMessage = '';

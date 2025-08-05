@@ -4,9 +4,10 @@ import { ArchivoService } from '../archivo.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-archivo-vista',
-  templateUrl: './archivo-vista.component.html',
-  styleUrls: ['./archivo-vista.component.css']
+    selector: 'app-archivo-vista',
+    templateUrl: './archivo-vista.component.html',
+    styleUrls: ['./archivo-vista.component.css'],
+    standalone: false
 })
 export class ArchivoVistaComponent implements OnInit {
   // @Input() filename: string = '';

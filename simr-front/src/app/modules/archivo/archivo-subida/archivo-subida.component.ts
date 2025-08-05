@@ -5,9 +5,10 @@ import Swal from 'sweetalert2';
 import { SharedMessageData } from '../../../models/shared-message-data.interface';
 
 @Component({
-  selector: 'app-archivo-subida',
-  templateUrl: './archivo-subida.component.html',
-  styleUrls: ['./archivo-subida.component.css']
+    selector: 'app-archivo-subida',
+    templateUrl: './archivo-subida.component.html',
+    styleUrls: ['./archivo-subida.component.css'],
+    standalone: false
 })
 export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   // @Output() fileUploaded = new EventEmitter<void>();

@@ -8,9 +8,10 @@ import { User } from '../../interfaces/auth.interface';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.css',
+    standalone: false
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   // Propiedades reactivas conectadas directamente a los observables

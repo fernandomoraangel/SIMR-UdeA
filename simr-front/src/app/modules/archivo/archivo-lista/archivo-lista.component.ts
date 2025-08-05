@@ -18,9 +18,10 @@ interface SelectedFileInfo {
 }
 
 @Component({
-  selector: 'app-archivo-lista',
-  templateUrl: './archivo-lista.component.html',
-  styleUrls: ['./archivo-lista.component.css'],
+    selector: 'app-archivo-lista',
+    templateUrl: './archivo-lista.component.html',
+    styleUrls: ['./archivo-lista.component.css'],
+    standalone: false
 })
 export class ArchivoListaComponent implements OnInit, OnDestroy {
   // files: any[] = [];

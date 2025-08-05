@@ -5,12 +5,13 @@ import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 import { LoginCredentials } from '../../interfaces/auth.interface';
 
-const base_url = environment.base_url;
+// const API_URL = environment.apiUrl;
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css',
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -58,7 +59,7 @@ export class LoginComponent implements OnInit {
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
         this.router.navigate(['/dashboard']);
-        // this.router.navigate([base_url]);
+        // this.router.navigate([API_URL]);
 
         this.showTest = true;
       },
