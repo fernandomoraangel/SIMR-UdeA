@@ -29,7 +29,7 @@
 //     hasError: computed(() => !!store.error())
 //   })),
 //   withMethods((store, repository = inject(IdiomaService)) => ({
-    
+
 //     loadIdiomas: rxMethod<void>(
 //       pipe(
 //         tap(() => store.patchState({ loading: true, error: null })),
@@ -37,9 +37,9 @@
 //           repository.getAll().pipe(
 //             tap((idiomas) => store.patchState({ idiomas, loading: false })),
 //             catchError((error) => {
-//               store.patchState({ 
-//                 loading: false, 
-//                 error: error.error?.message || 'Error al cargar idiomas' 
+//               store.patchState({
+//                 loading: false,
+//                 error: error.error?.message || 'Error al cargar idiomas'
 //               });
 //               return of([]);
 //             })
@@ -55,9 +55,9 @@
 //           repository.getById(id).pipe(
 //             tap((idioma) => store.patchState({ selectedIdioma: idioma, loading: false })),
 //             catchError((error) => {
-//               store.patchState({ 
-//                 loading: false, 
-//                 error: error.error?.message || 'Error al cargar idioma' 
+//               store.patchState({
+//                 loading: false,
+//                 error: error.error?.message || 'Error al cargar idioma'
 //               });
 //               return of(null);
 //             })
@@ -73,15 +73,15 @@
 //           repository.create(request).pipe(
 //             tap((newIdioma) => {
 //               const currentIdiomas = store.idiomas();
-//               store.patchState({ 
-//                 idiomas: [newIdioma, ...currentIdiomas], 
-//                 loading: false 
+//               store.patchState({
+//                 idiomas: [newIdioma, ...currentIdiomas],
+//                 loading: false
 //               });
 //             }),
 //             catchError((error) => {
-//               store.patchState({ 
-//                 loading: false, 
-//                 error: error.error?.message || 'Error al crear idioma' 
+//               store.patchState({
+//                 loading: false,
+//                 error: error.error?.message || 'Error al crear idioma'
 //               });
 //               return of(null);
 //             })
@@ -97,19 +97,19 @@
 //           repository.update(id, data).pipe(
 //             tap((updatedIdioma) => {
 //               const currentIdiomas = store.idiomas();
-//               const updatedIdiomas = currentIdiomas.map(idioma => 
+//               const updatedIdiomas = currentIdiomas.map(idioma =>
 //                 idioma._id === id ? updatedIdioma : idioma
 //               );
-//               store.patchState({ 
-//                 idiomas: updatedIdiomas, 
+//               store.patchState({
+//                 idiomas: updatedIdiomas,
 //                 selectedIdioma: updatedIdioma,
-//                 loading: false 
+//                 loading: false
 //               });
 //             }),
 //             catchError((error) => {
-//               store.patchState({ 
-//                 loading: false, 
-//                 error: error.error?.message || 'Error al actualizar idioma' 
+//               store.patchState({
+//                 loading: false,
+//                 error: error.error?.message || 'Error al actualizar idioma'
 //               });
 //               return of(null);
 //             })
@@ -126,16 +126,16 @@
 //             tap(() => {
 //               const currentIdiomas = store.idiomas();
 //               const filteredIdiomas = currentIdiomas.filter(idioma => idioma._id !== id);
-//               store.patchState({ 
-//                 idiomas: filteredIdiomas, 
+//               store.patchState({
+//                 idiomas: filteredIdiomas,
 //                 selectedIdioma: null,
-//                 loading: false 
+//                 loading: false
 //               });
 //             }),
 //             catchError((error) => {
-//               store.patchState({ 
-//                 loading: false, 
-//                 error: error.error?.message || 'Error al eliminar idioma' 
+//               store.patchState({
+//                 loading: false,
+//                 error: error.error?.message || 'Error al eliminar idioma'
 //               });
 //               return of(null);
 //             })
