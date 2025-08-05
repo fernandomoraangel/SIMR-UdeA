@@ -1,23 +1,23 @@
-"use strict";
+'use strict';
 
 // Cargar dependencias
-const mongoose = require("mongoose");
-const Archivo = mongoose.model("Archivo");
+const mongoose = require('mongoose');
+const Archivo = mongoose.model('Archivo');
 
 // Método para el manejo de errores
 const getErrorMessage = (err) => {
   // Definir variable de error message
-  let message = "";
+  let message = '';
   // Si ocurre un error interno de MongoDB
   if (err.code) {
     switch (err.code) {
       case 11000:
       case 11001:
-        message = "El registro ya existe";
+        message = 'El registro ya existe';
         break;
       // si un error general ocurre
       default:
-        message = "Se ha producido un error";
+        message = 'Se ha producido un error';
     }
   } else {
     // Grabar el error en una lista de posibles errores
@@ -52,8 +52,8 @@ exports.list = async (req, res) => {
   try {
     // Usa el método model 'find' para obtener una lista de archivos
     const archivos = await Archivo.find()
-      .sort("-created")
-      .populate("creador", "originalName mimetype")
+      .sort('-created')
+      .populate('creador', 'originalName mimetype')
       .exec();
     res.json(archivos);
   } catch (err) {
@@ -74,12 +74,12 @@ exports.update = async (req, res) => {
   const archivo = req.archivo;
 
   // Actualiza los campos
-  archivo.filename = req.body.archivo.filename
-  archivo.originalName = req.body.originalName
-  archivo.mimetype = req.body.mimetype
-  archivo.size = req.body.size
-  archivo.uploadDate = req.body.uploadDate
-  archivo.minioObjectName = req.body.minioObjectName
+  archivo.filename = req.body.archivo.filename;
+  archivo.originalName = req.body.originalName;
+  archivo.mimetype = req.body.mimetype;
+  archivo.size = req.body.size;
+  archivo.uploadDate = req.body.uploadDate;
+  archivo.minioObjectName = req.body.minioObjectName;
 
   // Intenta salvar
   try {
@@ -112,9 +112,9 @@ exports.delete = async (req, res) => {
 exports.archivoByID = async (req, res, next, id) => {
   try {
     const archivo = await Archivo.findById(id)
-      .populate("creador", "originalName mimetype")
+      .populate('creador', 'originalName mimetype')
       .exec();
-    if (!archivo) return next(new Error("Fallo al cargar el archivo" + id));
+    if (!archivo) return next(new Error('Fallo al cargar el archivo' + id));
     // Si el archivo es encontrado, usar el objeto 'request' para pasarla al sgte middleware
     req.archivo = archivo;
     // Llamar al sgte middleware
@@ -129,7 +129,7 @@ exports.hasAuthorization = (req, res, next) => {
   // Si el usuario actual, no es el creador, enviar el mensaje de error
   if (req.archivo.creador.id !== req.user.id) {
     return res.status(403).send({
-      message: "Usuario no autorizado",
+      message: 'Usuario no autorizado',
     });
   }
   // Llamar sgte middleware
