@@ -1,94 +1,98 @@
 <!-- Mostrar loader global mientras el AuthService está cargando -->
-<div *ngIf="isLoading$ | async" class="global-loading">
-  <div class="spinner"></div>
-  <p>Cargando...</p>
-</div>
+@if (isLoading$ | async) {
+  <div class="global-loading">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+}
 
 <!-- Contenido del dashboard -->
-<div *ngIf="!(isLoading$ | async)" class="dashboard-container">
-  <header class="dashboard-header">
-    <h1>Dashboard</h1>
-
-    <!-- Información del usuario usando observable -->
-    <div *ngIf="user$ | async as user" class="user-info">
-      <div class="user-details">
-        <span class="username">{{ user.fullName }}</span>
-        <!-- <span class="user-role" *ngIf="user.role">{{ user.role }}</span> -->
-      </div>
-      <button
-        (click)="logout()"
-        class="logout-btn"
-        [disabled]="isLoading$ | async"
-      >
-        {{ (isLoading$ | async) ? "Cerrando..." : "Cerrar Sesión" }}
-      </button>
-    </div>
-  </header>
-
-  <main class="dashboard-content">
-    <!-- Indicador de estado de autenticación -->
-    <div class="auth-status" *ngIf="isAuthenticated$ | async">
-      <span class="status-indicator online"></span>
-      <span>Conectado</span>
-    </div>
-
-    <!-- Acciones principales -->
-    <div class="actions">
-      <!-- <button 
-        (click)="redirectToAngularJS()" 
+@if (!(isLoading$ | async)) {
+  <div class="dashboard-container">
+    <header class="dashboard-header">
+      <h1>Dashboard</h1>
+      <!-- Información del usuario usando observable -->
+      @if (user$ | async; as user) {
+        <div class="user-info">
+          <div class="user-details">
+            <span class="username">{{ user.fullName }}</span>
+            <!-- <span class="user-role" *ngIf="user.role">{{ user.role }}</span> -->
+          </div>
+          <button
+            (click)="logout()"
+            class="logout-btn"
+            [disabled]="isLoading$ | async"
+            >
+            {{ (isLoading$ | async) ? "Cerrando..." : "Cerrar Sesión" }}
+          </button>
+        </div>
+      }
+    </header>
+    <main class="dashboard-content">
+      <!-- Indicador de estado de autenticación -->
+      @if (isAuthenticated$ | async) {
+        <div class="auth-status">
+          <span class="status-indicator online"></span>
+          <span>Conectado</span>
+        </div>
+      }
+      <!-- Acciones principales -->
+      <div class="actions">
+        <!-- <button
+        (click)="redirectToAngularJS()"
         class="btn btn-primary"
         [disabled]="!(isAuthenticated$ | async)">
         <i class="icon-arrow-right"></i>
         Ir a AngularJS
       </button> -->
-
       <button
         (click)="redirectToAngularJS()"
         class="btn btn-secondary"
         [disabled]="!(isAuthenticated$ | async)"
-      >
+        >
         <i class="icon-external-link"></i>
         Ir a AngularJS
       </button>
-
       <!-- <button
-        (click)="loadProtectedData()"
-        class="btn btn-info"
-        [disabled]="loadingData || !(isAuthenticated$ | async)"
+      (click)="loadProtectedData()"
+      class="btn btn-info"
+      [disabled]="loadingData || !(isAuthenticated$ | async)"
       >
-        <i class="icon-download" *ngIf="!loadingData"></i>
-        <div class="mini-spinner" *ngIf="loadingData"></div>
-        {{ loadingData ? "Cargando..." : "Listado de Usuarios" }}
-      </button> -->
-
-      <button
-        (click)="loadActores()"
-        class="btn btn-info"
-        [disabled]="loadingData || !(isAuthenticated$ | async)"
+      <i class="icon-download" *ngIf="!loadingData"></i>
+      <div class="mini-spinner" *ngIf="loadingData"></div>
+      {{ loadingData ? "Cargando..." : "Listado de Usuarios" }}
+    </button> -->
+    <button
+      (click)="loadActores()"
+      class="btn btn-info"
+      [disabled]="loadingData || !(isAuthenticated$ | async)"
       >
-        <i class="icon-download" *ngIf="!loadingData"></i>
-        <div class="mini-spinner" *ngIf="loadingData"></div>
-        {{ loadingData ? "Cargando..." : "Listado de Actores" }}
-      </button>
-
-      <button (click)="testRefreshToken()" class="redirect-btn">
-        Refresh Token
-      </button>
-
-      <button (click)="testVerifyToken()" class="redirect-btn">
-        Verify Token
-      </button>
-    </div>
-
-    <!-- Mensajes de error -->
-    <div *ngIf="errorMessage" class="error-message">
+      @if (!loadingData) {
+        <i class="icon-download"></i>
+      }
+      @if (loadingData) {
+        <div class="mini-spinner"></div>
+      }
+      {{ loadingData ? "Cargando..." : "Listado de Actores" }}
+    </button>
+    <button (click)="testRefreshToken()" class="redirect-btn">
+      Refresh Token
+    </button>
+    <button (click)="testVerifyToken()" class="redirect-btn">
+      Verify Token
+    </button>
+  </div>
+  <!-- Mensajes de error -->
+  @if (errorMessage) {
+    <div class="error-message">
       <i class="icon-alert"></i>
       {{ errorMessage }}
       <button (click)="errorMessage = ''" class="close-btn">×</button>
     </div>
-
-    <!-- Datos protegidos -->
-    <div *ngIf="protectedData" class="protected-data">
+  }
+  <!-- Datos protegidos -->
+  @if (protectedData) {
+    <div class="protected-data">
       <h3>Datos Protegidos</h3>
       <div class="data-summary">
         <div class="stat-card">
@@ -96,15 +100,15 @@
           <div class="stat-label">Usuarios</div>
         </div>
       </div>
-
       <details class="data-details">
         <summary>Ver datos completos</summary>
         <pre class="data-json">{{ protectedData | json }}</pre>
       </details>
     </div>
-
-    <!-- Lista de actores -->
-    <div *ngIf="listaActores" class="lista-actores">
+  }
+  <!-- Lista de actores -->
+  @if (listaActores) {
+    <div class="lista-actores">
       <h3>Lista de Actores</h3>
       <!-- <table class="table"> -->
       <table class="table-auto w-full">
@@ -115,23 +119,27 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            class="even:bg-gray-100 odd:bg-white"
-            *ngFor="let actor of listaActores.actores"
-          >
-            <td>{{ actor.nombres }}</td>
-            <td>{{ actor.apellidos }}</td>
-          </tr>
+          @for (actor of listaActores.actores; track actor) {
+            <tr
+              class="even:bg-gray-100 odd:bg-white"
+              >
+              <td>{{ actor.nombres }}</td>
+              <td>{{ actor.apellidos }}</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
-
-    <!-- Estado vacío -->
-    <!-- <div *ngIf="!listaActores || !protectedData && !loadingData" class="empty-state"> -->
-    <div *ngIf="!listaActores" class="empty-state">
+  }
+  <!-- Estado vacío -->
+  <!-- <div *ngIf="!listaActores || !protectedData && !loadingData" class="empty-state"> -->
+  @if (!listaActores) {
+    <div class="empty-state">
       <div class="empty-icon">📊</div>
       <h3>¡Bienvenido al Dashboard!</h3>
       <p>Haz clic en las diferentes acciones para interactuar con la aplicación.</p>
     </div>
-  </main>
+  }
+</main>
 </div>
+}

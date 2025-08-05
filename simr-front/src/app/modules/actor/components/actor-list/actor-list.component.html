@@ -28,8 +28,7 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let actor of actores">
-
+          @for (actor of actores; track actor) {
             <tr>
               <td>
                 <a href="/actores/{{actor._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
@@ -39,21 +38,17 @@
               <td scope="row">{{ actor.apellidos }}</td>
               <td scope="row">{{ actor.nombreReunion }}</td>
               <!-- <td scope="row">{{ actor.contenedor }}</td> -->
-
               <!-- <td scope="row">
-                <a routerLink="/providers/details/{{actor.id}}" class="btn btn-info btn-sm mx-1">Details</a>
-                <a routerLink="/providers/edit/{{actor.id}}" class="btn btn-secondary btn-sm mx-1">Edit</a>
-                <a href="#myModal{{actor.id}}" class="btn btn-danger btn-sm mx-1" data-toggle="modal">Delete</a>
-                 -->
+              <a routerLink="/providers/details/{{actor.id}}" class="btn btn-info btn-sm mx-1">Details</a>
+              <a routerLink="/providers/edit/{{actor.id}}" class="btn btn-secondary btn-sm mx-1">Edit</a>
+              <a href="#myModal{{actor.id}}" class="btn btn-danger btn-sm mx-1" data-toggle="modal">Delete</a>
+              -->
               <!-- <a href="/providers/delete/{{actor.id}}" class="btn btn-danger btn-sm">Delete</a> -->
-
-              <!-- </td> -->
-
-            </tr>
-
-          </ng-container>
-        </tbody>
-      </table>
-    </div>
+            <!-- </td> -->
+          </tr>
+        }
+      </tbody>
+    </table>
   </div>
+</div>
 </section>
