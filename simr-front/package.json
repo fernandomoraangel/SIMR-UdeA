@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^20.1.4",
     "@angular/platform-browser-dynamic": "^20.1.4",
     "@angular/router": "^20.1.4",
+    "@ngrx/signals": "^20.0.0",
     "bootstrap": "^5.3.7",
     "rxjs": "~7.8.2",
     "sweetalert2": "^11.22.2",
