@@ -8,10 +8,10 @@ import { User } from '../../interfaces/auth.interface';
 import Swal from 'sweetalert2';
 
 @Component({
-    selector: 'app-dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrl: './dashboard.component.css',
-    standalone: false
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css',
+  standalone: false,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   // Propiedades reactivas conectadas directamente a los observables
@@ -23,6 +23,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protectedData: any = null;
   listaActores: any = null;
   loadingData = false;
+  showActores = false;
+  showIdiomas = false;
   errorMessage = '';
 
   private destroy$ = new Subject<void>();
@@ -96,9 +98,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadActores(): void {
+    this.showActores = this.showActores ? false : true;
+    
+    if (!this.showActores) {
+      return;
+    
+    }
     this.loadingData = true;
     this.errorMessage = '';
-
     // Usar el método de test del servicio o crear un endpoint específico
     this.authService.testGetAllActores().subscribe({
       next: (actores) => {
@@ -119,6 +126,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  loadIdiomas(): void {}
 
   redirectToAngularJS(): void {
     this.authService.redirectToAngularJS();

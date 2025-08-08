@@ -9,7 +9,26 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
 
-const routes: Routes = [{ path: '', component: DashboardComponent }];
+const routes: Routes = [
+  {
+    path: '',
+    component: DashboardComponent,
+    // children: [
+    //   {
+    //     path: 'actores',
+    //     loadChildren: () =>
+    //       import('../../modules/actor/actor.module').then((m) => m.ActorModule),
+    //   },
+    //   {
+    //     path: 'idiomas',
+    //     loadChildren: () =>
+    //       import('../../features/idiomas/idiomas.routes').then(
+    //         (r) => r.IDIOMAS_ROUTES
+    //       ),
+    //   },
+    // ],
+  },
+];
 
 @NgModule({
   declarations: [DashboardComponent],
