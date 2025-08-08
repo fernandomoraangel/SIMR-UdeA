@@ -31,6 +31,10 @@ const routes: Routes = [
   //   // canActivate: [AuthGuard],
   // },
   {
+    path: 'idiomas',
+    loadChildren: () => import('./features/idiomas/idiomas.routes').then(r => r.IDIOMAS_ROUTES)
+  },
+  {
     path: 'files',
     loadChildren: () =>
       import('./modules/archivo/archivo.module').then((m) => m.ArchivoModule),
