@@ -1,16 +1,36 @@
 <!-- <h1>Home works!!!</h1> -->
 <div class="home-container">
-  <!-- <a href="/login/" target="_blank">Iniciar Sesión</a> -->
-  <a href="/login/">Iniciar Sesión</a>
+  <!-- <a routerLink="/login/" target="_blank">Iniciar Sesión</a> -->
+  <a routerLink="/login/">Iniciar Sesión</a>
   <br />
-  <a href="/signup/">Registrarse</a>
+  <a routerLink="/signup/">Registrarse</a>
   <br />
-  <a href="/dashboard/">Dashboard</a>
+  <a routerLink="/dashboard/">Dashboard</a>
   <br />
-  <a href="http://localhost:3000">AngularJS</a>
+  <a href="http://localhost:3000">Ir a AngularJS</a>
   <br />
   <br />
-  <a href="#" (click)="logout(); $event.preventDefault()">Cerrar sesión</a>
+  <!-- <a routerLink="" (click)="logout(); $event.preventDefault()">Cerrar sesión</a> -->
+
+  <div class="vertical-container">
+    <h5 class="vertical-element">Test Area</h5>
+    <!-- <button
+      (click)="redirectToAngularJS()"
+      class="redirect-btn vertical-element"
+    >
+      Ir a Aplicación AngularJS
+    </button> -->
+    <button (click)="testRefreshToken()" class="redirect-btn vertical-element">
+      Refresh Token
+    </button>
+    <button (click)="testVerifyToken()" class="redirect-btn vertical-element">
+      Verify Token
+    </button>
+    @if (isAuthenticated$ | async) {
+    <button (click)="logout()" class="redirect-btn">Logout</button>
+    }
+
+  </div>
 
   <!-- <div class="vertical-container">
     <button

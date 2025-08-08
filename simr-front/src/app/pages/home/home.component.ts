@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
     standalone: false
 })
 export class HomeComponent {
+  isAuthenticated$ = this.authService.isAuthenticated$;
   errorMessage = '';
 
   // constructor(private authService: AuthService, private router: Router) {}
