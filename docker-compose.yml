@@ -1,0 +1,36 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    networks: [simr-net]
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: superAdmin
+      MONGO_INITDB_ROOT_PASSWORD: sadmin1990
+      MONGODB_AUTH_MECHANISM: SCRAM-SHA-256
+    volumes:
+      - mongodb_data:/data/db
+      - ./init.mongo.js:/docker-entrypoint-initdb.d/init.mongo.js
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    networks: [simr-net]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: superAdmin
+      MINIO_ROOT_PASSWORD: sadmin1990
+    volumes:
+      - minio_data:/data
+      - ./init.minio.sh:/docker-entrypoint.sh
+    command: server /data --console-address ":9001"
+
+volumes:
+  mongodb_data:
+  minio_data:
+
+networks:
+  simr-net:
+    external: true
