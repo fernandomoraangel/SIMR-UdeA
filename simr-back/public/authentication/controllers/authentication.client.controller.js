@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
-angular.module("authentication").controller("AuthenticationController", [
-  "$scope",
-  "$timeout",
-  "Authentication",
+angular.module('authentication').controller('AuthenticationController', [
+  '$scope',
+  '$timeout',
+  'Authentication',
   function ($scope, $timeout, Authentication) {
-    console.log("[AuthController] Inicializando controlador de autenticación");
+    console.log('[AuthController] Inicializando controlador de autenticación');
     $scope.auth = Authentication.state;
 
     // Estado inicial
@@ -34,17 +34,17 @@ angular.module("authentication").controller("AuthenticationController", [
     // Verificar estado inicial
     function checkInitialAuthState() {
       console.log(
-        "[AuthController] Verificando estado inicial de autenticación"
+        '[AuthController] Verificando estado inicial de autenticación'
       );
 
       Authentication.checkAuthStatus()
         .then(function (user) {
-          console.log("[AuthController] Usuario autenticado:", user);
+          console.log('[AuthController] Usuario autenticado:', user);
           // updateAuthState();
           // $scope.isCheckingAuth = false;
         })
         .catch(function (error) {
-          console.log("[AuthController] No autenticado:", error);
+          console.log('[AuthController] No autenticado:', error);
           // $scope.isUserAuthenticated = false;
           // $scope.currentUser = null;
           // $scope.isCheckingAuth = false;
@@ -56,7 +56,7 @@ angular.module("authentication").controller("AuthenticationController", [
 
     // Método público para refrescar manualmente el estado
     $scope.refreshAuthState = function () {
-      console.log("[AuthController] Refrescando estado manualmente");
+      console.log('[AuthController] Refrescando estado manualmente');
       checkInitialAuthState();
     };
 
@@ -70,80 +70,80 @@ angular.module("authentication").controller("AuthenticationController", [
     // Verifica si está autenticado al cargar
     Authentication.checkAuthStatus()
       .then(function () {
-        console.log("Usuario autenticado:", Authentication.getCurrentUser());
+        console.log('Usuario autenticado:', Authentication.getCurrentUser());
         Authentication.init(); // Iniciar autenticación y temporizador
       })
       .catch(function () {
-        console.warn("Usuario no autenticado");
+        console.warn('Usuario no autenticado');
       });
 
     $scope.signupUser = function () {
-      console.log("Intentando registrar usuario con:", $scope.user);
+      console.log('Intentando registrar usuario con:', $scope.user);
       if ($scope.signupForm.$valid) {
         Authentication.signup($scope.user)
           .then((user) => {
-            console.log("Usuario registrado:", user);
+            console.log('Usuario registrado:', user);
             // Swal.fire({
             //   title: "Registro exitoso",
             //   text: "El usuario ha sido registrado correctamente.",
             //   icon: "success",
             //   confirmButtonText: "Aceptar",
             // });
-            window.location.href = "/"; // Cambia la URL según tu aplicación
+            window.location.href = '/'; // Cambia la URL según tu aplicación
           })
           .catch((err) => {
-            console.error("Error al registrar usuario:", err.data.message);
+            console.error('Error al registrar usuario:', err.data.message);
             Swal.fire({
-              title: "Error de registro",
+              title: 'Error de registro',
               text:
                 err.data.message ||
-                "Por favor, verifica los datos e inténtalo de nuevo.",
-              icon: "error",
-              confirmButtonText: "Aceptar",
+                'Por favor, verifica los datos e inténtalo de nuevo.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar',
             });
           });
       } else {
         Swal.fire({
-          title: "Formulario inválido",
-          text: "Por favor, completa todos los campos requeridos.",
-          icon: "warning",
-          confirmButtonText: "Aceptar",
+          title: 'Formulario inválido',
+          text: 'Por favor, completa todos los campos requeridos.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
         });
       }
     };
 
     $scope.loginUser = function () {
-      console.log("Intentando iniciar sesión con:", $scope.credentials);
+      console.log('Intentando iniciar sesión con:', $scope.credentials);
       if ($scope.loginForm.$valid) {
         Authentication.login($scope.credentials)
           .then((user) => {
-            console.log("Usuario autenticado:", user);
+            console.log('Usuario autenticado:', user);
             // const responseSwal = Swal.fire({
             //   title: "Bienvenido",
             //   text: `Hola ${user.name || user.username}, has iniciado sesión correctamente.`,
             //   icon: "success",
             //   confirmButtonText: "Aceptar",
             // });
-            window.location.href = "/"; // Redirigir a la página principal
+            window.location.href = '/'; // Redirigir a la página principal
           })
           .catch((err) => {
-            console.error("Error al iniciar sesión:", err);
-            console.warn("Error de inicio de sesión:", err.data.message);
+            console.error('Error al iniciar sesión:', err);
+            console.warn('Error de inicio de sesión:', err.data.message);
             Swal.fire({
-              title: "Error de inicio de sesión",
+              title: 'Error de inicio de sesión',
               text:
                 err.data.message ||
-                "Por favor, verifica tus credenciales e inténtalo de nuevo.",
-              icon: "error",
-              confirmButtonText: "Aceptar",
+                'Por favor, verifica tus credenciales e inténtalo de nuevo.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar',
             });
           });
       } else {
         Swal.fire({
-          title: "Formulario inválido",
-          text: "Por favor, completa todos los campos requeridos.",
-          icon: "warning",
-          confirmButtonText: "Aceptar",
+          title: 'Formulario inválido',
+          text: 'Por favor, completa todos los campos requeridos.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
         });
       }
     };
