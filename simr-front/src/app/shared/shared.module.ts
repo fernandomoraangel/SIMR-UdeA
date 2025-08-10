@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Pipes
-import { CapitalizeWordsPipe } from '../capitalize-words.pipe';
+import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 
 
 @NgModule({
