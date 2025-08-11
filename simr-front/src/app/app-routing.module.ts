@@ -24,15 +24,17 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'diccionarios',
+    loadChildren: () => import('./features/diccionario/diccionario.routes').then(r => r.DICCIONARIOS_ROUTES)
+  },
   // {
-  //   path: 'actores',
-  //   loadChildren: () =>
-  //     import('./modules/actor/actor.module').then((m) => m.ActorModule),
-  //   // canActivate: [AuthGuard],
+  //   path: 'diccionarios',
+  //   loadChildren: () => import('./features/diccionarios/diccionario.module').then(m => m.DiccionariosModule)
   // },
   {
     path: 'idiomas',
-    loadChildren: () => import('./features/idiomas/idiomas.routes').then(r => r.IDIOMAS_ROUTES)
+    loadChildren: () => import('./features/idioma/idioma.routes').then(r => r.IDIOMAS_ROUTES)
   },
   {
     path: 'files',
