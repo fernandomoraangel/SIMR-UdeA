@@ -26,7 +26,10 @@ const routes: Routes = [
   },
   {
     path: 'diccionarios',
-    loadChildren: () => import('./features/diccionario/diccionario.routes').then(r => r.DICCIONARIOS_ROUTES)
+    loadChildren: () =>
+      import('./features/diccionario/diccionario.routes').then(
+        (r) => r.DICCIONARIOS_ROUTES
+      ),
   },
   // {
   //   path: 'diccionarios',
@@ -34,7 +37,8 @@ const routes: Routes = [
   // },
   {
     path: 'idiomas',
-    loadChildren: () => import('./features/idioma/idioma.routes').then(r => r.IDIOMAS_ROUTES)
+    loadChildren: () =>
+      import('./features/idioma/idioma.routes').then((r) => r.IDIOMAS_ROUTES),
   },
   {
     path: 'files',
