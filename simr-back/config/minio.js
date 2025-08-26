@@ -226,9 +226,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error al subir el archivo' }); // Respuesta de formato JSON
-  } finally {
-    // Cerrar la conexión a MongoDB
-    await client.close();
   }
 });
 

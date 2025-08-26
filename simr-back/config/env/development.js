@@ -1,5 +1,5 @@
 module.exports = {
-  db: "mongodb://superAdmin:SOh3TbYhx8ypJPxmt1oOfL@localhost/simr",
+  db: "mongodb://superAdmin:sadmin1990@localhost:27017/",
   // Si no es local mongodb://usuario:pass@hostname:puerto/basedatos
   sessionSecret: "developmentSessionSecret",
   google: {
