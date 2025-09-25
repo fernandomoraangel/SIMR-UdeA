@@ -1,5 +1,8 @@
+// Cargar variables de entorno ANTES que nada
+require("dotenv").config();
+
 // Definir entorno de desarrollo, no de producción
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+// process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 // process.env.NODE_ENV=process.env.NODE_ENV ||'production';
 
 const express = require('./config/express');
@@ -27,7 +30,7 @@ var passportObj = passport();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 	// console.log(`Servidor ejecutandose en el puerto ${PORT}`);
-	console.log(`Servidor ejecutandose en http://localhost:${PORT}`);
+	console.log(`Servidor ejecutandose en el puerto ${PORT}`);
 });
 
 module.exports = app;
