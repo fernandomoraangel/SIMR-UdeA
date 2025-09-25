@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule } from '@angular/core';
 
 @NgModule({
   providers: [
@@ -6,9 +6,9 @@ import { NgModule } from "@angular/core";
     // InstrumentoService,
     // IdiomaService,
     // ColeccionService
-  ]
+  ],
 })
-export class ReferenceDataModule { }
+export class ReferenceDataModule {}
 
 // En cada módulo de entidad que necesite referencias
 // @NgModule({
