@@ -1,0 +1,168 @@
+<p>diccionario-list works!</p>
+<div class="diccionario-list-container">
+  <div class="header-section">
+    <h2>Diccionarios</h2>
+    <div class="actions">
+      @if (authService.isAuthenticated()) {
+      <button class="btn btn-primary" (click)="navigateToCreate()">
+        <i class="fas fa-plus"></i> Nuevo Diccionario
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Filtros y búsqueda -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Buscar por tabla, campo, definición..."
+        [value]="store.searchTerm()"
+        (input)="onSearchChange($event)"
+      />
+      <i class="fas fa-search search-icon"></i>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (store.isLoading()) {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando diccionarios...</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (store.error()) {
+  <div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ store.error() }}
+    <button class="btn-close" (click)="store.clearError()">×</button>
+  </div>
+  }
+
+  <!-- Tabla de diccionarios -->
+  @if (!store.isLoading() && filteredDiccionarios().length > 0) {
+  <!-- @if (!store.isLoading()) { -->
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th
+            class="sortable"
+            [class.active]="store.sortProperty() === 'tabla'"
+            (click)="onSort('tabla')"
+          >
+            Tabla @if (store.sortProperty() === 'tabla') {
+            <i
+              class="fas"
+              [class.fa-sort-up]="!store.sortReverse()"
+              [class.fa-sort-down]="store.sortReverse()"
+            ></i>
+            } @else {
+            <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th
+            class="sortable"
+            [class.active]="store.sortProperty() === 'campo'"
+            (click)="onSort('campo')"
+          >
+            Campo @if (store.sortProperty() === 'campo') {
+            <i
+              class="fas"
+              [class.fa-sort-up]="!store.sortReverse()"
+              [class.fa-sort-down]="store.sortReverse()"
+            ></i>
+            } @else {
+            <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th>Campo Largo</th>
+          <th
+            class="sortable"
+            [class.active]="store.sortProperty() === 'definicion'"
+            (click)="onSort('definicion')"
+          >
+            Definición @if (store.sortProperty() === 'definicion') {
+            <i
+              class="fas"
+              [class.fa-sort-up]="!store.sortReverse()"
+              [class.fa-sort-down]="store.sortReverse()"
+            ></i>
+            } @else {
+            <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th class="actions-column">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (diccionario of filteredDiccionarios(); track diccionario._id) {
+        <tr>
+          <td>{{ diccionario.tabla }}</td>
+          <td>{{ diccionario.campo }}</td>
+          <td>{{ diccionario.campoLargo || "-" }}</td>
+          <td class="definition-cell">
+            {{ diccionario.definicion | slice : 0 : 100 }}
+            @if (diccionario.definicion.length > 100) {
+            <span>...</span>
+            }
+          </td>
+          <td class="actions-cell">
+            <div class="btn-group">
+              <button
+                class="btn btn-sm btn-outline-primary"
+                (click)="navigateToDetail(diccionario._id!)"
+                title="Ver detalle"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              @if (authService.isAuthenticated()) {
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                (click)="navigateToEdit(diccionario._id!)"
+                title="Editar"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="onDelete(diccionario)"
+                title="Eliminar"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+              }
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+
+  <!-- Empty state -->
+  @if (!store.isLoading() && filteredDiccionarios().length === 0) {
+  <div class="empty-state">
+    @if (store.searchTerm()) {
+    <i class="fas fa-search fa-3x"></i>
+    <h3>No se encontraron resultados</h3>
+    <p>Intenta con otros términos de búsqueda</p>
+    <button class="btn btn-outline-primary" (click)="clearSearch()">
+      Limpiar búsqueda
+    </button>
+    } @else {
+    <i class="fas fa-book fa-3x"></i>
+    <h3>No hay diccionarios disponibles</h3>
+    <p>Comienza creando tu primer diccionario</p>
+    @if (authService.isAuthenticated()) {
+    <button class="btn btn-primary" (click)="navigateToCreate()">
+      <i class="fas fa-plus"></i> Crear Diccionario
+    </button>
+    } }
+  </div>
+  }
+</div>

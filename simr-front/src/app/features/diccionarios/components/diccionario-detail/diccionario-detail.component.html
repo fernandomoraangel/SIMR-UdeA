@@ -1,0 +1,65 @@
+<p>diccionario-detail works!</p>
+<section class="diccionario-detail">
+  <div class="jumbotron" *ngIf="authService.isAuthenticated()">
+    <div class="wrapper2" *ngIf="diccionario()">
+      <!-- Identificador de la vista -->
+      <div class="idVista">
+        <em>Campo de diccionario</em>
+      </div>
+
+      <div class="panel panel-default">
+        <!-- Título -->
+        <div class="tituloVistaView">
+          {{ diccionario()!.campoLargo | uppercase }}
+        </div>
+
+        <!-- Botones de acción -->
+        <div *ngIf="canEdit()" class="action-buttons">
+          <a [routerLink]="['/diccionarios', diccionario()!._id, 'edit']">
+            <span class="glyphicon glyphicon-pencil"></span>
+          </a>
+          <a href="#" (click)="onDelete($event)">
+            <span class="glyphicon glyphicon-remove"></span>
+          </a>
+        </div>
+
+        <!-- Tabla de detalles -->
+        <table class="table table-striped text-left">
+          <tbody>
+            <tr>
+              <td class="campo">Tabla</td>
+              <td>{{ diccionario()!.tabla }}</td>
+            </tr>
+            <tr>
+              <td class="campo">Campo abreviado</td>
+              <td>{{ diccionario()!.campo }}</td>
+            </tr>
+            <tr>
+              <td class="campo">Definición</td>
+              <td>{{ diccionario()!.definicion }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Información del creador -->
+      <div
+        class="creador"
+        *ngIf="diccionario()!.creado && diccionario()!.creador"
+      >
+        <em>Creada en </em>
+        <em>{{ diccionario()!.creado | date : "mediumDate" }}</em>
+        <em> por </em>
+        <em>{{ diccionario()!.creador!.fullName }}</em>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading()" class="loading">Cargando diccionario...</div>
+
+    <!-- Error -->
+    <div *ngIf="error()" class="error">
+      {{ error() }}
+    </div>
+  </div>
+</section>

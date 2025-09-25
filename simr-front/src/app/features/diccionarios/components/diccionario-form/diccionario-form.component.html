@@ -1,0 +1,139 @@
+<p>diccionario-form works!</p>
+@if (diccionarioForm) {
+
+<form (ngSubmit)="onSubmit()" class="diccionario-form">
+  <div class="form-grid">
+    <!-- Tabla -->
+    <div class="form-group">
+      <label for="tabla" class="form-label required">
+        <i class="fas fa-table"></i> Tabla
+      </label>
+      <input
+        type="text"
+        id="tabla"
+        class="form-control"
+        formControlName="tabla"
+        placeholder="Ingrese el nombre de la tabla"
+        [class.is-invalid]="isFieldInvalid('tabla')"
+      />
+      @if (isFieldInvalid('tabla')) {
+      <div class="invalid-feedback">
+        @if (diccionarioForm.get('tabla')?.errors?.['required']) { La tabla es
+        requerida } @if (diccionarioForm.get('tabla')?.errors?.['minlength']) {
+        La tabla debe tener al menos 2 caracteres }
+      </div>
+      }
+    </div>
+
+    <!-- Campo -->
+    <div class="form-group">
+      <label for="campo" class="form-label required">
+        <i class="fas fa-tag"></i> Campo
+      </label>
+      <input
+        type="text"
+        id="campo"
+        class="form-control"
+        formControlName="campo"
+        placeholder="Ingrese el nombre del campo"
+        [class.is-invalid]="isFieldInvalid('campo')"
+      />
+      @if (isFieldInvalid('campo')) {
+      <div class="invalid-feedback">
+        @if (diccionarioForm.get('campo')?.errors?.['required']) { El campo es
+        requerido } @if (diccionarioForm.get('campo')?.errors?.['minlength']) {
+        El campo debe tener al menos 2 caracteres }
+      </div>
+      }
+    </div>
+
+    <!-- Campo Largo -->
+    <div class="form-group full-width">
+      <label for="campoLargo" class="form-label">
+        <i class="fas fa-text-width"></i> Campo Largo
+      </label>
+      <input
+        type="text"
+        id="campoLargo"
+        class="form-control"
+        formControlName="campoLargo"
+        placeholder="Ingrese el nombre completo del campo (opcional)"
+      />
+    </div>
+
+    <!-- Definición -->
+    <div class="form-group full-width">
+      <label for="definicion" class="form-label required">
+        <i class="fas fa-file-text"></i> Definición
+      </label>
+      <textarea
+        id="definicion"
+        class="form-control"
+        formControlName="definicion"
+        rows="4"
+        placeholder="Ingrese la definición del campo"
+        [class.is-invalid]="isFieldInvalid('definicion')"
+      ></textarea>
+      @if (isFieldInvalid('definicion')) {
+      <div class="invalid-feedback">
+        @if (diccionarioForm.get('definicion')?.errors?.['required']) { La
+        definición es requerida } @if
+        (diccionarioForm.get('definicion')?.errors?.['minlength']) { La
+        definición debe tener al menos 10 caracteres }
+      </div>
+      }
+      <small class="form-text text-muted">
+        {{ diccionarioForm.get("definicion")?.value?.length || 0 }} caracteres
+      </small>
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="form-actions">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="onCancel()"
+      [disabled]="loading"
+    >
+      <i class="fas fa-times"></i> Cancelar
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="diccionarioForm.invalid || loading"
+    >
+      @if (loading) {
+      <i class="fas fa-spinner fa-spin"></i>
+      } @else {
+      <i class="fas fa-save"></i>
+      }
+      {{ isEditMode ? "Actualizar" : "Crear" }} Diccionario
+    </button>
+  </div>
+
+  <!-- Preview de la entrada del diccionario -->
+  @if (diccionarioForm.valid) {
+  <div class="preview-section">
+    <h5><i class="fas fa-eye"></i> Vista Previa</h5>
+    <div class="preview-card">
+      <div class="preview-header">
+        <strong
+          >{{ diccionarioForm.get("tabla")?.value }}.{{
+            diccionarioForm.get("campo")?.value
+          }}</strong
+        >
+        @if (diccionarioForm.get('campoLargo')?.value) {
+        <span class="preview-long-name">{{
+          diccionarioForm.get("campoLargo")?.value
+        }}</span>
+        }
+      </div>
+      <div class="preview-definition">
+        {{ diccionarioForm.get("definicion")?.value }}
+      </div>
+    </div>
+  </div>
+  }
+</form>
+}
