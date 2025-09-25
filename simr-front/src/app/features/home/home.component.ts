@@ -3,10 +3,10 @@ import { AuthService } from '../../core/auth/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    styleUrl: './home.component.css',
-    standalone: false
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css',
+  standalone: false,
 })
 export class HomeComponent {
   isAuthenticated$ = this.authService.isAuthenticated$;
