@@ -20,16 +20,16 @@ import { AppRoutingModule } from './app-routing.module';
 
 // Components
 import { AppComponent } from './app.component';
-import { HomeComponent } from './pages/home/home.component';
+import { HomeComponent } from './features/home/home.component';
 // import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { LoginComponent } from './pages/login/login.component';
-import { SignupComponent } from './pages/signup/signup.component';
+import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
+import { LoginComponent } from './features/auth/login/login.component';
+import { SignupComponent } from './features/auth/signup/signup.component';
 
 // Services and Guards
-import { AuthService } from './services/auth.service';
-import { AuthGuard } from './guards/auth.guard';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthService } from './core/auth/auth.service';
+import { AuthGuard } from './core/auth/auth.guard';
+import { AuthInterceptor } from './core/auth/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HomeComponent,
     PageNotFoundComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
   ],
   imports: [
     BrowserModule,
