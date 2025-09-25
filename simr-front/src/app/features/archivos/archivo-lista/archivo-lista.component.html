@@ -1,0 +1,52 @@
+<div class="file-list">
+  <h2>{{dbCollection.toUpperCase()}}</h2>
+  <h3 style="font-style: italic;">{{ documentName | capitalizeWords }}</h3>
+  <h4>Archivos</h4>
+  @if (loading) {
+    <div class="loading">Cargando archivos...</div>
+  }
+  @if (!loading && files.length > 0) {
+    <div>
+      <button (click)="deleteSelectedFiles()" [disabled]="selectedFiles.length === 0" class="delete-multiple-btn">
+        Eliminar seleccionados ({{ selectedFiles.length }})
+      </button>
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" [checked]="allSelected" (change)="toggleAllSelection()">
+            </th>
+            <th>Nombre</th>
+            <th>Tamaño</th>
+            <th>Última modificación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (file of files; track file) {
+            <tr>
+              <td>
+                <!-- <input type="checkbox" [checked]="selectedFiles.has(file.name)" (change)="toggleFileSelection(file.name)"> -->
+                <input type="checkbox" [checked]="isInSelectedFiles(file.id)" (change)="toggleFileSelection(file)">
+              </td>
+              <td>{{ file.name }}</td>
+              <td>{{ formatBytes(file.size) }}</td>
+              <td>{{ file.lastModified | date:'medium' }}</td>
+              <td>
+                <button (click)="downloadFile(file.name)">Descargar</button>
+                <button (click)="viewFile(file.name)" class="view-btn">Ver</button>
+                <button (click)="deleteFile(file)" class="delete-btn">Eliminar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (!loading && files.length === 0) {
+    <div class="no-files">
+      No hay archivos disponibles.
+    </div>
+  }
+  <router-outlet></router-outlet>
+</div>
