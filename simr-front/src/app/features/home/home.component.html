@@ -1,0 +1,60 @@
+<!-- <h1>Home works!!!</h1> -->
+<div class="home-container">
+  <!-- <a routerLink="/login/" target="_blank">Iniciar Sesión</a> -->
+  <a routerLink="/login/">Iniciar Sesión</a>
+  <br />
+  <a routerLink="/signup/">Registrarse</a>
+  <br />
+  <a routerLink="/dashboard/">Dashboard</a>
+  <br />
+  <a routerLink="/diccionarios/">Ir a Diccionarios</a>
+  <br />
+  <a href="http://localhost:3000">Ir a AngularJS</a>
+  <br />
+  <a routerLink="/listado-tareas/">Listado de Tareas</a>
+  <br />
+
+  <br />
+  <!-- <a routerLink="" (click)="logout(); $event.preventDefault()">Cerrar sesión</a> -->
+
+  <div class="vertical-container">
+    <h5 class="vertical-element">Test Area</h5>
+    <!-- <button
+      (click)="redirectToAngularJS()"
+      class="redirect-btn vertical-element"
+    >
+      Ir a Aplicación AngularJS
+    </button> -->
+    <button (click)="testRefreshToken()" class="redirect-btn vertical-element">
+      Refresh Token
+    </button>
+    <button (click)="testVerifyToken()" class="redirect-btn vertical-element">
+      Verify Token
+    </button>
+    @if (isAuthenticated$ | async) {
+    <button (click)="logout()" class="redirect-btn">Logout</button>
+    }
+  </div>
+
+  <!-- <div class="vertical-container">
+    <button
+      (click)="redirectToAngularJS()"
+      class="redirect-btn vertical-element"
+    >
+      Ir a Aplicación AngularJS
+    </button>
+    <button (click)="testRefreshToken()" class="redirect-btn vertical-element">
+      Refresh Token
+    </button>
+    <button (click)="testVerifyToken()" class="redirect-btn vertical-element">
+      Verify Token
+    </button>
+    <button (click)="logout()" class="redirect-btn">Logout</button>
+  </div> -->
+</div>
+
+<!-- <iframe
+  id="angularjs-frame"
+  src="http://localhost:3000"
+  style="width: 100%; height: 100%; border: 1px solid #ccc"
+></iframe> -->

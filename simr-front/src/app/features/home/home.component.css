@@ -1,0 +1,16 @@
+.home-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.vertical-container {
+  display: flex;
+  flex-direction: column; /* Organiza verticalmente */
+}
+
+.vertical-element {
+  margin-bottom: 10px; /* Espacio entre los elementos */
+}   
