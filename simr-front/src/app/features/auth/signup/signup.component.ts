@@ -1,0 +1,60 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { User } from '../../../core/models/user.model';
+import { SignupCredentials } from '../../../core/auth/auth.interface';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Router } from '@angular/router';
+
+@Component({
+    selector: 'app-signup',
+    templateUrl: './signup.component.html',
+    styleUrl: './signup.component.css',
+    standalone: false
+})
+export class SignupComponent implements OnInit {
+  signupForm: FormGroup;
+  isLoading = false;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.signupForm = this.formBuilder.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {}
+
+  onSubmit(): void {
+    if (this.signupForm.invalid) {
+      return;
+    }
+
+    this.isLoading = true;
+    console.log('signupForm Values:', this.signupForm.value);
+    // Aquí puedes agregar la lógica para enviar los datos al servidor
+    const newUser: SignupCredentials = this.signupForm.value;
+    // newUser.provider = 'local'; // o cualquier valor predeterminado
+    // this.authService.signup(newUser).subscribe({
+    this.authService.signup(newUser).subscribe({
+      next: (response) => {
+        // console.log('Registration successful', response);
+        // Creación de cuenta exitosa
+        console.log('Creación de cuenta exitosa', response);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        console.error('Error during registration', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
+  }
+}
