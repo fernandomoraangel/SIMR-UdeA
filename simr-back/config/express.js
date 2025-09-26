@@ -1,17 +1,17 @@
-const config = require('./config');
-const express = require('express');
+const config = require("./config");
+const express = require("express");
 // const session = require('express-session');
 // const MongoStore = require('connect-mongo');
-const morgan = require('morgan');
-const compress = require('compression');
+const morgan = require("morgan");
+const compress = require("compression");
 // const bodyParser = require('body-parser');
-const methodOverride = require('method-override');
+const methodOverride = require("method-override");
 // const flash = require('connect-flash');
-const passport = require('passport');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
-const crypto = require('crypto');
+const passport = require("passport");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const crypto = require("crypto");
 
 // Función para inicializar la aplicación express
 module.exports = function () {
@@ -23,35 +23,19 @@ module.exports = function () {
 
   //* Middlewares de seguridad
   app.use((req, res, next) => {
-    res.locals.nonce = crypto.randomBytes(16).toString('base64');
+    res.locals.nonce = crypto.randomBytes(16).toString("base64");
     next();
   });
 
-  // Helmet CSP configurado por request
-  app.use((req, res, next) => {
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          `'nonce-${res.locals.nonce}'`,
-          'https://cdn.jsdelivr.net/npm/sweetalert2@11',
-        ],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        imgSrc: ["'self'", 'data:'],
-        frameAncestors: ["'self'"],
-        upgradeInsecureRequests: [],
-      },
-    })(req, res, next); // Llama al middleware generado por helmet
-  });
-
-  // Desactivar Helmet CSP si es necesario
-  // app.use(helmet({
-  // 	contentSecurityPolicy: false // Ajustar según necesidades
-  // }));
+  // Deshabilitando CSP para desarrollo
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // CSP deshabilitado para desarrollo
+    })
+  );
 
   //* Parsers
-  app.use(express.json({ limit: '10mb' })); // Middleware para analizar el cuerpo JSON
+  app.use(express.json({ limit: "10mb" })); // Middleware para analizar el cuerpo JSON
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
@@ -83,16 +67,16 @@ module.exports = function () {
   app.use(
     cors({
       origin:
-        process.env.NODE_ENV === 'production'
-          ? ['https://tudominio.com', 'https://www.tudominio.com']
+        process.env.NODE_ENV === "production"
+          ? ["https://tudominio.com", "https://www.tudominio.com"]
           : [
-              'http://localhost:4200',
-              'http://localhost:3000',
-              'http://localhost',
+              "http://localhost:4200",
+              "http://localhost:3000",
+              "http://localhost",
             ],
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     })
   );
 
@@ -114,11 +98,11 @@ module.exports = function () {
   // ===================================================
 
   //! Revisar si es necesario este código
-  if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
-  } else if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));
+  } else if (process.env.NODE_ENV === "production") {
     // Para subir a Heroku
-    require('dotenv').config();
+    require("dotenv").config();
     const DB_URI = process.env.DB_URI;
     const PORT = process.env.PORT;
     app.use(compress());
@@ -211,10 +195,10 @@ module.exports = function () {
   // ], require('./routes/admin'));
 
   //* Configurar el directorio views
-  app.set('views', './app/views');
+  app.set("views", "./app/views");
 
   //* Configurar el motor de plantillas
-  app.set('view engine', 'ejs');
+  app.set("view engine", "ejs");
 
   // // Registrar flash
   // app.use(flash());
@@ -252,27 +236,27 @@ module.exports = function () {
   // });
 
   // * Archivos de enrutamiento
-  require('../app/routes/index.server.routes.js')(app);
-  require('../app/routes/users.server.routes.js')(app);
-  require('../app/routes/obras.server.routes.js')(app);
-  require('../app/routes/actores.server.routes.js')(app);
-  require('../app/routes/recursos.server.routes.js')(app);
-  require('../app/routes/generos.server.routes.js')(app);
-  require('../app/routes/generosnomusicales.server.routes.js')(app);
-  require('../app/routes/materias.server.routes.js')(app);
-  require('../app/routes/instrumentos.server.routes.js')(app);
-  require('../app/routes/proyectos.server.routes.js')(app);
-  require('../app/routes/medios.server.routes.js')(app);
-  require('../app/routes/sistemas.server.routes.js')(app);
-  require('../app/routes/fondos.server.routes.js')(app);
-  require('../app/routes/colecciones.server.routes.js')(app);
-  require('../app/routes/ejemplares.server.routes.js')(app);
-  require('../app/routes/idiomas.server.routes.js')(app);
-  require('../app/routes/diccionarios.server.routes.js')(app);
-  require('../app/routes/archivos.server.routes.js')(app);
+  require("../app/routes/index.server.routes.js")(app);
+  require("../app/routes/users.server.routes.js")(app);
+  require("../app/routes/obras.server.routes.js")(app);
+  require("../app/routes/actores.server.routes.js")(app);
+  require("../app/routes/recursos.server.routes.js")(app);
+  require("../app/routes/generos.server.routes.js")(app);
+  require("../app/routes/generosnomusicales.server.routes.js")(app);
+  require("../app/routes/materias.server.routes.js")(app);
+  require("../app/routes/instrumentos.server.routes.js")(app);
+  require("../app/routes/proyectos.server.routes.js")(app);
+  require("../app/routes/medios.server.routes.js")(app);
+  require("../app/routes/sistemas.server.routes.js")(app);
+  require("../app/routes/fondos.server.routes.js")(app);
+  require("../app/routes/colecciones.server.routes.js")(app);
+  require("../app/routes/ejemplares.server.routes.js")(app);
+  require("../app/routes/idiomas.server.routes.js")(app);
+  require("../app/routes/diccionarios.server.routes.js")(app);
+  require("../app/routes/archivos.server.routes.js")(app);
 
   // Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
-  app.use(express.static('./public'));
+  app.use(express.static("./public"));
 
   // Devuelve la instancia de la aplicación
   return app;

@@ -2,10 +2,22 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+// Detectar automáticamente la URL base según el puerto actual
+const getBaseUrl = () => {
+  const currentPort = window.location.port;
+  if (currentPort === '80' || currentPort === '') {
+    // Si estamos en puerto 80 (nginx proxy), usar rutas relativas
+    return window.location.origin;
+  } else {
+    // Si estamos en otro puerto, usar localhost:3000
+    return 'http://localhost:3000';
+  }
+};
+
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
-  originUrl: 'http://localhost:3000'
+  apiUrl: getBaseUrl() + '/api',
+  originUrl: getBaseUrl(),
 };
 
 /*
