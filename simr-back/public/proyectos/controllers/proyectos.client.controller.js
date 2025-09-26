@@ -224,7 +224,7 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     $scope.actorAdd = function () {
-      existe = false;
+      var existe = false;
       //Fecha y precisión
       var precisionyFechaInicio = precisionFecha(this.fechaInicioActivo);
       this.fechaInicioActivo = precisionyFechaInicio.fecha;
@@ -397,7 +397,7 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     $scope.fechaAdd = function (f) {
-      existe = false;
+      var existe = false;
       //Fecha y precisión
       var precisionyFecha = precisionFecha(this.fecha);
       this.fecha = precisionyFecha.fecha;
@@ -531,7 +531,7 @@ angular.module("proyectos").controller("ProyectosController", [
 
     //Menú descriptores libres
     $scope.dDescriptorAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta:" + this.dEtiqueta + ",contenido:" + this.dContenido;
       var properties = x.split(",");
       var obj = {};
@@ -656,7 +656,7 @@ angular.module("proyectos").controller("ProyectosController", [
 
     //Menú enlaces
     $scope.enlaceAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
       var properties = x.split(",");
       var obj = {};

@@ -163,7 +163,7 @@ angular.module("ejemplares").controller("EjemplaresController", [
     };
     //Menú descriptores libres
     $scope.estadoAdd = function () {
-      existe = false;
+      var existe = false;
       let x =
         "etiqueta:" +
         this.estadoEtiqueta +

@@ -286,7 +286,7 @@ angular.module("medios").controller("MediosController", [
 
     //Alias
     $scope.aliasAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "nombre:" + this.alias;
       var properties = x.split(",");
       var obj = {};
@@ -356,8 +356,8 @@ angular.module("medios").controller("MediosController", [
     };
 
     $scope.instrumentoAdd = function () {
-      existe = false;
-      x =
+      var existe = false;
+      var x =
         "instrumento:" +
         this.instrumento +
         ",cantidad:" +
@@ -474,7 +474,7 @@ angular.module("medios").controller("MediosController", [
 
     //Anotaciones cartográfico temporales
     $scope.anotacionCartograficoTemporalAdd = function () {
-      existe = false;
+      var existe = false;
       //Calcular precisión para fecha inicio
       var precisionyFechaInicio = precisionFecha(this.fechaDeInicio);
       this.fechaDeInicio = precisionyFechaInicio.fecha;
@@ -707,7 +707,7 @@ angular.module("medios").controller("MediosController", [
 
     //Menú descriptores libres
     $scope.dDescriptorAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta:" + this.dEtiqueta + ",contenido:" + this.dContenido;
       var properties = x.split(",");
       var obj = {};
@@ -806,8 +806,8 @@ angular.module("medios").controller("MediosController", [
     };
 
     $scope.proyectoAdd = function () {
-      existe = false;
-      x = "proyecto:" + this.proyecto;
+      var existe = false;
+      var x = "proyecto:" + this.proyecto;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -874,7 +874,7 @@ angular.module("medios").controller("MediosController", [
     };
     //Menú enlaces
     $scope.enlaceAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
       var properties = x.split(",");
       var obj = {};

@@ -284,7 +284,7 @@ angular.module("sistemas").controller("SistemasController", [
 
     //Alias
     $scope.aliasAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "nombre:" + this.alias;
       var properties = x.split(",");
       var obj = {};
@@ -356,8 +356,8 @@ angular.module("sistemas").controller("SistemasController", [
 
     //Sistemas relacionados
     $scope.sistemaRelacionadoAdd = function () {
-      existe = false;
-      x = "id:" + this.sRelacionado;
+      var existe = false;
+      var x = "id:" + this.sRelacionado;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -423,8 +423,8 @@ angular.module("sistemas").controller("SistemasController", [
 
     //Padres
     $scope.padresAdd = function () {
-      existe = false;
-      x = "id:" + this.padre;
+      var existe = false;
+      var x = "id:" + this.padre;
       // $scope.sistemaAux(this.padres);
       var properties = x.split(",");
       var obj = {};
@@ -572,8 +572,8 @@ angular.module("sistemas").controller("SistemasController", [
     };
 
     $scope.proyectoAdd = function () {
-      existe = false;
-      x = "proyecto:" + this.proyecto;
+      var existe = false;
+      var x = "proyecto:" + this.proyecto;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -694,7 +694,7 @@ angular.module("sistemas").controller("SistemasController", [
 
     //Menú enlaces
     $scope.enlaceAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
       var properties = x.split(",");
       var obj = {};
@@ -796,7 +796,7 @@ angular.module("sistemas").controller("SistemasController", [
 
     //Anotaciones cartográfico temporales
     $scope.anotacionCartograficoTemporalAdd = function () {
-      existe = false;
+      var existe = false;
       //Calcular precisión para fecha inicio
       var precisionyFechaInicio = precisionFecha(this.fechaDeInicio);
       this.fechaDeInicio = precisionyFechaInicio.fecha;
@@ -1029,7 +1029,7 @@ angular.module("sistemas").controller("SistemasController", [
 
     //Menú descriptores libres
     $scope.dDescriptorAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta:" + this.dEtiqueta + ",contenido:" + this.dContenido;
       var properties = x.split(",");
       var obj = {};

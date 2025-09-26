@@ -537,7 +537,7 @@ angular.module("obras").controller("ObrasController", [
                 icon: "error",
                 confirmButtonText: "Cerrar",
               });
-              existe = true;
+              $scope.existe = true;
               return;
             }
           }
@@ -615,7 +615,7 @@ angular.module("obras").controller("ObrasController", [
                 icon: "error",
                 confirmButtonText: "Cerrar",
               });
-              existe = true;
+              $scope.existe = true;
               return;
             }
           }
@@ -726,7 +726,7 @@ angular.module("obras").controller("ObrasController", [
                 icon: "error",
                 confirmButtonText: "Cerrar",
               });
-              existe = true;
+              $scope.existe = true;
               return;
             }
           }

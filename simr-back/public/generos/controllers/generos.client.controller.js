@@ -357,7 +357,7 @@ angular.module("generos").controller("GenerosController", [
 
     //Alias
     $scope.aliasAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "nombre:" + this.alias;
       var properties = x.split(",");
       var obj = {};
@@ -430,7 +430,7 @@ angular.module("generos").controller("GenerosController", [
 
     //Género relacionado
     $scope.generoRelacionadoAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "id:" + this.generoRelacionado;
       var properties = x.split(",");
       var obj = {};
@@ -500,8 +500,8 @@ angular.module("generos").controller("GenerosController", [
 
     //Padres
     $scope.padresAdd = function () {
-      existe = false;
-      x = "id:" + this.padre;
+      var existe = false;
+      var x = "id:" + this.padre;
       // $scope.sistemaAux(this.padres);
       var properties = x.split(",");
       var obj = {};
@@ -568,8 +568,8 @@ angular.module("generos").controller("GenerosController", [
 
     //Hijos
     $scope.hijosAdd = function () {
-      existe = false;
-      x = "id:" + this.hijo;
+      var existe = false;
+      var x = "id:" + this.hijo;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {

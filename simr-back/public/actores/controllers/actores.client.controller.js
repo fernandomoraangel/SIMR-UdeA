@@ -279,7 +279,7 @@ angular.module("actores").controller("ActoresController", [
     };
     //Anotaciones cartográfico temporales
     $scope.anotacionCartograficoTemporalAdd = function () {
-      existe = false;
+      var existe = false;
       //Calcular precisión para fecha inicio
       var precisionyFechaInicio = precisionFecha(this.fechaDeInicio);
       this.fechaDeInicio = precisionyFechaInicio.fecha;
@@ -509,7 +509,7 @@ angular.module("actores").controller("ActoresController", [
 
     //Menú descriptores libres
     $scope.dDescriptorAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta:" + this.dEtiqueta + ",contenido:" + this.dContenido;
       var properties = x.split(",");
       var obj = {};
@@ -872,7 +872,7 @@ angular.module("actores").controller("ActoresController", [
     // };
 
     $scope.enlaceAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
       var properties = x.split(",");
       var obj = {};

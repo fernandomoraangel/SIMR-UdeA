@@ -490,8 +490,8 @@ angular.module("recursos").controller("RecursosController", [
       }
     };
     $scope.actorAdd = function () {
-      existe = false;
-      x = "actor:" + this.idActor + ",tipoDeMencion:" + this.rol;
+      var existe = false;
+      var x = "actor:" + this.idActor + ",tipoDeMencion:" + this.rol;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -589,7 +589,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //nnormalizados
     $scope.nnormalizadoAdd = function () {
-      existe = false;
+      var existe = false;
       var x =
         "nombre:" +
         this.nNormalizadoNombre +
@@ -704,8 +704,8 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.recursoAdd = function (x) {
-      existe = false;
-      x = "id:" + this.contenedor;
+      var existe = false;
+      var x = "id:" + this.contenedor;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -784,8 +784,8 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.materiaAdd = function (x) {
-      existe = false;
-      x = "id:" + this.materia;
+      var existe = false;
+      var x = "id:" + this.materia;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -853,7 +853,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //Descripción técnica
     $scope.dTecnicaAdd = function () {
-      existe = false;
+      var existe = false;
       var x =
         "criterio:" + this.criterioDTecnica + ",valor:" + this.valordTecnica;
       var properties = x.split(",");
@@ -955,8 +955,8 @@ angular.module("recursos").controller("RecursosController", [
     //Obra relacionada
 
     $scope.obraRelacionadaAdd = function () {
-      existe = false;
-      x = "id:" + this.obraRelacionada;
+      var existe = false;
+      var x = "id:" + this.obraRelacionada;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1019,8 +1019,8 @@ angular.module("recursos").controller("RecursosController", [
 
     //Tipo
     $scope.tipoAdd = function () {
-      existe = false;
-      x = "id:" + this.tipodeRecurso;
+      var existe = false;
+      var x = "id:" + this.tipodeRecurso;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1087,7 +1087,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //Fuente
     $scope.fuenteAdd = function () {
-      existe = false;
+      var existe = false;
       //Fecha y precisión
       var precisionyFecha = precisionFecha(this.fechaDeFuente);
       this.fechaDeFuente = precisionyFecha.fecha;
@@ -1288,8 +1288,8 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.idiomaAdd = function () {
-      existe = false;
-      x = "id:" + this.idioma;
+      var existe = false;
+      var x = "id:" + this.idioma;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1355,7 +1355,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //Anotaciones cartográfico temporales
     $scope.anotacionCartograficoTemporalAdd = function () {
-      existe = false;
+      var existe = false;
       //Calcular precisión para fecha inicio
       var precisionyFechaInicio = precisionFecha(this.fechaDeInicio);
       this.fechaDeInicio = precisionyFechaInicio.fecha;
@@ -1585,7 +1585,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //Menú descriptores libres
     $scope.dDescriptorAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta:" + this.dEtiqueta + ",contenido:" + this.dContenido;
       var properties = x.split(",");
       var obj = {};
@@ -1695,8 +1695,8 @@ angular.module("recursos").controller("RecursosController", [
     };
 
     $scope.proyectoAdd = function () {
-      x = "id:" + this.proyecto;
-      existe = false;
+      var x = "id:" + this.proyecto;
+      var existe = false;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1765,7 +1765,7 @@ angular.module("recursos").controller("RecursosController", [
 
     //Los asteriscos se usan porque la url contiene ":"
     $scope.enlaceAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
       var properties = x.split(",");
       var obj = {};
