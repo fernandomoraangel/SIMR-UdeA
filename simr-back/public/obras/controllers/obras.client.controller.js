@@ -574,13 +574,13 @@ angular.module("obras").controller("ObrasController", [
 
     //Denominación Regional-socio-cultural
     $scope.denominacionRegionalAdd = function () {
-      existe = false;
-      x =
+      $scope.existe = false;
+      $scope.x =
         "denominacionRegional:" +
         this.denominacionRegional +
         ",fuenteDenominacion:" +
         this.fuenteDenominacion;
-      var properties = x.split(",");
+      var properties = $scope.x.split(",");
       var obj = {};
       properties.forEach(function (property) {
         var tup = property.split(":");
@@ -600,7 +600,7 @@ angular.module("obras").controller("ObrasController", [
           confirmButtonText: "Cerrar",
         });
       } else {
-        if ($scope.idDenominacionesRegionales.indexOf(x) === -1) {
+        if ($scope.idDenominacionesRegionales.indexOf($scope.x) === -1) {
           for (var i in $scope.idDenominacionesRegionales) {
             if (
               $scope.idDenominacionesRegionales[i].denominacionRegional ===
@@ -620,7 +620,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idDenominacionesRegionales.push(obj);
           this.denominacionRegional = "";
           this.fuenteDenominacion = "";
@@ -686,8 +686,8 @@ angular.module("obras").controller("ObrasController", [
     };
     $scope.asientoLigadoAdd = function (x) {
       //Verificar que los campos están llenos
-      existe = false;
-      x =
+      $scope.existe = false;
+      $scope.x =
         "id:" +
         this.asientoligado +
         ",tipoDeRelacion:" +
@@ -701,7 +701,7 @@ angular.module("obras").controller("ObrasController", [
         ",notaGeneral:" +
         this.notaGeneral;
 
-      var properties = x.split(",");
+      var properties = $scope.x.split(",");
       var obj = {};
       properties.forEach(function (property) {
         var tup = property.split(":");
@@ -731,7 +731,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idAsientosLigados.push(obj);
           this.asientoligado = "";
           this.tipoDeRelacion = "";
@@ -824,7 +824,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.generoAdd = function () {
-      existe = false;
+      $scope.existe = false;
       var x = "id:" + this.genero;
       var properties = x.split(",");
       var obj = {};
@@ -857,7 +857,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idGeneros.push(obj);
           this.genero = "";
         }
@@ -904,7 +904,7 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.generoNoMusicalAdd = function () {
-      existe = false;
+      $scope.existe = false;
       var x = "id:" + this.generoNoMusical;
       var properties = x.split(",");
       var obj = {};
@@ -937,7 +937,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idGenerosNoMusicales.push(obj);
           this.generoNoMusical = "";
         }
@@ -984,8 +984,8 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.materiaAdd = function (x) {
-      existe = false;
-      x = "id:" + this.materia;
+      $scope.existe = false;
+      var x = "id:" + this.materia;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1017,7 +1017,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idMaterias.push(obj);
           this.materia = "";
         }
@@ -1065,8 +1065,8 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.medioAdd = function (x) {
-      existe = false;
-      x = "id:" + this.medio;
+      $scope.existe = false;
+      var x = "id:" + this.medio;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1097,7 +1097,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idMedios.push(obj);
           this.medio = "";
         }
@@ -1144,8 +1144,8 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.sistemaAdd = function (x) {
-      existe = false;
-      x = "id:" + this.sistema + ",centro:" + this.centroSistema;
+      $scope.existe = false;
+      var x = "id:" + this.sistema + ",centro:" + this.centroSistema;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1176,7 +1176,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idSistemas.push(obj);
           this.sistema = "";
           this.centroSistema = "";
@@ -1236,8 +1236,8 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.idiomaAdd = function () {
-      existe = false;
-      x = "id:" + this.idioma;
+      var existe = false;
+      var x = "id:" + this.idioma;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1405,7 +1405,7 @@ angular.module("obras").controller("ObrasController", [
 
     //Anotaciones cartográfico temporales
     $scope.anotacionCartograficoTemporalAdd = function () {
-      existe = false;
+      var existe = false;
       //Calcular precisión para fecha inicio
       var precisionyFechaInicio = precisionFecha(this.fechaDeInicio);
       this.fechaDeInicio = precisionyFechaInicio.fecha;
@@ -1638,7 +1638,7 @@ angular.module("obras").controller("ObrasController", [
 
     //Menú descriptores libres
     $scope.dDescriptorAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta:" + this.dEtiqueta + ",contenido:" + this.dContenido;
       var properties = x.split(",");
       var obj = {};
@@ -1748,8 +1748,8 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.proyectoAdd = function () {
-      x = "id:" + this.proyecto;
-      existe = false;
+      var x = "id:" + this.proyecto;
+      var existe = false;
       var properties = x.split(",");
       var obj = {};
       properties.forEach(function (property) {
@@ -1903,7 +1903,7 @@ angular.module("obras").controller("ObrasController", [
     // *** (Fin de Archivos) ***
 
     $scope.enlaceAdd = function () {
-      existe = false;
+      var existe = false;
       var x = "etiqueta*" + this.eEtiqueta + ",url*" + this.eUrl;
       var properties = x.split(",");
       var obj = {};

@@ -154,7 +154,7 @@
           <div ng-model="todoInput">
             <!-- TODO: Cambiar por ng-click en todos los update -->
             <select class="form-control" id="actorId" ng-model="actor">
-              <option ng-repeat="actor in actores track by $index" value="{{actor.id}}">
+              <option ng-repeat=" actor in actores track by $index" value="{{actor.id}}">
                 {{actor.fullName}} {{nombrarSi("Rol", actor.rol)}}
               </option>
               <option value="">-----</option>
@@ -441,7 +441,7 @@
 
         <div class="collapse" id="collapseGenero">
           <label class="campo"></label>
-          <select class="form-control" id="generosId" ng-model="genero" ng-mouseup="updateGeneros();">
+          <select class="form-control" id="generosId" ng-model="genero" ng-mouseup="$scope.updateGeneros();">
             <option ng-repeat="genero in generos track by $index" value="{{genero._id}}">
               {{genero.nombre}}
             </option>
@@ -495,7 +495,7 @@
 
         <div class="collapse" id="collapseGeneroNoMusical">
           <label class="campo"></label>
-          <select class="form-control" ng-model="generoNoMusical" ng-mouseup="updateGenerosNoMusicales();">
+          <select class="form-control" ng-model="generoNoMusical" ng-mouseup="$scope.updateGenerosNoMusicales();">
             <option ng-repeat="generoNoMusical in generosNoMusicales track by $index" value="{{generoNoMusical.id}}">
               {{generoNoMusical.nombre}}
             </option>
@@ -549,7 +549,7 @@
         <div>
           <div class="collapse" id="collapseMateria">
             <label class="campo"></label>
-            <select class="form-control" ng-model="materia" ng-mouseup="updateMaterias();">
+            <select class="form-control" ng-model="materia" ng-mouseup="$scope.updateMaterias();">
               <option ng-repeat="materia in materias track by $index" value="{{materia._id}}">
                 {{materia.nombre}}
               </option>
@@ -605,7 +605,7 @@
 
           <div class="collapse" id="collapseMedio">
             <label class="campo"></label>
-            <select class="form-control" ng-model="medio" ng-mouseup="updatemedios();">
+            <select class="form-control" ng-model="medio" ng-mouseup="$scope.updatemedios();">
               <option ng-repeat="medio in medios track by $index" value="{{medio.id}}">
                 {{medio.nombre}}
               </option>
@@ -659,7 +659,7 @@
 
           <div class="collapse" id="collapseSistema">
             <label class="campo"></label>
-            <select class="form-control" id="sistemaId" ng-model="sistema" ng-mouseup="updatesistemas();">
+            <select class="form-control" id="sistemaId" ng-model="sistema" ng-mouseup="$scope.updatesistemas();">
               <option ng-repeat="sistema in sistemas track by $index" value="{{sistema.id}}">
                 {{sistema.nombre}}
               </option>
@@ -782,7 +782,7 @@
           </div>
 
           <div class="collapse" id="collapseProyecto">
-            <select class="form-control" ng-model="proyecto" ng-mouseup="updateProyectos();">
+            <select class="form-control" ng-model="proyecto" ng-mouseup="$scope.updateProyectos();">
               <option ng-repeat="proyecto in proyectos track by $index" value="{{proyecto.id}}">
                 {{proyecto.nombre}}
               </option>
