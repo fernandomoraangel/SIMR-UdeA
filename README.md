@@ -336,3 +336,322 @@ git fetch
 git pull
 ~~~
 
+## Chuletario de Comandos Docker y Docker Compose
+
+### Comandos Básicos de Docker
+
+#### Gestión de Imágenes
+```bash
+# Listar imágenes locales
+docker images
+docker image ls
+
+# Descargar una imagen
+docker pull <imagen>:<tag>
+
+# Construir imagen desde Dockerfile
+docker build -t <nombre-imagen>:<tag> .
+docker build -t <nombre-imagen>:<tag> -f <dockerfile> <contexto>
+
+# Eliminar imagen
+docker rmi <imagen-id>
+docker image rm <nombre-imagen>:<tag>
+
+# Limpiar imágenes no utilizadas
+docker image prune
+docker image prune -a  # Elimina todas las imágenes no utilizadas
+```
+
+#### Gestión de Contenedores
+```bash
+# Listar contenedores en ejecución
+docker ps
+docker container ls
+
+# Listar todos los contenedores (incluso detenidos)
+docker ps -a
+docker container ls -a
+
+# Crear y ejecutar un contenedor
+docker run <imagen>
+docker run -d <imagen>                    # En background (detached)
+docker run -p 3000:3000 <imagen>         # Mapear puertos
+docker run -v /host/path:/container/path  # Montar volúmenes
+docker run --name <nombre> <imagen>       # Asignar nombre
+
+# Ejecutar comando en contenedor existente
+docker exec -it <container-id> bash
+docker exec -it <container-name> sh
+
+# Detener contenedor
+docker stop <container-id>
+docker container stop <container-name>
+
+# Iniciar contenedor detenido
+docker start <container-id>
+docker container start <container-name>
+
+# Reiniciar contenedor
+docker restart <container-id>
+docker container restart <container-name>
+
+# Eliminar contenedor
+docker rm <container-id>
+docker container rm <container-name>
+
+# Eliminar contenedor en ejecución (forzado)
+docker rm -f <container-id>
+```
+
+#### Monitoreo y Logs
+```bash
+# Ver logs de un contenedor
+docker logs <container-id>
+docker logs -f <container-id>           # Seguir logs en tiempo real
+docker logs --tail 50 <container-id>   # Últimas 50 líneas
+
+# Ver estadísticas de uso de recursos
+docker stats
+docker stats <container-id>
+
+# Inspeccionar contenedor
+docker inspect <container-id>
+
+# Ver procesos en un contenedor
+docker top <container-id>
+```
+
+#### Limpieza del Sistema
+```bash
+# Limpiar contenedores detenidos
+docker container prune
+
+# Limpiar imágenes no utilizadas
+docker image prune
+
+# Limpiar volúmenes no utilizados
+docker volume prune
+
+# Limpiar redes no utilizadas
+docker network prune
+
+# Limpieza general del sistema
+docker system prune
+docker system prune -a     # Incluye imágenes no utilizadas
+
+# Ver espacio utilizado por Docker
+docker system df
+```
+
+### Comandos de Docker Compose
+
+#### Gestión de Servicios
+```bash
+# Construir y levantar todos los servicios
+docker-compose up
+docker-compose up -d                    # En background
+docker-compose up --build              # Forzar reconstrucción
+docker-compose up <servicio>           # Solo un servicio específico
+
+# Construir servicios sin levantarlos
+docker-compose build
+docker-compose build --no-cache        # Sin usar caché
+docker-compose build <servicio>        # Solo un servicio
+
+# Detener servicios
+docker-compose down
+docker-compose down --volumes          # Elimina también volúmenes
+docker-compose down --rmi all          # Elimina también imágenes
+
+# Detener servicios sin eliminarlos
+docker-compose stop
+docker-compose stop <servicio>
+
+# Iniciar servicios detenidos
+docker-compose start
+docker-compose start <servicio>
+
+# Reiniciar servicios
+docker-compose restart
+docker-compose restart <servicio>
+```
+
+#### Configuraciones con Restart Policy
+```yaml
+# En docker-compose.yml - Configuraciones de reinicio:
+version: '3.8'
+services:
+  servicio:
+    restart: "no"              # No reiniciar automáticamente
+    restart: always            # Siempre reiniciar
+    restart: on-failure        # Solo si falla
+    restart: unless-stopped    # Reiniciar a menos que se detenga manualmente
+```
+
+```bash
+# Aplicar cambios de configuración
+docker-compose up -d                    # Aplica cambios sin downtime
+docker-compose up -d --force-recreate   # Recrea contenedores
+```
+
+#### Monitoreo y Debugging
+```bash
+# Ver logs de todos los servicios
+docker-compose logs
+docker-compose logs -f                  # Seguir logs en tiempo real
+docker-compose logs <servicio>         # Logs de un servicio específico
+docker-compose logs -f --tail 100 <servicio>  # Últimas 100 líneas seguidas
+
+# Ver estado de servicios
+docker-compose ps
+docker-compose ps -a                    # Incluir servicios detenidos
+
+# Ejecutar comando en servicio
+docker-compose exec <servicio> bash
+docker-compose exec <servicio> sh
+docker-compose exec <servicio> <comando>
+
+# Escalar servicios (crear múltiples instancias)
+docker-compose up -d --scale <servicio>=3
+
+# Ver configuración final del compose
+docker-compose config
+```
+
+#### Gestión de Volúmenes y Redes
+```bash
+# Listar volúmenes del proyecto
+docker-compose volume ls
+
+# Eliminar volúmenes del proyecto
+docker volume rm $(docker volume ls -q)
+
+# Ver redes del proyecto
+docker-compose network ls
+docker network ls
+```
+
+### Comandos Útiles para Troubleshooting
+
+#### Verificar Estado del Sistema
+```bash
+# Ver todos los procesos Docker
+docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# Ver uso de recursos
+docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
+
+# Verificar conectividad de red
+docker-compose exec <servicio> ping <otro-servicio>
+docker-compose exec <servicio> nslookup <otro-servicio>
+```
+
+#### Backup y Restore
+```bash
+# Backup de volúmenes
+docker run --rm -v <volumen>:/backup -v $(pwd):/host alpine tar czf /host/backup.tar.gz -C /backup .
+
+# Restore de volúmenes
+docker run --rm -v <volumen>:/backup -v $(pwd):/host alpine tar xzf /host/backup.tar.gz -C /backup
+
+# Exportar/Importar imágenes
+docker save -o imagen.tar <imagen>:<tag>
+docker load -i imagen.tar
+```
+
+### Ejemplos Específicos para el Proyecto SIMR
+
+#### Levantamiento Normal
+```bash
+# Levantar todos los servicios en background
+docker-compose up -d
+
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Ver solo logs del backend
+docker-compose logs -f simr-back
+
+# Ver solo logs del frontend
+docker-compose logs -f simr-front
+```
+
+#### Desarrollo y Debug
+```bash
+# Reconstruir y levantar tras cambios en código
+docker-compose up -d --build
+
+# Acceder al contenedor del backend para debugging
+docker-compose exec simr-back bash
+
+# Acceder a MongoDB
+docker-compose exec mongodb mongosh -u superAdmin -p SOh3TbYhx8ypJPxmt1oOfL simr
+
+# Acceder a MinIO (interfaz web en http://localhost:9001)
+# O desde línea de comandos:
+docker-compose exec minio mc ls local/sistema-archivos-simr
+```
+
+#### Mantenimiento y Limpieza
+```bash
+# Reiniciar un servicio específico
+docker-compose restart simr-back
+
+# Ver estado de servicios con restart policy
+docker-compose ps
+
+# Limpiar el proyecto completo
+docker-compose down --volumes --rmi all
+
+# Levantar solo servicios de base de datos
+docker-compose up -d mongodb minio
+
+# Ver estadísticas de uso
+docker stats simr-back_1 simr-front_1 mongodb_1
+```
+
+#### Comandos de Monitoreo Continuo
+```bash
+# Monitoreo completo en tiempo real
+watch 'docker-compose ps && echo "=== LOGS RECIENTES ===" && docker-compose logs --tail 10'
+
+# Ver solo servicios que han fallado
+docker ps -a --filter "status=exited"
+
+# Verificar que servicios se reinician automáticamente
+docker-compose logs | grep -i restart
+```
+
+### Tips Importantes
+
+1. **Restart Policies**: Con `restart: unless-stopped`, los contenedores se reinician automáticamente excepto cuando se detienen manualmente con `docker-compose stop` o `docker stop`.
+
+2. **Logs**: Usa `-f` para seguir logs en tiempo real y `--tail N` para limitar la cantidad de líneas mostradas.
+
+3. **Desarrollo**: Durante desarrollo, usa `docker-compose up --build` para asegurar que los cambios se reflejen.
+
+4. **Limpieza**: Ejecuta regularmente `docker system prune` para liberar espacio en disco.
+
+5. **Backup**: Siempre haz backup de tus volúmenes antes de hacer `docker-compose down --volumes`.
+
+6. **Red**: Los servicios pueden comunicarse entre sí usando sus nombres de servicio definidos en `docker-compose.yml`.
+
+### Solución de Problemas Comunes
+
+```bash
+# Si un servicio no inicia:
+docker-compose logs <servicio>
+docker-compose exec <servicio> sh  # Si está corriendo
+
+# Si hay problemas de permisos:
+docker-compose exec <servicio> chown -R $(id -u):$(id -g) /path/to/dir
+
+# Si hay conflictos de puerto:
+docker-compose ps
+netstat -tulpn | grep <puerto>
+
+# Si se agota el espacio en disco:
+docker system df
+docker system prune -a
+```
+

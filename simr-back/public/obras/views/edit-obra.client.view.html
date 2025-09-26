@@ -264,7 +264,7 @@
         </div>
 
         <div class="collapse" id="collapseContenedor">
-          <select class="form-control" id="nombreContenedor" ng-model="contenedor" ng-click="updateObras();">
+          <select class="form-control" id="nombreContenedor" ng-model="contenedor" ng-click="$scope.updateObras();">
             <option ng-repeat="obra in obras track by $index" value="{{obra.id}}">
               {{obra.titulo}}
             </option>
@@ -314,7 +314,7 @@
         </div>
 
         <div class="collapse" id="collapseAL">
-          <select class="form-control" id="asientoObraId" ng-model="asientoligado" ng-mouseup="updateObras();">
+          <select class="form-control" id="asientoObraId" ng-model="asientoligado" ng-mouseup="$scope.updateObras();">
             <option ng-repeat="obra in obras track by $index" value="{{obra.id}}">
               {{obra.titulo}}
             </option>
@@ -343,7 +343,7 @@
           <div>
             <label class="campo">Proyecto asociado a la relación</label>
             <select class="form-control" id="asientoProyectoId" ng-model="proyectoRelacion"
-              ng-mouseup="updateProyectos();">
+              ng-mouseup="$scope.updateProyectos();">
               <option ng-repeat="proyecto in proyectos track by $index" value="{{proyecto.id}}">
                 {{proyecto.nombre}}
               </option>
@@ -418,7 +418,7 @@
 
         <div class="collapse" id="collapseGenero">
           <label class="campo"></label>
-          <select class="form-control" ng-model="genero" ng-mouseup="updateGeneros();">
+          <select class="form-control" ng-model="genero" ng-mouseup="$scope.updateGeneros();">
             <option ng-repeat="genero in generos track by $index" value="{{genero._id}}">
               {{genero.nombre}}
             </option>
@@ -473,7 +473,7 @@
 
         <div class="collapse" id="collapseGeneroNoMusical">
           <label class="campo"></label>
-          <select class="form-control" ng-model="generoNoMusical" ng-mouseup="updateGenerosNoMusicales();">
+          <select class="form-control" ng-model="generoNoMusical" ng-mouseup="$scope.updateGenerosNoMusicales();">
             <option ng-repeat="generoNoMusical in generosNoMusicales track by $index" value="{{generoNoMusical.id}}">
               {{generoNoMusical.nombre}}
             </option>
@@ -529,7 +529,7 @@
         <div>
           <div class="collapse" id="collapseMateria">
             <label class="campo"></label>
-            <select class="form-control" ng-model="materia" ng-mouseup="updateMaterias();">
+            <select class="form-control" ng-model="materia" ng-mouseup="$scope.updateMaterias();">
               <option ng-repeat="materia in materias track by $index" value="{{materia._id}}">
                 {{materia.nombre}}
               </option>
@@ -586,7 +586,7 @@
 
           <div class="collapse" id="collapseMedio">
             <label class="campo"></label>
-            <select class="form-control" ng-model="medio" ng-mouseup="updatemedios();">
+            <select class="form-control" ng-model="medio" ng-mouseup="$scope.updatemedios();">
               <option ng-repeat="medio in medios track by $index" value="{{medio.id}}">
                 {{medio.nombre}}
               </option>
@@ -641,7 +641,7 @@
 
           <div class="collapse" id="collapseSistema">
             <label class="campo"></label>
-            <select class="form-control" id="sistemaId" ng-model="sistema" ng-mouseup="updatesistemas();">
+            <select class="form-control" id="sistemaId" ng-model="sistema" ng-mouseup="$scope.updatesistemas();">
               <option ng-repeat="sistema in sistemas track by $index" value="{{sistema.id}}">
                 {{sistema.nombre}}
               </option>
@@ -766,7 +766,7 @@
           </div>
 
           <div class="collapse" id="collapseProyecto">
-            <select class="form-control" ng-model="proyecto" ng-mouseup="updateProyectos();">
+            <select class="form-control" ng-model="proyecto" ng-mouseup="$scope.updateProyectos();">
               <option ng-repeat="proyecto in proyectos track by $index" value="{{proyecto.id}}">
                 {{proyecto.nombre}}
               </option>

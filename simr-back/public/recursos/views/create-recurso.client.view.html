@@ -582,7 +582,7 @@
             <label class="campo">MATERIA</label>
           </div>
           <div class="collapse" id="collapseMat">
-            <select class="form-control" ng-model="materia" ng-mouseup="updateMaterias();">
+            <select class="form-control" ng-model="materia" ng-mouseup="$scope.updateMaterias();">
               <option ng-repeat="materia in materias track by $index" value="{{materia._id}}">
                 {{materia.nombre}}
               </option>
@@ -811,7 +811,7 @@
           </div>
           <div class="collapse" id="collapsePAsociados">
             <label class="campo"></label>
-            <select class="form-control" ng-model="proyecto" ng-mouseup="updateProyectos();">
+            <select class="form-control" ng-model="proyecto" ng-mouseup="$scope.updateProyectos();">
               <option ng-repeat="proyecto in proyectos track by $index" value="{{proyecto.id}}">
                 {{proyecto.nombre}}
               </option>
