@@ -7,13 +7,33 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Backend: Express.js",
+      "name": "Backend: Express.js (Local)",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/simr-back/server.js",
       "cwd": "${workspaceFolder}/simr-back",
       "env": {
         "NODE_ENV": "development"
       }
+    },
+    {
+      "name": "Backend: Docker Debug (Attach)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}/simr-back",
+      "remoteRoot": "/app",
+      "restart": true,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Frontend: Chrome Debug",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/simr-back/public",
+      "sourceMaps": false,
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug"
     }
   ]
 }

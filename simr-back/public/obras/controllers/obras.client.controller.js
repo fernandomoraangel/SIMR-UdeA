@@ -125,6 +125,10 @@ angular.module("obras").controller("ObrasController", [
     $scope.archivosCargados = [];
     $scope.documentId = $routeParams.obraId;
 
+    // Variables auxiliares globales del controlador
+    $scope.existe = false;
+    $scope.x = "";
+
     // Funciones auxiliares
     //Cargar los campos que tienen vectores para la vista de edición
     $scope.cargaDenominaciones = function (d) {
@@ -506,9 +510,9 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.obraAdd = function () {
-      existe = false;
-      x = "id:" + this.contenedor;
-      var properties = x.split(",");
+      $scope.existe = false;
+      $scope.x = "id:" + this.contenedor;
+      var properties = $scope.x.split(",");
       var obj = {};
       properties.forEach(function (property) {
         var tup = property.split(":");
@@ -523,7 +527,7 @@ angular.module("obras").controller("ObrasController", [
           confirmButtonText: "Cerrar",
         });
       } else {
-        if ($scope.idContenedores.indexOf(x) === -1) {
+        if ($scope.idContenedores.indexOf($scope.x) === -1) {
           for (var i in $scope.idContenedores) {
             if ($scope.idContenedores[i].id === this.contenedor) {
               //Mensaje de error
@@ -538,7 +542,7 @@ angular.module("obras").controller("ObrasController", [
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idContenedores.push(obj);
           this.contenedor = "";
           //console.log($scope.idContenedores);
@@ -1311,9 +1315,9 @@ angular.module("obras").controller("ObrasController", [
     };
 
     $scope.actorAdd = function () {
-      existe = false;
-      x = "id:" + this.actor + ",rol:" + this.rol;
-      var properties = x.split(",");
+      $scope.existe = false;
+      $scope.x = "id:" + this.actor + ",rol:" + this.rol;
+      var properties = $scope.x.split(",");
       var obj = {};
       properties.forEach(function (property) {
         var tup = property.split(":");
@@ -1333,7 +1337,7 @@ angular.module("obras").controller("ObrasController", [
           confirmButtonText: "Cerrar",
         });
       } else {
-        if ($scope.idActores.indexOf(x) === -1) {
+        if ($scope.idActores.indexOf($scope.x) === -1) {
           for (var i in $scope.idActores) {
             if (
               $scope.idActores[i].id === this.actor &&
@@ -1346,12 +1350,12 @@ angular.module("obras").controller("ObrasController", [
                 icon: "error",
                 confirmButtonText: "Cerrar",
               });
-              existe = true;
+              $scope.existe = true;
               return;
             }
           }
         }
-        if (existe === false) {
+        if ($scope.existe === false) {
           $scope.idActores.push(obj);
           this.actor = "";
           this.rol = "";

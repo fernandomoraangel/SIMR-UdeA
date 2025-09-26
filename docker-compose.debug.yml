@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  simr-back:
+    command: npm run debug
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true

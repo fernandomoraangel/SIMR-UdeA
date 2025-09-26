@@ -47,9 +47,10 @@ services:
     build: ./simr-back
     ports:
       - "3000:3000"
+      - "9229:9229" # Puerto para debug
     volumes:
-      - ./simr-back:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./simr-back:/app
+      - /app/node_modules
     env_file:
       - ./simr-back/.env
     depends_on:
