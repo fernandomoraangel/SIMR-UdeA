@@ -2,6 +2,6 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:3000/api',
-  originUrl: 'http://localhost:3000',
+  apiUrl: '/api',
+  originUrl: window.location.origin,
 };
