@@ -68,13 +68,7 @@ module.exports = function () {
     cors({
       origin:
         process.env.NODE_ENV === "production"
-<<<<<<< HEAD
           ? [process.env.FRONTEND_URL, process.env.ANGULARJS_URL]
-=======
-          ? process.env.ALLOWED_ORIGINS
-            ? process.env.ALLOWED_ORIGINS.split(",")
-            : ["https://tu-dominio.com"] // TODO: Cambiar a tu dominio real o usar variable de entorno
->>>>>>> 0a822a3845c23aba92f0a43824624aade1a35615
           : [
               "http://localhost:4200",
               "http://localhost:3000",
@@ -260,6 +254,10 @@ module.exports = function () {
   require("../app/routes/idiomas.server.routes.js")(app);
   require("../app/routes/diccionarios.server.routes.js")(app);
   require("../app/routes/archivos.server.routes.js")(app);
+
+  // Agregar rutas de MinIO
+  const { router: minioRouter } = require("./minio");
+  app.use("/api/minio", minioRouter);
 
   // Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
   app.use(express.static("./public"));

@@ -7,11 +7,7 @@ angular.module("archivos", []).factory("ArchivoService", [
   function ($resource, $http, $window, $rootScope, $q) {
     // var apiUrl = 'http://localhost:3000';
     const apiUrl = "http://localhost:3000/files";
-<<<<<<< HEAD
     const angularAppOrigin = "http://localhost:4200";
-=======
-    const angularAppOrigin = window.FRONTEND_URL;
->>>>>>> 0a822a3845c23aba92f0a43824624aade1a35615
     const Archivo = $resource(
       apiUrl + "/api/archivos/:archivoId",
       { archivoId: "@_id" },
@@ -163,11 +159,7 @@ angular.module("archivos", []).factory("ArchivoService", [
         angularWindowFileUpload = $window.open(
           angularAppOrigin + "/files/upload",
           "AngularApp",
-<<<<<<< HEAD
           "width=563,height=365,noopener,noreferrer"
-=======
-          "width=563,height=365"
->>>>>>> 0a822a3845c23aba92f0a43824624aade1a35615
         );
       }
     }
