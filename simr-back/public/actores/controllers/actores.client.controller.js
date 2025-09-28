@@ -634,7 +634,7 @@ angular.module("actores").controller("ActoresController", [
         angularWindowFileUpload = window.open(
           angularAppOrigin + "/files/upload",
           "AngularApp",
-          "width=563,height=365"
+          "width=563,height=365,noopener,noreferrer"
         );
       }
     };

@@ -378,14 +378,33 @@ export class AuthService {
    */
   redirectToAngularJS(): void {
     if (this.isAuthenticated()) {
-      window.location.href = 'http://localhost:3000';
+      // Usar URL dinámica en lugar de hardcodeada
+      const angularJSUrl = this.getAngularJSUrl();
+      window.location.href = angularJSUrl;
     }
   }
 
   redirectToLegacyApp(): void {
     if (this.isAuthenticated()) {
-      window.location.href = this.API_URL;
+      window.location.href = this.API_URL.replace('/api/auth', '');
     }
+  }
+
+  private getAngularJSUrl(): string {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      if (hostname === 'localhost') {
+        return 'http://localhost:3000';
+      } else {
+        // En producción, asumir que AngularJS está en el mismo dominio o subdominio
+        return (
+          window.location.protocol +
+          '//' +
+          hostname.replace('frontend', 'legacy')
+        );
+      }
+    }
+    return 'http://localhost:3000';
   }
 
   isAuthenticated(): boolean {

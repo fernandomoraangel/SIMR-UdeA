@@ -6,10 +6,12 @@ MINIO_ROOT_USER=${MINIO_ROOT_USER:-superAdmin}
 MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-sadmin1990}
 BUCKET_NAME="sistema-archivos-simr"
 
-echo "Waiting for MinIO to start..."
+echo "Starting MinIO server in background..."
+minio server /data --console-address ":9001" &
+MINIO_PID=$!
 
-# Wait for MinIO to start (using the service name from docker-compose)
-until mc alias set minio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD > /dev/null 2>&1; do
+echo "Waiting for MinIO to start..."
+until mc alias set minio http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD > /dev/null 2>&1; do
     echo "Waiting for MinIO connection..."
     sleep 2
 done
@@ -28,3 +30,6 @@ fi
 mc anonymous set public minio/$BUCKET_NAME
 
 echo "MinIO initialization complete"
+
+# Wait for MinIO process
+wait $MINIO_PID

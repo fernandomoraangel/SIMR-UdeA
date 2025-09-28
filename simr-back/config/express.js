@@ -68,7 +68,7 @@ module.exports = function () {
     cors({
       origin:
         process.env.NODE_ENV === "production"
-          ? ["https://tudominio.com", "https://www.tudominio.com"]
+          ? [process.env.FRONTEND_URL, process.env.ANGULARJS_URL]
           : [
               "http://localhost:4200",
               "http://localhost:3000",

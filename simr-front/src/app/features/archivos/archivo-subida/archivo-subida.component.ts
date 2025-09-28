@@ -74,9 +74,44 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   }
 
   onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+    if (file) {
+      const sanitizedName = this.sanitizeFileName(file.name);
+      if (sanitizedName !== file.name) {
+        Swal.fire({
+          title: 'Nombre de archivo modificado',
+          text: `El nombre del archivo contenía caracteres no válidos y fue modificado a: ${sanitizedName}`,
+          icon: 'info',
+          confirmButtonText: 'Aceptar',
+        });
+      }
+      // Crear un nuevo File con el nombre sanitizado
+      this.selectedFile = new File([file], sanitizedName, { type: file.type });
+    }
     this.uploadProgress = 0;
     this.processingFile = false;
+  }
+
+  private sanitizeFileName(name: string): string {
+    // Remover caracteres problemáticos que pueden causar "illegal path"
+    // Caracteres inválidos en nombres de archivo: < > : " | ? * \
+    const invalidChars = /[<>:"|?*\\]/g;
+    // Reemplazar con guiones bajos
+    let sanitized = name.replace(invalidChars, '_');
+    // También remover caracteres de control y otros problemáticos
+    sanitized = sanitized.replace(/[\x00-\x1f\x7f-\x9f]/g, '_');
+    // Limitar longitud si es necesario (Windows tiene límites)
+    if (sanitized.length > 255) {
+      const extIndex = sanitized.lastIndexOf('.');
+      if (extIndex > 0) {
+        const ext = sanitized.substring(extIndex);
+        const base = sanitized.substring(0, extIndex);
+        sanitized = base.substring(0, 255 - ext.length) + ext;
+      } else {
+        sanitized = sanitized.substring(0, 255);
+      }
+    }
+    return sanitized;
   }
 
   uploadFile(): void {
