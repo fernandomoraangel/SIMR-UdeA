@@ -68,7 +68,13 @@ module.exports = function () {
     cors({
       origin:
         process.env.NODE_ENV === "production"
+<<<<<<< HEAD
           ? [process.env.FRONTEND_URL, process.env.ANGULARJS_URL]
+=======
+          ? process.env.ALLOWED_ORIGINS
+            ? process.env.ALLOWED_ORIGINS.split(",")
+            : ["https://tu-dominio.com"] // TODO: Cambiar a tu dominio real o usar variable de entorno
+>>>>>>> 0a822a3845c23aba92f0a43824624aade1a35615
           : [
               "http://localhost:4200",
               "http://localhost:3000",
