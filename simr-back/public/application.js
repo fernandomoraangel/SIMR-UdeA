@@ -43,9 +43,13 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
 
 mainApplicationModule.config([
   "$locationProvider",
-  function ($locationProvider) {
+  "$httpProvider",
+  function ($locationProvider, $httpProvider) {
     $locationProvider.hashPrefix("!");
     // $locationProvider.html5Mode(true);
+
+    // Configurar envío de cookies con todas las requests
+    $httpProvider.defaults.withCredentials = true;
   },
 ]);
 
