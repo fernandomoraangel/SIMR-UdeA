@@ -66,31 +66,32 @@ Thumbs.db
 
 #========================================
 # [DOCKER & INFRASTRUCTURE]
-# MinIO data directory
+# MinIO data directory (runtime data, not config)
 minio-data/
 minio-data/**
 
-# Docker volumes data
-volumes/
-data/
+# Docker runtime volumes data (not the volume definitions)
+volumes/data/
+volumes/logs/
 
-# SSL certificates (if any)
-ssl/
-*.crt
+# SSL certificates with private keys (keep .crt templates if needed)
 *.key
 *.pem
+ssl/private/
 
 #========================================
 # [ENVIRONMENT & CONFIG]
-# Environment files (uncomment for production)
+# Environment files with sensitive data (uncomment for production)
 # .env
-# .env.*
+# .env.local
+# .env.production
 # simr-back/.env*
 # simr-front/.env*
 
-# Configuration files with sensitive data
+# Local configuration overrides (keep base configs)
 config/local.js
-config/production.js
+config/local.json
+config/production.local.js
 
 #========================================
 # [LOGS & TEMPORARY FILES]
