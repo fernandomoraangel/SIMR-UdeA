@@ -74,24 +74,26 @@ minio-data/**
 volumes/data/
 volumes/logs/
 
-# SSL certificates with private keys (keep .crt templates if needed)
-*.key
-*.pem
-ssl/private/
+# SSL certificates with private keys (COMMENTED FOR DEVELOPMENT - UNCOMMENT IN PRODUCTION)
+# *.key
+# *.pem
+# ssl/private/
 
 #========================================
 # [ENVIRONMENT & CONFIG]
-# Environment files with sensitive data (uncomment for production)
+# Environment files with sensitive data (COMMENTED FOR DEVELOPMENT - UNCOMMENT IN PRODUCTION)
+# NOTA: Estos archivos están incluidos para agilizar desarrollo, 
+# pero deben excluirse en producción por seguridad
 # .env
 # .env.local
 # .env.production
 # simr-back/.env*
 # simr-front/.env*
 
-# Local configuration overrides (keep base configs)
-config/local.js
-config/local.json
-config/production.local.js
+# Local configuration overrides (COMMENTED FOR DEVELOPMENT)
+# config/local.js
+# config/local.json
+# config/production.local.js
 
 #========================================
 # [LOGS & TEMPORARY FILES]
