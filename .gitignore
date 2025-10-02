@@ -61,4 +61,5 @@
 /simr-front/.DS_Store
 /simr-front/Thumbs.db
 simr-back/public/core/.DS_Store
-.DS_Storeminio-data/
+.DS_Store
+minio-data/
