@@ -74,6 +74,10 @@ minio-data/**
 volumes/data/
 volumes/logs/
 
+# Production data directories (when using /mnt/data)
+/mnt/data/
+/mnt/data/**
+
 # SSL certificates with private keys (COMMENTED FOR DEVELOPMENT - UNCOMMENT IN PRODUCTION)
 # *.key
 # *.pem
