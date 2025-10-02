@@ -52,12 +52,23 @@ angular.module("archivos", []).factory("ArchivoService", [
 
     // Función para recibir mensajes
     function recibirMensaje(event) {
-      if (event.origin !== angularAppOrigin) return;
+      if (event.origin !== angularAppOrigin) {
+        console.log(
+          "(ArchivoService) Origen no válido:",
+          event.origin,
+          "esperado:",
+          angularAppOrigin
+        );
+        return;
+      }
 
       let messageType = "";
       let data = null;
 
-      console.log("(ArchivoService) Mensaje recibido:", event.data);
+      console.log(
+        "(ArchivoService) Mensaje recibido desde origen válido:",
+        event.data
+      );
 
       switch (event.data.type) {
         case "FILE_UPLOAD":
@@ -159,7 +170,7 @@ angular.module("archivos", []).factory("ArchivoService", [
         angularWindowFileUpload = $window.open(
           angularAppOrigin + "/files/upload",
           "AngularApp",
-          "width=563,height=365,noopener,noreferrer"
+          "width=563,height=365"
         );
       }
     }

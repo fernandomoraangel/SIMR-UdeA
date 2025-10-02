@@ -40,6 +40,9 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.messageListener = this.receiveMessage.bind(this);
     window.addEventListener('message', this.messageListener, false);
+    console.log('window.opener:', window.opener);
+    console.log('window.parent:', window.parent);
+    console.log('window.parent !== window:', window.parent !== window);
     if (window.opener) {
       this.isCalledFromAngularJSOrigin = true;
     }
@@ -47,7 +50,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
       'isCalledFromAngularJSOrigin',
       this.isCalledFromAngularJSOrigin
     );
-  }
+  }</search>
 
   ngOnDestroy() {
     window.removeEventListener('message', this.messageListener);
@@ -175,7 +178,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
     };
 
     if (window.opener) {
-      console.log('Ventana padre encontrada');
+      console.log('Ventana padre encontrada (opener)');
       Swal.fire({
         title: '¡Éxito!',
         text: 'Archivo subido exitosamente',
@@ -187,7 +190,22 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
           this.angularJSOrigin
         );
         console.log('Mensaje enviado a AngularJS');
-        window.close();
+        setTimeout(() => window.close(), 30000); // Delay de 30 segundos para copiar logs
+      });
+    } else if (window.parent && window.parent !== window) {
+      console.log('Ventana padre encontrada (parent)');
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'Archivo subido exitosamente',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+      }).then(() => {
+        window.parent.postMessage(
+          this.messageToAngularJS,
+          this.angularJSOrigin
+        );
+        console.log('Mensaje enviado a AngularJS');
+        setTimeout(() => window.close(), 30000); // Delay de 30 segundos para copiar logs
       });
     } else {
       console.error(
@@ -211,8 +229,9 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
         text: 'Se perdió la conexión con el formulario',
         icon: 'error',
         confirmButtonText: 'Aceptar',
+      }).then(() => {
+        setTimeout(() => window.close(), 5000); // Dar tiempo para ver el mensaje
       });
-      window.close();
     }
-  }
+  }</search>
 }

@@ -628,13 +628,14 @@ angular.module("actores").controller("ActoresController", [
         angularWindowFileUpload
       );
       this.fileInfo = null;
+      ArchivoService.agregarListener(); // Asegurar que el listener esté activo
       if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
         angularWindowFileUpload.focus();
       } else {
         angularWindowFileUpload = window.open(
           angularAppOrigin + "/files/upload",
           "AngularApp",
-          "width=563,height=365,noopener,noreferrer"
+          "width=563,height=365"
         );
       }
     };
