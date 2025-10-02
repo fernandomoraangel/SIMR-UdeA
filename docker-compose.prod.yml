@@ -79,8 +79,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - /mnt/data/ssl:/etc/ssl/certs:ro
+      - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      # Comentado hasta configurar SSL correctamente
+      # - /mnt/data/ssl:/etc/ssl/certs:ro
     depends_on:
       - simr-back
       - simr-front
