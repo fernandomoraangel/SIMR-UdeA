@@ -12,6 +12,9 @@ const passport = require("./config/passport");
 // Crear instancia del objeto db
 const db = mongoose();
 
+// Inicializar passport con las estrategias
+passport();
+
 // Crear instancia del objeto express
 const app = express();
 

@@ -6,9 +6,9 @@ const COOKIE_REFRESH_MAX_AGE =
 // Configuración base de cookies seguras
 const baseCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production', // HTTPS en producción
-  sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // 'lax' para desarrollo, 'strict' para producción
-  path: '/', // Disponible en toda la app
+  secure: process.env.NODE_ENV === "production", // HTTPS en producción
+  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // 'lax' para desarrollo, 'strict' para producción
+  path: "/", // Disponible en toda la app
   // domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost', // Comentado para desarrollo
 };
 
@@ -37,11 +37,11 @@ const cookieHelpers = {
   // Configurar cookies de autenticación
   setAuthCookies: (res, accessToken, refreshToken) => {
     try {
-      res.cookie('accessToken', accessToken, cookieConfig.accessToken);
-      res.cookie('refreshToken', refreshToken, cookieConfig.refreshToken);
+      res.cookie("accessToken", accessToken, cookieConfig.accessToken);
+      res.cookie("refreshToken", refreshToken, cookieConfig.refreshToken);
       return true;
     } catch (error) {
-      console.error('Error configurando cookies de autenticación:', error);
+      console.error("Error configurando cookies de autenticación:", error);
       return false;
     }
   },
@@ -49,11 +49,11 @@ const cookieHelpers = {
   // Limpiar cookies de autenticación
   clearAuthCookies: (res) => {
     try {
-      res.clearCookie('accessToken', cookieConfig.clear);
-      res.clearCookie('refreshToken', cookieConfig.clear);
+      res.clearCookie("accessToken", cookieConfig.clear);
+      res.clearCookie("refreshToken", cookieConfig.clear);
       return true;
     } catch (error) {
-      console.error('Error limpiando cookies de autenticación:', error);
+      console.error("Error limpiando cookies de autenticación:", error);
       return false;
     }
   },

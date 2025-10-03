@@ -86,7 +86,9 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
       next: (authState: any) => {
         console.log('🔐 Estado de autenticación en popup:', authState);
         if (!authState.isAuthenticated) {
-          console.warn('⚠️ Usuario no autenticado en popup, intentando verificar...');
+          console.warn(
+            '⚠️ Usuario no autenticado en popup, intentando verificar...'
+          );
           // Intentar verificar manualmente
           this.authService.verifyAuth().subscribe({
             next: (verifyResult: any) => {
@@ -94,7 +96,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
             },
             error: (error: any) => {
               console.error('❌ Error en verificación manual:', error);
-            }
+            },
           });
         } else {
           console.log('✅ Usuario autenticado en popup');
@@ -102,7 +104,7 @@ export class ArchivoSubidaComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         console.error('❌ Error verificando autenticación:', error);
-      }
+      },
     });
   }
 
