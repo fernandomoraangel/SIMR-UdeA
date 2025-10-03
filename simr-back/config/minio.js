@@ -208,9 +208,11 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   const fileName = path.basename(req.file.originalname, extension);
 
   // Sanitizar el nombre del archivo para evitar caracteres problemáticos
+  // Preservar caracteres UTF-8 válidos y solo reemplazar caracteres realmente problemáticos
   const sanitizedFileName = fileName
-    .replace(/[<>:"|?*\\]/g, "_")
-    .replace(/[\x00-\x1f\x7f-\x9f]/g, "_");
+    .replace(/[<>:"|?*\\\/]/g, "_") // Solo caracteres que causan problemas en sistemas de archivos
+    .replace(/[\x00-\x1f\x7f]/g, "_") // Solo caracteres de control, no todos los extendidos
+    .trim(); // Eliminar espacios al inicio y final
 
   const objectName = `${sanitizedFileName}-${Date.now()}${extension}`;
   const fileBuffer = req.file.buffer;
@@ -252,7 +254,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
 // *** LISTAR ARCHIVOS ***
 // Ruta para listar archivos
-router.get("/files", async (req, res) => {
+router.get("/", async (req, res) => {
   const stream = minioClient.listObjects(myBucketName, "", true);
   const files = [];
 

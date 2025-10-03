@@ -38,7 +38,7 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   // Comunicacion con AngularJS por PostMessages
   messageFromAngularJS: string = '';
   messageToAngularJS: SharedMessageData = { type: '', status: '', message: '' };
-  angularJSOrigin = 'http://localhost:3000'; // Dominio de la app AngularJS
+  angularJSOrigin = window.location.origin; // Usar el mismo origen (localhost:80)
   private messageListener: any;
 
   constructor(

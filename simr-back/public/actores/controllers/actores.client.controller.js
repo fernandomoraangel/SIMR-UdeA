@@ -608,7 +608,7 @@ angular.module("actores").controller("ActoresController", [
     };
 
     //Menú enlaces
-    var angularAppOrigin = "http://localhost:4200"; // Dominio de la app Angular
+    var angularAppOrigin = window.location.origin; // Usar el mismo origen (localhost:80)
     var angularWindowFileUpload;
     var angularWindowFileList;
 
@@ -633,7 +633,7 @@ angular.module("actores").controller("ActoresController", [
         angularWindowFileUpload.focus();
       } else {
         angularWindowFileUpload = window.open(
-          angularAppOrigin + "/files/upload",
+          "http://localhost/angular/files/upload",
           "AngularApp",
           "width=563,height=365"
         );

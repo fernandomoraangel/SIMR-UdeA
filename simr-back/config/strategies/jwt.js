@@ -1,20 +1,23 @@
 // Invocar el modo 'strict' de Javascript
-'use strict';
+"use strict";
 
 // Cargar los módulos necesarios
-const passport = require('passport');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const mongoose = require('mongoose');
-const User = mongoose.model('User');
+const passport = require("passport");
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
 
 module.exports = function () {
-
   // Función para extraer JWT de cookies
   const cookieExtractor = (req) => {
     let token = null;
     if (req && req.cookies) {
-      token = req.cookies['accessToken'];
+      token = req.cookies["accessToken"];
+      console.log(
+        "Token extraído de cookies:",
+        token ? "Token encontrado" : "No token"
+      );
     }
     return token;
   };
@@ -24,30 +27,37 @@ module.exports = function () {
   const opts = {
     jwtFromRequest: ExtractJwt.fromExtractors([
       cookieExtractor,
-      ExtractJwt.fromAuthHeaderAsBearerToken()
+      ExtractJwt.fromAuthHeaderAsBearerToken(),
     ]),
     secretOrKey: process.env.JWT_SECRET,
-    ignoreExpiration: false
+    ignoreExpiration: false,
   };
 
   // Estrategia JWT con múltiples extractores para autenticación con tokens
-  passport.use(new JwtStrategy(opts, async (payload, done) => {
-    try {
-      console.log('Payload recibido del token:', payload);
+  passport.use(
+    new JwtStrategy(opts, async (payload, done) => {
+      try {
+        console.log("Payload recibido del token:", payload);
 
-      const user = await User.findById(payload.id);
-      if (user) {
-        console.log('Usuario encontrado:', user.username);
-        return done(null, user);
-      } else {
-        console.log('No se encontró el usuario');
-        return done(null, false);
+        if (!payload || !payload.id) {
+          console.log("Payload inválido o sin ID");
+          return done(null, false);
+        }
+
+        const user = await User.findById(payload.id);
+        if (user) {
+          console.log("Usuario encontrado:", user.username);
+          return done(null, user);
+        } else {
+          console.log("No se encontró el usuario con ID:", payload.id);
+          return done(null, false);
+        }
+      } catch (error) {
+        console.error("Error en la estrategia JWT:", error);
+        return done(error, false);
       }
-    } catch (error) {
-      console.error('Error en la estrategia JWT:', error);
-      return done(error, false);
-    }
-  }));
+    })
+  );
 
   //! // Estrategia JWT para cookies (para compartir entre apps)
   // passport.use('jwt-cookie', new JwtStrategy({

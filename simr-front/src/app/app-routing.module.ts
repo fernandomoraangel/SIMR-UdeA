@@ -56,7 +56,7 @@ const routes: Routes = [
       import('./features/archivos/archivos.module').then(
         (m) => m.ArchivoModule
       ),
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard], // Temporalmente comentado para debug
   },
 
   { path: '**', component: PageNotFoundComponent },

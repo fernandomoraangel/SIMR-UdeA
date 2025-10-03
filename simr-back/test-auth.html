@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Autenticación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            background-color: #d4edda;
+        }
+
+        .error {
+            background-color: #f8d7da;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Prueba de Autenticación SIMR</h1>
+
+    <div class="test-section">
+        <h3>1. Probar conexión al servidor</h3>
+        <button onclick="testConnection()">Probar Conexión</button>
+        <div id="connection-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Verificar endpoint de autenticación</h3>
+        <button onclick="testAuthVerify()">Probar /api/auth/verify</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Simular popup de archivos</h3>
+        <button onclick="testFileUploadPopup()">Abrir Popup de Archivos</button>
+        <div id="popup-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Información del navegador</h3>
+        <button onclick="showBrowserInfo()">Mostrar Información</button>
+        <div id="browser-result" class="result"></div>
+    </div>
+
+    <script>
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            element.textContent = logMessage;
+            element.className = `result ${isError ? 'error' : 'success'}`;
+        }
+
+        async function testConnection() {
+            log('connection-result', 'Probando conexión...');
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/verify', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                log('connection-result', `Conexión exitosa. Status: ${response.status}
+Respuesta: ${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log('connection-result', `Error de conexión: ${error.message}`, true);
+            }
+        }
+
+        async function testAuthVerify() {
+            log('auth-result', 'Verificando autenticación...');
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/verify', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const responseText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = responseText;
+                }
+
+                log('auth-result', `Status: ${response.status}
+Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}
+Respuesta: ${typeof data === 'object' ? JSON.stringify(data, null, 2) : data}`);
+            } catch (error) {
+                log('auth-result', `Error en verificación: ${error.message}
+Stack: ${error.stack}`, true);
+            }
+        }
+
+        function testFileUploadPopup() {
+            log('popup-result', 'Abriendo popup de archivos...');
+            try {
+                const popup = window.open(
+                    'http://localhost:4200/archivos/upload',
+                    'AngularApp',
+                    'width=563,height=365,toolbar=no,location=no,menubar=no,scrollbars=yes,resizable=yes,status=no'
+                );
+
+                if (popup) {
+                    log('popup-result', 'Popup abierto exitosamente. Verificando si se carga...');
+
+                    // Verificar si el popup se cerró inmediatamente (bloqueado)
+                    setTimeout(() => {
+                        if (popup.closed) {
+                            log('popup-result', 'El popup fue cerrado o bloqueado por el navegador', true);
+                        } else {
+                            log('popup-result', 'Popup abierto y funcional');
+                        }
+                    }, 1000);
+                } else {
+                    log('popup-result', 'El popup fue bloqueado por el navegador', true);
+                }
+            } catch (error) {
+                log('popup-result', `Error al abrir popup: ${error.message}`, true);
+            }
+        }
+
+        function showBrowserInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                cookies: document.cookie,
+                location: window.location.href,
+                localStorage: Object.keys(localStorage),
+                sessionStorage: Object.keys(sessionStorage),
+                consoleErrors: 'Ver consola del desarrollador para errores de WebSocket'
+            };
+
+            log('browser-result', JSON.stringify(info, null, 2));
+        }
+
+        // Auto-ejecutar prueba de conexión al cargar
+        window.onload = function () {
+            testConnection();
+        };
+    </script>
+</body>
+
+</html>

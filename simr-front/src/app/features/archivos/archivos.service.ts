@@ -19,7 +19,7 @@ import { environment } from '@env/environment';
   providedIn: 'root',
 })
 export class ArchivosService {
-  private readonly API_URL = `${environment.originUrl}/files`;
+  private readonly API_URL = `${environment.originUrl}/files/api`;
   private fileChangedSource = new Subject<void>();
 
   fileChanged$ = this.fileChangedSource.asObservable();
@@ -32,6 +32,7 @@ export class ArchivosService {
         collection: collection,
         documentId: documentId,
       },
+      withCredentials: true,
     });
   }
 
@@ -42,6 +43,7 @@ export class ArchivosService {
     const req = new HttpRequest('POST', `${this.API_URL}/upload`, formData, {
       reportProgress: true,
       responseType: 'json',
+      withCredentials: true,
     });
 
     return this.http.request(req).pipe(
@@ -63,7 +65,9 @@ export class ArchivosService {
   }
 
   getFiles(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/files`);
+    return this.http.get<any[]>(`${this.API_URL}/files`, {
+      withCredentials: true,
+    });
   }
 
   downloadFile(filename: string): void {
@@ -98,6 +102,7 @@ export class ArchivosService {
         'Content-Type': 'application/json',
       }),
       body: additionalFileInfo,
+      withCredentials: true,
     };
 
     return this.http
@@ -114,7 +119,11 @@ export class ArchivosService {
           success: boolean;
           message: string;
         }>;
-      }>(`${this.API_URL}/delete-multiple`, { files })
+      }>(
+        `${this.API_URL}/delete-multiple`,
+        { files },
+        { withCredentials: true }
+      )
       .pipe(
         tap(() => this.fileChangedSource.next()),
         map((response) => {

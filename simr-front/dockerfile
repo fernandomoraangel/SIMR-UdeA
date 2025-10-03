@@ -1,5 +1,6 @@
 # Etapa base: Node.js
-FROM node:20
+FROM node:latest
+
 
 # Crear directorio de la app
 WORKDIR /app

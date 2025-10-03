@@ -1818,11 +1818,49 @@ angular.module("obras").controller("ObrasController", [
 
     // // *** ARCHIVOS ***
 
-    // // === EVENT LISTENER ===
-    // // Agregar el listener cuando el controlador esté activo
-    // ArchivoService.agregarListener();
+    // Listener para archivos subidos exitosamente
+    function onFileUploadSuccess(event) {
+      const archivoInfo = event.detail;
+      console.log(
+        "📁 Archivo subido recibido en controller de obras:",
+        archivoInfo
+      );
 
-    // $scope.$on('$destroy', function () {
+      // Crear objeto con la estructura que necesita archivosCargados
+      const archivoParaFormulario = {
+        id: archivoInfo.id || archivoInfo.documentId,
+        _id: archivoInfo.id || archivoInfo.documentId,
+        filename: archivoInfo.filename,
+        originalName: archivoInfo.originalName,
+        mimetype: archivoInfo.mimetype,
+        size: archivoInfo.size,
+        uploadDate: archivoInfo.uploadDate,
+        minioObjectName: archivoInfo.minioObjectName,
+        // Campos adicionales
+        nombre: archivoInfo.originalName,
+        url: archivoInfo.filename,
+      };
+
+      // Agregar al array de archivos cargados
+      $scope.archivosCargados = $scope.archivosCargados || [];
+      $scope.archivosCargados.push(archivoParaFormulario);
+
+      console.log(
+        "✅ Archivo agregado a archivosCargados:",
+        $scope.archivosCargados
+      );
+
+      // Forzar actualización de la vista
+      $scope.$apply();
+    }
+
+    // Agregar el listener para archivos subidos
+    window.addEventListener("fileUploadSuccess", onFileUploadSuccess);
+
+    // Limpiar el listener cuando se destruya el scope
+    $scope.$on("$destroy", function () {
+      window.removeEventListener("fileUploadSuccess", onFileUploadSuccess);
+    });
     //   // Remover el listener cuando se destruya el controlador
     //   ArchivoService.removerListener();
     // });

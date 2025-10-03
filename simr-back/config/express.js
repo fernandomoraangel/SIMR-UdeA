@@ -207,6 +207,34 @@ module.exports = function () {
   app.use(passport.initialize());
   // app.use(passport.session());
 
+  // Middleware de manejo de errores global
+  app.use((err, req, res, next) => {
+    console.error("Error capturado por middleware global:", err);
+
+    // Si es un error de JWT o autenticación
+    if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token inválido o expirado",
+      });
+    }
+
+    // Si es un error de validación
+    if (err.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Error de validación",
+        errors: err.errors,
+      });
+    }
+
+    // Error genérico
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+    });
+  });
+
   // Servir archivos estáticos
   // AngularJS
   // app.use('/angularjs', express.static('public/angularjs'));
@@ -255,9 +283,9 @@ module.exports = function () {
   require("../app/routes/diccionarios.server.routes.js")(app);
   require("../app/routes/archivos.server.routes.js")(app);
 
-  // Agregar rutas de MinIO
-  const { router: minioRouter } = require("./minio");
-  app.use("/api/minio", minioRouter);
+  // Middleware para manejo específico de errores de autenticación
+  const { handleAuthError } = require("../app/middleware/authErrorHandler");
+  app.use(handleAuthError);
 
   // Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
   app.use(express.static("./public"));

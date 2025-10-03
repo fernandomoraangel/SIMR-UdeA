@@ -23,7 +23,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - ./minio-data:/data
+      - minio_data_dev:/data
       - ./init.minio.sh:/init.minio.sh
     environment:
       MINIO_ROOT_USER: superAdmin
@@ -87,6 +87,7 @@ services:
 
 volumes:
   mongodb_data_dev:
+  minio_data_dev:
 
 networks:
   simr-net-dev:

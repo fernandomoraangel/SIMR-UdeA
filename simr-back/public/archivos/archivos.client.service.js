@@ -5,9 +5,10 @@ angular.module("archivos", []).factory("ArchivoService", [
   "$rootScope",
   "$q",
   function ($resource, $http, $window, $rootScope, $q) {
-    // var apiUrl = 'http://localhost:3000';
+    // Variables globales del servicio
+    const angularJSOrigin = "http://localhost:3000";
     const apiUrl = "http://localhost:3000/files";
-    const angularAppOrigin = "http://localhost:4200";
+    const angularAppOrigin = window.location.origin;
     const Archivo = $resource(
       apiUrl + "/api/archivos/:archivoId",
       { archivoId: "@_id" },
@@ -167,11 +168,150 @@ angular.module("archivos", []).factory("ArchivoService", [
       if (angularWindowFileUpload && !angularWindowFileUpload.closed) {
         angularWindowFileUpload.focus();
       } else {
+        // Configuración mejorada para el popup
+        const windowFeatures = [
+          "width=563",
+          "height=365",
+          "toolbar=no",
+          "location=no",
+          "menubar=no",
+          "scrollbars=yes",
+          "resizable=yes",
+          "status=no",
+        ].join(",");
+
+        console.log("Abriendo popup de upload de archivos...");
         angularWindowFileUpload = $window.open(
-          angularAppOrigin + "/files/upload",
+          "http://localhost/angular/files/upload",
           "AngularApp",
-          "width=563,height=365"
+          windowFeatures
         );
+
+        // Verificar si el popup se abrió correctamente
+        if (angularWindowFileUpload) {
+          console.log("Popup abierto exitosamente");
+          // Mantener referencia activa al popup
+          angularWindowFileUpload.focus();
+
+          // Agregar listener para mensajes del popup Angular
+          const messageListener = function (event) {
+            console.log("Mensaje recibido del popup:", event);
+            if (
+              event.origin === window.location.origin &&
+              event.data &&
+              event.data.type === "FILE_UPLOAD"
+            ) {
+              console.log(
+                "✅ Archivo subido recibido via postMessage:",
+                event.data
+              );
+              handleFileUploadResult(event.data);
+              // Limpiar el listener
+              $window.removeEventListener("message", messageListener);
+            }
+          };
+          $window.addEventListener("message", messageListener, false);
+
+          // Agregar listener para localStorage como respaldo
+          console.log("🚀 INICIANDO POLLING DE LOCALSTORAGE...");
+          const checkLocalStorage = setInterval(function () {
+            try {
+              console.log("🔍 Verificando localStorage para archivos...");
+              const storageData = localStorage.getItem(
+                "angular_file_upload_result"
+              );
+              console.log("📦 Datos en localStorage:", storageData);
+
+              if (storageData) {
+                const data = JSON.parse(storageData);
+                console.log("📊 Datos parseados:", data);
+                console.log("⏰ Timestamp actual:", Date.now());
+                console.log("⏰ Timestamp del archivo:", data.timestamp);
+                console.log("⏰ Diferencia:", Date.now() - data.timestamp);
+
+                // Verificar que el mensaje es reciente (5 minutos para debug)
+                if (data.timestamp && Date.now() - data.timestamp < 300000) {
+                  console.log(
+                    "✅ Archivo subido recibido via localStorage:",
+                    data
+                  );
+                  handleFileUploadResult(data);
+                  // Limpiar el localStorage
+                  localStorage.removeItem("angular_file_upload_result");
+                  clearInterval(checkLocalStorage);
+                } else {
+                  console.log(
+                    "⚠️ Datos en localStorage demasiado antiguos o sin timestamp"
+                  );
+                  console.log(
+                    "⚠️ Timestamp diferencia:",
+                    Date.now() - (data.timestamp || 0)
+                  );
+                }
+              } else {
+                console.log("📭 No hay datos en localStorage");
+              }
+            } catch (error) {
+              console.error("❌ Error leyendo localStorage:", error);
+            }
+          }, 500);
+
+          // Opcional: agregar listener para cuando se cierre el popup
+          const checkClosed = setInterval(function () {
+            if (angularWindowFileUpload.closed) {
+              clearInterval(checkClosed);
+              clearInterval(checkLocalStorage);
+              $window.removeEventListener("message", messageListener);
+              console.log("Popup cerrado");
+              angularWindowFileUpload = null;
+            }
+          }, 1000);
+        } else {
+          console.error("No se pudo abrir el popup (posiblemente bloqueado)");
+          alert(
+            "No se pudo abrir la ventana de subida de archivos. Verifique que los popups no estén bloqueados."
+          );
+        }
+      }
+    }
+
+    // Función para manejar el resultado de la subida de archivos
+    function handleFileUploadResult(data) {
+      console.log("🎯 Procesando resultado de subida de archivo:", data);
+
+      try {
+        let fileInfo;
+
+        // Si data.message es string, parsearlo
+        if (typeof data.message === "string") {
+          fileInfo = JSON.parse(data.message);
+        } else {
+          fileInfo = data.message;
+        }
+
+        console.log("📁 Información del archivo procesada:", fileInfo);
+
+        // Mostrar notificación de éxito
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            title: "¡Éxito!",
+            text: `Archivo "${fileInfo.originalName}" subido correctamente`,
+            icon: "success",
+            confirmButtonText: "Aceptar",
+          });
+        } else {
+          alert(`Archivo "${fileInfo.originalName}" subido correctamente`);
+        }
+
+        // Disparar evento personalizado para que el controlador lo capture
+        const customEvent = new CustomEvent("fileUploadSuccess", {
+          detail: fileInfo,
+        });
+        window.dispatchEvent(customEvent);
+
+        console.log("✅ Resultado de subida procesado exitosamente");
+      } catch (error) {
+        console.error("❌ Error procesando resultado de subida:", error);
       }
     }
 
