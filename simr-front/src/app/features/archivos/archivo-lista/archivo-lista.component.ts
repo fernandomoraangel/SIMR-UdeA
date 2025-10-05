@@ -50,12 +50,82 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.messageListener = this.receiveMessage.bind(this);
     window.addEventListener('message', this.messageListener, false);
+
+    // Debug: verificar window.opener
+    console.log('🔍 window.opener existe:', !!window.opener);
+    console.log(
+      '🔍 window.opener es función:',
+      typeof window.opener?.postMessage
+    );
+    console.log('🔍 window.name:', window.name);
+
+    // Intentar obtener los parámetros desde localStorage primero
+    const storedParams = localStorage.getItem('angular_file_list_params');
+    if (storedParams) {
+      try {
+        const params = JSON.parse(storedParams);
+        console.log('📦 Parámetros obtenidos desde localStorage:', params);
+
+        // Verificar que los datos no sean demasiado antiguos (5 minutos)
+        if (params.timestamp && Date.now() - params.timestamp < 300000) {
+          this.documentId = params.documentId;
+          this.documentName = params.documentName;
+          this.dbCollection = params.dbCollection;
+
+          console.log('✅ Cargando archivos con parámetros de localStorage...');
+          this.loadDocumentFiles(this.dbCollection, this.documentId);
+
+          // Limpiar localStorage después de usar
+          localStorage.removeItem('angular_file_list_params');
+        } else {
+          console.warn('⚠️ Parámetros en localStorage demasiado antiguos');
+        }
+      } catch (error) {
+        console.error('❌ Error parseando parámetros de localStorage:', error);
+      }
+    }
+
     this.messageToAngularJS = {
       type: 'FILE_LIST',
       status: 'READY',
       message: 'Hola desde Angular!',
     };
-    window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
+
+    // Only send postMessage if window.opener exists
+    if (window.opener && typeof window.opener.postMessage === 'function') {
+      console.log('📤 Enviando mensaje READY a AngularJS...');
+      console.log('📤 Origin:', this.angularJSOrigin);
+      // Enviar el mensaje múltiples veces para asegurar que se reciba
+      window.opener.postMessage(this.messageToAngularJS, this.angularJSOrigin);
+
+      // Reintentar después de un pequeño delay
+      setTimeout(() => {
+        if (window.opener && typeof window.opener.postMessage === 'function') {
+          console.log('📤 Reenviando mensaje READY a AngularJS...');
+          window.opener.postMessage(
+            this.messageToAngularJS,
+            this.angularJSOrigin
+          );
+        }
+      }, 100);
+
+      setTimeout(() => {
+        if (window.opener && typeof window.opener.postMessage === 'function') {
+          console.log(
+            '📤 Reenviando mensaje READY a AngularJS (tercer intento)...'
+          );
+          window.opener.postMessage(
+            this.messageToAngularJS,
+            this.angularJSOrigin
+          );
+        }
+      }, 500);
+    } else {
+      console.warn(
+        '⚠️ No window.opener available - usando localStorage como fallback'
+      );
+    }
+
     this.fileChangedSubscription = this.archivosService.fileChanged$.subscribe(
       () => {
         this.loadDocumentFiles(this.dbCollection, this.documentId);
@@ -95,6 +165,12 @@ export class ArchivoListaComponent implements OnInit, OnDestroy {
       this.documentName = event.data.message.documentName;
       this.dbCollection = event.data.message.dbCollection;
       this.loadDocumentFiles(this.dbCollection, this.documentId);
+    } else if (event.data && event.data.type === 'FILE_UPLOAD') {
+      // Refresh the file list when a file is uploaded
+      console.log('📁 File uploaded message received, refreshing list...');
+      if (this.dbCollection && this.documentId) {
+        this.loadDocumentFiles(this.dbCollection, this.documentId);
+      }
     }
   }
 

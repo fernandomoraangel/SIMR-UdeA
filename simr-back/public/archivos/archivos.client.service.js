@@ -53,6 +53,13 @@ angular.module("archivos", []).factory("ArchivoService", [
 
     // Función para recibir mensajes
     function recibirMensaje(event) {
+      console.log(
+        "📨 (ArchivoService) Mensaje recibido:",
+        event.data,
+        "desde origen:",
+        event.origin
+      );
+
       if (event.origin !== angularAppOrigin) {
         console.log(
           "(ArchivoService) Origen no válido:",
@@ -82,9 +89,18 @@ angular.module("archivos", []).factory("ArchivoService", [
             id: documentId,
             minioObjectName: minioObjectName,
           };
+
+          // Forward the FILE_UPLOAD message to the file list window if it's open
+          if (angularWindowFileList && !angularWindowFileList.closed) {
+            console.log("Forwarding FILE_UPLOAD message to file list window");
+            angularWindowFileList.postMessage(event.data, angularAppOrigin);
+          }
           break;
         case "FILE_LIST":
           if (event.data.status != "READY") break;
+          console.log(
+            "✅ Mensaje FILE_LIST READY recibido, enviando datos del documento..."
+          );
           messageType = "archivoListo";
           data = event.data.message;
           enviarMensaje(
@@ -111,6 +127,7 @@ angular.module("archivos", []).factory("ArchivoService", [
       if (!listenerActivo) {
         $window.addEventListener("message", recibirMensaje, false);
         listenerActivo = true;
+        console.log("✅ Listener de postMessage activado");
       }
       console.log("Listener activo:", listenerActivo);
     }
@@ -348,13 +365,15 @@ angular.module("archivos", []).factory("ArchivoService", [
 
     // function mostrarArchivos(documentId, dbCollection) {
     function mostrarArchivos(documentId, documentName, dbCollection) {
+      console.log("📂 Abriendo ventana de archivos para:", {
+        documentId,
+        documentName,
+        dbCollection,
+      });
+
       if (angularWindowFileList && !angularWindowFileList.closed) {
         angularWindowFileList.close();
       }
-      angularWindowFileList = $window.open(
-        angularAppOrigin + "/files",
-        "_blank"
-      );
 
       const documentInfo = {
         documentId: documentId,
@@ -366,7 +385,37 @@ angular.module("archivos", []).factory("ArchivoService", [
         type: "FILE_LIST",
         message: documentInfo,
       };
-      console.log("Mensaje a enviar (mostrarArchivos):", mensajeAEnviar);
+      console.log("📝 Mensaje a enviar (mostrarArchivos):", mensajeAEnviar);
+
+      // Guardar los datos en localStorage para que Angular los lea
+      localStorage.setItem(
+        "angular_file_list_params",
+        JSON.stringify({
+          documentId: documentId,
+          documentName: documentName,
+          dbCollection: dbCollection,
+          timestamp: Date.now(),
+        })
+      );
+      console.log("💾 Datos guardados en localStorage");
+
+      // Configuración de la ventana emergente
+      const windowFeatures = [
+        "width=1200",
+        "height=800",
+        "toolbar=no",
+        "location=no",
+        "menubar=no",
+        "scrollbars=yes",
+        "resizable=yes",
+        "status=no",
+      ].join(",");
+
+      angularWindowFileList = $window.open(
+        angularAppOrigin + "/angular/files",
+        "FileListWindow",
+        windowFeatures
+      );
     }
 
     function deleteFile(fileName, fileId) {
