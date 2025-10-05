@@ -256,6 +256,7 @@ angular.module("archivos", []).factory("ArchivoService", [
                   // Limpiar el localStorage
                   localStorage.removeItem("angular_file_upload_result");
                   clearInterval(checkLocalStorage);
+                  console.log("🛑 Polling detenido - archivo procesado");
                 } else {
                   console.log(
                     "⚠️ Datos en localStorage demasiado antiguos o sin timestamp"
@@ -264,6 +265,8 @@ angular.module("archivos", []).factory("ArchivoService", [
                     "⚠️ Timestamp diferencia:",
                     Date.now() - (data.timestamp || 0)
                   );
+                  // Limpiar datos antiguos
+                  localStorage.removeItem("angular_file_upload_result");
                 }
               } else {
                 console.log("📭 No hay datos en localStorage");
@@ -273,14 +276,24 @@ angular.module("archivos", []).factory("ArchivoService", [
             }
           }, 500);
 
-          // Opcional: agregar listener para cuando se cierre el popup
+          // Monitorear cuando se cierre el popup
+          // NOTA: NO detenemos el polling aquí, solo limpiamos el listener de mensajes
           const checkClosed = setInterval(function () {
             if (angularWindowFileUpload.closed) {
               clearInterval(checkClosed);
-              clearInterval(checkLocalStorage);
               $window.removeEventListener("message", messageListener);
-              console.log("Popup cerrado");
+              console.log(
+                "🪟 Popup cerrado - polling continúa por 10 segundos más"
+              );
               angularWindowFileUpload = null;
+
+              // Detener el polling después de 10 segundos si no se procesó ningún archivo
+              setTimeout(function () {
+                clearInterval(checkLocalStorage);
+                console.log(
+                  "⏱️ Timeout: Polling detenido después de 10 segundos"
+                );
+              }, 10000);
             }
           }, 1000);
         } else {
@@ -308,23 +321,28 @@ angular.module("archivos", []).factory("ArchivoService", [
 
         console.log("📁 Información del archivo procesada:", fileInfo);
 
-        // Mostrar notificación de éxito
-        if (typeof Swal !== "undefined") {
-          Swal.fire({
-            title: "¡Éxito!",
-            text: `Archivo "${fileInfo.originalName}" subido correctamente`,
-            icon: "success",
-            confirmButtonText: "Aceptar",
-          });
-        } else {
-          alert(`Archivo "${fileInfo.originalName}" subido correctamente`);
-        }
+        // NOTA: El popup de Angular ya muestra un mensaje de éxito,
+        // por lo que no necesitamos mostrar otro aquí
 
-        // Disparar evento personalizado para que el controlador lo capture
+        // Disparar evento personalizado para que la directiva lo capture
         const customEvent = new CustomEvent("fileUploadSuccess", {
           detail: fileInfo,
         });
         window.dispatchEvent(customEvent);
+        console.log("📤 CustomEvent 'fileUploadSuccess' disparado");
+
+        // NOTA: Ya no usamos $broadcast porque causa duplicación
+        // La directiva escucha el CustomEvent directamente
+        // console.log("📤 Intentando disparar evento 'archivoSubido' via $broadcast...");
+        // if ($rootScope.$$phase) {
+        //   console.log("⚠️ Ya estamos en fase de digest, broadcasting directamente");
+        //   $rootScope.$broadcast("archivoSubido", fileInfo);
+        // } else {
+        //   console.log("✅ No estamos en fase de digest, usando $apply");
+        //   $rootScope.$apply(() => {
+        //     $rootScope.$broadcast("archivoSubido", fileInfo);
+        //   });
+        // }
 
         console.log("✅ Resultado de subida procesado exitosamente");
       } catch (error) {

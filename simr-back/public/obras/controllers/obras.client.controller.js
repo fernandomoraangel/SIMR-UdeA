@@ -1818,49 +1818,55 @@ angular.module("obras").controller("ObrasController", [
 
     // // *** ARCHIVOS ***
 
-    // Listener para archivos subidos exitosamente
-    function onFileUploadSuccess(event) {
-      const archivoInfo = event.detail;
-      console.log(
-        "📁 Archivo subido recibido en controller de obras:",
-        archivoInfo
-      );
+    // *** ARCHIVOS ***
+    // Nota: La directiva archivo-manager ahora maneja todo el flujo de archivos
+    // mediante two-way binding, por lo que no necesitamos listeners adicionales aquí.
 
-      // Crear objeto con la estructura que necesita archivosCargados
-      const archivoParaFormulario = {
-        id: archivoInfo.id || archivoInfo.documentId,
-        _id: archivoInfo.id || archivoInfo.documentId,
-        filename: archivoInfo.filename,
-        originalName: archivoInfo.originalName,
-        mimetype: archivoInfo.mimetype,
-        size: archivoInfo.size,
-        uploadDate: archivoInfo.uploadDate,
-        minioObjectName: archivoInfo.minioObjectName,
-        // Campos adicionales
-        nombre: archivoInfo.originalName,
-        url: archivoInfo.filename,
-      };
+    // // Listener para archivos subidos exitosamente (COMENTADO - ahora lo maneja la directiva)
+    // function onFileUploadSuccess(event) {
+    //   const archivoInfo = event.detail;
+    //   console.log(
+    //     "📁 Archivo subido recibido en controller de obras:",
+    //     archivoInfo
+    //   );
 
-      // Agregar al array de archivos cargados
-      $scope.archivosCargados = $scope.archivosCargados || [];
-      $scope.archivosCargados.push(archivoParaFormulario);
+    //   // Crear objeto con la estructura que necesita archivosCargados
+    //   const archivoParaFormulario = {
+    //     id: archivoInfo.id || archivoInfo.documentId,
+    //     _id: archivoInfo.id || archivoInfo.documentId,
+    //     filename: archivoInfo.filename,
+    //     originalName: archivoInfo.originalName,
+    //     mimetype: archivoInfo.mimetype,
+    //     size: archivoInfo.size,
+    //     uploadDate: archivoInfo.uploadDate,
+    //     minioObjectName: archivoInfo.minioObjectName,
+    //     // Campos adicionales
+    //     nombre: archivoInfo.originalName,
+    //     url: archivoInfo.filename,
+    //   };
 
-      console.log(
-        "✅ Archivo agregado a archivosCargados:",
-        $scope.archivosCargados
-      );
+    //   // Agregar al array de archivos cargados
+    //   $scope.archivosCargados = $scope.archivosCargados || [];
+    //   $scope.archivosCargados.push(archivoParaFormulario);
 
-      // Forzar actualización de la vista
-      $scope.$apply();
-    }
+    //   console.log(
+    //     "✅ Archivo agregado a archivosCargados en controller:",
+    //     $scope.archivosCargados
+    //   );
 
-    // Agregar el listener para archivos subidos
-    window.addEventListener("fileUploadSuccess", onFileUploadSuccess);
+    //   // Forzar actualización de la vista de manera segura
+    //   if (!$scope.$$phase) {
+    //     $scope.$apply();
+    //   }
+    // }
 
-    // Limpiar el listener cuando se destruya el scope
-    $scope.$on("$destroy", function () {
-      window.removeEventListener("fileUploadSuccess", onFileUploadSuccess);
-    });
+    // // Agregar el listener para archivos subidos
+    // window.addEventListener("fileUploadSuccess", onFileUploadSuccess);
+
+    // // Limpiar el listener cuando se destruya el scope
+    // $scope.$on("$destroy", function () {
+    //   window.removeEventListener("fileUploadSuccess", onFileUploadSuccess);
+    // });
     //   // Remover el listener cuando se destruya el controlador
     //   ArchivoService.removerListener();
     // });
