@@ -62,8 +62,8 @@ services:
 
   simr-front:
     build:
-      context: ./simr-front
-      dockerfile: Dockerfile.prod
+      context: . # Contexto en la raíz del proyecto para acceder a .env.production
+      dockerfile: simr-front/Dockerfile.prod
     container_name: simr-front_prod
     restart: unless-stopped
     expose:

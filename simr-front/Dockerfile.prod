@@ -9,6 +9,9 @@ COPY package*.json ./
 # Instalar dependencias
 RUN npm ci
 
+# Copiar el archivo .env.production desde la raíz del proyecto
+COPY ../.env.production ./.env.production
+
 # Copiar código fuente
 COPY . .
 

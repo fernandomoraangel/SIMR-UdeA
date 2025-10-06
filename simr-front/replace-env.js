@@ -2,8 +2,10 @@ const fs = require("fs");
 const path = require("path");
 
 try {
-  const envFile = fs.readFileSync("../.env.production", "utf8");
+  // Leer el archivo .env.production desde el directorio actual
+  const envFile = fs.readFileSync(".env.production", "utf8");
   const envVars = {};
+
   envFile.split("\n").forEach((line) => {
     const trimmedLine = line.trim();
     if (trimmedLine && !trimmedLine.startsWith("#")) {
@@ -15,12 +17,16 @@ try {
     }
   });
 
+  // Leer el archivo environment.prod.ts
   let prodEnv = fs.readFileSync("src/environments/environment.prod.ts", "utf8");
+
+  // Reemplazar las variables de entorno
   Object.keys(envVars).forEach((key) => {
     const regex = new RegExp(`\\$\\{${key}\\}`, "g");
     prodEnv = prodEnv.replace(regex, envVars[key]);
   });
 
+  // Escribir el archivo actualizado
   fs.writeFileSync("src/environments/environment.prod.ts", prodEnv);
   console.log("✅ Variables de entorno reemplazadas en environment.prod.ts");
 } catch (error) {
