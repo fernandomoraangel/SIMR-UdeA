@@ -12,6 +12,12 @@ services:
       - ./init.mongo.js:/docker-entrypoint-initdb.d/init.mongo.js
     networks:
       - simr-net-prod
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     # No exponer puertos en producción por seguridad
 
   minio:
@@ -26,12 +32,19 @@ services:
       MINIO_ROOT_PASSWORD: sadmin1990
     networks:
       - simr-net-prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     # No exponer puertos en producción por seguridad
 
   minio-init:
     image: minio/mc:latest
     depends_on:
-      - minio
+      minio:
+        condition: service_healthy
     environment:
       MINIO_ROOT_USER: superAdmin
       MINIO_ROOT_PASSWORD: sadmin1990
@@ -41,6 +54,7 @@ services:
     command: -c "/init.minio.sh"
     networks:
       - simr-net-prod
+    restart: on-failure
 
   simr-back:
     build:
@@ -55,8 +69,10 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - mongodb
-      - minio
+      mongodb:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     networks:
       - simr-net-prod
 
