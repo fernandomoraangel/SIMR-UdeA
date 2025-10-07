@@ -19,7 +19,7 @@ import { environment } from '@env/environment';
   providedIn: 'root',
 })
 export class ArchivosService {
-  private readonly API_URL = `${environment.originUrl}/files/api`;
+  private readonly API_URL = `${environment.originUrl}/files`;
   private fileChangedSource = new Subject<void>();
 
   fileChanged$ = this.fileChangedSource.asObservable();
@@ -65,7 +65,8 @@ export class ArchivosService {
   }
 
   getFiles(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/files`, {
+    // La ruta para listar archivos está en /api/archivos, no en /files
+    return this.http.get<any[]>(`${environment.originUrl}/api/archivos`, {
       withCredentials: true,
     });
   }
