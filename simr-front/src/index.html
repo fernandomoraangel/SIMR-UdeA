@@ -14,7 +14,16 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <script>
     // Define la URL del frontend para el servicio de archivos
-    window.FRONTEND_URL = window.location.protocol + '//' + window.location.hostname + ':4200';
+    // En desarrollo: http://localhost:4200
+    // En producción: http://172.23.0.97/angular (a través de nginx)
+    const currentPort = window.location.port;
+    if (currentPort === '4200') {
+      // Desarrollo - servidor Angular dev en 4200
+      window.FRONTEND_URL = window.location.protocol + '//' + window.location.hostname + ':4200';
+    } else {
+      // Producción - servido a través de nginx en /angular/
+      window.FRONTEND_URL = window.location.protocol + '//' + window.location.hostname;
+    }
   </script>
 </head>
 
