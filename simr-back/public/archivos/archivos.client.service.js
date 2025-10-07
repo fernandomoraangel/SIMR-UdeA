@@ -6,8 +6,8 @@ angular.module("archivos", []).factory("ArchivoService", [
   "$q",
   function ($resource, $http, $window, $rootScope, $q) {
     // Variables globales del servicio
-    const angularJSOrigin = "http://localhost:3000";
-    const apiUrl = "http://localhost:3000/files";
+    const angularJSOrigin = "http://172.23.0.97";
+    const apiUrl = "http://172.23.0.97/files";
     const angularAppOrigin = window.location.origin;
     const Archivo = $resource(
       apiUrl + "/api/archivos/:archivoId",
