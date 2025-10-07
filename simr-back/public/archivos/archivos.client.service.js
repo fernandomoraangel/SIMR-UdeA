@@ -199,7 +199,7 @@ angular.module("archivos", []).factory("ArchivoService", [
 
         console.log("Abriendo popup de upload de archivos...");
         angularWindowFileUpload = $window.open(
-          "http://localhost/angular/files/upload",
+          "http://172.23.0.97/angular/files/upload",
           "AngularApp",
           windowFeatures
         );
