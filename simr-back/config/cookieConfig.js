@@ -6,10 +6,12 @@ const COOKIE_REFRESH_MAX_AGE =
 // Configuración base de cookies seguras
 const baseCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // HTTPS en producción
-  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // 'lax' para desarrollo, 'strict' para producción
+  secure: false, // Cambiado a false para desarrollo con HTTP
+  sameSite: "lax", // 'lax' permite cookies en navegación normal
   path: "/", // Disponible en toda la app
-  // domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost', // Comentado para desarrollo
+  // No especificar domain en desarrollo permite usar IPs (172.23.0.97)
+  // En producción se puede especificar el dominio mediante variable de entorno
+  domain: process.env.COOKIE_DOMAIN || undefined,
 };
 
 // Configuración de cookies para autenticación

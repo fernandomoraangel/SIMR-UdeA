@@ -75,8 +75,14 @@ module.exports = function () {
               "http://localhost",
             ],
       credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Cookie",
+      ],
+      exposedHeaders: ["Set-Cookie"],
     })
   );
 
