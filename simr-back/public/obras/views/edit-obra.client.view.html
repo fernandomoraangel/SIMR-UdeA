@@ -3,7 +3,7 @@
 <section data-ng-controller="ObrasController" data-ng-init="findOne()">
   <div class="jumbotron" data-ng-if="auth.isAuthenticated">
     <div class="container">
-      <label class="tituloVista">EDITAR OBRA</label>
+      <label class="tituloVista">Editar obra</label>
       <form class="form-principal" data-ng-submit="update()" novalidate>
         <!-- Mensaje de error-->
         <div data-ng-show="error">
@@ -67,7 +67,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse"
             ng-click="cargaDenominaciones(obra.denominacionRegional)" href="#collapseDenominacionRegional" role="button"
             aria-expanded="false" aria-controls="collapseExample"></button>
-          <label class="campo">DENOMINACIÓN(ES) REGIONAL-SOCIO-CULTURAL(ES)</label>
+          <label class="campo">Denominación(es) regional-socio-cultural(es)</label>
         </div>
 
         <div class="collapse" id="collapseDenominacionRegional">
@@ -122,7 +122,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseActor"
             ng-click="cargaActores(obra.actores)" role="button" aria-expanded="false"
             aria-controls="collapseActor"></button>
-          <label class="seccion">ACTORES</label>
+          <label class="seccion">Actores</label>
         </div>
         <div></div>
         <div class="collapse" id="collapseActor">
@@ -190,7 +190,7 @@
               </div>
             </div>
           </div>
-          <label>DESCRIPCIÓN</label>
+          <label>Descripción</label>
         </div>
         <div class="campo">
           <div>
@@ -260,7 +260,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseContenedor"
             ng-click="cargaContenedores(obra.contenedores)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">CONTENEDORES</label>
+          <label class="campo">Contenedores</label>
         </div>
 
         <div class="collapse" id="collapseContenedor">
@@ -310,7 +310,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAL"
             ng-click="cargaAsientosLigados(obra.asientoLigado)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">ASIENTO LIGADO</label>
+          <label class="campo">Asiento ligado</label>
         </div>
 
         <div class="collapse" id="collapseAL">
@@ -413,7 +413,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseGenero"
             ng-click="cargaGeneros(obra.generosFormas)" role="button" aria-expanded="false"
             href="#collapseGenero"></button>
-          <label class="seccion">GÉNEROS-FORMAS-ESPECIES (MUSICALES)</label>
+          <label class="seccion">Géneros-formas-especies (musicales)</label>
         </div>
 
         <div class="collapse" id="collapseGenero">
@@ -581,7 +581,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseMedio"
               ng-click="cargaMedios(obra.mediosSonoros)" role="button" aria-expanded="false"
               aria-controls="collapseMedio"></button>
-            <label class="seccion">MEDIOS SONOROS-FORMATOS ASOCIADOS</label>
+            <label class="seccion">Medios sonoros-formatos asociados</label>
           </div>
 
           <div class="collapse" id="collapseMedio">
@@ -636,7 +636,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseSistema"
               ng-click="cargaSistemas(obra.sistemasSonoros)" role="button" aria-expanded="false"
               aria-controls="collapseSistema"></button>
-            <label class="seccion">SISTEMAS SONOROS ASOCIADOS</label>
+            <label class="seccion">Sistemas sonoros asociados</label>
           </div>
 
           <div class="collapse" id="collapseSistema">
@@ -650,7 +650,7 @@
 
             <!-- Centro de sistema sonoro -->
 
-            <label class="seccion">CENTRO DE SISTEMA SONORO (TONALIDAD)</label>
+            <label class="seccion">Centro de sistema sonoro (tonalidad)</label>
             <select class="form-control" id="centroSId" ng-model="centroSistema">
               <option ng-repeat="centro in centros track by $index" value="{{centro}}">
                 {{centro}}
@@ -706,7 +706,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseI"
               ng-click="cargaIdiomas(obra.idiomas)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">IDIOMAS ASOCIADOS AL GÉNERO</label>
+            <label class="campo">Idiomas asociados al género</label>
           </div>
 
           <div class="collapse" id="collapseI">
@@ -762,7 +762,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseProyecto"
               ng-click="cargaProyectos(obra.proyectos)" role="button" aria-expanded="false"
               aria-controls="collapseProyecto"></button>
-            <label class="seccion">PROYECTOS ASOCIADOS</label>
+            <label class="seccion">Proyectos asociados</label>
           </div>
 
           <div class="collapse" id="collapseProyecto">
@@ -818,7 +818,7 @@
               ng-click="cargaAnotacionesCartograficoTemporales(obra.anotacionCartograficoTemporal)"
               href="#collapseAnotacionesCT" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
+            <label class="campo">Anotaciones cartográfico temporales</label>
           </div>
           <div>
             <div class="collapse" id="collapseAnotacionesCT">
@@ -902,7 +902,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse"
               ng-click="cargaDescriptores(obra.descriptores)" href="#collapseDescriptor" role="button"
               aria-expanded="false" aria-controls="collapseDescriptor"></button>
-            <label class="seccion">DESCRIPTORES LIBRES</label>
+            <label class="seccion">Descriptores libres</label>
           </div>
           <div class="collapse" id="collapseDescriptor">
             <hr />
@@ -966,7 +966,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEnlace"
               ng-click="cargaEnlaces(obra.vinculosRelacionados)" role="button" aria-expanded="false"
               aria-controls="collapseEnlace"></button>
-            <label class="seccion">ENLACES Y ARCHIVOS</label>
+            <label class="seccion">Enlaces y archivos</label>
           </div>
           <div></div>
           <div class="collapse" id="collapseEnlace">

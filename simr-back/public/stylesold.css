@@ -1,0 +1,317 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400);
+body {
+  background-color: #bac3d3;
+  -webkit-font-smoothing: antialiased;
+  font: normal 12 Roboto, arial, sans-serif;
+  text-align: center;
+  overflow: scroll;
+}
+
+.bodyEdit {
+  background-color: #dee7ee;
+  -webkit-font-smoothing: antialiased;
+  font: normal 12 Roboto, arial, sans-serif;
+  text-align: center;
+  overflow: scroll;
+}
+
+.bodyList {
+  background-color: #f0f0f0;
+  -webkit-font-smoothing: antialiased;
+  font: normal 12 Roboto, arial, sans-serif;
+  text-align: center;
+  overflow: scroll;
+}
+
+.sortOrder:after {
+  content: "\25b2";
+}
+.sortOrder.reverse:after {
+  content: "\25bc";
+}
+
+.h1 {
+  text-align: center;
+  color: black;
+  text-shadow: 0px 2px 0px #fff;
+  font-size: 16px;
+}
+.h2 {
+  text-align: left;
+  color: black;
+  text-shadow: 0px 1px 0px #fff;
+  font-size: 10px;
+}
+.campo {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.campoList {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  column-fill: rgb(218, 237, 233);
+}
+
+.glyphicon-floppy-save {
+  font-size: 16px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+}
+.glyphicon-modal-window {
+  font-size: 16px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+}
+.glyphicon-plus {
+  font-size: 16px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+}
+.glyphicon-remove {
+  font-size: 14px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+}
+
+.glyphicon-sunglasses {
+  font-size: 14px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+  color: rgb(6, 94, 68);
+}
+
+.glyphicon-pencil {
+  font-size: 14px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+  color: rgb(0, 0, 0);
+}
+
+.glyphicon-filter {
+  font-size: 14px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+  color: rgb(6, 94, 68);
+}
+
+.glyphicon-sort {
+  font-size: 14px;
+  font-weight: normal;
+  text-align: right;
+  align-content: left;
+}
+
+.seccion {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0px 1px 0px #fff;
+}
+
+.error {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: red;
+}
+
+.creador {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: right;
+  color: rgb(141, 128, 128);
+}
+
+.idVista {
+  font-size: 16px;
+  text-align: left;
+  color: rgb(141, 128, 128);
+}
+
+.tituloVista {
+  text-align: center;
+  color: black;
+  text-shadow: 1px 2px 1px #fff;
+  font-size: 30px;
+}
+
+.tituloVistaView {
+  text-align: left;
+  color: black;
+  text-shadow: 1px 2px 1px #fff;
+  font-size: 30px;
+}
+
+.subTituloVista {
+  text-align: center;
+  color: black;
+  text-shadow: 1px 2px 1px #fff;
+  font-size: 25px;
+}
+
+.wrapper {
+  width: 1730px;
+  margin: 0 auto;
+  box-shadow: 2px 2px;
+  background: #e3f1ec;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: left;
+}
+
+.wrapper2 {
+  width: 1400px;
+  margin: 0 auto;
+  box-shadow: 2px 2px;
+  background: #e3edf1;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: left;
+}
+
+.container {
+  margin: 10 10;
+  padding-top: 50px;
+  width: 70%;
+}
+
+.form-login {
+  text-align: left;
+  background-color: #b8c5db;
+  padding-top: 15px;
+  padding-bottom: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 15px;
+  border-color: #181717;
+  border-width: 10px;
+  box-shadow: 0 2px 0 #cfcfcf;
+}
+
+.form-principal {
+  text-align: left;
+  background-color: #bac6da;
+  padding-top: 15px;
+  padding-bottom: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 15px;
+  border-color: #181717;
+  border-width: 10px;
+  box-shadow: 0 2px 0 #cfcfcf;
+}
+
+.h4 {
+  border: 0 solid #fff;
+  border-bottom-width: 1px;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.form-control {
+  border-radius: 10px;
+  background-color: #f5f6f8;
+  border-color: #d2d2d2;
+  border-width: 2px;
+  box-shadow: 1 2px 0 #cfcfcf;
+  height: 50px;
+  margin: 10px;
+}
+
+.form-control-big {
+  border-radius: 10px;
+  background-color: #f5f6f8;
+  border-color: #d2d2d2;
+  border-width: 2px;
+  box-shadow: 1 2px 0 #cfcfcf;
+  height: 150px;
+  width: 100%;
+  margin: 10px;
+}
+
+.form-controlError {
+  border-radius: 10px;
+  text-align: left;
+  background-color: #bac3d3;
+  padding-top: 10px;
+  border-color: red;
+  border-width: 2px;
+  width: 1100px;
+  box-shadow: 1 2px 0 #cfcfcf;
+  height: 50px;
+  margin: 10px;
+}
+
+.btn-lg {
+  border-color: #d2d2d2;
+  background-color: #3090c7;
+  border: 3px;
+  width: 150px;
+  height: 40px;
+  margin: 10px;
+  font-size: 16px;
+  box-shadow: 1 2px 0 #cfcfcf;
+}
+
+.btn-lg2 {
+  border-color: #d2d2d2;
+  background-color: #3030c7;
+  border: 3px;
+  width: 180px;
+  height: 40px;
+  margin: 10px;
+  font-size: 16px;
+  box-shadow: 1 2px 0 #cfcfcf;
+}
+
+.btn-lg3 {
+  border-color: #d2d2d2;
+  background-color: #b3d0c1;
+  border: 1px;
+  height: 20px;
+  margin: 0px;
+  font-size: 14px;
+  box-shadow: 1 2px 0 #cfcfcf;
+}
+
+.division {
+  border: 4;
+  border-top: 1px solid #999;
+  border-bottom: 1px solid #333;
+  height: 2;
+  box-shadow: 1 4px 0 #cfcfcf;
+  width: 95%;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+}
+
+.img-resize {
+  max-width: 20%;
+  height: auto;
+  padding-top: 15px;
+}
+
+.sortorder:after {
+  content: "\25b2";
+}
+.sortorder.reverse:after {
+  content: "\25bc";
+}
+
+.swal2-popup {
+  font-size: 1.6rem !important;
+  font-family: Georgia, serif;
+}

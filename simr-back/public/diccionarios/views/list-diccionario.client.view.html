@@ -2,7 +2,7 @@
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="DiccionariosController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">DICCIONARIO DE DATOS</label>
+    <label class="tituloVista">Diccionario de datos</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -27,66 +27,44 @@
                 <button class="btn-lg3" ng-click="sortBy('tabla')">
                   TABLA
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'tabla'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'tabla'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('campo')">
                   CAMPO ABREVIADO
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'campo'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'campo'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('campoLargo')">
                   CAMPO
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'campoLargo'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'campoLargo'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('definicion')">
                   DEFINICIÓN
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'definicion'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'definicion'" ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr
-              data-ng-repeat="diccionario in diccionarios | orderBy:propertyName:reverse |filter:search"
-            >
+            <tr data-ng-repeat="diccionario in diccionarios | orderBy:propertyName:reverse |filter:search">
               <!-- diccionario es el modelo-->
               <td>
-                <a href="/#!/diccionarios/{{diccionario._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/diccionarios/{{diccionario._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td data-ng-bind="diccionario.tabla"></td>
               <td data-ng-bind="diccionario.campo"></td>
               <td data-ng-bind="diccionario.campoLargo"></td>
               <td data-ng-bind="diccionario.definicion"></td>
               <td data-ng-show="auth.currentUser.id == diccionario.creador.id">
-                <a href="/#!/diccionarios/{{diccionario._id}}/edit"
-                  ><span class="glyphicon glyphicon-pencil"></span
-                ></a>
+                <a href="/#!/diccionarios/{{diccionario._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
               </td>
             </tr>
           </tbody>

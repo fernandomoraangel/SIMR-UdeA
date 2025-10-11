@@ -6,25 +6,12 @@
       <!-- Ayuda al nivel de toda la página -->
       <div>
         <!-- Botón modal ayuda -->
-        <button
-          type="button"
-          class="glyphicon glyphicon-eye-open"
-          style="font-size: 16px; top: -5px"
-          ng-click="mostrarAyuda('Colección','Colección');"
-          data-toggle="modal"
-          data-target="#ayudaTitulo"
-        ></button>
+        <button type="button" class="glyphicon glyphicon-eye-open" style="font-size: 16px; top: -5px"
+          ng-click="mostrarAyuda('Colección','Colección');" data-toggle="modal" data-target="#ayudaTitulo"></button>
 
         <!-- Modal Ayuda-->
-        <div
-          style="text-align: left"
-          class="modal fade"
-          id="ayudaTitulo"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="ayudaTituloLabel"
-          aria-hidden="true"
-        >
+        <div style="text-align: left" class="modal fade" id="ayudaTitulo" tabindex="-1" role="dialog"
+          aria-labelledby="ayudaTituloLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -32,18 +19,14 @@
               </div>
               <div class="modal-body">{{campo}}</div>
               <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  data-dismiss="modal"
-                >
+                <button type="button" class="btn btn-primary" data-dismiss="modal">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <label class="tituloVista">CREAR COLECCIÓN</label>
+        <label class="tituloVista">Crear colección</label>
 
         <form class="form-principal" data-ng-submit="create()" novalidate>
           <!-- Mensaje de error-->
@@ -52,23 +35,13 @@
           </div>
           <div>
             <!-- Botón modal ayuda -->
-            <button
-              type="button"
-              class="glyphicon glyphicon-eye-open"
-              ng-click="mostrarAyuda('coleccion','nombreColeccion');"
-              data-toggle="modal"
-              data-target="#ayudanombreColeccion"
-            ></button>
+            <button type="button" class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('coleccion','nombreColeccion');" data-toggle="modal"
+              data-target="#ayudanombreColeccion"></button>
 
             <!-- Modal Ayuda-->
-            <div
-              class="modal fade"
-              id="ayudanombreColeccion"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="ayudanombreColeccionLabel"
-              aria-hidden="true"
-            >
+            <div class="modal fade" id="ayudanombreColeccion" tabindex="-1" role="dialog"
+              aria-labelledby="ayudanombreColeccionLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -76,11 +49,7 @@
                   </div>
                   <div class="modal-body">{{campo}}</div>
                   <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      data-dismiss="modal"
-                    >
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
                       Cerrar
                     </button>
                   </div>
@@ -91,36 +60,19 @@
           </div>
 
           <div>
-            <input
-              type="text"
-              class="form-control"
-              ng-model="nombre"
-              id="titulo"
-              placeholder=""
-              required
-            />
+            <input type="text" class="form-control" ng-model="nombre" id="titulo" placeholder="" required />
           </div>
           <!-- Fecha de creación -->
 
           <div>
             <!-- Botón modal ayuda -->
-            <button
-              type="button"
-              class="glyphicon glyphicon-eye-open"
-              ng-click="mostrarAyuda('coleccion','fechaColeccion');"
-              data-toggle="modal"
-              data-target="#ayudaFechaColeccion"
-            ></button>
+            <button type="button" class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('coleccion','fechaColeccion');" data-toggle="modal"
+              data-target="#ayudaFechaColeccion"></button>
 
             <!-- Modal Ayuda-->
-            <div
-              class="modal fade"
-              id="ayudaFechaColeccion"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="ayudaFechaColeccionLabel"
-              aria-hidden="true"
-            >
+            <div class="modal fade" id="ayudaFechaColeccion" tabindex="-1" role="dialog"
+              aria-labelledby="ayudaFechaColeccionLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -128,49 +80,30 @@
                   </div>
                   <div class="modal-body">{{campo}}</div>
                   <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      data-dismiss="modal"
-                    >
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
                       Cerrar
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-            <label>FECHA DE CREACIÓN</label>
+            <label>Fecha de creación</label>
           </div>
 
-          <input
-            type="text"
-            id="fechaCreacion"
-            class="form-control"
-            ng-model="fechaDeCreacion"
-            ng-blur="validarFecha(fechaDeCreacion,'fechaCreacion')"
-          />
+          <input type="text" id="fechaCreacion" class="form-control" ng-model="fechaDeCreacion"
+            ng-blur="validarFecha(fechaDeCreacion,'fechaCreacion')" />
 
           <!-- Tipo de colección -->
           <div>
             <div>
               <!-- Botón modal ayuda -->
-              <button
-                type="button"
-                class="glyphicon glyphicon-eye-open"
-                ng-click="mostrarAyuda('coleccion','tipoColeccion');"
-                data-toggle="modal"
-                data-target="#ayudaTipoColeccion"
-              ></button>
+              <button type="button" class="glyphicon glyphicon-eye-open"
+                ng-click="mostrarAyuda('coleccion','tipoColeccion');" data-toggle="modal"
+                data-target="#ayudaTipoColeccion"></button>
 
               <!-- Modal Ayuda-->
-              <div
-                class="modal fade"
-                id="ayudaTipoColeccion"
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby="ayudaTipoColeccionLabel"
-                aria-hidden="true"
-              >
+              <div class="modal fade" id="ayudaTipoColeccion" tabindex="-1" role="dialog"
+                aria-labelledby="ayudaTipoColeccionLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -178,27 +111,18 @@
                     </div>
                     <div class="modal-body">{{campo}}</div>
                     <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-primary"
-                        data-dismiss="modal"
-                      >
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">
                         Cerrar
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
-              <label>TIPO DE COLECCIÓN</label>
+              <label>Tipo de colección</label>
             </div>
 
-            <select
-              select
-              name="tipoSelect"
-              class="form-control"
-              ng-options="tipo for tipo in tiposFondosColecciones"
-              ng-model="tipo"
-            >
+            <select select name="tipoSelect" class="form-control" ng-options="tipo for tipo in tiposFondosColecciones"
+              ng-model="tipo">
               <option value="">Seleccione un valor</option>
               <tt>tipoSelect={{tipo}}</tt>
             </select>
@@ -206,22 +130,12 @@
           <!-- Propiedad-comodato -->
           <div>
             <!-- Botón modal ayuda -->
-            <button
-              type="button"
-              class="glyphicon glyphicon-eye-open"
-              ng-click="mostrarAyuda('coleccion','propiedadComodatoColeccion');"
-              data-toggle="modal"
-              data-target="#ayudaPropiedadComodatoColeccion"
-            ></button>
+            <button type="button" class="glyphicon glyphicon-eye-open"
+              ng-click="mostrarAyuda('coleccion','propiedadComodatoColeccion');" data-toggle="modal"
+              data-target="#ayudaPropiedadComodatoColeccion"></button>
             <!-- Modal Ayuda-->
-            <div
-              class="modal fade"
-              id="ayudaPropiedadComodatoColeccion"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="ayudaPropiedadComodatoColeccionLabel"
-              aria-hidden="true"
-            >
+            <div class="modal fade" id="ayudaPropiedadComodatoColeccion" tabindex="-1" role="dialog"
+              aria-labelledby="ayudaPropiedadComodatoColeccionLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -229,11 +143,7 @@
                   </div>
                   <div class="modal-body">{{campo}}</div>
                   <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      data-dismiss="modal"
-                    >
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
                       Cerrar
                     </button>
                   </div>
@@ -243,19 +153,10 @@
             <label>PROPIEDAD/COMODATO</label>
           </div>
 
-          <textarea
-            class="form-control"
-            placeholder=""
-            ng-model="propiedadComodato"
-            id="descripcion"
-          ></textarea>
+          <textarea class="form-control" placeholder="" ng-model="propiedadComodato" id="descripcion"></textarea>
 
           <div>
-            <input
-              type="submit"
-              class="btn btn-primary btn-lg2"
-              value="Crear"
-            />
+            <input type="submit" class="btn btn-primary btn-lg2" value="Crear" />
             <div data-ng-show="error">
               <strong class="error" data-ng-bind="error"></strong>
             </div>

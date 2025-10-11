@@ -2,7 +2,7 @@
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="GenerosController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">GÉNEROS O FORMAS MUSICALES</label>
+    <label class="tituloVista">Géneros o formas musicales</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -27,79 +27,52 @@
                 <button class="btn-lg3" ng-click="sortBy('nombre')">
                   NOMBRE
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'nombre'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'nombre'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('alias')">
                   ALIAS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'alias'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'alias'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('GeneroRelacionado')">
                   GÉNEROS RELACIONADOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'GeneroRelacionado'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'GeneroRelacionado'"
+                  ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('padres')">
                   PADRES
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'padres'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'padres'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('hijos')">
                   HIJOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'hijos'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'hijos'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('idioma')">
                   IDIOMA
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'idioma'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'idioma'" ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr
-              data-ng-repeat="genero in generos | orderBy:propertyName:reverse|filter:search"
-            >
+            <tr data-ng-repeat="genero in generos | orderBy:propertyName:reverse|filter:search">
               <!-- generos es el modelo-->
               <td>
-                <a href="/#!/generos/{{genero._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/generos/{{genero._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td data-ng-bind="genero.nombre"></td>
               <td data-ng-bind="verAlias(genero.alias)"></td>
@@ -108,9 +81,7 @@
               <td data-ng-bind="verGeneros(genero.hijos)"></td>
               <td data-ng-bind="verIdiomas(genero.idioma)"></td>
               <td data-ng-show="auth.currentUser.id == genero.creador.id">
-                <a href="/#!/generos/{{genero._id}}/edit"
-                  ><span class="glyphicon glyphicon-pencil"></span
-                ></a>
+                <a href="/#!/generos/{{genero._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
               </td>
             </tr>
           </tbody>

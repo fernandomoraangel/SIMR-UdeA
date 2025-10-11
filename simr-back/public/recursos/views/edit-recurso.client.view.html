@@ -3,7 +3,7 @@
 <section data-ng-controller="RecursosController" data-ng-init="findOne()">
   <div class="jumbotron" data-ng-if="auth.isAuthenticated">
     <div class="container">
-      <label class="tituloVista">EDITAR RECURSO</label>
+      <label class="tituloVista">Editar recurso</label>
       <form class="form-principal" data-ng-submit="update()" novalidate>
         <!-- Mensaje de error-->
         <div data-ng-show="error">
@@ -62,7 +62,7 @@
             </div>
           </div>
 
-          <label class="campo">DESCRIPCIÓN</label>
+          <label class="campo">Descripción</label>
         </div>
         <div>
           <textarea class="form-control-big" wrap="soft" ng-model="recurso.descripcion"></textarea>
@@ -151,7 +151,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseNN"
             ng-click="cargaNNormalizados(recurso.numeroNormalizado)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">NÚMEROS NORMALIZADOS</label>
+          <label class="campo">Números normalizados</label>
         </div>
 
         <div class="collapse" id="collapseNN">
@@ -247,7 +247,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseMR"
               ng-click="cargaMResponsabilidad(recurso.mencionResponsabilidad)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">MENCIONES DE RESPONSABILIDAD</label>
+            <label class="campo">Menciones de responsabilidad</label>
           </div>
           <div class="collapse" id="collapseMR">
             <div>
@@ -312,7 +312,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseCR"
               ng-click="cargaContenedores(recurso.contenedores)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">CONTENEDOR (RECURSOS)</label>
+            <label class="campo">Contenedor (recursos)</label>
           </div>
 
           <div class="collapse" id="collapseCR">
@@ -434,7 +434,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseTRe"
               ng-click="cargaTipoRecurso(recurso.tiposDeRecurso)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">TIPO DE RECURSO</label>
+            <label class="campo">Tipo de recurso</label>
           </div>
           <div class="collapse" id="collapseTRe">
             <select select name="tipoSelect" class="form-control" ng-options="tipo for tipo in tipos"
@@ -483,7 +483,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAnotacionesCT"
               ng-click="cargaAnotacionesCartograficoTemporales(recurso.anotacionCartograficoTemporal)" role="button"
               aria-expanded="false" aria-controls="collapseExample"></button>
-            <label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
+            <label class="campo">Anotaciones cartográfico temporales</label>
           </div>
           <div>
             <div class="collapse" id="collapseAnotacionesCT">
@@ -674,7 +674,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDescripcionT"
               ng-click="cargadTecnica(recurso.descripcionTecnica)" role="button" aria-expanded="false"
               aria-controls="collapseDescripcionT"></button>
-            <label class="seccion">DESCRIPCIÓN TÉCNICA</label>
+            <label class="seccion">Descripción técnica</label>
           </div>
           <div class="collapse" id="collapseDescripcionT">
             <label class="campo">Criterio</label>
@@ -732,7 +732,7 @@
               </div>
             </div>
 
-            <label class="campo">MATERIAL ACOMPAÑANTE</label>
+            <label class="campo">Material acompañante</label>
           </div>
           <div>
             <div>
@@ -763,7 +763,7 @@
               </div>
             </div>
 
-            <label class="campo">MENCIÓN DE SERIE</label>
+            <label class="campo">Mención de serie</label>
           </div>
 
           <div>
@@ -797,7 +797,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapsePAsociados"
               ng-click="cargaProyectos(recurso.proyectos)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">PROYECTOS ASOCIADOS</label>
+            <label class="campo">Proyectos asociados</label>
           </div>
           <div class="collapse" id="collapsePAsociados">
             <label class="campo"></label>
@@ -852,7 +852,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDL"
               ng-click="cargaDescriptores(recurso.descriptorLibre)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">DESCRIPTORES LIBRES</label>
+            <label class="campo">Descriptores libres</label>
           </div>
           <div class="collapse" id="collapseDL">
             <hr />
@@ -918,7 +918,7 @@
             <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEyA"
               ng-click="cargaEnlaces(recurso.vinculoRelacionado)" role="button" aria-expanded="false"
               aria-controls="collapseExample"></button>
-            <label class="campo">ENLACES Y ARCHIVOS</label>
+            <label class="campo">Enlaces y archivos</label>
           </div>
           <div class="collapse" id="collapseEyA">
             <h3>Enlaces</h3>

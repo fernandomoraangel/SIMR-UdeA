@@ -10,7 +10,7 @@
         <p>Hola, bienvenido {{ auth.currentUser.fullName }}</p>
       </div>
 
-      <label class="tituloVista">CREAR IDIOMA</label>
+      <label class="tituloVista">Crear idioma</label>
 
       <form class="form-principal" data-ng-submit="create()" novalidate>
         <!-- Mensaje de error-->
@@ -23,11 +23,7 @@
         </div>
 
         <div>
-          <input
-            type="submit"
-            class="btn btn-primary pull-right"
-            value="Crear"
-          />
+          <input type="submit" class="btn btn-primary pull-right" value="Crear" />
           <div data-ng-show="error">
             <strong class="error" data-ng-bind="error"></strong>
           </div>

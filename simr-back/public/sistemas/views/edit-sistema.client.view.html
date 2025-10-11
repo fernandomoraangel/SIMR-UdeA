@@ -3,7 +3,7 @@
 <section data-ng-controller="SistemasController" data-ng-init="findOne()">
   <div class="jumbotron" data-ng-if="auth.isAuthenticated">
     <div class="container">
-      <label class="tituloVistaView">EDITAR SISTEMA SONORO</label>
+      <label class="tituloVistaView">Editar sistema sonoro</label>
 
       <form class="form-principal" data-ng-submit="update()" novalidate>
         <!-- Mensaje de error-->
@@ -60,7 +60,7 @@
               </div>
             </div>
           </div>
-          <label>DESCRIPCIÓN</label>
+          <label>Descripción</label>
         </div>
         <div class="campo">
           <div>
@@ -95,7 +95,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAL"
             ng-click="cargaAlias(sistema.alias)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">NOMBRES ALTERNATIVOS (ALIAS)</label>
+          <label class="campo">Nombres alternativos (alias)</label>
         </div>
 
         <div class="collapse" id="collapseAL">
@@ -144,7 +144,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseSR"
             ng-click="cargaSistemasRelacionados(sistema.sistemasRelacionados)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">SISTEMAS RELACIONADOS</label>
+          <label class="campo">Sistemas relacionados</label>
         </div>
 
         <!-- Sistemas relacionados -->
@@ -198,7 +198,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseSP"
             ng-click="cargaSistemasPadre(sistema.padres)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">SISTEMAS PADRE</label>
+          <label class="campo">Sistemas padre</label>
         </div>
         <!-- Sistemas Padre -->
         <div class="collapse" id="collapseSP">
@@ -250,7 +250,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseSH"
             ng-click="cargaSistemasHijo(sistema.hijos)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">SISTEMAS HIJOS</label>
+          <label class="campo">Sistemas hijos</label>
         </div>
 
         <div class="collapse" id="collapseSH">
@@ -305,7 +305,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapsePR"
             ng-click="cargaProyectosAsociados(sistema.proyectosAsociados)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">PROYECTOS ASOCIADOS</label>
+          <label class="campo">Proyectos asociados</label>
         </div>
         <div class="collapse" id="collapsePR">
           <label class="campo"></label>
@@ -358,7 +358,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAnotacionesCT"
             ng-click="cargaAnotaciones(sistema.anotacionCartograficoTemporal)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
+          <label class="campo">Anotaciones cartográfico temporales</label>
         </div>
         <div>
           <div class="collapse" id="collapseAnotacionesCT">
@@ -440,7 +440,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDL"
             ng-click="cargaDescriptoresLibres(sistema.descriptorLibre)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">DESCRIPTORES LIBRES</label>
+          <label class="campo">Descriptores libres</label>
         </div>
         <div class="collapse" id="collapseDL">
           <hr />
@@ -506,7 +506,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEyA"
             ng-click="cargaEnlaces(sistema.vinculoRelacionado)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">ENLACES Y ARCHIVOS</label>
+          <label class="campo">Enlaces y archivos</label>
         </div>
         <div class="collapse" id="collapseEyA">
           <h3>Enlaces</h3>

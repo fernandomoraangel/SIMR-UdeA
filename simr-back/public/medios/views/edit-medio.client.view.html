@@ -3,7 +3,7 @@
 <section data-ng-controller="MediosController" data-ng-init="findOne()">
   <div class="jumbotron" data-ng-if="auth.isAuthenticated">
     <div class="container">
-      <label class="tituloVista">EDITAR MEDIO SONORO (FORMATO)</label>
+      <label class="tituloVista">Editar medio sonoro (formato)</label>
 
       <form class="form-principal" data-ng-submit="update()" novalidate>
         <!-- Mensaje de error-->
@@ -70,7 +70,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseNombresA"
             ng-click="cargaAlias(medio.alias)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">NOMBRES ALTERNATIVOS (ALIAS)</label>
+          <label class="campo">Nombres alternativos (alias)</label>
         </div>
 
         <div class="collapse" id="collapseNombresA">
@@ -114,7 +114,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseInstrumentosM"
             ng-click="cargaInstrumentos(medio.instrumentos)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">INSTRUMENTOS (MEDIOS)</label>
+          <label class="campo">Instrumentos (medios)</label>
         </div>
         <div class="collapse" id="collapseInstrumentosM">
           <label class="campo"></label>
@@ -185,7 +185,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseProyectosA"
             ng-click="cargaProyectos(medio.proyectosAsociados)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">PROYECTOS ASOCIADOS</label>
+          <label class="campo">Proyectos asociados</label>
         </div>
 
         <div class="collapse" id="collapseProyectosA">
@@ -238,7 +238,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseAnotacionesCT"
             ng-click="cargaAnotaciones(medio.anotacionCartograficoTemporal)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">ANOTACIONES CARTOGRÁFICO TEMPORALES</label>
+          <label class="campo">Anotaciones cartográfico temporales</label>
         </div>
 
         <div class="collapse" id="collapseAnotacionesCT">
@@ -321,7 +321,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDescriptoresL"
             ng-click="cargaDescriptores(medio.descriptorLibre)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">DESCRIPTORES LIBRES</label>
+          <label class="campo">Descriptores libres</label>
         </div>
         <div class="collapse" id="collapseDescriptoresL">
           <hr />
@@ -387,7 +387,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEyA"
             ng-click="cargaEnlaces(medio.vinculoRelacionado)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">ENLACES Y ARCHIVOS</label>
+          <label class="campo">Enlaces y archivos</label>
         </div>
         <div class="collapse" id="collapseEyA">
           <h3>Enlaces</h3>

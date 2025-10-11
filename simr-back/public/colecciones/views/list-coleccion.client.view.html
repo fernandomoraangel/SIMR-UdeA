@@ -2,7 +2,7 @@
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="ColeccionesController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">COLECCIONES DOCUMENTALES</label>
+    <label class="tituloVista">Colecciones documentales</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -27,68 +27,44 @@
                 <button class="btn-lg3" ng-click="sortBy('nombre')">
                   NOMBRE
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'nombre'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'nombre'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('tipo')">TIPO</button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'tipo'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'tipo'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('propiedadComodato')">
                   PROPIEDAD-COMODATO
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'propiedadComodato'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'propiedadComodato'"
+                  ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('fechaDeCreacion')">
                   CREACIÓN
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'fechaDeCreacion'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'fechaDeCreacion'"
+                  ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              data-ng-repeat="coleccion in colecciones | orderBy:propertyName:reverse|filter:search"
-            >
+            <tr data-ng-repeat="coleccion in colecciones | orderBy:propertyName:reverse|filter:search">
               <!-- coleccions es el modelo-->
 
               <td>
-                <a href="/#!/colecciones/{{coleccion._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/colecciones/{{coleccion._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td data-ng-bind="coleccion.nombre"></td>
               <td data-ng-bind="coleccion.tipo"></td>
               <td data-ng-bind="coleccion.propiedadComodato"></td>
-              <td
-                data-ng-bind="formatDate(coleccion.fechaDeCreacion,coleccion.precision)"
-              ></td>
-              <td
-                data-ng-show="auth.currentUser.id == coleccion.creador.id"
-              >
-                <a href="/#!/colecciones/{{coleccion._id}}/edit"
-                  ><span class="glyphicon glyphicon-pencil"></span
-                ></a>
+              <td data-ng-bind="formatDate(coleccion.fechaDeCreacion,coleccion.precision)"></td>
+              <td data-ng-show="auth.currentUser.id == coleccion.creador.id">
+                <a href="/#!/colecciones/{{coleccion._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
               </td>
             </tr>
           </tbody>

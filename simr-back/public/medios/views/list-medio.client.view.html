@@ -2,7 +2,7 @@
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="MediosController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">MEDIOS SONOROS</label>
+    <label class="tituloVista">Medios sonoros</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -27,66 +27,45 @@
                 <button class="btn-lg3" ng-click="sortBy('nombre')">
                   NOMBRE
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'nombre'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'nombre'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('alias')">
                   ALIAS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'alias'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'alias'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('instrumentos')">
                   INSTRUMENTOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'instrumentos'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'instrumentos'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('proyectosAsociados')">
                   PROYECTOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'proyectosAsociados'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'proyectosAsociados'"
+                  ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr
-              data-ng-repeat="medio in medios | orderBy:propertyName:reverse|filter:search"
-            >
+            <tr data-ng-repeat="medio in medios | orderBy:propertyName:reverse|filter:search">
               <!-- medios es el modelo-->
               <td>
-                <a href="/#!/medios/{{medio._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/medios/{{medio._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td data-ng-bind="medio.nombre"></td>
               <td data-ng-bind="verAlias(medio.alias)"></td>
               <td data-ng-bind="verInstrumento(medio.instrumentos)"></td>
               <td data-ng-bind="verProyecto(medio.proyectosAsociados)"></td>
               <td data-ng-show="auth.currentUser.id == medio.creador.id">
-                <a href="/#!/medios/{{medio._id}}/edit"
-                  ><span class="glyphicon glyphicon-pencil"></span
-                ></a>
+                <a href="/#!/medios/{{medio._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
               </td>
             </tr>
           </tbody>

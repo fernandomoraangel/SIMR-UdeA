@@ -3,7 +3,7 @@
 <section data-ng-controller="DiccionariosController">
   <div class="jumbotron" data-ng-if="auth.isAuthenticated">
     <div class="container">
-      <label class="tituloVista">CREAR CAMPO EN DICCIONARIO DE DATOS</label>
+      <label class="tituloVista">Crear campo en diccionario de datos</label>
 
       <form class="form-principal" data-ng-submit="create()" novalidate>
         <!-- Mensaje de error-->
@@ -13,23 +13,12 @@
         <!-- Tabla -->
         <div>
           <!-- Botón modal ayuda -->
-          <button
-            type="button"
-            class="glyphicon glyphicon-eye-open"
-            ng-click="mostrarAyuda('diccionario','tabla');"
-            data-toggle="modal"
-            data-target="#ayudaTabla"
-          ></button>
+          <button type="button" class="glyphicon glyphicon-eye-open" ng-click="mostrarAyuda('diccionario','tabla');"
+            data-toggle="modal" data-target="#ayudaTabla"></button>
 
           <!-- Modal Ayuda-->
-          <div
-            class="modal fade"
-            id="ayudaTabla"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="ayudaTablaLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="ayudaTabla" tabindex="-1" role="dialog" aria-labelledby="ayudaTablaLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -37,11 +26,7 @@
                 </div>
                 <div class="modal-body">{{campo}}</div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                  >
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">
                     Cerrar
                   </button>
                 </div>
@@ -57,23 +42,13 @@
 
         <div>
           <!-- Botón modal ayuda -->
-          <button
-            type="button"
-            class="glyphicon glyphicon-eye-open"
-            ng-click="mostrarAyuda('diccionario','campoAbreviado');"
-            data-toggle="modal"
-            data-target="#ayudacampoAbreviado"
-          ></button>
+          <button type="button" class="glyphicon glyphicon-eye-open"
+            ng-click="mostrarAyuda('diccionario','campoAbreviado');" data-toggle="modal"
+            data-target="#ayudacampoAbreviado"></button>
 
           <!-- Modal Ayuda-->
-          <div
-            class="modal fade"
-            id="ayudacampoAbreviado"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="ayudacampoAbreviadoLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="ayudacampoAbreviado" tabindex="-1" role="dialog"
+            aria-labelledby="ayudacampoAbreviadoLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -81,18 +56,14 @@
                 </div>
                 <div class="modal-body">{{campo}}</div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                  >
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">
                     Cerrar
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <label>CAMPO ABREVIADO</label>
+          <label>Campo abreviado</label>
         </div>
         <div>
           <input type="text" class="form-control" ng-model="campo" required />
@@ -100,23 +71,13 @@
         <!-- Campo largo -->
         <div>
           <!-- Botón modal ayuda -->
-          <button
-            type="button"
-            class="glyphicon glyphicon-eye-open"
-            ng-click="mostrarAyuda('diccionario','campoLargo');"
-            data-toggle="modal"
-            data-target="#ayudaCampoLargo"
-          ></button>
+          <button type="button" class="glyphicon glyphicon-eye-open"
+            ng-click="mostrarAyuda('diccionario','campoLargo');" data-toggle="modal"
+            data-target="#ayudaCampoLargo"></button>
 
           <!-- Modal Ayuda-->
-          <div
-            class="modal fade"
-            id="ayudaCampoLargo"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="ayudaCampoLargoLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="ayudaCampoLargo" tabindex="-1" role="dialog"
+            aria-labelledby="ayudaCampoLargoLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -124,47 +85,28 @@
                 </div>
                 <div class="modal-body">{{campo}}</div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                  >
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">
                     Cerrar
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <label>CAMPO LARGO</label>
+          <label>Campo largo</label>
         </div>
         <div>
-          <input
-            type="text"
-            class="form-control"
-            ng-model="campoLargo"
-            required
-          />
+          <input type="text" class="form-control" ng-model="campoLargo" required />
         </div>
         <!-- Definición -->
         <div>
           <!-- Botón modal ayuda -->
-          <button
-            type="button"
-            class="glyphicon glyphicon-eye-open"
-            ng-click="mostrarAyuda('diccionario','definicion');"
-            data-toggle="modal"
-            data-target="#ayudaDefinicion"
-          ></button>
+          <button type="button" class="glyphicon glyphicon-eye-open"
+            ng-click="mostrarAyuda('diccionario','definicion');" data-toggle="modal"
+            data-target="#ayudaDefinicion"></button>
 
           <!-- Modal Ayuda-->
-          <div
-            class="modal fade"
-            id="ayudaDefinicion"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="ayudaDefinicionLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="ayudaDefinicion" tabindex="-1" role="dialog"
+            aria-labelledby="ayudaDefinicionLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -172,34 +114,21 @@
                 </div>
                 <div class="modal-body">{{campo}}</div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                  >
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">
                     Cerrar
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <label>DEFINICIÓN</label>
+          <label>Definición</label>
         </div>
         <div>
-          <textarea
-            type="text"
-            class="form-control-big"
-            ng-model="definicion"
-            required
-          ></textarea>
+          <textarea type="text" class="form-control-big" ng-model="definicion" required></textarea>
         </div>
 
         <div>
-          <input
-            type="submit"
-            class="btn btn-primary pull-right"
-            value="Crear"
-          />
+          <input type="submit" class="btn btn-primary pull-right" value="Crear" />
           <div data-ng-show="error">
             <strong class="error" data-ng-bind="error"></strong>
           </div>

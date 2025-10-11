@@ -3,7 +3,7 @@
 <section data-ng-controller="ProyectosController" data-ng-init="findOne()">
   <div class="jumbotron" data-ng-if="auth.isAuthenticated">
     <div class="container">
-      <label class="tituloVista">EDITAR PROYECTO</label>
+      <label class="tituloVista">Editar proyecto</label>
 
       <form class="form-principal" data-ng-submit="update()" novalidate>
         <!-- Mensaje de error-->
@@ -34,7 +34,7 @@
               </div>
             </div>
           </div>
-          <label class="campo">NOMBRE DEL PROYECTO</label>
+          <label class="campo">Nombre del proyecto</label>
         </div>
 
         <div>
@@ -67,7 +67,7 @@
             </div>
           </div>
 
-          <label class="campo">ESTADO DEL PROYECTO</label>
+          <label class="campo">Estado del proyecto</label>
         </div>
         <div>
           <select class="form-control" ng-model="proyecto.estado">
@@ -182,7 +182,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseFechas"
             ng-click="cargaFechas(proyecto.fechasAsociadas)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">FECHAS ASOCIADAS AL PROYECTO</label>
+          <label class="campo">Fechas asociadas al proyecto</label>
         </div>
         <div class="collapse" id="collapseFechas">
           <div>
@@ -242,7 +242,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseDescriptores"
             ng-click="cargaDescriptores(proyecto.descriptoresLibres)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">DESCRIPTORES LIBRES</label>
+          <label class="campo">Descriptores libres</label>
         </div>
         <div class="collapse" id="collapseDescriptores">
           <hr />
@@ -309,7 +309,7 @@
           <button class="glyphicon glyphicon-arrow-right" data-toggle="collapse" href="#collapseEyA"
             ng-click="cargaEnlaces(proyecto.vinculoRelacionado)" role="button" aria-expanded="false"
             aria-controls="collapseExample"></button>
-          <label class="campo">ENLACES Y ARCHIVOS</label>
+          <label class="campo">Enlaces y archivos</label>
         </div>
         <div class="collapse" id="collapseEyA">
           <h3>Enlaces</h3>

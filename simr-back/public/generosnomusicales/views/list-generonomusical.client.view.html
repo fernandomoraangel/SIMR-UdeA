@@ -1,11 +1,8 @@
 <!-- View listar generos-->
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
-<section
-  data-ng-controller="GenerosNoMusicalesController"
-  data-ng-init="find()"
->
+<section data-ng-controller="GenerosNoMusicalesController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">GÉNEROS O FORMAS NO MUSICALES</label>
+    <label class="tituloVista">Géneros o formas no musicales</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -30,97 +27,63 @@
                 <button class="btn-lg3" ng-click="sortBy('nombre')">
                   NOMBRE
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'nombre'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'nombre'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('alias')">
                   ALIAS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'alias'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'alias'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
-                <button
-                  class="btn-lg3"
-                  ng-click="sortBy('generosRelacionados')"
-                >
+                <button class="btn-lg3" ng-click="sortBy('generosRelacionados')">
                   GÉNEROS RELACIONADOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'generosRelacionados'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'generosRelacionados'"
+                  ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('padres')">
                   PADRES
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'padres'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'padres'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('hijos')">
                   HIJOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'hijos'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'hijos'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('idioma')">
                   IDIOMA
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'idioma'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'idioma'" ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr
-              data-ng-repeat="generoNoMusical in generosNoMusicales |  orderBy:propertyName:reverse|filter:search"
-            >
+            <tr data-ng-repeat="generoNoMusical in generosNoMusicales |  orderBy:propertyName:reverse|filter:search">
               <!-- generos es el modelo-->
               <td>
-                <a href="/#!/generosnomusicales/{{generoNoMusical._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/generosnomusicales/{{generoNoMusical._id}}"><span
+                    class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td data-ng-bind="generoNoMusical.nombre"></td>
               <td data-ng-bind="verAlias(generoNoMusical.alias)"></td>
-              <td
-                data-ng-bind="verGeneros(generoNoMusical.generosRelacionados)"
-              ></td>
+              <td data-ng-bind="verGeneros(generoNoMusical.generosRelacionados)"></td>
               <td data-ng-bind="verGeneros(generoNoMusical.padres)"></td>
               <td data-ng-bind="verGeneros(generoNoMusical.hijos)"></td>
               <td data-ng-bind="verIdiomas(generoNoMusical.idioma)"></td>
-              <td
-                data-ng-show="auth.currentUser.id == generoNoMusical.creador.id"
-              >
-                <a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit"
-                  ><span class="glyphicon glyphicon-pencil"></span
-                ></a>
+              <td data-ng-show="auth.currentUser.id == generoNoMusical.creador.id">
+                <a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit"><span
+                    class="glyphicon glyphicon-pencil"></span></a>
               </td>
             </tr>
           </tbody>

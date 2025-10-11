@@ -3,7 +3,7 @@
 
 <section data-ng-controller="IdiomasController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">IDIOMAS</label>
+    <label class="tituloVista">Idiomas</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -26,24 +26,16 @@
                 <button class="btn-lg3" ng-click="sortBy('idioma')">
                   IDIOMA
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'idioma'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'idioma'" ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr
-              data-ng-repeat="idioma in idiomas | orderBy:propertyName:reverse|filter:search"
-            >
+            <tr data-ng-repeat="idioma in idiomas | orderBy:propertyName:reverse|filter:search">
               <!-- idiomas es el modelo-->
               <td>
-                <a href="/#!/idiomas/{{idioma._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/idiomas/{{idioma._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td class="descripcion" data-ng-bind="idioma.idioma"></td>
               <td data-ng-show="auth.currentUser.id == idioma.creador.id">

@@ -1,58 +1,130 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto:400);
+/*
+ * SIMR - Sistema de Información de Músicas Regionales
+ * Hoja de estilos principal
+ * Versión: 2.0
+ * Última actualización: Octubre 2025
+ * Paleta de colores inspirada en el logo institucional
+ * - Verde institucional principal: #065E44
+ * - Capitalización automática de textos
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+:root {
+  --primary-green: #065e44;
+  --primary-green-light: #0a8563;
+  --primary-green-dark: #043d2d;
+  --secondary-green: #b3d0c1;
+  --accent-green: #e3f1ec;
+  --background-light: #f8fdfb;
+  --background-medium: #eef5f2;
+  --background-dark: #e0ebe6;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a5a5a;
+  --text-muted: #8d8080;
+  --border-color: #c8d8d0;
+  --shadow-color: rgba(6, 94, 68, 0.1);
+  --error-color: #d32f2f;
+  --success-color: #2e7d32;
+  --white: #ffffff;
+  --orange-accent: #ff6b35;
+}
+
 body {
-  background-color: #bac3d3;
+  background: linear-gradient(
+    135deg,
+    var(--background-light) 0%,
+    var(--background-medium) 100%
+  ) !important;
   -webkit-font-smoothing: antialiased;
-  font: normal 12 Roboto, arial, sans-serif;
+  font-family: "Roboto", Arial, sans-serif !important;
+  font-size: 14px;
+  color: var(--text-primary) !important;
   text-align: center;
   overflow: scroll;
 }
 
 .bodyEdit {
-  background-color: #dee7ee;
+  background: linear-gradient(
+    135deg,
+    #f0f7f4 0%,
+    var(--accent-green) 100%
+  ) !important;
   -webkit-font-smoothing: antialiased;
-  font: normal 12 Roboto, arial, sans-serif;
+  font-family: "Roboto", Arial, sans-serif !important;
   text-align: center;
   overflow: scroll;
 }
 
 .bodyList {
-  background-color: #f0f0f0;
+  background: linear-gradient(
+    135deg,
+    var(--white) 0%,
+    var(--background-medium) 100%
+  ) !important;
   -webkit-font-smoothing: antialiased;
-  font: normal 12 Roboto, arial, sans-serif;
+  font-family: "Roboto", Arial, sans-serif !important;
   text-align: center;
   overflow: scroll;
 }
 
 .sortOrder:after {
   content: "\25b2";
+  color: var(--primary-green) !important;
 }
+
 .sortOrder.reverse:after {
   content: "\25bc";
 }
 
 .h1 {
   text-align: center;
-  color: black;
-  text-shadow: 0px 2px 0px #fff;
+  color: var(--primary-green-dark) !important;
+  text-shadow: 0px 2px 0px rgba(6, 94, 68, 0.1);
   font-size: 16px;
+  text-transform: lowercase !important;
 }
+
+.h1::first-letter {
+  text-transform: uppercase !important;
+}
+
 .h2 {
   text-align: left;
-  color: black;
-  text-shadow: 0px 1px 0px #fff;
+  color: var(--text-secondary) !important;
+  text-shadow: 0px 1px 0px rgba(6, 94, 68, 0.05);
   font-size: 10px;
+  text-transform: lowercase !important;
 }
+
+.h2::first-letter {
+  text-transform: uppercase !important;
+}
+
 .campo {
   font-size: 18px;
   font-weight: bold;
   text-align: left;
+  color: var(--text-primary) !important;
+  text-transform: lowercase !important;
+}
+
+.campo::first-letter {
+  text-transform: uppercase !important;
 }
 
 .campoList {
   font-size: 16px;
   font-weight: bold;
   text-align: left;
-  column-fill: rgb(218, 237, 233);
+  background-color: var(--accent-green) !important;
+  padding: 8px;
+  border-radius: 4px;
+  text-transform: lowercase !important;
+}
+
+.campoList::first-letter {
+  text-transform: uppercase !important;
 }
 
 .glyphicon-floppy-save {
@@ -60,24 +132,31 @@ body {
   font-weight: normal;
   text-align: right;
   align-content: left;
+  color: var(--primary-green) !important;
 }
+
 .glyphicon-modal-window {
   font-size: 16px;
   font-weight: normal;
   text-align: right;
   align-content: left;
+  color: var(--primary-green) !important;
 }
+
 .glyphicon-plus {
   font-size: 16px;
   font-weight: normal;
   text-align: right;
   align-content: left;
+  color: var(--primary-green) !important;
 }
+
 .glyphicon-remove {
   font-size: 14px;
   font-weight: normal;
   text-align: right;
   align-content: left;
+  color: var(--error-color) !important;
 }
 
 .glyphicon-sunglasses {
@@ -85,7 +164,7 @@ body {
   font-weight: normal;
   text-align: right;
   align-content: left;
-  color: rgb(6, 94, 68);
+  color: var(--primary-green) !important;
 }
 
 .glyphicon-pencil {
@@ -93,7 +172,11 @@ body {
   font-weight: normal;
   text-align: right;
   align-content: left;
-  color: rgb(0, 0, 0);
+  color: var(--text-primary) !important;
+}
+
+.glyphicon-pencil:hover {
+  color: var(--primary-green) !important;
 }
 
 .glyphicon-filter {
@@ -101,7 +184,7 @@ body {
   font-weight: normal;
   text-align: right;
   align-content: left;
-  color: rgb(6, 94, 68);
+  color: var(--primary-green) !important;
 }
 
 .glyphicon-sort {
@@ -109,73 +192,111 @@ body {
   font-weight: normal;
   text-align: right;
   align-content: left;
+  color: var(--text-secondary) !important;
+}
+
+.glyphicon-sort:hover {
+  color: var(--primary-green) !important;
 }
 
 .seccion {
   font-size: 22px;
   font-weight: bold;
   text-align: center;
-  text-shadow: 0px 1px 0px #fff;
+  color: var(--primary-green) !important;
+  text-shadow: 0px 1px 2px var(--shadow-color);
+  text-transform: lowercase !important;
+}
+
+.seccion::first-letter {
+  text-transform: uppercase !important;
 }
 
 .error {
   font-size: 18px;
   font-weight: bold;
   text-align: center;
-  color: red;
+  color: var(--error-color) !important;
+  background-color: #ffebee !important;
+  padding: 12px;
+  border-radius: 8px;
 }
 
 .creador {
   font-size: 12px;
   font-weight: bold;
   text-align: right;
-  color: rgb(141, 128, 128);
+  color: var(--text-muted) !important;
 }
 
 .idVista {
   font-size: 16px;
   text-align: left;
-  color: rgb(141, 128, 128);
+  color: var(--text-muted) !important;
 }
 
 .tituloVista {
   text-align: center;
-  color: black;
-  text-shadow: 1px 2px 1px #fff;
+  color: var(--primary-green-dark) !important;
+  text-shadow: 1px 2px 2px var(--shadow-color);
   font-size: 30px;
+  font-weight: 700;
+  text-transform: lowercase !important;
+}
+
+.tituloVista::first-letter {
+  text-transform: uppercase !important;
 }
 
 .tituloVistaView {
   text-align: left;
-  color: black;
-  text-shadow: 1px 2px 1px #fff;
+  color: var(--primary-green-dark) !important;
+  text-shadow: 1px 2px 2px var(--shadow-color);
   font-size: 30px;
+  font-weight: 700;
+  text-transform: lowercase !important;
+}
+
+.tituloVistaView::first-letter {
+  text-transform: uppercase !important;
 }
 
 .subTituloVista {
   text-align: center;
-  color: black;
-  text-shadow: 1px 2px 1px #fff;
+  color: var(--primary-green) !important;
+  text-shadow: 1px 2px 2px var(--shadow-color);
   font-size: 25px;
+  font-weight: 600;
+  text-transform: lowercase !important;
+}
+
+.subTituloVista::first-letter {
+  text-transform: uppercase !important;
 }
 
 .wrapper {
   width: 1730px;
   margin: 0 auto;
-  box-shadow: 2px 2px;
-  background: #e3f1ec;
-  border-radius: 8px;
-  padding: 10px;
+  box-shadow: 0 4px 16px var(--shadow-color) !important;
+  background: var(--white) !important;
+  border-radius: 12px;
+  border: 1px solid var(--border-color) !important;
+  padding: 20px;
   text-align: left;
 }
 
 .wrapper2 {
   width: 1400px;
   margin: 0 auto;
-  box-shadow: 2px 2px;
-  background: #e3edf1;
-  border-radius: 8px;
-  padding: 10px;
+  box-shadow: 0 4px 16px var(--shadow-color) !important;
+  background: linear-gradient(
+    135deg,
+    var(--white) 0%,
+    var(--accent-green) 100%
+  ) !important;
+  border-radius: 12px;
+  border: 1px solid var(--border-color) !important;
+  padding: 20px;
   text-align: left;
 }
 
@@ -187,110 +308,196 @@ body {
 
 .form-login {
   text-align: left;
-  background-color: #b8c5db;
+  background: linear-gradient(
+    135deg,
+    var(--white) 0%,
+    var(--secondary-green) 100%
+  ) !important;
   padding-top: 15px;
   padding-bottom: 40px;
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 15px;
-  border-color: #181717;
-  border-width: 10px;
-  box-shadow: 0 2px 0 #cfcfcf;
+  border: 2px solid var(--primary-green) !important;
+  box-shadow: 0 8px 24px var(--shadow-color) !important;
 }
 
 .form-principal {
   text-align: left;
-  background-color: #bac6da;
+  background: linear-gradient(135deg, var(--white) 0%, #e8f1ee 100%) !important;
   padding-top: 15px;
   padding-bottom: 40px;
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 15px;
-  border-color: #181717;
-  border-width: 10px;
-  box-shadow: 0 2px 0 #cfcfcf;
+  border: 2px solid var(--border-color) !important;
+  box-shadow: 0 6px 20px var(--shadow-color) !important;
 }
 
 .h4 {
-  border: 0 solid #fff;
-  border-bottom-width: 1px;
+  border: 0 solid var(--border-color) !important;
+  border-bottom-width: 2px !important;
   padding-bottom: 10px;
   text-align: center;
+  color: var(--primary-green) !important;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .form-control {
-  border-radius: 10px;
-  background-color: #f5f6f8;
-  border-color: #d2d2d2;
-  border-width: 2px;
-  box-shadow: 1 2px 0 #cfcfcf;
-  height: 50px;
+  border-radius: 10px !important;
+  background-color: var(--white) !important;
+  border: 2px solid var(--border-color) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  height: 50px !important;
+  padding: 0 16px !important;
   margin: 10px;
+  font-size: 14px !important;
+  color: var(--text-primary) !important;
+}
+
+.form-control:focus {
+  outline: none !important;
+  border-color: var(--primary-green) !important;
+  box-shadow: 0 0 0 3px rgba(6, 94, 68, 0.1) !important;
+}
+
+.form-control:hover {
+  border-color: var(--primary-green-light) !important;
 }
 
 .form-control-big {
-  border-radius: 10px;
-  background-color: #f5f6f8;
-  border-color: #d2d2d2;
-  border-width: 2px;
-  box-shadow: 1 2px 0 #cfcfcf;
-  height: 150px;
-  width: 100%;
+  border-radius: 10px !important;
+  background-color: var(--white) !important;
+  border: 2px solid var(--border-color) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  height: 150px !important;
+  width: 100% !important;
+  padding: 16px !important;
   margin: 10px;
+  font-size: 14px !important;
+  color: var(--text-primary) !important;
+}
+
+.form-control-big:focus {
+  outline: none !important;
+  border-color: var(--primary-green) !important;
+  box-shadow: 0 0 0 3px rgba(6, 94, 68, 0.1) !important;
+}
+
+.form-control-big:hover {
+  border-color: var(--primary-green-light) !important;
 }
 
 .form-controlError {
-  border-radius: 10px;
+  border-radius: 10px !important;
   text-align: left;
-  background-color: #bac3d3;
+  background-color: #ffebee !important;
   padding-top: 10px;
-  border-color: red;
-  border-width: 2px;
+  border: 2px solid var(--error-color) !important;
   width: 1100px;
-  box-shadow: 1 2px 0 #cfcfcf;
-  height: 50px;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.15) !important;
+  height: 50px !important;
   margin: 10px;
+  color: var(--error-color) !important;
 }
 
 .btn-lg {
-  border-color: #d2d2d2;
-  background-color: #3090c7;
-  border: 3px;
-  width: 150px;
-  height: 40px;
+  border: 2px solid var(--primary-green) !important;
+  background: linear-gradient(
+    135deg,
+    var(--primary-green) 0%,
+    var(--primary-green-light) 100%
+  ) !important;
+  color: var(--white) !important;
+  border-radius: 8px !important;
+  width: 150px !important;
+  height: 40px !important;
   margin: 10px;
-  font-size: 16px;
-  box-shadow: 1 2px 0 #cfcfcf;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(6, 94, 68, 0.2) !important;
+  text-transform: lowercase !important;
+}
+
+.btn-lg::first-letter {
+  text-transform: uppercase !important;
+}
+
+.btn-lg:hover {
+  background: linear-gradient(
+    135deg,
+    var(--primary-green-light) 0%,
+    var(--primary-green) 100%
+  ) !important;
+  box-shadow: 0 6px 16px rgba(6, 94, 68, 0.3) !important;
 }
 
 .btn-lg2 {
-  border-color: #d2d2d2;
-  background-color: #3030c7;
-  border: 3px;
-  width: 180px;
-  height: 40px;
+  border: 2px solid var(--primary-green-dark) !important;
+  background: linear-gradient(
+    135deg,
+    var(--primary-green-dark) 0%,
+    var(--primary-green) 100%
+  ) !important;
+  color: var(--white) !important;
+  border-radius: 8px !important;
+  width: 180px !important;
+  height: 40px !important;
   margin: 10px;
-  font-size: 16px;
-  box-shadow: 1 2px 0 #cfcfcf;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(4, 61, 45, 0.25) !important;
+  text-transform: lowercase !important;
+}
+
+.btn-lg2::first-letter {
+  text-transform: uppercase !important;
+}
+
+.btn-lg2:hover {
+  background: linear-gradient(
+    135deg,
+    var(--primary-green) 0%,
+    var(--primary-green-dark) 100%
+  ) !important;
+  box-shadow: 0 6px 16px rgba(4, 61, 45, 0.35) !important;
 }
 
 .btn-lg3 {
-  border-color: #d2d2d2;
-  background-color: #b3d0c1;
-  border: 1px;
-  height: 20px;
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--secondary-green) !important;
+  color: var(--primary-green-dark) !important;
+  border-radius: 6px !important;
+  height: 20px !important;
+  padding: 0 12px !important;
   margin: 0px;
-  font-size: 14px;
-  box-shadow: 1 2px 0 #cfcfcf;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(6, 94, 68, 0.1) !important;
+  text-transform: lowercase !important;
+}
+
+.btn-lg3::first-letter {
+  text-transform: uppercase !important;
+}
+
+.btn-lg3:hover {
+  background-color: var(--primary-green-light) !important;
+  color: var(--white) !important;
+  border-color: var(--primary-green-light) !important;
 }
 
 .division {
-  border: 4;
-  border-top: 1px solid #999;
-  border-bottom: 1px solid #333;
-  height: 2;
-  box-shadow: 1 4px 0 #cfcfcf;
+  border: none !important;
+  border-top: 2px solid var(--border-color) !important;
+  height: 0;
+  box-shadow: none !important;
   width: 95%;
+  margin: 24px 0;
 }
 
 .form-group {
@@ -302,16 +509,522 @@ body {
   max-width: 20%;
   height: auto;
   padding-top: 15px;
+  border-radius: 8px;
 }
 
 .sortorder:after {
   content: "\25b2";
+  color: var(--primary-green) !important;
 }
+
 .sortorder.reverse:after {
   content: "\25bc";
 }
 
 .swal2-popup {
   font-size: 1.6rem !important;
-  font-family: Georgia, serif;
+  font-family: "Roboto", Arial, sans-serif !important;
+  border-radius: 12px !important;
+  border: 2px solid var(--primary-green) !important;
+}
+
+.swal2-title {
+  color: var(--primary-green-dark) !important;
+}
+
+.swal2-confirm {
+  background-color: var(--primary-green) !important;
+  border-radius: 8px !important;
+}
+
+.swal2-confirm:hover {
+  background-color: var(--primary-green-light) !important;
+}
+
+.swal2-cancel {
+  background-color: var(--text-muted) !important;
+  border-radius: 8px !important;
+}
+
+/* ===================================
+   REGLAS GLOBALES PARA CAPITALIZACIÓN Y COLORES
+   =================================== */
+
+/* Capitalizar todos los textos en labels, botones, títulos */
+button,
+.btn,
+input[type="button"],
+input[type="submit"],
+label,
+span:not(.glyphicon):not([class*="glyphicon-"]),
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-transform: lowercase !important;
+}
+
+/* Primera letra en mayúscula para los elementos anteriores */
+button::first-letter,
+.btn::first-letter,
+input[type="button"]::first-letter,
+input[type="submit"]::first-letter,
+label::first-letter,
+span:not(.glyphicon):not([class*="glyphicon-"])::first-letter,
+h1::first-letter,
+h2::first-letter,
+h3::first-letter,
+h4::first-letter,
+h5::first-letter,
+h6::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Forzar color verde en todos los títulos y encabezados */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--primary-green-dark) !important;
+}
+
+/* Reglas específicas para Angular/AngularJS */
+[ng-bind],
+[ng-bind-html],
+.ng-binding {
+  text-transform: lowercase !important;
+}
+
+[ng-bind]::first-letter,
+[ng-bind-html]::first-letter,
+.ng-binding::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Títulos en modales y secciones */
+.modal-title,
+.panel-title,
+.card-title {
+  color: var(--primary-green-dark) !important;
+  text-transform: lowercase !important;
+}
+
+.modal-title::first-letter,
+.panel-title::first-letter,
+.card-title::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Labels y textos descriptivos */
+label,
+.control-label,
+.form-label {
+  color: var(--primary-green-dark) !important;
+  text-transform: lowercase !important;
+  font-weight: 500 !important;
+}
+
+label::first-letter,
+.control-label::first-letter,
+.form-label::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Forzar verde en botones por defecto */
+button:not(.btn-danger):not(.btn-warning):not(.swal2-cancel),
+.btn:not(.btn-danger):not(.btn-warning) {
+  background-color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+  color: var(--white) !important;
+}
+
+button:not(.btn-danger):not(.btn-warning):not(.swal2-cancel):hover,
+.btn:not(.btn-danger):not(.btn-warning):hover {
+  background-color: var(--primary-green-light) !important;
+  border-color: var(--primary-green-light) !important;
+}
+
+/* Enlaces en verde */
+a {
+  color: var(--primary-green) !important;
+}
+
+a:hover {
+  color: var(--primary-green-light) !important;
+}
+
+/* Texto en negrita en verde oscuro */
+strong,
+b {
+  color: var(--primary-green-dark) !important;
+}
+
+/* ===================================
+   REGLAS ESPECÍFICAS PARA ELEMENTOS PERSISTENTES
+   =================================== */
+
+/* Forzar verde en labels y títulos que aún aparecen en negro */
+label[for],
+.label,
+.form-label,
+legend,
+fieldset > span,
+div > span:first-child,
+.campo,
+.campoList {
+  color: var(--primary-green-dark) !important;
+  text-transform: capitalize !important;
+}
+
+/* Asegurar que los iconos de ojo tengan fondo verde */
+.glyphicon,
+[class*="glyphicon-"] {
+  color: var(--primary-green) !important;
+}
+
+/* Botones con fondo verde específicamente */
+button[class*="btn"],
+.btn-primary,
+.btn-success,
+.btn-info,
+.btn-default {
+  background-color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+  color: var(--white) !important;
+}
+
+/* Títulos específicos que aparecen en la interfaz */
+div > h1,
+div > h2,
+div > h3,
+div > h4,
+div > h5,
+div > h6,
+span > h1,
+span > h2,
+span > h3,
+span > h4,
+span > h5,
+span > h6 {
+  color: var(--primary-green-dark) !important;
+  text-transform: capitalize !important;
+}
+
+/* Selectores específicos de AngularJS */
+[ng-controller] label,
+[ng-controller] h1,
+[ng-controller] h2,
+[ng-controller] h3,
+[ng-controller] h4,
+[ng-controller] span.label,
+[ng-controller] span.campo {
+  color: var(--primary-green-dark) !important;
+  text-transform: capitalize !important;
+}
+
+/* Elementos de Bootstrap que puedan estar en negro */
+.panel-heading,
+.panel-title,
+.list-group-item-heading,
+.navbar-brand {
+  color: var(--primary-green-dark) !important;
+  text-transform: lowercase !important;
+}
+
+.panel-heading::first-letter,
+.panel-title::first-letter,
+.list-group-item-heading::first-letter,
+.navbar-brand::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Forzar capitalización en elementos de texto comunes - CORREGIDO */
+p,
+span:not(.glyphicon):not([class*="glyphicon-"]),
+div,
+label,
+button,
+a,
+li,
+td,
+th,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-transform: lowercase !important;
+}
+
+/* Primera letra en mayúscula */
+p::first-letter,
+span:not(.glyphicon):not([class*="glyphicon-"])::first-letter,
+div::first-letter,
+label::first-letter,
+button::first-letter,
+a::first-letter,
+li::first-letter,
+td::first-letter,
+th::first-letter,
+h1::first-letter,
+h2::first-letter,
+h3::first-letter,
+h4::first-letter,
+h5::first-letter,
+h6::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Botón de eliminar (X) en rojo */
+.glyphicon-remove,
+.btn-danger,
+button.remove,
+a.remove,
+.delete-button,
+[ng-click*="delete"],
+[ng-click*="remove"],
+[onclick*="delete"],
+[onclick*="remove"] {
+  color: var(--error-color) !important;
+  background-color: transparent !important;
+  border-color: var(--error-color) !important;
+}
+
+.glyphicon-remove:hover {
+  color: #b71c1c !important;
+}
+
+/* Hacer iconos de Bootstrap más pequeños */
+.glyphicon,
+[class*="glyphicon-"],
+.fa,
+[class*="fa-"] {
+  font-size: 0.85em !important;
+}
+
+/* Iconos en botones un poco más grandes */
+button .glyphicon,
+.btn .glyphicon,
+button [class*="glyphicon-"],
+.btn [class*="glyphicon-"] {
+  font-size: 0.9em !important;
+}
+
+/* Excepciones: elementos que NO deben transformarse */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="search"],
+textarea,
+code,
+pre,
+.no-capitalize,
+[contenteditable="true"] {
+  text-transform: none !important;
+}
+
+/* ===================================
+   REGLAS ULTRA-ESPECÍFICAS PARA MAYÚSCULAS
+   Estas reglas tienen la máxima prioridad
+   =================================== */
+
+/* Forzar lowercase en TODOS los elementos de texto visibles */
+body *:not(input):not(textarea):not(code):not(pre):not(script):not(style) {
+  text-transform: lowercase !important;
+}
+
+/* Primera letra en mayúscula para TODOS los elementos de texto */
+body
+  *:not(input):not(textarea):not(code):not(pre):not(script):not(
+    style
+  )::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Reglas específicas adicionales para elementos problemáticos */
+label *,
+span *,
+div *,
+h1 *,
+h2 *,
+h3 *,
+h4 *,
+h5 *,
+h6 *,
+button *,
+a *,
+li *,
+td *,
+th * {
+  text-transform: lowercase !important;
+}
+
+label *::first-letter,
+span *::first-letter,
+div *::first-letter,
+h1 *::first-letter,
+h2 *::first-letter,
+h3 *::first-letter,
+h4 *::first-letter,
+h5 *::first-letter,
+h6 *::first-letter,
+button *::first-letter,
+a *::first-letter,
+li *::first-letter,
+td *::first-letter,
+th *::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Elementos específicos que aparecen en la imagen */
+[ng-bind-html],
+.ng-binding,
+.ng-scope {
+  text-transform: lowercase !important;
+}
+
+[ng-bind-html]::first-letter,
+.ng-binding::first-letter,
+.ng-scope::first-letter {
+  text-transform: uppercase !important;
+}
+
+/* Asegurar que los inputs y textareas NO se transformen */
+input,
+textarea,
+select,
+option {
+  text-transform: none !important;
+}
+
+/* ============================================
+   ESTILOS CON COLOR NARANJA INSTITUCIONAL
+   Acentos y elementos secundarios
+   ============================================ */
+
+/* Botones de acción secundaria con naranja */
+.btn-secondary,
+.btn-warning,
+.btn-info {
+  background: linear-gradient(
+    135deg,
+    var(--orange-accent) 0%,
+    #ff8555 100%
+  ) !important;
+  border-color: var(--orange-accent) !important;
+  color: var(--white) !important;
+  box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3) !important;
+}
+
+.btn-secondary:hover,
+.btn-warning:hover,
+.btn-info:hover {
+  background: linear-gradient(
+    135deg,
+    #ff8555 0%,
+    var(--orange-accent) 100%
+  ) !important;
+  box-shadow: 0 5px 14px rgba(255, 107, 53, 0.4) !important;
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Enlaces con acento naranja al hover */
+a:hover {
+  color: var(--orange-accent) !important;
+  transition: color 0.2s ease;
+}
+
+/* Iconos de edición (lápiz) en naranja */
+.glyphicon-pencil {
+  color: var(--orange-accent) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glyphicon-pencil:hover {
+  color: #ff8555 !important;
+  transform: scale(1.15);
+}
+
+/* Iconos de crear ventana (modal-window) en naranja */
+.glyphicon-modal-window {
+  color: var(--orange-accent) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glyphicon-modal-window:hover {
+  color: #ff8555 !important;
+  transform: scale(1.15);
+}
+
+/* Iconos de ayuda (ojo) con acento naranja */
+.glyphicon-eye-open {
+  color: var(--primary-green) !important;
+  transition: color 0.2s ease;
+}
+
+.glyphicon-eye-open:hover {
+  color: var(--orange-accent) !important;
+}
+
+/* Elementos colapsables (flechas) con naranja */
+.glyphicon-arrow-right {
+  color: var(--primary-green-dark) !important;
+  transition: all 0.2s ease;
+}
+
+.glyphicon-arrow-right:hover {
+  color: var(--orange-accent) !important;
+  transform: translateX(3px);
+}
+
+/* Badges y etiquetas con naranja */
+.badge,
+.label-info,
+.label-warning {
+  background-color: var(--orange-accent) !important;
+  color: var(--white) !important;
+}
+
+/* Bordes de elementos activos con naranja */
+.active,
+.selected {
+  border-left: 4px solid var(--orange-accent) !important;
+}
+
+/* Tooltips y popover con acento naranja */
+.tooltip-inner {
+  background-color: var(--orange-accent) !important;
+}
+
+.tooltip.top .tooltip-arrow {
+  border-top-color: var(--orange-accent) !important;
+}
+
+/* Focus en inputs con borde naranja */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--orange-accent) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+}
+
+/* Progreso y barras con naranja */
+.progress-bar {
+  background-color: var(--orange-accent) !important;
+}
+
+/* Alertas informativas con naranja */
+.alert-info {
+  background-color: rgba(255, 107, 53, 0.1) !important;
+  border-color: var(--orange-accent) !important;
+  color: #cc5629 !important;
 }

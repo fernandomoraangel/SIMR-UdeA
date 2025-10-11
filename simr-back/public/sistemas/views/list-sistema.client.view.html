@@ -2,7 +2,7 @@
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="SistemasController" data-ng-init="find()">
   <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
-    <label class="tituloVista">SISTEMAS SONOROS</label>
+    <label class="tituloVista">Sistemas sonoros</label>
     <ul>
       <div class="wrapper">
         <table class="table table-striped">
@@ -27,71 +27,45 @@
                 <button class="btn-lg3" ng-click="sortBy('nombre')">
                   NOMBRE
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'nombre'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'nombre'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('alias')">
                   ALIAS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'alias'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'alias'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
-                <button
-                  class="btn-lg3"
-                  ng-click="sortBy('sistemasRelacionados')"
-                >
+                <button class="btn-lg3" ng-click="sortBy('sistemasRelacionados')">
                   SISTEMAS RELACIONADOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'sistemasRelacionados'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'sistemasRelacionados'"
+                  ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('padres')">
                   PADRES
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'padres'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'padres'" ng-class="{reverse: reverse}"></span>
               </th>
 
               <th>
                 <button class="btn-lg3" ng-click="sortBy('hijos')">
                   HIJOS
                 </button>
-                <span
-                  class="sortorder"
-                  ng-show="propertyName === 'hijos'"
-                  ng-class="{reverse: reverse}"
-                ></span>
+                <span class="sortorder" ng-show="propertyName === 'hijos'" ng-class="{reverse: reverse}"></span>
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr
-              data-ng-repeat="sistema in sistemas | orderBy:propertyName:reverse|filter:search"
-            >
+            <tr data-ng-repeat="sistema in sistemas | orderBy:propertyName:reverse|filter:search">
               <!-- sistemas es el modelo-->
               <td>
-                <a href="/#!/sistemas/{{sistema._id}}"
-                  ><span class="glyphicon glyphicon-sunglasses"></span
-                ></a>
+                <a href="/#!/sistemas/{{sistema._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td data-ng-bind="sistema.nombre"></td>
               <td data-ng-bind="verAlias(sistema.alias)"></td>
@@ -100,9 +74,7 @@
               <td data-ng-bind="verSistemas(sistema.hijos)"></td>
 
               <td data-ng-show="auth.currentUser.id == sistema.creador.id">
-                <a href="/#!/sistemas/{{sistema._id}}/edit"
-                  ><span class="glyphicon glyphicon-pencil"></span
-                ></a>
+                <a href="/#!/sistemas/{{sistema._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
               </td>
             </tr>
           </tbody>
