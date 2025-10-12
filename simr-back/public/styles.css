@@ -38,10 +38,11 @@ body {
   ) !important;
   -webkit-font-smoothing: antialiased;
   font-family: "Roboto", Arial, sans-serif !important;
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--text-primary) !important;
   text-align: center;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .bodyEdit {
@@ -52,8 +53,10 @@ body {
   ) !important;
   -webkit-font-smoothing: antialiased;
   font-family: "Roboto", Arial, sans-serif !important;
+  font-size: 16px;
+  line-height: 1.6;
   text-align: center;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .bodyList {
@@ -64,8 +67,10 @@ body {
   ) !important;
   -webkit-font-smoothing: antialiased;
   font-family: "Roboto", Arial, sans-serif !important;
+  font-size: 16px;
+  line-height: 1.6;
   text-align: center;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .sortOrder:after {
@@ -81,7 +86,9 @@ body {
   text-align: center;
   color: var(--primary-green-dark) !important;
   text-shadow: 0px 2px 0px rgba(6, 94, 68, 0.1);
-  font-size: 16px;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
   text-transform: lowercase !important;
 }
 
@@ -93,7 +100,9 @@ body {
   text-align: left;
   color: var(--text-secondary) !important;
   text-shadow: 0px 1px 0px rgba(6, 94, 68, 0.05);
-  font-size: 10px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
   text-transform: lowercase !important;
 }
 
@@ -102,10 +111,11 @@ body {
 }
 
 .campo {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 600;
   text-align: left;
   color: var(--text-primary) !important;
+  margin-bottom: 6px;
   text-transform: lowercase !important;
 }
 
@@ -114,12 +124,13 @@ body {
 }
 
 .campoList {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 600;
   text-align: left;
   background-color: var(--accent-green) !important;
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 4px;
+  margin-bottom: 6px;
   text-transform: lowercase !important;
 }
 
@@ -200,11 +211,12 @@ body {
 }
 
 .seccion {
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 20px;
+  font-weight: 600;
   text-align: center;
   color: var(--primary-green) !important;
   text-shadow: 0px 1px 2px var(--shadow-color);
+  margin: 20px 0;
   text-transform: lowercase !important;
 }
 
@@ -213,34 +225,38 @@ body {
 }
 
 .error {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;
   text-align: center;
   color: var(--error-color) !important;
   background-color: #ffebee !important;
-  padding: 12px;
+  padding: 12px 16px;
   border-radius: 8px;
+  margin: 10px 0;
 }
 
 .creador {
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 500;
   text-align: right;
   color: var(--text-muted) !important;
 }
 
 .idVista {
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   color: var(--text-muted) !important;
+  font-weight: 400;
 }
 
 .tituloVista {
   text-align: center;
   color: var(--primary-green-dark) !important;
   text-shadow: 1px 2px 2px var(--shadow-color);
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.3;
   text-transform: lowercase !important;
 }
 
@@ -252,8 +268,10 @@ body {
   text-align: left;
   color: var(--primary-green-dark) !important;
   text-shadow: 1px 2px 2px var(--shadow-color);
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.3;
   text-transform: lowercase !important;
 }
 
@@ -265,8 +283,10 @@ body {
   text-align: center;
   color: var(--primary-green) !important;
   text-shadow: 1px 2px 2px var(--shadow-color);
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 600;
+  margin-bottom: 16px;
+  line-height: 1.3;
   text-transform: lowercase !important;
 }
 
@@ -340,19 +360,22 @@ body {
   padding-bottom: 10px;
   text-align: center;
   color: var(--primary-green) !important;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
   text-transform: capitalize;
 }
 
 .form-control {
-  border-radius: 10px !important;
+  border-radius: 6px !important;
   background-color: var(--white) !important;
   border: 2px solid var(--border-color) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
-  height: 50px !important;
-  padding: 0 16px !important;
-  margin: 10px;
-  font-size: 14px !important;
+  height: 42px !important;
+  padding: 8px 14px !important;
+  margin: 8px 0 !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
   color: var(--text-primary) !important;
 }
 
@@ -367,15 +390,16 @@ body {
 }
 
 .form-control-big {
-  border-radius: 10px !important;
+  border-radius: 6px !important;
   background-color: var(--white) !important;
   border: 2px solid var(--border-color) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
   height: 150px !important;
   width: 100% !important;
-  padding: 16px !important;
-  margin: 10px;
-  font-size: 14px !important;
+  padding: 12px 14px !important;
+  margin: 8px 0 !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
   color: var(--text-primary) !important;
 }
 
@@ -390,15 +414,19 @@ body {
 }
 
 .form-controlError {
-  border-radius: 10px !important;
+  border-radius: 6px !important;
   text-align: left;
   background-color: #ffebee !important;
-  padding-top: 10px;
+  padding: 10px 14px !important;
   border: 2px solid var(--error-color) !important;
-  width: 1100px;
+  width: 100%;
+  max-width: 1100px;
   box-shadow: 0 2px 8px rgba(211, 47, 47, 0.15) !important;
-  height: 50px !important;
-  margin: 10px;
+  height: auto !important;
+  min-height: 42px !important;
+  margin: 8px 0 !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
   color: var(--error-color) !important;
 }
 
@@ -410,15 +438,18 @@ body {
     var(--primary-green-light) 100%
   ) !important;
   color: var(--white) !important;
-  border-radius: 8px !important;
-  width: 150px !important;
-  height: 40px !important;
-  margin: 10px;
-  font-size: 16px !important;
+  border-radius: 6px !important;
+  width: auto !important;
+  min-width: 120px !important;
+  height: 42px !important;
+  padding: 0 24px !important;
+  margin: 8px 4px !important;
+  font-size: 15px !important;
   font-weight: 500 !important;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(6, 94, 68, 0.2) !important;
   text-transform: lowercase !important;
+  transition: all 0.2s ease;
 }
 
 .btn-lg::first-letter {
@@ -432,6 +463,7 @@ body {
     var(--primary-green) 100%
   ) !important;
   box-shadow: 0 6px 16px rgba(6, 94, 68, 0.3) !important;
+  transform: translateY(-1px);
 }
 
 .btn-lg2 {
@@ -442,15 +474,18 @@ body {
     var(--primary-green) 100%
   ) !important;
   color: var(--white) !important;
-  border-radius: 8px !important;
-  width: 180px !important;
-  height: 40px !important;
-  margin: 10px;
-  font-size: 16px !important;
+  border-radius: 6px !important;
+  width: auto !important;
+  min-width: 140px !important;
+  height: 42px !important;
+  padding: 0 24px !important;
+  margin: 8px 4px !important;
+  font-size: 15px !important;
   font-weight: 500 !important;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(4, 61, 45, 0.25) !important;
   text-transform: lowercase !important;
+  transition: all 0.2s ease;
 }
 
 .btn-lg2::first-letter {
@@ -464,21 +499,24 @@ body {
     var(--primary-green-dark) 100%
   ) !important;
   box-shadow: 0 6px 16px rgba(4, 61, 45, 0.35) !important;
+  transform: translateY(-1px);
 }
 
 .btn-lg3 {
   border: 1px solid var(--border-color) !important;
   background-color: var(--secondary-green) !important;
   color: var(--primary-green-dark) !important;
-  border-radius: 6px !important;
-  height: 20px !important;
-  padding: 0 12px !important;
-  margin: 0px;
+  border-radius: 4px !important;
+  height: auto !important;
+  min-height: 32px !important;
+  padding: 6px 16px !important;
+  margin: 4px !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(6, 94, 68, 0.1) !important;
   text-transform: lowercase !important;
+  transition: all 0.2s ease;
 }
 
 .btn-lg3::first-letter {
@@ -489,6 +527,7 @@ body {
   background-color: var(--primary-green-light) !important;
   color: var(--white) !important;
   border-color: var(--primary-green-light) !important;
+  transform: translateY(-1px);
 }
 
 .division {
@@ -522,7 +561,7 @@ body {
 }
 
 .swal2-popup {
-  font-size: 1.6rem !important;
+  font-size: 16px !important;
   font-family: "Roboto", Arial, sans-serif !important;
   border-radius: 12px !important;
   border: 2px solid var(--primary-green) !important;
@@ -530,11 +569,15 @@ body {
 
 .swal2-title {
   color: var(--primary-green-dark) !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
 }
 
 .swal2-confirm {
   background-color: var(--primary-green) !important;
   border-radius: 8px !important;
+  font-size: 15px !important;
+  padding: 10px 24px !important;
 }
 
 .swal2-confirm:hover {
@@ -544,6 +587,8 @@ body {
 .swal2-cancel {
   background-color: var(--text-muted) !important;
   border-radius: 8px !important;
+  font-size: 15px !important;
+  padding: 10px 24px !important;
 }
 
 /* ===================================
@@ -626,6 +671,9 @@ label,
   color: var(--primary-green-dark) !important;
   text-transform: lowercase !important;
   font-weight: 500 !important;
+  font-size: 14px !important;
+  margin-bottom: 6px !important;
+  display: inline-block;
 }
 
 label::first-letter,
@@ -804,7 +852,7 @@ a.remove,
 [class*="glyphicon-"],
 .fa,
 [class*="fa-"] {
-  font-size: 0.85em !important;
+  font-size: 16px !important;
 }
 
 /* Iconos en botones un poco más grandes */
@@ -812,7 +860,8 @@ button .glyphicon,
 .btn .glyphicon,
 button [class*="glyphicon-"],
 .btn [class*="glyphicon-"] {
-  font-size: 0.9em !important;
+  font-size: 16px !important;
+  vertical-align: middle;
 }
 
 /* Excepciones: elementos que NO deben transformarse */
@@ -827,6 +876,77 @@ pre,
 .no-capitalize,
 [contenteditable="true"] {
   text-transform: none !important;
+}
+
+/* ===================================
+   TIPOGRAFÍA ESTÁNDAR ADICIONAL
+   =================================== */
+
+/* Párrafos con tamaño estándar */
+p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  color: var(--text-primary) !important;
+}
+
+/* Listas con mejor espaciado */
+ul,
+ol {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+/* Tablas con mejor legibilidad */
+table {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+th {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 12px !important;
+}
+
+td {
+  font-size: 15px;
+  font-weight: 400;
+  padding: 8px 12px !important;
+}
+
+/* Enlaces con tamaño consistente */
+a {
+  font-size: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Texto pequeño para metadata */
+small,
+.small {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Énfasis y negrita */
+strong,
+b {
+  font-weight: 600;
+}
+
+em,
+i {
+  font-style: italic;
 }
 
 /* ===================================
