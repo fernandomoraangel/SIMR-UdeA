@@ -175,7 +175,14 @@ body {
   font-weight: normal;
   text-align: right;
   align-content: left;
-  color: var(--primary-green) !important;
+  color: var(--text-secondary) !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.glyphicon-sunglasses:hover {
+  color: var(--primary-green-light) !important;
+  transform: scale(1.2);
 }
 
 .glyphicon-pencil {
@@ -847,21 +854,24 @@ a.remove,
   color: #b71c1c !important;
 }
 
-/* Hacer iconos de Bootstrap más pequeños */
+/* Hacer iconos de Bootstrap más pequeños - altura de mayúscula */
 .glyphicon,
 [class*="glyphicon-"],
 .fa,
 [class*="fa-"] {
-  font-size: 16px !important;
+  font-size: 0.7em !important;
+  line-height: 1 !important;
+  vertical-align: baseline !important;
 }
 
-/* Iconos en botones un poco más grandes */
+/* Iconos en botones - ligeramente más grandes pero proporcionales */
 button .glyphicon,
 .btn .glyphicon,
 button [class*="glyphicon-"],
 .btn [class*="glyphicon-"] {
-  font-size: 16px !important;
-  vertical-align: middle;
+  font-size: 0.75em !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
 }
 
 /* Excepciones: elementos que NO deben transformarse */
@@ -1085,25 +1095,52 @@ a:hover {
   transform: scale(1.15);
 }
 
-/* Iconos de ayuda (ojo) con acento naranja */
+/* Iconos de ayuda (ojo) con colores suaves y animación */
 .glyphicon-eye-open {
-  color: var(--primary-green) !important;
-  transition: color 0.2s ease;
+  color: var(--text-secondary) !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .glyphicon-eye-open:hover {
-  color: var(--orange-accent) !important;
+  color: var(--primary-green-light) !important;
+  transform: scale(1.2);
+  animation: blink 0.5s ease-in-out;
 }
 
-/* Elementos colapsables (flechas) con naranja */
+/* Animación de parpadeo para el ojo */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Elementos colapsables (flechas) con colores suaves */
 .glyphicon-arrow-right {
-  color: var(--primary-green-dark) !important;
-  transition: all 0.2s ease;
+  color: var(--text-secondary) !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+  transform: rotate(0deg);
+}
+
+/* Flecha cuando está expandida - rotación 90 grados hacia abajo */
+.glyphicon-arrow-right[aria-expanded="true"] {
+  transform: rotate(90deg);
+  color: var(--primary-green-light) !important;
+}
+
+/* Flecha cuando está colapsada - volver a posición original */
+.glyphicon-arrow-right[aria-expanded="false"] {
+  transform: rotate(0deg);
 }
 
 .glyphicon-arrow-right:hover {
-  color: var(--orange-accent) !important;
-  transform: translateX(3px);
+  color: var(--primary-green) !important;
 }
 
 /* Badges y etiquetas con naranja */
