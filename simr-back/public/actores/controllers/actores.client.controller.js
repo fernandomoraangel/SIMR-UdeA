@@ -48,13 +48,51 @@ angular.module("actores").controller("ActoresController", [
 
     var control = 0;
     // Funciones auxiliares
-    $scope.validarUrloRuta = (url, id) => validarUrloRuta(url, id);
     $scope.validarFecha = (fecha, id) => validarFecha(fecha, id);
+    $scope.validarUrloRuta = (url, id) => validarUrloRuta(url, id);
     $scope.formatDate = (date, precision = "AMD") =>
       formatDate(date, precision);
     $scope.formatDateYMD = (date, precision = "AMD") =>
       formatDateYMD(date, precision);
     $scope.nombrarSi = (nombre, x) => nombrarSi(nombre, x);
+
+    // Función para formatear anotaciones cartográfico temporales sin campos vacíos
+    $scope.formatearAnotacionCartografica = function (c) {
+      var partes = [];
+
+      if (c.lugar && c.lugar !== "" && c.lugar !== "undefined") {
+        partes.push("Lugar: " + c.lugar);
+      }
+      if (
+        c.coberturaAmplitud &&
+        c.coberturaAmplitud !== "" &&
+        c.coberturaAmplitud !== "undefined"
+      ) {
+        partes.push("Cobertura: " + c.coberturaAmplitud);
+      }
+      if (c.evento && c.evento !== "" && c.evento !== "undefined") {
+        partes.push("Evento: " + c.evento);
+      }
+      if (
+        c.fechaInicio &&
+        c.fechaInicio !== "" &&
+        c.fechaInicio !== "undefined"
+      ) {
+        partes.push(
+          "Inicio: " + $scope.formatDate(c.fechaInicio, c.precisionInicio)
+        );
+      }
+      if (c.fechaFin && c.fechaFin !== "" && c.fechaFin !== "undefined") {
+        partes.push(
+          "Finalización: " + $scope.formatDate(c.fechaFin, c.precisionFin)
+        );
+      }
+      if (c.evidencia && c.evidencia !== "" && c.evidencia !== "undefined") {
+        partes.push("Evidencia: " + c.evidencia);
+      }
+
+      return partes.join("; ");
+    };
 
     //Variables globales para ordenar la vista de lista
     $scope.propertyName = "apellidos";
@@ -313,22 +351,19 @@ angular.module("actores").controller("ActoresController", [
         var tup = property.split(":");
         obj[tup[0]] = tup[1];
       });
+      // Validación: al menos un campo debe estar lleno
       if (
-        this.lugar === undefined ||
-        this.lugar === "" ||
-        this.evento === undefined ||
-        this.evento === "" ||
-        this.fechaDeInicio === undefined ||
-        this.fechaDeInicio === "" ||
-        this.fechaDeFin === undefined ||
-        this.fechaDeFin === "" ||
-        this.evidencia === undefined ||
-        this.evidencia === ""
+        (!this.lugar || this.lugar === "") &&
+        (!this.evento || this.evento === "") &&
+        (!this.coberturaAmplitud || this.coberturaAmplitud === "") &&
+        (!this.fechaDeInicio || this.fechaDeInicio === "") &&
+        (!this.fechaDeFin || this.fechaDeFin === "") &&
+        (!this.evidencia || this.evidencia === "")
       ) {
-        //Mostrar mensaje de error
+        //Mostrar mensaje de error - todos los campos vacíos
         Swal.fire({
           title: "¡Error!",
-          text: "Debe seleccionar completar todos los datos",
+          text: "Debe completar al menos un campo de la sección de anotaciones cartográfico temporales",
           icon: "error",
           confirmButtonText: "Cerrar",
         });
@@ -352,6 +387,7 @@ angular.module("actores").controller("ActoresController", [
               existe = true;
               this.lugar = "";
               this.evento = "";
+              this.coberturaAmplitud = "";
               this.fechaDeInicio = "";
               this.fechaDeFin = "";
               this.evidencia = "";
@@ -363,6 +399,7 @@ angular.module("actores").controller("ActoresController", [
           $scope.idAnotacionesCartograficoTemporales.push(obj);
           this.lugar = "";
           this.evento = "";
+          this.coberturaAmplitud = "";
           this.fechaDeInicio = "";
           this.fechaDeFin = "";
           this.evidencia = "";
@@ -999,8 +1036,6 @@ angular.module("actores").controller("ActoresController", [
         vinculoRelacionado: $scope.idEnlaces,
         archivosAdjuntos: idArchivos,
       });
-
-      console.log("actor", actor);
 
       //Usar el método '$save' de actor para enviar una petición POST apropiada
       actor.$save(

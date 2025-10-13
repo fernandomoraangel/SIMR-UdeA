@@ -372,7 +372,7 @@ angular.module("proyectos").controller("ProyectosController", [
     };
 
     //Función para calcular la precisión de una fecha
-    precisionFecha = function (fecha) {
+    var precisionFecha = function (fecha) {
       var arr = fecha.split("/");
       var ano = arr[0];
       var mes = arr[1];

@@ -192,7 +192,7 @@ angular.module("recursos").controller("RecursosController", [
       formatDateYMD(date, precision);
     $scope.nombrarSi = (nombre, x) => nombrarSi(nombre, x);
     //Función para calcular la precisión de una fecha
-    precisionFecha = function (fecha) {
+    var precisionFecha = function (fecha) {
       var arr = fecha.split("/");
       var ano = arr[0];
       var mes = arr[1];

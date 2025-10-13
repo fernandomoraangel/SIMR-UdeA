@@ -297,12 +297,7 @@
               <h2 class="glyphicon glyphicon-remove" ng-model="f"
                 ng-click="anotacionCartograficoTemporalRemove(c.lugar)" style="color: red"></h2>
               <em>
-                {{nombrarSi("Lugar", c.lugar)}}; {{nombrarSi("Cobertura",
-                c.coberturaAmplitud)}}; {{nombrarSi("Evento", c.evento)}};
-                {{nombrarSi("Fecha de inicio", formatDate(c.fechaInicio,
-                c.precisionInicio))}}; {{nombrarSi("Fecha de finalización",
-                formatDate(c.fechaFin,c.precisionFin))}};
-                {{nombrarSi("Evidencia", c.evidencia)}};
+                {{formatearAnotacionCartografica(c)}}
               </em>
               <!-- Agregar edición -->
               <h2 class="glyphicon glyphicon-pencil" style="color: blue" ng-model="c"
