@@ -173,6 +173,51 @@ angular
       $scope.cargaAnotaciones = function (d) {
         for (var i in d) {
           delete d[i]._id;
+          // Limpiar valores undefined, null y sus versiones en string
+          d[i].lugar =
+            d[i].lugar && d[i].lugar !== "undefined" && d[i].lugar !== "null"
+              ? d[i].lugar
+              : "";
+          d[i].evento =
+            d[i].evento && d[i].evento !== "undefined" && d[i].evento !== "null"
+              ? d[i].evento
+              : "";
+          d[i].coberturaAmplitud =
+            d[i].coberturaAmplitud &&
+            d[i].coberturaAmplitud !== "undefined" &&
+            d[i].coberturaAmplitud !== "null"
+              ? d[i].coberturaAmplitud
+              : "";
+          d[i].fechaInicio =
+            d[i].fechaInicio &&
+            d[i].fechaInicio !== "undefined" &&
+            d[i].fechaInicio !== "null"
+              ? d[i].fechaInicio
+              : "";
+          d[i].fechaFin =
+            d[i].fechaFin &&
+            d[i].fechaFin !== "undefined" &&
+            d[i].fechaFin !== "null"
+              ? d[i].fechaFin
+              : "";
+          d[i].evidencia =
+            d[i].evidencia &&
+            d[i].evidencia !== "undefined" &&
+            d[i].evidencia !== "null"
+              ? d[i].evidencia
+              : "";
+          d[i].precisionInicio =
+            d[i].precisionInicio &&
+            d[i].precisionInicio !== "undefined" &&
+            d[i].precisionInicio !== "null"
+              ? d[i].precisionInicio
+              : "";
+          d[i].precisionFin =
+            d[i].precisionFin &&
+            d[i].precisionFin !== "undefined" &&
+            d[i].precisionFin !== "null"
+              ? d[i].precisionFin
+              : "";
         }
         $scope.idAnotacionesCartograficoTemporales = [].concat(d);
       };
@@ -824,6 +869,13 @@ angular
         var precisionInicio = "";
         var precisionFin = "";
 
+        // Función auxiliar para limpiar valores undefined/null
+        const limpiarValor = (valor) => {
+          return valor && valor !== "undefined" && valor !== "null"
+            ? valor
+            : "";
+        };
+
         //Busca y si encuentra elimina del vector correspondiente
         for (var i in $scope.idAnotacionesCartograficoTemporales) {
           if (
@@ -846,19 +898,20 @@ angular
             $scope.idAnotacionesCartograficoTemporales.splice(i, 1);
           }
         }
-        document.getElementById("lugarId").value = lugar;
-        document.getElementById("coberturaId").value = coberturaAmplitud;
-        document.getElementById("eventoId").value = evento;
-        document.getElementById("fInicio").value = fechaInicio;
-        document.getElementById("fFin").value = fechaFin;
-        document.getElementById("evidenciaId").value = evidencia;
+        document.getElementById("lugarId").value = limpiarValor(lugar);
+        document.getElementById("coberturaId").value =
+          limpiarValor(coberturaAmplitud);
+        document.getElementById("eventoId").value = limpiarValor(evento);
+        document.getElementById("fInicio").value = limpiarValor(fechaInicio);
+        document.getElementById("fFin").value = limpiarValor(fechaFin);
+        document.getElementById("evidenciaId").value = limpiarValor(evidencia);
         //Devuelve los datos al modelo Angularjs
-        $scope.lugar = lugar;
-        $scope.coberturaAmplitud = coberturaAmplitud;
-        $scope.evento = evento;
+        $scope.lugar = limpiarValor(lugar);
+        $scope.coberturaAmplitud = limpiarValor(coberturaAmplitud);
+        $scope.evento = limpiarValor(evento);
         $scope.fechaDeInicio = formatDateforEdit(fechaInicio, precisionInicio);
         $scope.fechaDeFin = formatDateforEdit(fechaFin, precisionFin);
-        $scope.evidencia = evidencia;
+        $scope.evidencia = limpiarValor(evidencia);
       };
 
       $scope.anotacionCartograficoTemporalEditForEdit = function (
@@ -871,6 +924,13 @@ angular
       ) {
         var precisionInicio = "";
         var precisionFin = "";
+
+        // Función auxiliar para limpiar valores undefined/null
+        const limpiarValor = (valor) => {
+          return valor && valor !== "undefined" && valor !== "null"
+            ? valor
+            : "";
+        };
 
         //Calcular precisión para fecha inicio
         //Busca y si encuentra elimina del vector correspondiente
@@ -894,21 +954,31 @@ angular
             $scope.idAnotacionesCartograficoTemporales.splice(i, 1);
           }
         }
-        fInicio = formatDateYMD(fechaInicio, precisionInicio);
-        fFin = formatDateYMD(fechaFin, precisionFin);
-        document.getElementById("lugarId").value = lugar;
-        document.getElementById("coberturaId").value = coberturaAmplitud;
-        document.getElementById("eventoId").value = evento;
+
+        // Formatear fechas solo si tienen valores válidos
+        var fInicio =
+          fechaInicio && fechaInicio !== "undefined" && fechaInicio !== "null"
+            ? formatDateYMD(fechaInicio, precisionInicio)
+            : "";
+        var fFin =
+          fechaFin && fechaFin !== "undefined" && fechaFin !== "null"
+            ? formatDateYMD(fechaFin, precisionFin)
+            : "";
+
+        document.getElementById("lugarId").value = limpiarValor(lugar);
+        document.getElementById("coberturaId").value =
+          limpiarValor(coberturaAmplitud);
+        document.getElementById("eventoId").value = limpiarValor(evento);
         document.getElementById("fInicio").value = fInicio;
         document.getElementById("fFin").value = fFin;
-        document.getElementById("evidenciaId").value = evidencia;
+        document.getElementById("evidenciaId").value = limpiarValor(evidencia);
         //Devuelve los datos al modelo Angularjs
-        $scope.lugar = lugar;
-        $scope.coberturaAmplitud = coberturaAmplitud;
-        $scope.evento = evento;
+        $scope.lugar = limpiarValor(lugar);
+        $scope.coberturaAmplitud = limpiarValor(coberturaAmplitud);
+        $scope.evento = limpiarValor(evento);
         $scope.fechaDeInicio = fInicio;
         $scope.fechaDeFin = fFin;
-        $scope.evidencia = evidencia;
+        $scope.evidencia = limpiarValor(evidencia);
       };
 
       //Menú descriptores libres
