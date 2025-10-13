@@ -221,6 +221,52 @@ angular.module("obras").controller("ObrasController", [
       //console.log(d);
       for (var i in d) {
         delete d[i]._id;
+        // Limpiar campos undefined/null para evitar que se muestren como "undefined" en el formulario
+        // Verificar tanto el valor undefined como la cadena "undefined"
+        d[i].lugar =
+          d[i].lugar && d[i].lugar !== "undefined" && d[i].lugar !== "null"
+            ? d[i].lugar
+            : "";
+        d[i].evento =
+          d[i].evento && d[i].evento !== "undefined" && d[i].evento !== "null"
+            ? d[i].evento
+            : "";
+        d[i].coberturaAmplitud =
+          d[i].coberturaAmplitud &&
+          d[i].coberturaAmplitud !== "undefined" &&
+          d[i].coberturaAmplitud !== "null"
+            ? d[i].coberturaAmplitud
+            : "";
+        d[i].fechaInicio =
+          d[i].fechaInicio &&
+          d[i].fechaInicio !== "undefined" &&
+          d[i].fechaInicio !== "null"
+            ? d[i].fechaInicio
+            : "";
+        d[i].fechaFin =
+          d[i].fechaFin &&
+          d[i].fechaFin !== "undefined" &&
+          d[i].fechaFin !== "null"
+            ? d[i].fechaFin
+            : "";
+        d[i].evidencia =
+          d[i].evidencia &&
+          d[i].evidencia !== "undefined" &&
+          d[i].evidencia !== "null"
+            ? d[i].evidencia
+            : "";
+        d[i].precisionInicio =
+          d[i].precisionInicio &&
+          d[i].precisionInicio !== "undefined" &&
+          d[i].precisionInicio !== "null"
+            ? d[i].precisionInicio
+            : "";
+        d[i].precisionFin =
+          d[i].precisionFin &&
+          d[i].precisionFin !== "undefined" &&
+          d[i].precisionFin !== "null"
+            ? d[i].precisionFin
+            : "";
       }
       $scope.idAnotacionesCartograficoTemporales = [].concat(d);
     };
@@ -1608,19 +1654,34 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAnotacionesCartograficoTemporales.splice(i, 1);
         }
       }
-      document.getElementById("lugarId").value = lugar;
-      document.getElementById("coberturaId").value = coberturaAmplitud;
-      document.getElementById("eventoId").value = evento;
-      document.getElementById("fInicio").value = fechaInicio;
-      document.getElementById("fFin").value = fechaFin;
-      document.getElementById("evidenciaId").value = evidencia;
-      //Devuelve los datos al modelo Angularjs
-      $scope.lugar = lugar;
-      $scope.coberturaAmplitud = coberturaAmplitud;
-      $scope.evento = evento;
-      $scope.fechaDeInicio = formatDateforEdit(fechaInicio, precisionInicio);
-      $scope.fechaDeFin = formatDateforEdit(fechaFin, precisionFin);
-      $scope.evidencia = evidencia;
+
+      // Función auxiliar para limpiar valores undefined
+      var limpiarValor = function (valor) {
+        return valor && valor !== "undefined" && valor !== "null" ? valor : "";
+      };
+
+      // Solo asignar valores al DOM y scope si no son undefined/null
+      document.getElementById("lugarId").value = limpiarValor(lugar);
+      document.getElementById("coberturaId").value =
+        limpiarValor(coberturaAmplitud);
+      document.getElementById("eventoId").value = limpiarValor(evento);
+      document.getElementById("fInicio").value = limpiarValor(fechaInicio);
+      document.getElementById("fFin").value = limpiarValor(fechaFin);
+      document.getElementById("evidenciaId").value = limpiarValor(evidencia);
+
+      //Devuelve los datos al modelo Angularjs (solo si tienen contenido)
+      $scope.lugar = limpiarValor(lugar);
+      $scope.coberturaAmplitud = limpiarValor(coberturaAmplitud);
+      $scope.evento = limpiarValor(evento);
+      $scope.fechaDeInicio =
+        fechaInicio && fechaInicio !== "undefined" && fechaInicio !== "null"
+          ? formatDateforEdit(fechaInicio, precisionInicio)
+          : "";
+      $scope.fechaDeFin =
+        fechaFin && fechaFin !== "undefined" && fechaFin !== "null"
+          ? formatDateforEdit(fechaFin, precisionFin)
+          : "";
+      $scope.evidencia = limpiarValor(evidencia);
     };
 
     $scope.anotacionCartograficoTemporalEditForEdit = function (
@@ -1654,21 +1715,38 @@ angular.module("obras").controller("ObrasController", [
           $scope.idAnotacionesCartograficoTemporales.splice(i, 1);
         }
       }
-      fInicio = formatDateYMD(fechaInicio, precisionInicio);
-      fFin = formatDateYMD(fechaFin, precisionFin);
-      document.getElementById("lugarId").value = lugar;
-      document.getElementById("coberturaId").value = coberturaAmplitud;
-      document.getElementById("eventoId").value = evento;
+
+      // Función auxiliar para limpiar valores undefined
+      var limpiarValor = function (valor) {
+        return valor && valor !== "undefined" && valor !== "null" ? valor : "";
+      };
+
+      // Formatear fechas solo si tienen contenido válido
+      var fInicio =
+        fechaInicio && fechaInicio !== "undefined" && fechaInicio !== "null"
+          ? formatDateYMD(fechaInicio, precisionInicio)
+          : "";
+      var fFin =
+        fechaFin && fechaFin !== "undefined" && fechaFin !== "null"
+          ? formatDateYMD(fechaFin, precisionFin)
+          : "";
+
+      // Solo asignar valores al DOM si no son undefined/null
+      document.getElementById("lugarId").value = limpiarValor(lugar);
+      document.getElementById("coberturaId").value =
+        limpiarValor(coberturaAmplitud);
+      document.getElementById("eventoId").value = limpiarValor(evento);
       document.getElementById("fInicio").value = fInicio;
       document.getElementById("fFin").value = fFin;
-      document.getElementById("evidenciaId").value = evidencia;
-      //Devuelve los datos al modelo Angularjs
-      $scope.lugar = lugar;
-      $scope.coberturaAmplitud = coberturaAmplitud;
-      $scope.evento = evento;
+      document.getElementById("evidenciaId").value = limpiarValor(evidencia);
+
+      //Devuelve los datos al modelo Angularjs (solo si tienen contenido)
+      $scope.lugar = limpiarValor(lugar);
+      $scope.coberturaAmplitud = limpiarValor(coberturaAmplitud);
+      $scope.evento = limpiarValor(evento);
       $scope.fechaDeInicio = fInicio;
       $scope.fechaDeFin = fFin;
-      $scope.evidencia = evidencia;
+      $scope.evidencia = limpiarValor(evidencia);
     };
 
     //Menú descriptores libres
