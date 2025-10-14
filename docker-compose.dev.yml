@@ -24,14 +24,34 @@ services:
       - "9001:9001"
     volumes:
       - minio_data_dev:/data
-      - ./init.minio.sh:/init.minio.sh
+    command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: superAdmin
       MINIO_ROOT_PASSWORD: sadmin1990
+    networks:
+      - simr-net-dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: superAdmin
+      MINIO_ROOT_PASSWORD: sadmin1990
+    volumes:
+      - ./init.minio.sh:/init.minio.sh
     entrypoint: /bin/sh
     command: -c "/init.minio.sh"
     networks:
       - simr-net-dev
+    restart: on-failure
 
   simr-back:
     build:
@@ -50,8 +70,10 @@ services:
     environment:
       - NODE_ENV=development
     depends_on:
-      - mongodb
-      - minio
+      mongodb:
+        condition: service_started
+      minio:
+        condition: service_healthy
     networks:
       - simr-net-dev
 

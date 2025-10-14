@@ -3,6 +3,8 @@ version: "3.8"
 services:
   simr-back:
     command: npm run debug
+    env_file:
+      - ./.env.development
     environment:
       - NODE_ENV=development
     stdin_open: true

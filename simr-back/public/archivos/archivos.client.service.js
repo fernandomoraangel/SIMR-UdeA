@@ -5,10 +5,10 @@ angular.module("archivos", []).factory("ArchivoService", [
   "$rootScope",
   "$q",
   function ($resource, $http, $window, $rootScope, $q) {
-    // Variables globales del servicio
-    const angularJSOrigin = "http://172.23.0.97";
-    const apiUrl = "http://172.23.0.97/files";
-    const angularAppOrigin = window.location.origin;
+    // Variables globales del servicio - usando variables de entorno inyectadas
+    const angularJSOrigin = window.ANGULARJS_URL || "http://localhost:3000";
+    const apiUrl = (window.API_URL || "http://localhost:3000") + "/files";
+    const angularAppOrigin = window.FRONTEND_URL || window.location.origin;
     const Archivo = $resource(
       apiUrl + "/api/archivos/:archivoId",
       { archivoId: "@_id" },
@@ -199,7 +199,7 @@ angular.module("archivos", []).factory("ArchivoService", [
 
         console.log("Abriendo popup de upload de archivos...");
         angularWindowFileUpload = $window.open(
-          "http://172.23.0.97/angular/files/upload",
+          angularAppOrigin + "/files/upload",
           "AngularApp",
           windowFeatures
         );
@@ -430,7 +430,7 @@ angular.module("archivos", []).factory("ArchivoService", [
       ].join(",");
 
       angularWindowFileList = $window.open(
-        angularAppOrigin + "/angular/files",
+        angularAppOrigin + "/files",
         "FileListWindow",
         windowFeatures
       );

@@ -23,13 +23,15 @@
   <section ng-view></section>
   <script type="text/javascript" nonce="<%= nonce %>">
     window.user = <% - user || 'null' %>;
-    <script type="text/javascript" nonce="<%= nonce %>">
-      window.FRONTEND_URL = '<%= process.env.FRONTEND_URL || 'http://localhost:4200' %>';
   </script>
+  <script type="text/javascript" nonce="<%= nonce %>">
+    window.FRONTEND_URL = '<%= process.env.FRONTEND_URL || 'http://localhost:4200' %>';
+    window.ANGULARJS_URL = '<%= process.env.ANGULARJS_URL || 'http://localhost:3000' %>';
+    window.API_URL = '<%= process.env.API_URL || 'http://localhost:3000' %>';
   </script>
 
   <script type="text/javascript" nonce="<%= nonce %>">
-      src = "/lib/requirejs/bin/r.js";
+    src = "/lib/requirejs/bin/r.js";
   </script>
 
   <script src="/lib/jquery/dist/jquery.min.js"></script>

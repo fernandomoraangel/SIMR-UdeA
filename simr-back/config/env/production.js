@@ -8,6 +8,7 @@ module.exports = {
     clientID:
       "424952915433-7ejq1nho03771k9nc8rmdqmasqjfsqr7.apps.googleusercontent.com",
     clientSecret: "S0l1DWc4y0NMYSpDmyrxy3kL",
-    callbackURL: "http://172.23.0.97/oauth/google/callback",
+    callbackURL:
+      (process.env.API_URL || "http://172.23.0.97") + "/oauth/google/callback",
   },
 };
