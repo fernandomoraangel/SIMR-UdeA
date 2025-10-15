@@ -1,0 +1,92 @@
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
+<section class="container">
+    <div class="page-header">
+        <h1>Gestión de Roles</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="crearRole()">
+                <i class="glyphicon glyphicon-plus"></i> Crear Nuevo Rol
+            </button>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row" ng-if="loading">
+        <div class="col-md-12 text-center">
+            <p>Cargando roles...</p>
+        </div>
+    </div>
+
+    <div class="row" ng-if="error">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="!loading && !error">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Nombre Visualización</th>
+                            <th>Descripción</th>
+                            <th>Prioridad</th>
+                            <th>Hereda de</th>
+                            <th>Permisos</th>
+                            <th>Sistema</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="role in roles | orderBy:'-priority'">
+                            <td>
+                                <code>{{ role.name }}</code>
+                            </td>
+                            <td>{{ role.displayName }}</td>
+                            <td>{{ role.description }}</td>
+                            <td>
+                                <span class="label label-default">{{ role.priority }}</span>
+                            </td>
+                            <td>
+                                <span class="label label-info" ng-repeat="parent in role.inheritsFrom">
+                                    {{ parent.name || parent }}
+                                </span>
+                                <span ng-if="!role.inheritsFrom || role.inheritsFrom.length === 0" class="text-muted">
+                                    Ninguno
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge">{{ countPermissions(role.permissions) }}</span>
+                            </td>
+                            <td>
+                                <span ng-if="role.isSystem" class="label label-warning">Sistema</span>
+                                <span ng-if="!role.isSystem" class="label label-success">Personalizado</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" ng-click="editarRole(role)" title="Editar">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" ng-click="eliminarRole(role)"
+                                    ng-disabled="role.isSystem"
+                                    title="{{ role.isSystem ? 'No se pueden eliminar roles del sistema' : 'Eliminar' }}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="roles.length === 0">
+                            <td colspan="8" class="text-center text-muted">
+                                No hay roles registrados
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,169 @@
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
+<section class="container-fluid">
+    <div class="page-header">
+        <h1>{{ isEditMode ? 'Editar Rol' : 'Crear Nuevo Rol' }}</h1>
+    </div>
+    <div class="row" ng-if="error">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <form name="roleForm" ng-submit="guardarRole()" novalidate>
+
+                <!-- Información básica -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Información Básica</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group"
+                                    ng-class="{ 'has-error': roleForm.name.$invalid && roleForm.name.$dirty }">
+                                    <label for="name">Nombre del Rol (identificador) *</label>
+                                    <input type="text" class="form-control" id="name" name="name" ng-model="role.name"
+                                        required ng-disabled="isEditMode && role.isSystem"
+                                        placeholder="ej: editor, moderador">
+                                    <span class="help-block" ng-show="roleForm.name.$invalid && roleForm.name.$dirty">
+                                        El nombre del rol es requerido
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group"
+                                    ng-class="{ 'has-error': roleForm.displayName.$invalid && roleForm.displayName.$dirty }">
+                                    <label for="displayName">Nombre para Mostrar *</label>
+                                    <input type="text" class="form-control" id="displayName" name="displayName"
+                                        ng-model="role.displayName" required placeholder="ej: Editor, Moderador">
+                                    <span class="help-block"
+                                        ng-show="roleForm.displayName.$invalid && roleForm.displayName.$dirty">
+                                        El nombre para mostrar es requerido
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Descripción</label>
+                            <textarea class="form-control" id="description" name="description"
+                                ng-model="role.description" rows="2" placeholder="Descripción breve del rol"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group"
+                                    ng-class="{ 'has-error': roleForm.priority.$invalid && roleForm.priority.$dirty }">
+                                    <label for="priority">Prioridad (0-100) *</label>
+                                    <input type="number" class="form-control" id="priority" name="priority"
+                                        ng-model="role.priority" required min="0" max="100"
+                                        ng-disabled="isEditMode && role.isSystem">
+                                    <span class="help-block">Mayor número = mayor prioridad. Admin=100, Lector=10</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" ng-model="role.isSystem" ng-disabled="isEditMode">
+                                        Rol del Sistema (no puede ser eliminado)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Herencia de Roles -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Herencia de Roles</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="text-muted">Este rol heredará todos los permisos de los roles seleccionados:</p>
+                        <div class="checkbox" ng-repeat="r in allRoles | filter:{ _id: '!' + role._id }">
+                            <label>
+                                <input type="checkbox" ng-model="selectedInherits[r._id]">
+                                <strong>{{ r.displayName }}</strong> ({{ r.name }})
+                                <span class="label label-default">Prioridad: {{ r.priority }}</span>
+                            </label>
+                        </div>
+                        <p class="text-muted" ng-if="allRoles.length <= 1">
+                            No hay otros roles disponibles para herencia
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Permisos -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Permisos Directos</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="text-muted">
+                            Seleccione los permisos específicos para este rol.
+                            <strong>Own</strong> = solo sus propios recursos,
+                            <strong>Any</strong> = cualquier recurso.
+                        </p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Recurso</th>
+                                        <th ng-repeat="accion in acciones">
+                                            {{ accion }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="recurso in recursos">
+                                        <td><strong>{{ recurso }}</strong></td>
+                                        <td ng-repeat="accion in acciones">
+                                            <div class="checkbox-inline" style="margin: 0 5px;">
+                                                <label title="Own - solo propios">
+                                                    <input type="checkbox"
+                                                        ng-checked="hasPermission(recurso, accion, 'own')"
+                                                        ng-click="togglePermission(recurso, accion, 'own')">
+                                                    <small>Own</small>
+                                                </label>
+                                            </div>
+                                            <div class="checkbox-inline" style="margin: 0 5px;">
+                                                <label title="Any - todos">
+                                                    <input type="checkbox"
+                                                        ng-checked="hasPermission(recurso, accion, 'any')"
+                                                        ng-click="togglePermission(recurso, accion, 'any')">
+                                                    <small>Any</small>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success" ng-disabled="loading || roleForm.$invalid">
+                        <i class="glyphicon glyphicon-save"></i>
+                        {{ loading ? 'Guardando...' : 'Guardar' }}
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="cancelar()" ng-disabled="loading">
+                        <i class="glyphicon glyphicon-remove"></i>
+                        Cancelar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</section>

@@ -5,6 +5,7 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "ngRoute",
   "authentication",
   "core",
+  "admin",
   "obras",
   "actores",
   "recursos",

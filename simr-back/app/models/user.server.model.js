@@ -63,6 +63,20 @@ const UserSchema = new mongoose.Schema({
       expiresAt: Date,
     },
   ],
+  // Sistema de roles y permisos
+  roles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+    },
+  ],
+  customPermissions: [
+    {
+      resource: String,
+      action: String,
+      scope: { type: String, enum: ["any", "own"], default: "own" },
+    },
+  ],
 });
 
 // Configurar la propiedad virtual 'fullname'
@@ -114,6 +128,7 @@ UserSchema.methods.getSafeUser = function () {
     email: this.email,
     username: this.username,
     fullName: `${this.firstName} ${this.lastName}`.trim(),
+    roles: this.roles || [],
   };
 };
 
@@ -290,6 +305,59 @@ UserSchema.methods.invalidateRefreshToken = function (jti) {
 //* INVALIDATE ALL REFRESH TOKENS - Invalidar todos los tokens (para logout completo)
 UserSchema.methods.invalidateAllRefreshTokens = function () {
   this.refreshTokens = [];
+};
+
+//* GET ALL PERMISSIONS - Obtener todos los permisos del usuario (roles + custom)
+UserSchema.methods.getAllPermissions = async function () {
+  await this.populate("roles");
+  const permissions = new Map();
+
+  // Permisos de roles (con herencia)
+  for (const role of this.roles || []) {
+    const rolePerms = await role.getAllPermissions(); // Retorna Array
+    for (const perm of rolePerms) {
+      const key = `${perm.resource}:${perm.action}`;
+      // Si ya existe el permiso, usar el scope más permisivo
+      const existing = permissions.get(key);
+      if (!existing || (existing === "own" && perm.scope === "any")) {
+        permissions.set(key, perm.scope);
+      }
+    }
+  }
+
+  // Permisos custom del usuario (mayor prioridad)
+  for (const perm of this.customPermissions || []) {
+    const key = `${perm.resource}:${perm.action}`;
+    permissions.set(key, perm.scope);
+  }
+
+  return permissions;
+};
+
+//* HAS PERMISSION - Verificar si el usuario tiene un permiso específico
+UserSchema.methods.hasPermission = async function (
+  resource,
+  action,
+  scope = "own"
+) {
+  const permissions = await this.getAllPermissions();
+  const key = `${resource}:${action}`;
+  const userScope = permissions.get(key);
+
+  if (!userScope) return false;
+  if (scope === "own") return true; // own o any son válidos
+  return userScope === "any"; // para scope 'any', debe tener 'any'
+};
+
+//* HAS ROLE - Verificar si el usuario tiene un rol específico
+UserSchema.methods.hasRole = async function (roleName) {
+  await this.populate("roles");
+  return this.roles.some((role) => role.name === roleName);
+};
+
+//* IS ADMIN - Verificar si el usuario es administrador
+UserSchema.methods.isAdmin = async function () {
+  return await this.hasRole("admin");
 };
 
 //* FIND UNIQUE USERNAME - Encontrar posibles username no usados

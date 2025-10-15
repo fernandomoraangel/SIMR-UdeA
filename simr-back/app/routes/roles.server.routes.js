@@ -1,153 +1,65 @@
-// Invocar el modo 'strict' de JavaScript
+/**
+ * Rutas de Roles para SIMR
+ * Define todos los endpoints relacionados con gestión de roles
+ */
+
 "use strict";
 
-// Cargar los módulos necesarios
-const users = require("../controllers/users.server.controller");
-const { checkPermission } = require("../middleware/authorization");
+const rolesController = require("../controllers/roles.server.controller");
+const { isAdmin, authorize } = require("../middleware/authorize.middleware");
+const passport = require("passport");
 
-// Define el método routes module
+// Middleware de autenticación JWT
+const requireAuth = passport.authenticate("jwt", { session: false });
+
 module.exports = function (app) {
-  // Rutas para gestión de roles (solo administradores)
+  // ========================================
+  // RUTAS DE GESTIÓN DE ROLES
+  // ========================================
+
+  // Listar todos los roles y crear nuevo rol
   app
     .route("/api/roles")
-    .get(users.requiresLogin, checkPermission("user", "read"), (req, res) => {
-      // Devolver lista de roles disponibles
-      const roles = [
-        {
-          id: "user",
-          name: "Usuario",
-          description: "Usuario básico con permisos de lectura",
-        },
-        {
-          id: "editor",
-          name: "Editor",
-          description: "Puede crear y editar sus propios recursos",
-        },
-        {
-          id: "admin",
-          name: "Administrador",
-          description: "Control total sobre todos los recursos",
-        },
-      ];
+    .get(requireAuth, authorize("role", "read"), rolesController.list)
+    .post(requireAuth, isAdmin, rolesController.create);
 
-      res.json({
-        success: true,
-        data: roles,
-      });
-    });
-
-  // Ruta para actualizar rol de usuario (solo administradores)
+  // Obtener recursos disponibles
   app
-    .route("/api/users/:userId/role")
-    .put(
-      users.requiresLogin,
-      checkPermission("user", "update"),
-      async (req, res) => {
-        try {
-          const User = require("mongoose").model("User");
-          const { role } = req.body;
+    .route("/api/roles/resources")
+    .get(requireAuth, rolesController.getResources);
 
-          // Validar rol
-          const validRoles = ["user", "editor", "admin"];
-          if (!validRoles.includes(role)) {
-            return res.status(400).json({
-              success: false,
-              message: "Rol inválido",
-            });
-          }
+  // Obtener solo roles del sistema
+  app
+    .route("/api/roles/system")
+    .get(requireAuth, rolesController.getSystemRoles);
 
-          // Solo administradores pueden cambiar roles a admin
-          if (role === "admin" && req.user.role !== "admin") {
-            return res.status(403).json({
-              success: false,
-              message: "No tienes permisos para asignar rol de administrador",
-            });
-          }
+  // Operaciones sobre un rol específico
+  app
+    .route("/api/roles/:roleId")
+    .get(requireAuth, authorize("role", "read"), rolesController.read)
+    .put(requireAuth, isAdmin, rolesController.update)
+    .delete(requireAuth, isAdmin, rolesController.delete);
 
-          // Actualizar rol del usuario
-          const user = await User.findByIdAndUpdate(
-            req.params.userId,
-            { role },
-            { new: true }
-          );
+  // ========================================
+  // RUTAS DE ASIGNACIÓN DE ROLES A USUARIOS
+  // ========================================
 
-          if (!user) {
-            return res.status(404).json({
-              success: false,
-              message: "Usuario no encontrado",
-            });
-          }
+  // Asignar rol a usuario
+  app
+    .route("/api/users/:userId/roles/:roleId")
+    .post(requireAuth, isAdmin, rolesController.assignRoleToUser)
+    .delete(requireAuth, isAdmin, rolesController.removeRoleFromUser);
 
-          res.json({
-            success: true,
-            message: "Rol actualizado exitosamente",
-            data: user.getSafeUser(),
-          });
-        } catch (error) {
-          console.error("Error updating role:", error);
-          res.status(500).json({
-            success: false,
-            message: "Error interno del servidor",
-          });
-        }
-      }
-    );
+  // Obtener y actualizar roles de un usuario
+  app
+    .route("/api/users/:userId/roles")
+    .get(requireAuth, authorize("user", "read"), rolesController.getUserRoles)
+    .put(requireAuth, isAdmin, rolesController.updateUserRoles);
 
-  // Ruta para obtener permisos del usuario actual
-  app.route("/api/permissions").get(users.requiresLogin, (req, res) => {
-    const ac = require("../../config/accessControl");
-    const userRole = req.user.role || "user";
+  // ========================================
+  // MIDDLEWARE PARAMETERS
+  // ========================================
 
-    // Obtener todos los permisos del rol
-    const permissions = {};
-
-    // Recursos disponibles
-    const resources = [
-      "user",
-      "obra",
-      "recurso",
-      "proyecto",
-      "medio",
-      "sistema",
-      "coleccion",
-      "ejemplar",
-      "genero",
-      "materia",
-      "instrumento",
-      "fondo",
-      "archivo",
-      "diccionario",
-      "idioma",
-    ];
-
-    // Acciones disponibles
-    const actions = ["create", "read", "update", "delete"];
-
-    resources.forEach((resource) => {
-      permissions[resource] = {};
-      actions.forEach((action) => {
-        // Verificar permisos 'any' primero
-        let permission = ac.can(userRole)[action + "Any"](resource);
-        if (permission.granted) {
-          permissions[resource][action] = "any";
-        } else {
-          // Verificar permisos 'own'
-          permission = ac.can(userRole)[action + "Own"](resource);
-          if (permission.granted) {
-            permissions[resource][action] = "own";
-          } else {
-            permissions[resource][action] = false;
-          }
-        }
-      });
-    });
-
-    res.json({
-      success: true,
-      data: {
-        role: userRole,
-        permissions,
-      },
-    });
-  });
+  // Middleware para cargar rol por ID en req.role
+  app.param("roleId", rolesController.roleByID);
 };

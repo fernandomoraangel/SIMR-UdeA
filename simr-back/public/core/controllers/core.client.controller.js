@@ -3,7 +3,8 @@
 angular.module("core").controller("CoreController", [
   "$scope",
   "Authentication",
-  function ($scope, Authentication) {
+  "Authorization",
+  function ($scope, Authentication, Authorization) {
     $scope.acercaDe = function () {
       Swal.fire({
         html: "SISTEMA DE INFORMACIÓN MUSICAS REGIONALES-SIMR<br />Versión: 1.0<br />Grupo de investigación Músicas Regionales<br />Universidad de Antioquia<br /> Conceptualización: Grupo de Investigación Músicas Regionales<br />Desarrollo: Fernando Mora Ángel<br />2022",
@@ -19,6 +20,16 @@ angular.module("core").controller("CoreController", [
     // $scope.isUserAuthenticated = Authentication.isAuthenticated();
 
     $scope.auth = Authentication.state;
+
+    // Exponer funciones de autorización al scope para uso en las vistas
+    $scope.canCreate = Authorization.canCreate;
+    $scope.canEdit = Authorization.canEdit;
+    $scope.canDelete = Authorization.canDelete;
+    $scope.canList = Authorization.canList;
+    $scope.isAdmin = Authorization.isAdmin;
+    $scope.hasRole = Authorization.hasRole;
+    $scope.hasAnyRole = Authorization.hasAnyRole;
+    $scope.isOnlyRole = Authorization.isOnlyRole;
 
     // $scope.authentication = Authentication;
     // console.log("AuthController - authentication: ", $scope.authentication);

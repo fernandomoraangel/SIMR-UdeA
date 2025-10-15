@@ -170,7 +170,11 @@ exports.refreshToken = async (req, res) => {
     }
 
     // Buscar usuario y verificar que el token existe
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).populate(
+      "roles",
+      "name displayName description priority"
+    );
+
     if (!user) {
       return errorResponse(res, "Usuario no encontrado", 401);
     }
@@ -382,11 +386,15 @@ exports.create = async (req, res, next) => {
 };
 
 //* LIST - Recuperar una lista de usuarios
+//* LIST - Recuperar una lista de usuarios
 exports.list = async (req, res, next) => {
   try {
     // Usa el método static 'User' 'find' para recuperar la lista de usuarios
-    // 'username email',{skip: 10, limit: 10}
-    const users = await User.find({});
+    // Populate roles para obtener los nombres completos en lugar de solo IDs
+    const users = await User.find({})
+      .populate("roles", "name displayName description priority")
+      .select("-password"); // No enviar passwords
+
     // Usa el objeto 'response para enviar una respuesta JSON'
     successResponse(
       res,
@@ -430,10 +438,37 @@ exports.read = async (req, res) => {
 //* UPDATE - Actualizar un usuario específico
 exports.update = async (req, res, next) => {
   try {
-    // Usa el método static 'findByIdAndUpdate' de 'User' para actualizar
-    const user = await User.findByIdAndUpdate(req.user.id, req.body, {
-      new: true,
+    // Obtener el ID del usuario a actualizar desde req.requestedUser (establecido por userByID middleware)
+    const userId = req.requestedUser._id;
+
+    // Filtrar campos permitidos para actualización
+    const allowedFields = ["email", "firstName", "lastName", "password"];
+    const updateData = {};
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined && req.body[field] !== "") {
+        updateData[field] = req.body[field];
+      }
     });
+
+    // Si se proporcionó password, hashear antes de guardar
+    if (updateData.password) {
+      const user = await User.findById(userId);
+      user.password = updateData.password;
+      await user.save(); // Esto dispara el pre-save hook que hashea el password
+      delete updateData.password; // Ya fue actualizado
+    }
+
+    // Actualizar otros campos
+    const user = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!user) {
+      return errorResponse(res, "Usuario no encontrado", 404);
+    }
+
     // Usa el objeto 'response para enviar una respuesta JSON'
     successResponse(
       res,
@@ -442,21 +477,29 @@ exports.update = async (req, res, next) => {
       user.getSafeUser()
     );
   } catch (err) {
-    // Llama al sgte middleware
-    return next(err);
+    console.error("Error al actualizar usuario:", err);
+    return errorResponse(res, getErrorMessage(err), 400, {
+      error: err.message || "Error al actualizar usuario",
+    });
   }
 };
 
 //* DELETE - Eliminar un usuario específico
 exports.delete = async (req, res, next) => {
   try {
-    // Usamos el método 'remove' de la instancia 'User' para eliminar un dcto
-    // await req.user.remove();
-    await req.user.deleteOne();
+    // Verificar que no se esté eliminando a sí mismo
+    if (req.requestedUser._id.toString() === req.user._id.toString()) {
+      return errorResponse(res, "No puedes eliminar tu propia cuenta", 400);
+    }
+
+    // Usamos el método 'deleteOne' de la instancia 'User' para eliminar un documento
+    await req.requestedUser.deleteOne();
     successResponse(res, "Usuario eliminado exitosamente", 200);
-    // res.json(req.user);
   } catch (err) {
-    return next(err);
+    console.error("Error al eliminar usuario:", err);
+    return errorResponse(res, "Error al eliminar usuario", 500, {
+      error: err.message || "Error interno del servidor",
+    });
   }
 };
 

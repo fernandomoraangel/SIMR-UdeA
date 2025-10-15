@@ -44,9 +44,14 @@ module.exports = function () {
           return done(null, false);
         }
 
-        const user = await User.findById(payload.id);
+        const user = await User.findById(payload.id).populate(
+          "roles",
+          "name displayName description priority"
+        );
+
         if (user) {
           console.log("Usuario encontrado:", user.username);
+          console.log("Roles del usuario:", user.roles);
           return done(null, user);
         } else {
           console.log("No se encontró el usuario con ID:", payload.id);

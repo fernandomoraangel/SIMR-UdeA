@@ -288,6 +288,9 @@ module.exports = function () {
   require("../app/routes/idiomas.server.routes.js")(app);
   require("../app/routes/diccionarios.server.routes.js")(app);
   require("../app/routes/archivos.server.routes.js")(app);
+  // Sistema de roles y permisos
+  require("../app/routes/roles.server.routes.js")(app);
+  require("../app/routes/auditlog.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");
