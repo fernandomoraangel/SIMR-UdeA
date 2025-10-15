@@ -34,24 +34,54 @@ const logAudit = async (
   req
 ) => {
   try {
-    await AuditLog.create({
+    const auditData = {
+      action,
+      performedBy,
+      ipAddress: req.ip || req.connection.remoteAddress || "unknown",
+      userAgent: req.get("User-Agent") || "unknown",
+      success: true,
+    };
+
+    // Solo agregar targetRole si existe
+    if (targetRole) {
+      auditData.targetRole = targetRole;
+    }
+
+    // Solo agregar targetUser si existe
+    if (targetUser) {
+      auditData.targetUser = targetUser;
+    }
+
+    // Solo agregar changes si existe
+    if (changes) {
+      auditData.changes = changes;
+    }
+
+    await AuditLog.create(auditData);
+  } catch (error) {
+    console.error("Error al crear log de auditoría:", error);
+    console.error("Datos que causaron el error:", {
       action,
       performedBy,
       targetRole,
       targetUser,
-      changes,
-      ipAddress: req.ip || req.connection.remoteAddress,
-      userAgent: req.get("User-Agent"),
+      changes: JSON.stringify(changes),
     });
-  } catch (error) {
-    console.error("Error al crear log de auditoría:", error);
   }
 };
 
 //* CREATE - Crear un nuevo rol
 exports.create = async (req, res) => {
   try {
-    const { name, description, permissions, inheritsFrom, priority } = req.body;
+    const {
+      name,
+      displayName,
+      description,
+      permissions,
+      inheritsFrom,
+      priority,
+      isSystem,
+    } = req.body;
 
     // Validaciones
     if (!name) {
@@ -64,13 +94,71 @@ exports.create = async (req, res) => {
       return errorResponse(res, "Ya existe un rol con ese nombre", 409);
     }
 
+    // Transformar permisos del formato frontend al formato del modelo
+    // Frontend: { "obras": { "read": ["own", "any"], "update": ["own"] } }
+    // Modelo: [{ resource: "obra", actions: { read: "any", update: "own" } }]
+
+    // Mapeo de nombres plural (frontend) a singular (modelo)
+    const resourceNameMap = {
+      obras: "obra",
+      actores: "actor",
+      recursos: "recurso",
+      ejemplares: "ejemplar",
+      proyectos: "proyecto",
+      fondos: "fondo",
+      colecciones: "coleccion",
+      medios: "medio",
+      sistemas: "sistema",
+      materias: "materia",
+      generos: "genero",
+      generosNoMusicales: "genero_no_musical",
+      instrumentos: "instrumento",
+      idiomas: "idioma",
+      diccionarios: "diccionario",
+      archivos: "archivo",
+      users: "user",
+      roles: "role",
+    };
+
+    const transformedPermissions = [];
+    if (permissions && typeof permissions === "object") {
+      Object.keys(permissions).forEach((resourceName) => {
+        const actions = permissions[resourceName];
+        const transformedActions = {};
+
+        // Convertir cada acción
+        Object.keys(actions).forEach((actionName) => {
+          const scopes = actions[actionName];
+          // Si tiene "any", usar "any", sino usar "own"
+          if (Array.isArray(scopes)) {
+            transformedActions[actionName] = scopes.includes("any")
+              ? "any"
+              : "own";
+          }
+        });
+
+        // Solo agregar si tiene acciones
+        if (Object.keys(transformedActions).length > 0) {
+          // Convertir nombre del recurso de plural a singular
+          const singularResourceName =
+            resourceNameMap[resourceName] || resourceName;
+          transformedPermissions.push({
+            resource: singularResourceName,
+            actions: transformedActions,
+          });
+        }
+      });
+    }
+
     // Crear el rol
     const newRole = await Role.create({
       name,
+      displayName,
       description,
-      permissions: permissions || [],
+      permissions: transformedPermissions,
       inheritsFrom: inheritsFrom || [],
       priority: priority || 0,
+      isSystem: isSystem || false,
       createdBy: req.user._id,
     });
 
@@ -80,15 +168,19 @@ exports.create = async (req, res) => {
       req.user._id,
       newRole._id,
       null,
-      newRole,
+      newRole.toObject(),
       req
     );
+
+    console.log("Auditoría registrada");
 
     // Invalidar caché de permisos
     permissionService.invalidateAllCache();
 
     successResponse(res, "Rol creado exitosamente", 201, newRole);
   } catch (err) {
+    console.error("ERROR AL CREAR ROL:", err);
+    console.error("Stack trace:", err.stack);
     errorResponse(res, "Error al crear el rol", 500, { error: err.message });
   }
 };
@@ -116,11 +208,60 @@ exports.read = async (req, res) => {
     const role = req.role; // Viene del middleware roleByID
     const allPermissions = await role.getAllPermissions();
 
+    // Transformar permisos del formato del modelo al formato del frontend
+    // Modelo: [{ resource: "obra", actions: { read: "any", update: "own" } }]
+    // Frontend: { "obras": { "read": ["any"], "update": ["own"] } }
+
+    const resourceNameMapReverse = {
+      obra: "obras",
+      actor: "actores",
+      recurso: "recursos",
+      ejemplar: "ejemplares",
+      proyecto: "proyectos",
+      fondo: "fondos",
+      coleccion: "colecciones",
+      medio: "medios",
+      sistema: "sistemas",
+      materia: "materias",
+      genero: "generos",
+      genero_no_musical: "generosNoMusicales",
+      instrumento: "instrumentos",
+      idioma: "idiomas",
+      diccionario: "diccionarios",
+      archivo: "archivos",
+      user: "users",
+      role: "roles",
+    };
+
+    const frontendPermissions = {};
+    if (role.permissions && Array.isArray(role.permissions)) {
+      role.permissions.forEach((permission) => {
+        const pluralResourceName =
+          resourceNameMapReverse[permission.resource] || permission.resource;
+        frontendPermissions[pluralResourceName] = {};
+
+        // Convertir Map de actions a objeto
+        const actionsObj =
+          permission.actions instanceof Map
+            ? Object.fromEntries(permission.actions)
+            : permission.actions;
+
+        Object.keys(actionsObj || {}).forEach((actionName) => {
+          const scope = actionsObj[actionName];
+          frontendPermissions[pluralResourceName][actionName] = [scope];
+        });
+      });
+    }
+
+    const roleData = role.toObject();
+    roleData.permissions = frontendPermissions;
+
     successResponse(res, "Rol recuperado exitosamente", 200, {
-      ...role.toObject(),
+      ...roleData,
       allPermissions,
     });
   } catch (err) {
+    console.error("ERROR AL LEER ROL:", err);
     errorResponse(res, "Error al recuperar el rol", 500, {
       error: err.message,
     });
@@ -142,13 +283,85 @@ exports.update = async (req, res) => {
     }
 
     const previousState = role.toObject();
-    const { name, description, permissions, inheritsFrom, isActive, priority } =
-      req.body;
+    const {
+      name,
+      displayName,
+      description,
+      permissions,
+      inheritsFrom,
+      isActive,
+      priority,
+    } = req.body;
+
+    // Mapeo de nombres plural (frontend) a singular (modelo)
+    const resourceNameMap = {
+      obras: "obra",
+      actores: "actor",
+      recursos: "recurso",
+      ejemplares: "ejemplar",
+      proyectos: "proyecto",
+      fondos: "fondo",
+      colecciones: "coleccion",
+      medios: "medio",
+      sistemas: "sistema",
+      materias: "materia",
+      generos: "genero",
+      generosNoMusicales: "genero_no_musical",
+      instrumentos: "instrumento",
+      idiomas: "idioma",
+      diccionarios: "diccionario",
+      archivos: "archivo",
+      users: "user",
+      roles: "role",
+    };
+
+    // Transformar permisos si vienen del frontend
+    let transformedPermissions = permissions;
+    if (
+      permissions &&
+      typeof permissions === "object" &&
+      !Array.isArray(permissions)
+    ) {
+      transformedPermissions = [];
+      Object.keys(permissions).forEach((resourceName) => {
+        const actions = permissions[resourceName];
+        const transformedActions = {};
+
+        // Convertir cada acción
+        Object.keys(actions).forEach((actionName) => {
+          const scopes = actions[actionName];
+          // Si tiene "any", usar "any", sino usar "own"
+          if (Array.isArray(scopes)) {
+            transformedActions[actionName] = scopes.includes("any")
+              ? "any"
+              : "own";
+          }
+        });
+
+        // Solo agregar si tiene acciones
+        if (Object.keys(transformedActions).length > 0) {
+          // Convertir nombre del recurso de plural a singular
+          const singularResourceName =
+            resourceNameMap[resourceName] || resourceName;
+          transformedPermissions.push({
+            resource: singularResourceName,
+            actions: transformedActions,
+          });
+        }
+      });
+    }
+
+    console.log(
+      "Permisos transformados:",
+      JSON.stringify(transformedPermissions, null, 2)
+    );
 
     // Actualizar campos
     if (name !== undefined && !role.isSystem) role.name = name;
+    if (displayName !== undefined) role.displayName = displayName;
     if (description !== undefined) role.description = description;
-    if (permissions !== undefined) role.permissions = permissions;
+    if (transformedPermissions !== undefined)
+      role.permissions = transformedPermissions;
     if (inheritsFrom !== undefined) role.inheritsFrom = inheritsFrom;
     if (isActive !== undefined) role.isActive = isActive;
     if (priority !== undefined && !role.isSystem) role.priority = priority;
@@ -172,6 +385,8 @@ exports.update = async (req, res) => {
 
     successResponse(res, "Rol actualizado exitosamente", 200, role);
   } catch (err) {
+    console.error("ERROR AL ACTUALIZAR ROL:", err);
+    console.error("Stack trace:", err.stack);
     errorResponse(res, "Error al actualizar el rol", 500, {
       error: err.message,
     });
@@ -538,7 +753,7 @@ exports.updateUserRoles = async (req, res) => {
 
     // Registrar auditoría
     await logAudit(
-      "roles_updated",
+      "role_assigned",
       req.user._id,
       null,
       userId,

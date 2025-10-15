@@ -88,14 +88,18 @@
                     </div>
                     <div class="panel-body">
                         <p class="text-muted">Este rol heredará todos los permisos de los roles seleccionados:</p>
-                        <div class="checkbox" ng-repeat="r in allRoles | filter:{ _id: '!' + role._id }">
+
+                        <div class="checkbox" ng-repeat="r in allRoles" ng-if="!role._id || r._id !== role._id">
                             <label>
                                 <input type="checkbox" ng-model="selectedInherits[r._id]">
-                                <strong>{{ r.displayName }}</strong> ({{ r.name }})
+                                <strong>{{ r.displayName || r.name }}</strong> ({{ r.name }})
                                 <span class="label label-default">Prioridad: {{ r.priority }}</span>
                             </label>
                         </div>
-                        <p class="text-muted" ng-if="allRoles.length <= 1">
+                        <p class="text-muted" ng-if="allRoles.length === 0">
+                            No hay otros roles disponibles para herencia
+                        </p>
+                        <p class="text-muted" ng-if="allRoles.length === 1 && role._id">
                             No hay otros roles disponibles para herencia
                         </p>
                     </div>
@@ -153,7 +157,7 @@
 
                 <!-- Botones -->
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success" ng-disabled="loading || roleForm.$invalid">
+                    <button type="submit" class="btn btn-success" ng-disabled="loading">
                         <i class="glyphicon glyphicon-save"></i>
                         {{ loading ? 'Guardando...' : 'Guardar' }}
                     </button>
@@ -162,7 +166,6 @@
                         Cancelar
                     </button>
                 </div>
-
             </form>
         </div>
     </div>

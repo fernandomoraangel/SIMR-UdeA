@@ -62,6 +62,11 @@ const RoleSchema = new Schema(
       trim: true,
       maxlength: 50,
     },
+    displayName: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
     description: {
       type: String,
       trim: true,

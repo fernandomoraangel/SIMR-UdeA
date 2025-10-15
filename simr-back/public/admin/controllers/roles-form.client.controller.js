@@ -4,9 +4,17 @@ angular.module("admin").controller("RolesFormController", [
   "$scope",
   "$location",
   "$routeParams",
+  "$timeout",
   "AdminService",
   "Authentication",
-  function ($scope, $location, $routeParams, AdminService, Authentication) {
+  function (
+    $scope,
+    $location,
+    $routeParams,
+    $timeout,
+    AdminService,
+    Authentication
+  ) {
     $scope.authentication = Authentication.state;
     $scope.loading = false;
     $scope.error = null;
@@ -109,6 +117,14 @@ angular.module("admin").controller("RolesFormController", [
                 $scope.selectedInherits[roleId] = true;
               });
             }
+
+            // Forzar actualización del formulario
+            $timeout(function () {
+              if ($scope.roleForm) {
+                $scope.roleForm.$setPristine();
+                $scope.roleForm.$setUntouched();
+              }
+            }, 0);
           } else {
             $scope.error = response.message || "Error al cargar rol";
           }
@@ -122,7 +138,7 @@ angular.module("admin").controller("RolesFormController", [
         });
     };
 
-    // Alternar permiso
+    // Alternar permiso (own y any son mutuamente excluyentes)
     $scope.togglePermission = function (recurso, accion, scope) {
       if (!$scope.role.permissions[recurso]) {
         $scope.role.permissions[recurso] = {};
@@ -132,13 +148,34 @@ angular.module("admin").controller("RolesFormController", [
       }
 
       const index = $scope.role.permissions[recurso][accion].indexOf(scope);
+
       if (index > -1) {
+        // Si ya está seleccionado, deseleccionar
         $scope.role.permissions[recurso][accion].splice(index, 1);
         // Eliminar acción si está vacía
         if ($scope.role.permissions[recurso][accion].length === 0) {
           delete $scope.role.permissions[recurso][accion];
         }
       } else {
+        // Si se selecciona 'any', quitar 'own' (ya que 'any' incluye 'own')
+        // Si se selecciona 'own', quitar 'any' (para evitar redundancia)
+        if (scope === "any") {
+          // Remover 'own' si existe
+          const ownIndex =
+            $scope.role.permissions[recurso][accion].indexOf("own");
+          if (ownIndex > -1) {
+            $scope.role.permissions[recurso][accion].splice(ownIndex, 1);
+          }
+        } else if (scope === "own") {
+          // Remover 'any' si existe
+          const anyIndex =
+            $scope.role.permissions[recurso][accion].indexOf("any");
+          if (anyIndex > -1) {
+            $scope.role.permissions[recurso][accion].splice(anyIndex, 1);
+          }
+        }
+
+        // Agregar el nuevo scope
         $scope.role.permissions[recurso][accion].push(scope);
       }
     };
@@ -155,10 +192,20 @@ angular.module("admin").controller("RolesFormController", [
     // Guardar rol
     $scope.guardarRole = function () {
       if (!$scope.roleForm.$valid) {
+        // Mostrar campos inválidos
+        const invalidFields = [];
+        angular.forEach($scope.roleForm.$error, function (field, errorType) {
+          angular.forEach(field, function (errorField) {
+            invalidFields.push(errorField.$name + " (" + errorType + ")");
+          });
+        });
+
         Swal.fire({
           icon: "warning",
           title: "Campos Incompletos",
-          text: "Por favor complete todos los campos requeridos",
+          text:
+            "Por favor complete todos los campos requeridos: " +
+            invalidFields.join(", "),
           confirmButtonText: "Entendido",
         });
         return;
