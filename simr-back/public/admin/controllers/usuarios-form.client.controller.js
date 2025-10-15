@@ -56,7 +56,11 @@ angular.module("admin").controller("UsuariosFormController", [
       $scope.loading = true;
       AdminService.getUserById($routeParams.userId)
         .then(function (response) {
+          console.log("Respuesta completa de getUserById:", response);
           if (response.success) {
+            console.log("Datos del usuario recibidos:", response.data);
+            console.log("firstName:", response.data.firstName);
+            console.log("lastName:", response.data.lastName);
             $scope.usuario = response.data;
             // Marcar roles seleccionados
             if ($scope.usuario.roles && $scope.usuario.roles.length) {

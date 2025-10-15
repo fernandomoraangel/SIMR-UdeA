@@ -415,11 +415,16 @@ exports.read = async (req, res) => {
       return errorResponse(res, "Usuario no autenticado", 401);
     }
 
-    console.log("Recuperando usuario con ID:", req.requestedUser);
+    console.log("Recuperando usuario con ID:", req.requestedUser._id);
+    console.log("firstName:", req.requestedUser.firstName);
+    console.log("lastName:", req.requestedUser.lastName);
 
     const safeUser = req.requestedUser.getSafeUser();
 
-    console.log("Usuario recuperado:", safeUser);
+    console.log(
+      "Usuario recuperado (safeUser):",
+      JSON.stringify(safeUser, null, 2)
+    );
 
     return successResponse(
       res,

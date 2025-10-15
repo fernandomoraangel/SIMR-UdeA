@@ -127,6 +127,8 @@ UserSchema.methods.getSafeUser = function () {
     id: this._id,
     email: this.email,
     username: this.username,
+    firstName: this.firstName || "",
+    lastName: this.lastName || "",
     fullName: `${this.firstName} ${this.lastName}`.trim(),
     roles: this.roles || [],
   };
