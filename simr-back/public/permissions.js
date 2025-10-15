@@ -31,6 +31,8 @@ angular
         },
 
         // Verificar si el usuario tiene un permiso específico
+        // Para las vistas de lista, solo permite acciones con permisos "any"
+        // Para las vistas de detalle, permite tanto "any" como "own"
         hasPermission: function (resource, action) {
           if (!permissions || !permissions[resource]) {
             console.log(
@@ -39,10 +41,18 @@ angular
             );
             return false;
           }
-          var hasIt = permissions[resource][action] !== false;
+
+          var permissionValue = permissions[resource][action];
+
+          // Solo permitir si el permiso es "any"
+          // Los permisos "own" requieren verificación adicional del propietario
+          var hasIt = permissionValue === "any";
+
           console.log(
             "[Permissions] hasPermission(" + resource + ", " + action + "):",
-            hasIt
+            hasIt,
+            "- Valor del permiso:",
+            permissionValue
           );
           return hasIt;
         },
@@ -93,11 +103,19 @@ angular
           var resource = parts[0];
           var action = parts[1];
 
+          // Ocultar inicialmente hasta que se verifiquen los permisos
+          element.hide();
+
           function updateVisibility() {
-            if (PermissionsService.hasPermission(resource, action)) {
-              element.show();
-            } else {
-              element.hide();
+            var permissions = PermissionsService.getPermissions();
+
+            // Solo actualizar visibilidad si los permisos ya están cargados
+            if (permissions) {
+              if (PermissionsService.hasPermission(resource, action)) {
+                element.show();
+              } else {
+                element.hide();
+              }
             }
           }
 
