@@ -14,6 +14,8 @@ angular
           return $http.get("/api/permissions").then(function (response) {
             permissions = response.data.data.permissions;
             userRole = response.data.data.role;
+            console.log("[Permissions] Permisos cargados:", permissions);
+            console.log("[Permissions] Rol del usuario:", userRole);
             return response.data.data;
           });
         },
@@ -31,9 +33,18 @@ angular
         // Verificar si el usuario tiene un permiso específico
         hasPermission: function (resource, action) {
           if (!permissions || !permissions[resource]) {
+            console.log(
+              "[Permissions] No hay permisos para recurso:",
+              resource
+            );
             return false;
           }
-          return permissions[resource][action] !== false;
+          var hasIt = permissions[resource][action] !== false;
+          console.log(
+            "[Permissions] hasPermission(" + resource + ", " + action + "):",
+            hasIt
+          );
+          return hasIt;
         },
 
         // Verificar si el usuario tiene permisos 'any' para un recurso y acción

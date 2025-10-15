@@ -4,6 +4,7 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "ngResource",
   "ngRoute",
   "authentication",
+  "permissions",
   "core",
   "admin",
   "auditoria",
@@ -57,8 +58,19 @@ mainApplicationModule.config([
 
 mainApplicationModule.run([
   "Authentication",
-  function (Authentication) {
+  "PermissionsService",
+  function (Authentication, PermissionsService) {
     Authentication.init();
+
+    // Cargar permisos del usuario cuando la aplicación inicia
+    // Esperar un momento para que Authentication.init() termine
+    setTimeout(function () {
+      if (Authentication.user) {
+        PermissionsService.loadPermissions().catch(function (err) {
+          console.error("Error cargando permisos:", err);
+        });
+      }
+    }, 100);
 
     // Exponer a la consola del navegador
     // window.AuthService = Authentication;

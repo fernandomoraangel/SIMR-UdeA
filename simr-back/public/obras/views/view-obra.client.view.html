@@ -10,18 +10,13 @@
       <div class="panel panel-default">
         <!-- Default panel contents -->
 
-        <div
-          class="tituloVistaView"
-          data-ng-bind="obra.titulo | uppercase"
-        ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == obra.creador.id">
-          <a href="/#!/obras/{{obra._id}}/edit"
-            ><span class="glyphicon glyphicon-pencil"></span
-          ></a>
-          <a href="#" data-ng-click="delete();"
-            ><span class="glyphicon glyphicon-remove"></span
-          ></a>
+        <div class="tituloVistaView" data-ng-bind="obra.titulo | uppercase"></div>
+        <!-- Mostrar los botones de edición según permisos -->
+        <div>
+          <a href="/#!/obras/{{obra._id}}/edit" has-permission="obra:update"><span
+              class="glyphicon glyphicon-pencil"></span></a>
+          <a href="#" data-ng-click="delete();" has-permission="obra:delete"><span
+              class="glyphicon glyphicon-remove"></span></a>
         </div>
 
         <!-- Table -->
@@ -30,11 +25,7 @@
             <!-- TODO: ng-show="obra.denominacionRegional" -->
             <tr>
               <td class="campo">DENOMINACIONES REGIONALES</td>
-              <td
-                d
-                id="den"
-                data-ng-bind="verDenominaciones(obra.denominacionRegional)"
-              ></td>
+              <td d id="den" data-ng-bind="verDenominaciones(obra.denominacionRegional)"></td>
             </tr>
 
             <tr>
@@ -69,9 +60,7 @@
 
             <tr>
               <td class="campo">GÉNEROS O FORMAS NO MUSICALES</td>
-              <td
-                data-ng-bind="verGenerosNoMusicales(obra.GenerosFormasNoMusicales)"
-              ></td>
+              <td data-ng-bind="verGenerosNoMusicales(obra.GenerosFormasNoMusicales)"></td>
             </tr>
 
             <tr>
@@ -100,9 +89,7 @@
             </tr>
             <tr>
               <td class="campo">Anotaciones cartográfico temporales</td>
-              <td
-                data-ng-bind="verAnotacion(obra.anotacionCartograficoTemporal)"
-              ></td>
+              <td data-ng-bind="verAnotacion(obra.anotacionCartograficoTemporal)"></td>
             </tr>
 
             <tr>
@@ -112,21 +99,14 @@
 
             <tr>
               <td class="campo">VÍNCULOS RELACIONADOS</td>
-              <td
-                id="enlaces"
-                data-ng-bind="verVinculo(obra.vinculosRelacionados)"
-              ></td>
+              <td id="enlaces" data-ng-bind="verVinculo(obra.vinculosRelacionados)"></td>
             </tr>
 
             <tr>
               <td class="campo">ARCHIVOS</td>
               <td>
-                <archivo-manager
-                  template-type="detail-view"
-                  document-id="{{obra.id}}"
-                  document-name="{{obra.titulo}}"
-                  db-collection="obras"
-                >
+                <archivo-manager template-type="detail-view" document-id="{{obra.id}}" document-name="{{obra.titulo}}"
+                  db-collection="obras">
                 </archivo-manager>
               </td>
             </tr>

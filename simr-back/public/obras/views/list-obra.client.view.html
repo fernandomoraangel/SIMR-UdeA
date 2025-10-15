@@ -84,8 +84,11 @@
               <td data-ng-bind="verGeneros(obra.generosFormas)"></td>
               <td data-ng-bind="verGenerosNoMusicales(obra.GenerosFormasNoMusicales)"></td>
               <td data-ng-bind="verIdiomas(obra.idiomas)"></td>
-              <td data-ng-show="auth.currentUser.id == obra.creador.id">
+              <td has-permission="obra:update">
                 <a href="/#!/obras/{{obra._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td has-permission="obra:delete">
+                <a href="#" data-ng-click="delete(obra)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

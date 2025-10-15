@@ -4,7 +4,8 @@ angular.module("core").controller("CoreController", [
   "$scope",
   "Authentication",
   "Authorization",
-  function ($scope, Authentication, Authorization) {
+  "PermissionsService",
+  function ($scope, Authentication, Authorization, PermissionsService) {
     $scope.acercaDe = function () {
       Swal.fire({
         html: "SISTEMA DE INFORMACIÓN MUSICAS REGIONALES-SIMR<br />Versión: 1.0<br />Grupo de investigación Músicas Regionales<br />Universidad de Antioquia<br /> Conceptualización: Grupo de Investigación Músicas Regionales<br />Desarrollo: Fernando Mora Ángel<br />2022",
@@ -38,6 +39,14 @@ angular.module("core").controller("CoreController", [
     Authentication.checkAuthStatus()
       .then(() => {
         console.log("Usuario autenticado:", Authentication.state.currentUser);
+        // Cargar permisos cuando el usuario está autenticado
+        PermissionsService.loadPermissions()
+          .then(function () {
+            console.log("[Core] Permisos cargados en CoreController");
+          })
+          .catch(function (err) {
+            console.error("[Core] Error cargando permisos:", err);
+          });
         // Authentication.init(); // Iniciar autenticación y temporizador
       })
       .catch(() => {
