@@ -1,4 +1,136 @@
 <!-- View listar listas-->
+<style>
+    /* Estilos para mejorar los botones de acción en listas */
+    .list-group-item .btn-group .btn {
+        min-width: 32px !important;
+        font-size: 14px !important;
+        padding: 6px 10px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .list-group-item .btn-group .btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    .list-group-item .btn-group .btn:active {
+        transform: translateY(0) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Botón Editar - Amarillo */
+    .list-group-item .btn-group .btn-warning {
+        background-color: #f0ad4e !important;
+        border-color: #eea236 !important;
+        color: white !important;
+    }
+
+    .list-group-item .btn-group .btn-warning:hover {
+        background-color: #ec971f !important;
+        border-color: #d58512 !important;
+        color: white !important;
+    }
+
+    /* Botón Guardar - Verde */
+    .list-group-item .btn-group .btn-success {
+        background-color: #5cb85c !important;
+        border-color: #4cae4c !important;
+        color: white !important;
+    }
+
+    .list-group-item .btn-group .btn-success:hover {
+        background-color: #449d44 !important;
+        border-color: #398439 !important;
+        color: white !important;
+    }
+
+    /* Botón Cancelar - Gris */
+    .list-group-item .btn-group .btn-default {
+        background-color: #fff !important;
+        border-color: #ccc !important;
+        color: #333 !important;
+    }
+
+    .list-group-item .btn-group .btn-default:hover {
+        background-color: #e6e6e6 !important;
+        border-color: #adadad !important;
+        color: #333 !important;
+    }
+
+    /* Botón Eliminar - Rojo */
+    .list-group-item .btn-group .btn-danger {
+        background-color: #d9534f !important;
+        border-color: #d43f3a !important;
+        color: white !important;
+    }
+
+    .list-group-item .btn-group .btn-danger:hover {
+        background-color: #c9302c !important;
+        border-color: #ac2925 !important;
+        color: white !important;
+    }
+
+    /* Mejorar visibilidad de iconos */
+    .list-group-item .btn i {
+        font-size: 14px !important;
+        line-height: 1 !important;
+        color: inherit !important;
+    }
+
+    /* Estilos para los list-group-items */
+    .list-group-item {
+        padding: 12px 15px !important;
+    }
+
+    .list-group-item .row {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Estilos para el botón de agregar */
+    .panel-body .btn-success {
+        background-color: #5cb85c !important;
+        border-color: #4cae4c !important;
+        color: white !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .panel-body .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+        background-color: #449d44 !important;
+        border-color: #398439 !important;
+        color: white !important;
+    }
+
+    .panel-body .btn-success:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Mejorar inputs con tooltips */
+    .form-control[title]:focus {
+        border-color: #66afe9 !important;
+        box-shadow: 0 0 8px rgba(102, 175, 233, 0.6) !important;
+    }
+
+    /* Ajustar posición de botones en grupo */
+    .list-group-item .btn-group {
+        white-space: nowrap;
+    }
+
+    /* Espaciado entre botones */
+    .list-group-item .btn-group .btn {
+        margin-left: 3px;
+    }
+
+    .list-group-item .btn-group .btn:first-child {
+        margin-left: 0;
+    }
+</style>
+
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
 <section data-ng-controller="ListasController" data-ng-init="find()">
     <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
@@ -8,19 +140,18 @@
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-md-6">
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-filter"></i></span>
                     <input type="text" class="form-control" placeholder="Filtrar listas por nombre..."
-                        ng-model="filtroLista" id="filtroListaInput">
+                        ng-model="filtroLista" id="filtroListaInput" title="Escriba para filtrar las listas">
+                    <span class="input-group-btn" ng-show="filtroLista && filtroLista.length > 0">
+                        <button class="btn btn-default" type="button" ng-click="limpiarFiltro()" title="Limpiar filtro">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                    </span>
                 </div>
+                <small class="text-muted" ng-show="filtroLista && filtroLista.length > 0">
+                    Mostrando {{getFilteredListas().length}} de {{listas.length}} listas
+                </small>
             </div>
-            <!-- Crear Nueva Lista - Comentado porque las listas se crean desde código -->
-            <!--
-            <div class="col-md-6 text-right">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#createListaModal">
-                    <i class="glyphicon glyphicon-plus"></i> Crear Nueva Lista
-                </button>
-            </div>
-            -->
         </div>
 
         <!-- Tabla de listas -->
@@ -42,6 +173,19 @@
                                 </small>
                             </div>
                         </div>
+                        <!-- Mensaje cuando no hay listas que coincidan con el filtro -->
+                        <div ng-if="getFilteredListas().length === 0 && filtroLista" class="text-center text-muted"
+                            style="padding: 20px;">
+                            <i class="glyphicon glyphicon-search" style="font-size: 48px; opacity: 0.3;"></i>
+                            <p style="margin-top: 10px;">No se encontraron listas que coincidan con "{{filtroLista}}"
+                            </p>
+                        </div>
+                        <!-- Mensaje cuando no hay listas cargadas -->
+                        <div ng-if="getFilteredListas().length === 0 && !filtroLista" class="text-center text-muted"
+                            style="padding: 20px;">
+                            <i class="glyphicon glyphicon-list" style="font-size: 48px; opacity: 0.3;"></i>
+                            <p style="margin-top: 10px;">No hay listas disponibles</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -50,30 +194,46 @@
             <div class="col-md-8" ng-if="selectedLista">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4>{{selectedLista.nombre_lista}}
-                            <button class="btn btn-danger btn-sm pull-right" ng-click="deleteLista(selectedLista)">
-                                <i class="glyphicon glyphicon-trash"></i> Eliminar Lista
-                            </button>
-                        </h4>
+                        <h4>{{selectedLista.nombre_lista}}</h4>
                     </div>
                     <div class="panel-body">
-                        <!-- Agregar nuevo elemento -->
-                        <div class="row" style="margin-bottom: 20px;">
+                        <!-- Agregar nuevo elemento - Formato especial para nNormalizados -->
+                        <div ng-if="isNNormalizados()" style="margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" placeholder="Sigla (ej: DOI, ISBN, etc.)"
+                                        ng-model="newElementSigla" ng-keypress="$event.keyCode === 13 && addElement()"
+                                        id="newElementSiglaInput" title="Ingrese la sigla del número normalizado">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-success btn-block" ng-click="addElement()"
+                                        title="Agregar nuevo número normalizado">
+                                        <i class="glyphicon glyphicon-plus"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" placeholder="Frase completa (opcional)"
+                                        ng-model="newElementFrase" ng-keypress="$event.keyCode === 13 && addElement()"
+                                        title="Ingrese la descripción completa del número normalizado">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Agregar nuevo elemento - Formato normal para otras listas -->
+                        <div ng-if="!isNNormalizados()" class="row" style="margin-bottom: 20px;">
                             <div class="col-md-8">
                                 <input type="text" class="form-control" placeholder="Nuevo elemento..."
                                     ng-model="newElement" ng-keypress="$event.keyCode === 13 && addElement()"
-                                    id="newElementInput">
+                                    id="newElementInput" title="Ingrese el nuevo elemento a agregar">
                             </div>
                             <div class="col-md-4">
-                                <button class="btn btn-success btn-block" ng-click="addElement()">
+                                <button class="btn btn-success btn-block" ng-click="addElement()"
+                                    title="Agregar nuevo elemento a la lista">
                                     <i class="glyphicon glyphicon-plus"></i> Agregar
                                 </button>
                             </div>
-                        </div>
-                        <!-- Debug info -->
-                        <div style="margin-bottom: 10px; font-size: 12px; color: #666;">
-                            Debug: newElement = "{{newElement}}" | Length: {{newElement.length}} | Is Empty:
-                            {{!newElement || newElement.trim() === ''}}
                         </div>
 
                         <!-- Lista de elementos -->
@@ -82,26 +242,52 @@
                                 ng-repeat="elemento in selectedLista.elementos track by $index">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <span ng-if="editIndex !== $index">{{elemento}}</span>
-                                        <input type="text" class="form-control" ng-if="editIndex === $index"
-                                            ng-model="editElement" ng-keypress="$event.keyCode === 13 && saveEdit()">
+                                        <!-- Mostrar con formato especial si es nNormalizados -->
+                                        <span ng-if="editIndex !== $index && isNNormalizados()">
+                                            <strong>{{getMetadataSigla($index)}}</strong>
+                                            <span ng-if="getMetadataFrase($index)"> -
+                                                {{getMetadataFrase($index)}}</span>
+                                        </span>
+                                        <!-- Mostrar normal para otras listas -->
+                                        <span ng-if="editIndex !== $index && !isNNormalizados()">{{elemento}}</span>
+
+                                        <!-- Campo de edición -->
+                                        <div ng-if="editIndex === $index">
+                                            <input type="text" class="form-control" ng-model="editElement.sigla"
+                                                placeholder="Sigla" ng-keypress="$event.keyCode === 13 && saveEdit()"
+                                                ng-if="isNNormalizados()">
+                                            <input type="text" class="form-control" ng-model="editElement.frase"
+                                                placeholder="Frase completa"
+                                                ng-keypress="$event.keyCode === 13 && saveEdit()"
+                                                style="margin-top: 5px;" ng-if="isNNormalizados()">
+                                            <input type="text" class="form-control" ng-model="editElement"
+                                                ng-keypress="$event.keyCode === 13 && saveEdit()"
+                                                ng-if="!isNNormalizados()">
+                                        </div>
                                     </div>
                                     <div class="col-md-4 text-right">
-                                        <button class="btn btn-xs btn-warning" ng-if="editIndex !== $index"
-                                            ng-click="startEdit($index)">
-                                            <i class="glyphicon glyphicon-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-xs btn-success" ng-if="editIndex === $index"
-                                            ng-click="saveEdit()">
-                                            <i class="glyphicon glyphicon-ok"></i>
-                                        </button>
-                                        <button class="btn btn-xs btn-default" ng-if="editIndex === $index"
-                                            ng-click="cancelEdit()">
-                                            <i class="glyphicon glyphicon-remove"></i>
-                                        </button>
-                                        <button class="btn btn-xs btn-danger" ng-click="deleteElement($index)">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </button>
+                                        <div class="btn-group" role="group">
+                                            <!-- Botón Editar -->
+                                            <button class="btn btn-sm btn-warning" ng-if="editIndex !== $index"
+                                                ng-click="startEdit($index)" title="Editar elemento">
+                                                <i class="glyphicon glyphicon-pencil"></i>
+                                            </button>
+                                            <!-- Botón Guardar -->
+                                            <button class="btn btn-sm btn-success" ng-if="editIndex === $index"
+                                                ng-click="saveEdit()" title="Guardar cambios">
+                                                <i class="glyphicon glyphicon-ok"></i>
+                                            </button>
+                                            <!-- Botón Cancelar -->
+                                            <button class="btn btn-sm btn-default" ng-if="editIndex === $index"
+                                                ng-click="cancelEdit()" title="Cancelar edición">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                            </button>
+                                            <!-- Botón Eliminar -->
+                                            <button class="btn btn-sm btn-danger" ng-click="deleteElement($index)"
+                                                title="Eliminar elemento">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

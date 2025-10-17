@@ -137,7 +137,7 @@ exports.delete = async (req, res, next) => {
 exports.addElement = async (req, res, next) => {
   try {
     const { nombre_lista } = req.params;
-    const { elemento } = req.body;
+    const { elemento, metadata } = req.body;
 
     if (!elemento) {
       return errorResponse(res, "Elemento requerido", 400);
@@ -155,6 +155,15 @@ exports.addElement = async (req, res, next) => {
     }
 
     lista.elementos.push(elemento);
+
+    // Si la lista tiene metadata y se proporciona metadata, agregarla
+    if (metadata && (lista.metadata || nombre_lista === "nNormalizados")) {
+      if (!lista.metadata) {
+        lista.metadata = [];
+      }
+      lista.metadata.push(metadata);
+    }
+
     lista.fecha_modificacion = new Date();
     lista.usuario_modifico = req.user._id;
 
@@ -174,7 +183,7 @@ exports.addElement = async (req, res, next) => {
 exports.updateElement = async (req, res, next) => {
   try {
     const { lista_id, elemento_index } = req.params;
-    const { elemento } = req.body;
+    const { elemento, metadata } = req.body;
 
     if (!elemento) {
       return errorResponse(res, "Elemento requerido", 400);
@@ -192,6 +201,12 @@ exports.updateElement = async (req, res, next) => {
     }
 
     lista.elementos[index] = elemento;
+
+    // Si la lista tiene metadata y se proporciona metadata, actualizarla
+    if (metadata && lista.metadata && lista.metadata[index]) {
+      lista.metadata[index] = metadata;
+    }
+
     lista.fecha_modificacion = new Date();
     lista.usuario_modifico = req.user._id;
 
@@ -224,6 +239,12 @@ exports.deleteElement = async (req, res, next) => {
     }
 
     lista.elementos.splice(index, 1);
+
+    // Si la lista tiene metadata, también eliminar el metadata correspondiente
+    if (lista.metadata && lista.metadata[index]) {
+      lista.metadata.splice(index, 1);
+    }
+
     lista.fecha_modificacion = new Date();
     lista.usuario_modifico = req.user._id;
 

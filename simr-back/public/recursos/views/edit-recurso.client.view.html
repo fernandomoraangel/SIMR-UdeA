@@ -159,11 +159,10 @@
           <label class="campo">Nombre</label>
           <hr />
           <select id="nombreNNormalizadoId" ng-model="nNormalizadoNombre" class="form-control">
-            <option ng-repeat="n in nNormalizados | orderBy: n.frase" value="{{n.sigla}}">
-              {{n.sigla}} {{n.frase}}
+            <option ng-repeat="n in nNormalizados | orderBy: n.frase track by $index" value="{{n.sigla}}">
+              {{n.sigla}} <span ng-if="n.frase">- {{n.frase}}</span>
             </option>
             <option value="">-----</option>
-            <tt>tipoSelect={{nnormalizado}}</tt>
           </select>
           <div>
             <label class="campo">Número</label>

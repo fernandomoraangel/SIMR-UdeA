@@ -16,6 +16,10 @@ angular.module("listas").controller("ListasController", [
     Listas,
     ListasElementos
   ) {
+    // Depuración: ver cambios en el filtro
+    $scope.$watch("filtroLista", function (newVal, oldVal) {
+      console.log("Filtro cambiado:", newVal);
+    });
     //Exponer el servicio Authentication
     $scope.auth = Authentication.state;
 
@@ -24,84 +28,128 @@ angular.module("listas").controller("ListasController", [
     $scope.listas = [];
     $scope.selectedLista = null;
     $scope.newElement = "";
+    $scope.newElementSigla = "";
+    $scope.newElementFrase = "";
     $scope.editElement = "";
     $scope.editIndex = -1;
 
     //Cargar todas las listas
     $scope.find = function () {
-      $scope.listas = Listas.query();
+      Listas.query(
+        function (listas) {
+          $scope.listas = listas;
+          console.log("Listas cargadas:", $scope.listas.length);
+        },
+        function (error) {
+          console.error("Error al cargar listas:", error);
+          Swal.fire({
+            title: "¡Error!",
+            text: "Error al cargar las listas",
+            icon: "error",
+            confirmButtonText: "Cerrar",
+          });
+        }
+      );
+    };
+
+    //Verificar si la lista seleccionada es nNormalizados
+    $scope.isNNormalizados = function () {
+      return (
+        $scope.selectedLista &&
+        $scope.selectedLista.nombre_lista === "nNormalizados"
+      );
+    };
+
+    //Obtener sigla de metadata
+    $scope.getMetadataSigla = function (index) {
+      if (
+        $scope.selectedLista &&
+        $scope.selectedLista.metadata &&
+        $scope.selectedLista.metadata[index]
+      ) {
+        return $scope.selectedLista.metadata[index].sigla;
+      }
+      return "";
+    };
+
+    //Obtener frase de metadata
+    $scope.getMetadataFrase = function (index) {
+      if (
+        $scope.selectedLista &&
+        $scope.selectedLista.metadata &&
+        $scope.selectedLista.metadata[index]
+      ) {
+        return $scope.selectedLista.metadata[index].frase;
+      }
+      return "";
     };
 
     //Filtrar listas por nombre
     $scope.getFilteredListas = function () {
-      // Obtener el valor del filtro desde el DOM si el scope está vacío
-      var filtroValue =
-        $scope.filtroLista ||
-        (document.getElementById("filtroListaInput")
-          ? document.getElementById("filtroListaInput").value
-          : "");
+      // Si no hay listas cargadas, retornar array vacío
+      if (!$scope.listas || !Array.isArray($scope.listas)) {
+        return [];
+      }
 
-      if (!filtroValue) {
+      // Si no hay filtro o es cadena vacía, retornar todas las listas
+      if (!$scope.filtroLista || $scope.filtroLista.trim() === "") {
         return $scope.listas;
       }
-      return $scope.listas.filter(function (lista) {
-        return lista.nombre_lista
-          .toLowerCase()
-          .includes(filtroValue.toLowerCase());
+
+      // Filtrar por nombre
+      var filtro = $scope.filtroLista.toLowerCase().trim();
+      var filtradas = $scope.listas.filter(function (lista) {
+        if (!lista || !lista.nombre_lista) {
+          return false;
+        }
+        return lista.nombre_lista.toLowerCase().indexOf(filtro) !== -1;
       });
+
+      return filtradas;
+    };
+
+    //Limpiar el filtro
+    $scope.limpiarFiltro = function () {
+      $scope.filtroLista = "";
     };
 
     //Seleccionar una lista para gestión
     $scope.selectLista = function (lista) {
-      console.log("Seleccionando lista:", lista.nombre_lista);
       $scope.selectedLista = lista;
-      // NO limpiar newElement aquí para evitar conflictos
-      // $scope.newElement = "";
+      $scope.newElement = "";
+      $scope.newElementSigla = "";
+      $scope.newElementFrase = "";
       $scope.editElement = "";
       $scope.editIndex = -1;
     };
 
     //Agregar elemento a una lista
     $scope.addElement = function () {
-      console.log("=== INICIANDO addElement ===");
+      var elementoData;
 
-      // Intentar obtener el valor del DOM directamente
-      var inputValue = document.getElementById("newElementInput")
-        ? document.getElementById("newElementInput").value
-        : "";
-      console.log("Valor del input del DOM:", inputValue);
-      console.log("Valor de $scope.newElement:", $scope.newElement);
+      //Verificar si es nNormalizados
+      if ($scope.isNNormalizados()) {
+        if (
+          !$scope.newElementSigla ||
+          !$scope.newElementSigla.trim() ||
+          !$scope.selectedLista
+        )
+          return;
 
-      // Usar el valor del DOM si el scope está vacío
-      var elementToAdd = $scope.newElement || inputValue;
-      console.log("Elemento a agregar (final):", elementToAdd);
+        elementoData = {
+          elemento: $scope.newElementSigla.trim(),
+          metadata: {
+            sigla: $scope.newElementSigla.trim(),
+            frase: $scope.newElementFrase ? $scope.newElementFrase.trim() : "",
+          },
+        };
+      } else {
+        if (!$scope.newElement.trim() || !$scope.selectedLista) return;
 
-      console.log("Lista seleccionada:", $scope.selectedLista);
-
-      if (!elementToAdd || !elementToAdd.trim() || !$scope.selectedLista) {
-        console.log(
-          "Validación fallida: elemento vacío o lista no seleccionada"
-        );
-        console.log("elementToAdd:", elementToAdd);
-        console.log(
-          "elementToAdd trimmed:",
-          elementToAdd ? elementToAdd.trim() : "undefined/null"
-        );
-        console.log("selectedLista:", $scope.selectedLista);
-        return;
+        elementoData = {
+          elemento: $scope.newElement.trim(),
+        };
       }
-
-      console.log("=== VALIDACIÓN PASADA, ENVIANDO PETICIÓN ===");
-
-      var elementoData = {
-        elemento: elementToAdd.trim(),
-      };
-
-      console.log(
-        "Enviando petición a:",
-        "/api/listas/" + $scope.selectedLista.nombre_lista + "/elementos"
-      );
-      console.log("Datos:", elementoData);
 
       ListasElementos.save(
         {
@@ -109,15 +157,25 @@ angular.module("listas").controller("ListasController", [
         },
         elementoData,
         function (response) {
-          console.log("Respuesta exitosa:", response);
           //Actualizar la lista localmente
-          $scope.selectedLista.elementos.push(elementToAdd.trim());
-          $scope.selectedLista.fecha_modificacion = response.fecha_modificacion;
-          $scope.newElement = "";
-          // Limpiar también el input del DOM
-          if (document.getElementById("newElementInput")) {
-            document.getElementById("newElementInput").value = "";
+          if ($scope.isNNormalizados()) {
+            $scope.selectedLista.elementos.push($scope.newElementSigla.trim());
+            if (!$scope.selectedLista.metadata) {
+              $scope.selectedLista.metadata = [];
+            }
+            $scope.selectedLista.metadata.push({
+              sigla: $scope.newElementSigla.trim(),
+              frase: $scope.newElementFrase
+                ? $scope.newElementFrase.trim()
+                : "",
+            });
+            $scope.newElementSigla = "";
+            $scope.newElementFrase = "";
+          } else {
+            $scope.selectedLista.elementos.push($scope.newElement.trim());
+            $scope.newElement = "";
           }
+          $scope.selectedLista.fecha_modificacion = response.fecha_modificacion;
 
           Swal.fire({
             title: "¡Elemento agregado!",
@@ -127,10 +185,9 @@ angular.module("listas").controller("ListasController", [
           });
         },
         function (error) {
-          console.error("Error al agregar elemento:", error);
           Swal.fire({
             title: "¡Error!",
-            text: error.data?.message || "Error al agregar elemento",
+            text: error.data.message || "Error al agregar elemento",
             icon: "error",
             confirmButtonText: "Cerrar",
           });
@@ -141,7 +198,23 @@ angular.module("listas").controller("ListasController", [
     //Editar elemento
     $scope.startEdit = function (index) {
       $scope.editIndex = index;
-      $scope.editElement = $scope.selectedLista.elementos[index];
+      if ($scope.isNNormalizados()) {
+        //Para nNormalizados, cargar sigla y frase
+        $scope.editElement = {
+          sigla:
+            $scope.selectedLista.metadata &&
+            $scope.selectedLista.metadata[index]
+              ? $scope.selectedLista.metadata[index].sigla
+              : "",
+          frase:
+            $scope.selectedLista.metadata &&
+            $scope.selectedLista.metadata[index]
+              ? $scope.selectedLista.metadata[index].frase
+              : "",
+        };
+      } else {
+        $scope.editElement = $scope.selectedLista.elementos[index];
+      }
     };
 
     $scope.cancelEdit = function () {
@@ -150,11 +223,30 @@ angular.module("listas").controller("ListasController", [
     };
 
     $scope.saveEdit = function () {
-      if (!$scope.editElement.trim() || $scope.editIndex === -1) return;
+      if ($scope.editIndex === -1) return;
 
-      var elementoData = {
-        elemento: $scope.editElement.trim(),
-      };
+      var elementoData;
+
+      if ($scope.isNNormalizados()) {
+        if (!$scope.editElement.sigla || !$scope.editElement.sigla.trim())
+          return;
+
+        elementoData = {
+          elemento: $scope.editElement.sigla.trim(),
+          metadata: {
+            sigla: $scope.editElement.sigla.trim(),
+            frase: $scope.editElement.frase
+              ? $scope.editElement.frase.trim()
+              : "",
+          },
+        };
+      } else {
+        if (!$scope.editElement.trim()) return;
+
+        elementoData = {
+          elemento: $scope.editElement.trim(),
+        };
+      }
 
       ListasElementos.update(
         {
@@ -164,8 +256,22 @@ angular.module("listas").controller("ListasController", [
         elementoData,
         function (response) {
           //Actualizar la lista localmente
-          $scope.selectedLista.elementos[$scope.editIndex] =
-            $scope.editElement.trim();
+          if ($scope.isNNormalizados()) {
+            $scope.selectedLista.elementos[$scope.editIndex] =
+              $scope.editElement.sigla.trim();
+            if (!$scope.selectedLista.metadata) {
+              $scope.selectedLista.metadata = [];
+            }
+            $scope.selectedLista.metadata[$scope.editIndex] = {
+              sigla: $scope.editElement.sigla.trim(),
+              frase: $scope.editElement.frase
+                ? $scope.editElement.frase.trim()
+                : "",
+            };
+          } else {
+            $scope.selectedLista.elementos[$scope.editIndex] =
+              $scope.editElement.trim();
+          }
           $scope.selectedLista.fecha_modificacion = response.fecha_modificacion;
           $scope.cancelEdit();
 

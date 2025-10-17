@@ -38,7 +38,12 @@ angular.module("recursos").controller("RecursosController", [
     $scope.loadListas = function () {
       Listas.query(function (listas) {
         listas.forEach(function (lista) {
-          $scope[lista.nombre_lista] = lista.elementos;
+          // Para listas con metadata (como nNormalizados), usar metadata en lugar de elementos
+          if (lista.metadata && lista.metadata.length > 0) {
+            $scope[lista.nombre_lista] = lista.metadata;
+          } else {
+            $scope[lista.nombre_lista] = lista.elementos;
+          }
         });
       });
     };
