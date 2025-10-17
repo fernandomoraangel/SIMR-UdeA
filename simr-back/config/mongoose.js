@@ -33,6 +33,8 @@ module.exports = function () {
   // Sistema de roles y permisos
   require("../app/models/role.server.model");
   require("../app/models/auditlog.server.model");
+  // Modelo de listas
+  require("../app/models/lista.server.model");
   // console.log("Carga de modelos");
   // Devolver la instancia de conexión a Mongoose
   return db;

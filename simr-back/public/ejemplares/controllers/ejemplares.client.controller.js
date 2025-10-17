@@ -11,6 +11,7 @@ angular.module("ejemplares").controller("EjemplaresController", [
   "Fondos",
   "Colecciones",
   "Diccionarios",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -20,13 +21,25 @@ angular.module("ejemplares").controller("EjemplaresController", [
     Recursos,
     Fondos,
     Colecciones,
-    Diccionarios
+    Diccionarios,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    $scope.estados = estados;
-    $scope.disponibilidades = disponibilidades;
+
+    // Cargar listas dinámicas desde la API
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+
+    // Inicializar listas
+    $scope.loadListas();
+
     $scope.idEstados = [];
     $scope.recursos = Recursos.query();
     $scope.fondos = Fondos.query();

@@ -14,6 +14,7 @@ angular.module("recursos").controller("RecursosController", [
   "Idiomas",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -26,23 +27,29 @@ angular.module("recursos").controller("RecursosController", [
     Proyectos,
     Idiomas,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    $scope.roles = roles;
+
+    // Cargar listas dinámicas desde la API
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+
+    // Inicializar listas
+    $scope.loadListas();
+
     $scope.validarFecha = (fecha, id) => validarFecha(fecha, id);
     $scope.formatDateYMD = (date, precision = "AMD") =>
       formatDateYMD(date, precision);
-    $scope.tipos = tipos;
     $scope.idiomas = Idiomas.query();
-    $scope.lugares = lugares;
-    $scope.coberturas = coberturas;
-    $scope.nNormalizados = nNormalizados;
-    $scope.dEtiquetas = dEtiquetas;
-    $scope.tipoFuente = tipoFuente;
-    $scope.criterio = criterio;
     $scope.idMenciones = [];
     $scope.idAnotacionesCartograficoTemporales = [];
     $scope.idProyectos = [];

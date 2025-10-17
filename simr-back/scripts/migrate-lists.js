@@ -1,0 +1,387 @@
+#!/usr/bin/env node
+
+/**
+ * Script de migración para trasladar las listas hardcodeadas a MongoDB
+ * Ejecutar con: node scripts/migrate-lists.js
+ */
+
+const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
+
+// Conectar a MongoDB
+const connectDB = async () => {
+  try {
+    // Conectar primero a la base por defecto y luego cambiar a simr-dev
+    const mongoUri = "mongodb://superAdmin:sadmin1990@localhost:27017/";
+    console.log("Using MongoDB URI:", mongoUri);
+
+    await mongoose.connect(mongoUri);
+    console.log("✅ Conectado a MongoDB");
+
+    // Cambiar a la base de datos simr-dev
+    const db = mongoose.connection.useDb("simr-dev");
+    console.log("✅ Cambiado a base de datos simr-dev");
+  } catch (error) {
+    console.error("❌ Error conectando a MongoDB:", error);
+    process.exit(1);
+  }
+};
+
+// Leer el archivo de listas
+const readListasFile = () => {
+  try {
+    // Usar datos hardcodeados ya que el archivo fue eliminado
+    return {
+      nNormalizados: [
+        { sigla: "Depósito legal", frase: "" },
+        { sigla: "DOI", frase: "Digital Object Identifier System" },
+        { sigla: "ISAN", frase: "International Standard Audiovisual Number" },
+        { sigla: "ISBN", frase: "International Standard Book Number" },
+        { sigla: "ISMN", frase: "International Standard Music Number" },
+        { sigla: "ISRC", frase: "International Standard Recording Code" },
+        { sigla: "ISSN", frase: "International Standard Serial Number" },
+        { sigla: "ISWC", frase: "International Standard Musical Work Code" },
+      ],
+      tipos: [
+        "Artículo de revista",
+        "Dibujo",
+        "Esquema",
+        "Fotografía",
+        "Grabación audiovisual",
+        "Grabación sonora",
+        "Lead sheet (partitura con melodía y acordes)",
+        "Lead sheet con texto",
+        "Libro",
+        "Mapa",
+        "Partitura general",
+        "Partitura individual (particella)",
+        "Partitura melódica",
+        "Plano",
+        "Revista",
+        "Software",
+        "Partitura manuscrita",
+        "",
+      ],
+      tipoFuente: [
+        "Distribuidor",
+        "Editor",
+        "Estudio de grabación de audio",
+        "Fabricante",
+        "Grabación de campo",
+        "Matriz",
+        "Productor",
+        "Productora audiovisual",
+        "Publicador",
+        "Referencia",
+        "Sello",
+      ],
+      criterio: [
+        "Archivo tipo Container",
+        "Bitrate",
+        "Calidad de grabación",
+        "Cantidad de canales",
+        "Cantidad de pistas de audio",
+        "Codec audio",
+        "Codec vídeo",
+        "Código SPARS",
+        "Tipo de grabación (analógico, digital)",
+        "Compresión de archivo",
+        "Dimensiones físicas (cm)",
+        "Duración",
+        "Formato (tipo de soporte)",
+        "Número de páginas",
+        "Profundidad de bits",
+        "Profundidad de color",
+        "Rata de muestreo",
+        "Relación de aspecto",
+        "Resolución vídeos e imágenes",
+        "Tamaño de archivo",
+        "Tipo de archivo",
+        "Tipo de cinta",
+        "Velocidad de cinta",
+        "Velocidad de rotación",
+        "Tipo de grabación (profesional, casera, de campo)",
+        "Número de unidades físicas del soporte",
+        "Código de tiempo de la máquina reproductora",
+      ],
+      estados: [
+        "Archivo corrupto",
+        "Cinta deteriorada",
+        "Cinta enredada",
+        "Depostillado",
+        "estuche quebrado",
+        "Hongos",
+        "Humedad",
+        "Incompleto",
+        "Inservible",
+        "Lévemente deteriorado",
+        "Manchas",
+        "Marbete rayado o ilegible",
+        "Mutilado",
+        "Óptimo",
+        "Para expurgo",
+        "Portada deteriorada o ilegible",
+        "Quebrado",
+        "Rayado",
+        "Sin estuche",
+        "Soporte defectuoso",
+        "Sucio",
+        "Trozos faltantes",
+        "Estuche despegado",
+        "Estuche roto",
+      ],
+      disponibilidades: [
+        "Disponible",
+        "En préstamo",
+        "En proceso técnico",
+        "Extraviado",
+        "Reservado",
+        "Restringido",
+      ],
+      estadosProyecto: [
+        "Compromisos pendientes",
+        "Ejecución",
+        "Formulación",
+        "Prorroga",
+        "Suspendido",
+        "Terminado",
+      ],
+      dEtiquetas: [
+        "Experiencia significativa",
+        "Interés pedagógico",
+        "Interés general",
+        "Obra representativa",
+        "Proyecto similar",
+        "Relación con línea de investigación",
+        "Texto digno de mención",
+        "Versión significativa",
+      ],
+      tiposFondosColecciones: [
+        "Archivo de gestión",
+        "Archivo digital",
+        "Archivo institucional",
+        "Archivo personal",
+        "Artística",
+        "Audiovisual",
+        "Contenidos variados",
+        "Literaria",
+        "Música",
+        "Poesía",
+        "Software",
+        "Teoria",
+        "Textos creativos",
+        "Visual",
+      ],
+      lugares: [
+        "Amazonía",
+        "América",
+        "Andes",
+        "Argentina",
+        "Atlántico",
+        "Bolivia",
+        "Brasil",
+        "Colombia",
+        "Iberoamérica",
+        "Latinoamérica",
+        "Llanos",
+        "Medellín",
+        "México",
+        "Pacífico",
+        "Panamá",
+        "Paraguay",
+        "Perú",
+        "Uruguay",
+      ],
+      coberturas: [
+        "América Latina",
+        "Ciudad",
+        "Continente",
+        "Hispanoamérica",
+        "Iberoamérica",
+        "Local",
+        "Mundo",
+        "País",
+      ],
+      roles: [
+        "Actor al que se refiere la obra",
+        "Adaptación",
+        "Arreglista",
+        "Arreglo",
+        "Autor letra",
+        "Autor música",
+        "Autor",
+        "Beat maker",
+        "Compilador",
+        "Compositor",
+        "Coordinador",
+        "Corrector de estilo",
+        "Dedicatoria",
+        "Diagramación",
+        "Digitador (asigna digitaciones a la partitura)",
+        "Digitador de partituras",
+        "Director",
+        "Director",
+        "Editor",
+        "Grabación",
+        "Guionista",
+        "Ingeniero de audio",
+        "Intérprete",
+        "Investigador principal",
+        "Investigador",
+        "Masterización",
+        "Mezcla",
+        "Postproducción",
+        "Presentador",
+        "Producción ejecutiva",
+        "Producción",
+        "Productor",
+        "Prologuista",
+        "Revisor",
+        "Titular de derechos patrimoniales",
+        "Traductor",
+        "Transcripcion (para determinado instrumento)",
+        "Transcripción sonora de textos",
+        "Transcripción sonora-musical",
+        "Transcripción-traducción",
+        "Transcriptor de la partitura",
+        "Versión",
+      ],
+    };
+  } catch (error) {
+    console.error("❌ Error procesando datos de listas:", error);
+    process.exit(1);
+  }
+};
+
+// Modelo de Lista (temporal para migración)
+const ListaSchema = new mongoose.Schema({
+  nombre_lista: { type: String, required: true, index: true },
+  elementos: { type: [String], required: true },
+  metadata: { type: mongoose.Schema.Types.Mixed },
+  fecha_creacion: { type: Date, default: Date.now },
+  fecha_modificacion: { type: Date, default: Date.now },
+  usuario_modifico: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+});
+
+// Usar la base de datos simr-dev
+const db = mongoose.connection.useDb("simr-dev");
+const Lista = db.model("Lista", ListaSchema);
+
+// Función para migrar listas simples (arrays de strings)
+const migrateSimpleList = async (nombreLista, elementos) => {
+  try {
+    // Verificar si ya existe
+    const existing = await Lista.findOne({ nombre_lista: nombreLista });
+    if (existing) {
+      console.log(`⚠️  Lista '${nombreLista}' ya existe, omitiendo...`);
+      return;
+    }
+
+    // Filtrar elementos vacíos y crear la lista
+    const elementosFiltrados = elementos.filter((el) => el && el.trim() !== "");
+
+    const nuevaLista = new Lista({
+      nombre_lista: nombreLista,
+      elementos: elementosFiltrados,
+      metadata: null,
+    });
+
+    await nuevaLista.save();
+    console.log(
+      `✅ Migrada lista '${nombreLista}' con ${elementosFiltrados.length} elementos`
+    );
+  } catch (error) {
+    console.error(`❌ Error migrando lista '${nombreLista}':`, error);
+  }
+};
+
+// Función para migrar lista compleja (nNormalizados)
+const migrateComplexList = async (nombreLista, elementos) => {
+  try {
+    // Verificar si ya existe
+    const existing = await Lista.findOne({ nombre_lista: nombreLista });
+    if (existing) {
+      console.log(`⚠️  Lista '${nombreLista}' ya existe, omitiendo...`);
+      return;
+    }
+
+    // Convertir objetos a strings para elementos
+    const elementosStrings = elementos.map((item) => item.sigla || item);
+
+    const nuevaLista = new Lista({
+      nombre_lista: nombreLista,
+      elementos: elementosStrings,
+      metadata: elementos, // Guardar la estructura completa en metadata
+    });
+
+    await nuevaLista.save();
+    console.log(
+      `✅ Migrada lista compleja '${nombreLista}' con ${elementosStrings.length} elementos`
+    );
+  } catch (error) {
+    console.error(`❌ Error migrando lista compleja '${nombreLista}':`, error);
+  }
+};
+
+// Función principal de migración
+const migrateLists = async () => {
+  try {
+    console.log("🚀 Iniciando migración de listas...\n");
+
+    const listas = readListasFile();
+
+    // Migrar listas simples
+    await migrateSimpleList("tipos", listas.tipos);
+    await migrateSimpleList("tipoFuente", listas.tipoFuente);
+    await migrateSimpleList("criterio", listas.criterio);
+    await migrateSimpleList("estados", listas.estados);
+    await migrateSimpleList("disponibilidades", listas.disponibilidades);
+    await migrateSimpleList("estadosProyecto", listas.estadosProyecto);
+    await migrateSimpleList("dEtiquetas", listas.dEtiquetas);
+    await migrateSimpleList(
+      "tiposFondosColecciones",
+      listas.tiposFondosColecciones
+    );
+    await migrateSimpleList("lugares", listas.lugares);
+    await migrateSimpleList("coberturas", listas.coberturas);
+    await migrateSimpleList("roles", listas.roles);
+
+    // Migrar lista compleja
+    await migrateComplexList("nNormalizados", listas.nNormalizados);
+
+    console.log("\n✅ Migración completada exitosamente!");
+    console.log("📋 Listas migradas:");
+    console.log("   - tipos");
+    console.log("   - tipoFuente");
+    console.log("   - criterio");
+    console.log("   - estados");
+    console.log("   - disponibilidades");
+    console.log("   - estadosProyecto");
+    console.log("   - dEtiquetas");
+    console.log("   - tiposFondosColecciones");
+    console.log("   - lugares");
+    console.log("   - coberturas");
+    console.log("   - roles");
+    console.log("   - nNormalizados (compleja)");
+  } catch (error) {
+    console.error("❌ Error durante la migración:", error);
+    process.exit(1);
+  }
+};
+
+// Función principal
+const main = async () => {
+  await connectDB();
+  await migrateLists();
+  await mongoose.disconnect();
+  console.log("🔌 Desconectado de MongoDB");
+  process.exit(0);
+};
+
+// Ejecutar si se llama directamente
+if (require.main === module) {
+  main();
+}
+
+module.exports = { migrateLists };

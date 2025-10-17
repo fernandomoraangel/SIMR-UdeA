@@ -1,0 +1,155 @@
+<!-- View listar listas-->
+<ng-include src="'core/views/core.client.view.html'"></ng-include>
+<section data-ng-controller="ListasController" data-ng-init="find()">
+    <div class="jumbotron bodyList" data-ng-if="auth.isAuthenticated">
+        <label class="tituloVista">Gestión de Listas</label>
+
+        <!-- Filtro de listas -->
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-filter"></i></span>
+                    <input type="text" class="form-control" placeholder="Filtrar listas por nombre..."
+                        ng-model="filtroLista" id="filtroListaInput">
+                </div>
+            </div>
+            <!-- Crear Nueva Lista - Comentado porque las listas se crean desde código -->
+            <!--
+            <div class="col-md-6 text-right">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#createListaModal">
+                    <i class="glyphicon glyphicon-plus"></i> Crear Nueva Lista
+                </button>
+            </div>
+            -->
+        </div>
+
+        <!-- Tabla de listas -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Listas Disponibles</h4>
+                    </div>
+                    <div class="panel-body" style="max-height: 600px; overflow-y: auto;">
+                        <div class="list-group">
+                            <div class="list-group-item" ng-repeat="lista in getFilteredListas()"
+                                ng-click="selectLista(lista)" style="cursor: pointer;"
+                                ng-class="{active: selectedLista && selectedLista._id === lista._id}">
+                                <h5 class="list-group-item-heading">{{lista.nombre_lista}}</h5>
+                                <p class="list-group-item-text">{{lista.elementos.length}} elementos</p>
+                                <small class="text-muted">
+                                    Modificado: {{lista.fecha_modificacion | date:'dd/MM/yyyy HH:mm'}}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de gestión de elementos -->
+            <div class="col-md-8" ng-if="selectedLista">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>{{selectedLista.nombre_lista}}
+                            <button class="btn btn-danger btn-sm pull-right" ng-click="deleteLista(selectedLista)">
+                                <i class="glyphicon glyphicon-trash"></i> Eliminar Lista
+                            </button>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Agregar nuevo elemento -->
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Nuevo elemento..."
+                                    ng-model="newElement" ng-keypress="$event.keyCode === 13 && addElement()"
+                                    id="newElementInput">
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-success btn-block" ng-click="addElement()">
+                                    <i class="glyphicon glyphicon-plus"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Debug info -->
+                        <div style="margin-bottom: 10px; font-size: 12px; color: #666;">
+                            Debug: newElement = "{{newElement}}" | Length: {{newElement.length}} | Is Empty:
+                            {{!newElement || newElement.trim() === ''}}
+                        </div>
+
+                        <!-- Lista de elementos -->
+                        <div class="list-group">
+                            <div class="list-group-item"
+                                ng-repeat="elemento in selectedLista.elementos track by $index">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <span ng-if="editIndex !== $index">{{elemento}}</span>
+                                        <input type="text" class="form-control" ng-if="editIndex === $index"
+                                            ng-model="editElement" ng-keypress="$event.keyCode === 13 && saveEdit()">
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <button class="btn btn-xs btn-warning" ng-if="editIndex !== $index"
+                                            ng-click="startEdit($index)">
+                                            <i class="glyphicon glyphicon-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-xs btn-success" ng-if="editIndex === $index"
+                                            ng-click="saveEdit()">
+                                            <i class="glyphicon glyphicon-ok"></i>
+                                        </button>
+                                        <button class="btn btn-xs btn-default" ng-if="editIndex === $index"
+                                            ng-click="cancelEdit()">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                        <button class="btn btn-xs btn-danger" ng-click="deleteElement($index)">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-if="!selectedLista.elementos || selectedLista.elementos.length === 0"
+                            class="text-center text-muted">
+                            <p>No hay elementos en esta lista.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensaje cuando no hay lista seleccionada -->
+            <div class="col-md-8" ng-if="!selectedLista">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center text-muted">
+                        <h4>Selecciona una lista para gestionar sus elementos</h4>
+                        <p>Haz clic en una lista de la izquierda para ver y editar sus elementos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal para crear nueva lista - Comentado porque las listas se crean desde código -->
+<!--
+<div class="modal fade" id="createListaModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Crear Nueva Lista</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newListaNombre">Nombre de la Lista:</label>
+                    <input type="text" class="form-control" id="newListaNombre" ng-model="newListaNombre"
+                        placeholder="Ej: tipos, estados, roles">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" ng-click="createLista()" data-dismiss="modal">Crear
+                    Lista</button>
+            </div>
+        </div>
+    </div>
+</div>
+-->

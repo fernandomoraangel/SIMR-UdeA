@@ -18,6 +18,7 @@ angular.module("obras").controller("ObrasController", [
   "Idiomas",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $rootScope,
@@ -34,7 +35,8 @@ angular.module("obras").controller("ObrasController", [
     Proyectos,
     Idiomas,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     // intercept the route change event
     $scope.$on("$routeChangeStart", function (angularEvent, newUrl) {
@@ -48,29 +50,19 @@ angular.module("obras").controller("ObrasController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    $scope.roles = roles;
-    $scope.tipos = [
-      "Ballet",
-      "Danza",
-      "Dramatica",
-      "Literaria",
-      "Multimedia",
-      "Musical",
-      "Plástica",
-      "Poética",
-      "Teatral",
-      "Teórica",
-      "Visual",
-    ];
 
-    $scope.eventos = [
-      "Composición",
-      "Creación",
-      "Estreno",
-      "Primera grabación",
-      "Puesta en escena",
-    ];
-    $scope.lugares = lugares;
+    // Cargar listas dinámicas desde la API
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+
+    // Inicializar listas
+    $scope.loadListas();
+
     $scope.centros = [
       "C",
       "C#",
@@ -85,8 +77,6 @@ angular.module("obras").controller("ObrasController", [
       "Bb",
       "B",
     ];
-    $scope.coberturas = coberturas;
-    $scope.dEtiquetas = dEtiquetas;
     $scope.direcciones = ["A-B", "B-A", "No direccional", "Indeterminada"];
     $scope.tiposDeRelacion = [
       "Obra derivada",

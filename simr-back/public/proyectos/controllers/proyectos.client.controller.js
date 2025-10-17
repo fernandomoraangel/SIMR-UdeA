@@ -10,6 +10,7 @@ angular.module("proyectos").controller("ProyectosController", [
   "Actores",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -18,42 +19,23 @@ angular.module("proyectos").controller("ProyectosController", [
     Proyectos,
     Actores,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    //Específicos de proyecto
-    $scope.roles = [
-      "Asesor",
-      "Auxiliar administrativo",
-      "Co-investigador",
-      "Colaborador",
-      "Estudiante de doctorado",
-      "Estudiante de maestría",
-      "Estudiante de pregrado",
-      "Investigador principal",
-      "Investigador",
-      "Servicios técnicos",
-    ];
-    $scope.estadosProyecto = estadosProyecto;
-    //Específicos de proyecto
-    $scope.eventos = [
-      "Acta de finalización",
-      "Acta de inicio",
-      "Análisis de datos",
-      "Construcción de informe",
-      "Envío a convocatoria",
-      "Finalización",
-      "Formulación",
-      "Inicio",
-      "Procesamiento de información",
-      "Prórroga",
-      "Solicitud de prórroga",
-      "Terminación",
-      "Trabajo de campo",
-    ];
-    $scope.dEtiquetas = dEtiquetas;
+    // Cargar listas dinámicas desde la API
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+
+    // Inicializar listas
+    $scope.loadListas();
     $scope.idActores = [];
     $scope.idFechas = [];
     $scope.idDescriptores = [];

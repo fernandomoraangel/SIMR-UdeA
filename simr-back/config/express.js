@@ -292,6 +292,8 @@ module.exports = function () {
   require("../app/routes/roles.server.routes.js")(app);
   require("../app/routes/permissions.server.routes.js")(app);
   require("../app/routes/auditlog.server.routes.js")(app);
+  // Rutas para gestión de listas
+  require("../app/routes/listas.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");

@@ -8,18 +8,32 @@ angular.module("colecciones").controller("ColeccionesController", [
   "Authentication",
   "Colecciones",
   "Diccionarios",
+  "Listas",
   function (
     $scope,
     $routeParams,
     $location,
     Authentication,
     Colecciones,
-    Diccionarios
+    Diccionarios,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    $scope.tiposFondosColecciones = tiposFondosColecciones;
+
+    // Cargar listas dinámicas desde la API
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+
+    // Inicializar listas
+    $scope.loadListas();
+
     $scope.idActores = [];
     $scope.idFechas = [];
     $scope.idCoberturas = [];

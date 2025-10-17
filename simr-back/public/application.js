@@ -24,6 +24,7 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "diccionarios",
   "generosNoMusicales",
   "archivos",
+  "listas",
 ]);
 // .run(function ($location) {
 //   // Redirect to the login page if the user is not authenticated
