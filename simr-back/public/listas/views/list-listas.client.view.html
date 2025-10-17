@@ -16,119 +16,125 @@
 
     .list-group-item .btn-group .btn:active {
         transform: translateY(0) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-    }
 
-    /* Botón Editar - Amarillo */
-    .list-group-item .btn-group .btn-warning {
-        background-color: #f0ad4e !important;
-        border-color: #eea236 !important;
-        color: white !important;
-    }
+        <span ng-if="editIndex !== $index && !isNNormalizados()"> {
+                {
+                elemento
+            }
+        }
 
-    .list-group-item .btn-group .btn-warning:hover {
-        background-color: #ec971f !important;
-        border-color: #d58512 !important;
-        color: white !important;
-    }
+        </span>
 
-    /* Botón Guardar - Verde */
-    .list-group-item .btn-group .btn-success {
-        background-color: #5cb85c !important;
-        border-color: #4cae4c !important;
-        color: white !important;
-    }
+        /* Botón Editar - Amarillo */
+        .list-group-item .btn-group .btn-warning {
+            background-color: #f0ad4e !important;
+            border-color: #eea236 !important;
+            color: white !important;
+        }
 
-    .list-group-item .btn-group .btn-success:hover {
-        background-color: #449d44 !important;
-        border-color: #398439 !important;
-        color: white !important;
-    }
+        .list-group-item .btn-group .btn-warning:hover {
+            background-color: #ec971f !important;
+            border-color: #d58512 !important;
+            color: white !important;
+        }
 
-    /* Botón Cancelar - Gris */
-    .list-group-item .btn-group .btn-default {
-        background-color: #fff !important;
-        border-color: #ccc !important;
-        color: #333 !important;
-    }
+        /* Botón Guardar - Verde */
+        .list-group-item .btn-group .btn-success {
+            background-color: #5cb85c !important;
+            border-color: #4cae4c !important;
+            color: white !important;
+        }
 
-    .list-group-item .btn-group .btn-default:hover {
-        background-color: #e6e6e6 !important;
-        border-color: #adadad !important;
-        color: #333 !important;
-    }
+        .list-group-item .btn-group .btn-success:hover {
+            background-color: #449d44 !important;
+            border-color: #398439 !important;
+            color: white !important;
+        }
 
-    /* Botón Eliminar - Rojo */
-    .list-group-item .btn-group .btn-danger {
-        background-color: #d9534f !important;
-        border-color: #d43f3a !important;
-        color: white !important;
-    }
+        /* Botón Cancelar - Gris */
+        .list-group-item .btn-group .btn-default {
+            background-color: #fff !important;
+            border-color: #ccc !important;
+            color: #333 !important;
+        }
 
-    .list-group-item .btn-group .btn-danger:hover {
-        background-color: #c9302c !important;
-        border-color: #ac2925 !important;
-        color: white !important;
-    }
+        .list-group-item .btn-group .btn-default:hover {
+            background-color: #e6e6e6 !important;
+            border-color: #adadad !important;
+            color: #333 !important;
+        }
 
-    /* Mejorar visibilidad de iconos */
-    .list-group-item .btn i {
-        font-size: 14px !important;
-        line-height: 1 !important;
-        color: inherit !important;
-    }
+        /* Botón Eliminar - Rojo */
+        .list-group-item .btn-group .btn-danger {
+            background-color: #d9534f !important;
+            border-color: #d43f3a !important;
+            color: white !important;
+        }
 
-    /* Estilos para los list-group-items */
-    .list-group-item {
-        padding: 12px 15px !important;
-    }
+        .list-group-item .btn-group .btn-danger:hover {
+            background-color: #c9302c !important;
+            border-color: #ac2925 !important;
+            color: white !important;
+        }
 
-    .list-group-item .row {
-        display: flex;
-        align-items: center;
-    }
+        /* Mejorar visibilidad de iconos */
+        .list-group-item .btn i {
+            font-size: 14px !important;
+            line-height: 1 !important;
+            color: inherit !important;
+        }
 
-    /* Estilos para el botón de agregar */
-    .panel-body .btn-success {
-        background-color: #5cb85c !important;
-        border-color: #4cae4c !important;
-        color: white !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    }
+        /* Estilos para los list-group-items */
+        .list-group-item {
+            padding: 12px 15px !important;
+        }
 
-    .panel-body .btn-success:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-        background-color: #449d44 !important;
-        border-color: #398439 !important;
-        color: white !important;
-    }
+        .list-group-item .row {
+            display: flex;
+            align-items: center;
+        }
 
-    .panel-body .btn-success:active {
-        transform: translateY(0);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-    }
+        /* Estilos para el botón de agregar */
+        .panel-body .btn-success {
+            background-color: #5cb85c !important;
+            border-color: #4cae4c !important;
+            color: white !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        }
 
-    /* Mejorar inputs con tooltips */
-    .form-control[title]:focus {
-        border-color: #66afe9 !important;
-        box-shadow: 0 0 8px rgba(102, 175, 233, 0.6) !important;
-    }
+        .panel-body .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+            background-color: #449d44 !important;
+            border-color: #398439 !important;
+            color: white !important;
+        }
 
-    /* Ajustar posición de botones en grupo */
-    .list-group-item .btn-group {
-        white-space: nowrap;
-    }
+        .panel-body .btn-success:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        }
 
-    /* Espaciado entre botones */
-    .list-group-item .btn-group .btn {
-        margin-left: 3px;
-    }
+        /* Mejorar inputs con tooltips */
+        .form-control[title]:focus {
+            border-color: #66afe9 !important;
+            box-shadow: 0 0 8px rgba(102, 175, 233, 0.6) !important;
+        }
 
-    .list-group-item .btn-group .btn:first-child {
-        margin-left: 0;
-    }
+        /* Ajustar posición de botones en grupo */
+        .list-group-item .btn-group {
+            white-space: nowrap;
+        }
+
+        /* Espaciado entre botones */
+        .list-group-item .btn-group .btn {
+            margin-left: 3px;
+        }
+
+        .list-group-item .btn-group .btn:first-child {
+            margin-left: 0;
+        }
 </style>
 
 <ng-include src="'core/views/core.client.view.html'"></ng-include>
@@ -177,7 +183,7 @@
             <div class="col-md-8" ng-if="selectedLista">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4>{{selectedLista.nombre_lista}}</h4>
+                        <h4>{{selectedLista.nombre_lista | capitalize}}</h4>
                     </div>
                     <div class="panel-body">
                         <!-- Agregar nuevo elemento - Formato especial para nNormalizados -->
@@ -232,7 +238,8 @@
                                                 {{getMetadataFrase($index)}}</span>
                                         </span>
                                         <!-- Mostrar normal para otras listas -->
-                                        <span ng-if="editIndex !== $index && !isNNormalizados()">{{elemento}}</span>
+                                        <span ng-if="editIndex !== $index && !isNNormalizados()">{{elemento |
+                                            capitalize}}</span>
 
                                         <!-- Campo de edición -->
                                         <div ng-if="editIndex === $index">
