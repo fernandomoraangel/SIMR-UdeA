@@ -715,7 +715,13 @@ div > span:first-child,
 /* Asegurar que los iconos de ojo tengan fondo verde */
 .glyphicon,
 [class*="glyphicon-"] {
-  color: var(--primary-green) !important;
+  font-size: 16px !important;
+  font-family: "Roboto", Arial, sans-serif !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  color: var(--primary-green-dark) !important;
+  margin-bottom: 6px !important;
+  display: inline-block;
 }
 
 /* Botones con fondo verde específicamente */
@@ -813,7 +819,7 @@ a.remove,
   background-color: transparent !important;
   border-color: var(--error-color) !important;
 }
-
+  text-transform: none !important;
 .glyphicon-remove:hover {
   color: #b71c1c !important;
 }
