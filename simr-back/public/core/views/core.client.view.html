@@ -122,6 +122,14 @@
             </ul>
           </li>
 
+          <li class="dropdown" data-ng-if="auth.isAuthenticated">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+              aria-expanded="false">Utilidades<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/#!/search">Búsqueda General</a></li>
+            </ul>
+          </li>
+
           <li class="dropdown" data-ng-if="isAdmin()">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
               aria-expanded="false">Administración<span class="caret"></span></a>
@@ -203,7 +211,4 @@
       "
       ng-click="testRefreshToken()"
       >Test Refresh Token</a
-    > -->
-    <!-- Fin TEST AREA -->
-  </div>
 </section>

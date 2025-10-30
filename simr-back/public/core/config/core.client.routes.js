@@ -13,6 +13,11 @@ angular.module("core").config([
       .when("/", {
         templateUrl: "/core/views/core.client.view.html",
         requireAuth: false,
+      })
+      .when("/search", {
+        templateUrl: "/search/views/search.client.view.html",
+        controller: "SearchController",
+        controllerAs: "vm",
       });
     // .otherwise({
     // 	redirectTo: '/'

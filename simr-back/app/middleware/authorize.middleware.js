@@ -30,6 +30,11 @@ const authorize = (resource, action, options = {}) => {
         });
       }
 
+      // DEBUG: Log para verificar permisos
+      console.log(
+        `🔐 Verificando permiso: ${resource}:${action} para usuario ${req.user._id}`
+      );
+
       // Verificar primero si tiene permiso "any" (acceso total)
       const hasAnyPermission = await permissionService.hasPermission(
         req.user,
@@ -38,7 +43,10 @@ const authorize = (resource, action, options = {}) => {
         "any"
       );
 
+      console.log(`🔐 Permiso ${resource}:${action}:any = ${hasAnyPermission}`);
+
       if (hasAnyPermission) {
+        console.log(`✅ Permiso concedido para ${resource}:${action}`);
         return next(); // Permiso concedido
       }
 
@@ -50,6 +58,8 @@ const authorize = (resource, action, options = {}) => {
         "own"
       );
 
+      console.log(`🔐 Permiso ${resource}:${action}:own = ${hasOwnPermission}`);
+
       if (hasOwnPermission) {
         // Verificar ownership si se proporcionó la función
         if (
@@ -59,6 +69,9 @@ const authorize = (resource, action, options = {}) => {
           const isOwner = await options.checkOwnership(req);
 
           if (isOwner) {
+            console.log(
+              `✅ Permiso concedido (ownership) para ${resource}:${action}`
+            );
             return next(); // Es dueño del recurso
           } else {
             return res.status(403).json({
@@ -77,6 +90,7 @@ const authorize = (resource, action, options = {}) => {
       }
 
       // No tiene ningún permiso
+      console.log(`❌ Permiso denegado para ${resource}:${action}`);
       return res.status(403).json({
         success: false,
         message: `No autorizado. Requiere permiso de ${action} en ${resource}.`,

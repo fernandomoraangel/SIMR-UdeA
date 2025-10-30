@@ -37,6 +37,7 @@ const PermissionSchema = new Schema(
         "idioma",
         "diccionario",
         "archivo",
+        "search",
       ],
     },
     actions: {
@@ -321,6 +322,14 @@ RoleSchema.statics.createSystemRoles = async function () {
             ["delete", "any"],
           ]),
         },
+        {
+          resource: "search",
+          actions: new Map([["read", "any"]]),
+        },
+        {
+          resource: "search",
+          actions: new Map([["read", "any"]]),
+        },
       ],
     },
     {
@@ -393,6 +402,10 @@ RoleSchema.statics.createSystemRoles = async function () {
           resource: "archivo",
           actions: new Map([["read", "any"]]),
         },
+        {
+          resource: "search",
+          actions: new Map([["read", "any"]]),
+        },
       ],
     },
     {
@@ -442,6 +455,10 @@ RoleSchema.statics.createSystemRoles = async function () {
             ["update", "own"],
             ["delete", "own"],
           ]),
+        },
+        {
+          resource: "search",
+          actions: new Map([["read", "any"]]),
         },
       ],
     },
@@ -579,6 +596,10 @@ RoleSchema.statics.createSystemRoles = async function () {
             ["read", "any"],
             ["update", "any"],
           ]),
+        },
+        {
+          resource: "search",
+          actions: new Map([["read", "any"]]),
         },
       ],
     },

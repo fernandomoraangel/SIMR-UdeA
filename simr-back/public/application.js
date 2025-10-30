@@ -25,6 +25,7 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "generosNoMusicales",
   "archivos",
   "listas",
+  "search",
 ]);
 // .run(function ($location) {
 //   // Redirect to the login page if the user is not authenticated

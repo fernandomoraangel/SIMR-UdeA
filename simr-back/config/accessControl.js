@@ -22,7 +22,9 @@ ac.grant("user")
   .readAny("fondo")
   .readAny("archivo")
   .readAny("diccionario")
-  .readAny("idioma");
+  .readAny("idioma")
+  // Usuarios pueden usar el sistema de búsqueda
+  .readAny("search");
 
 ac.grant("editor")
   .extend("user")

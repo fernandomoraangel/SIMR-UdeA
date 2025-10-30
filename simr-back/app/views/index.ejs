@@ -22,16 +22,11 @@
 
   <section ng-view></section>
   <script type="text/javascript" nonce="<%= nonce %>">
-    window.user = <% - user || 'null' %>;
-  </script>
-  <script type="text/javascript" nonce="<%= nonce %>">
+    window.user = JSON.parse('<%- JSON.stringify(user || null) %>');
     window.FRONTEND_URL = '<%= process.env.FRONTEND_URL || 'http://localhost:4200' %>';
     window.ANGULARJS_URL = '<%= process.env.ANGULARJS_URL || 'http://localhost:3000' %>';
     window.API_URL = '<%= process.env.API_URL || 'http://localhost:3000' %>';
-  </script>
-
-  <script type="text/javascript" nonce="<%= nonce %>">
-    src = "/lib/requirejs/bin/r.js";
+    window.src = "/lib/requirejs/bin/r.js";
   </script>
 
   <script src="/lib/jquery/dist/jquery.min.js"></script>
@@ -167,6 +162,12 @@
   <script type="text/javascript" src="/auditoria/services/auditoria.client.service.js"></script>
   <script type="text/javascript" src="/auditoria/controllers/auditoria-lista.client.controller.js"></script>
   <script type="text/javascript" src="/auditoria/config/auditoria.client.routes.js"></script>
+
+  <!-- Sistema de búsqueda -->
+  <script type="text/javascript" src="/search/search.client.module.js"></script>
+  <script type="text/javascript" src="/search/config/search.client.routes.js"></script>
+  <script type="text/javascript" src="/search/services/search.client.service.js"></script>
+  <script type="text/javascript" src="/search/controllers/search.client.controller.js"></script>
 
   <!-- Autenticación -->
   <script type="text/javascript" src="/authentication/authentication.client.module.js"></script>
