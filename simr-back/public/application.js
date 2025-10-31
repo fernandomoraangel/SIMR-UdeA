@@ -26,6 +26,7 @@ var mainApplicationModule = angular.module(mainApplicationModuleName, [
   "archivos",
   "listas",
   "search",
+  "graph",
 ]);
 // .run(function ($location) {
 //   // Redirect to the login page if the user is not authenticated

@@ -1,0 +1,399 @@
+<section ng-controller="CoreController">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-core-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div data-ng-if="auth.isAuthenticated">
+                    <img src="img/logomr2.png" alt="Logo" class="img-resize" style="max-width: 40%" />
+                </div>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-core-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown" data-ng-if="auth.isAuthenticated">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Obras y actores<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li data-ng-if="canCreate()"><a href="/#!/obras/create">Crear obra</a></li>
+                            <li><a href="/#!/obras">Listar obras</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/actores/create">Crear actor</a></li>
+                            <li><a href="/#!/actores">Listar actores</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" data-ng-if="auth.isAuthenticated">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Recursos y ejemplares<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li data-ng-if="canCreate()"><a href="/#!/recursos/create">Crear Recurso</a></li>
+                            <li><a href="/#!/recursos">Listar Recursos</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/ejemplares/create">Crear Ejemplar</a></li>
+                            <li><a href="#!/ejemplares">Listar Ejemplares</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" data-ng-if="auth.isAuthenticated">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Proyectos<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li data-ng-if="canCreate()"><a href="/#!/proyectos/create">Crear Proyecto</a></li>
+                            <li><a href="#!/proyectos">Listar Proyectos</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" data-ng-if="auth.isAuthenticated">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Fondos y Colecciones<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li data-ng-if="canCreate()"><a href="/#!/fondos/create">Crear Fondo documental</a></li>
+                            <li><a href="/#!/fondos">Listar Fondos documentales</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/colecciones/create">Crear Colección</a></li>
+                            <li><a href="/#!/colecciones">Listar Colecciones</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" data-ng-if="auth.isAuthenticated">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Términos<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li data-ng-if="canCreate()"><a href="/#!/instrumentos/create">Crear Instrumento</a></li>
+                            <li><a href="/#!/instrumentos">Listar Instrumentos</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/medios/create">Crear Medio sonoro</a></li>
+                            <li><a href="/#!/medios">Listar Medios sonoros</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/sistemas/create">Crear Sistema sonoro</a></li>
+                            <li><a href="/#!/sistemas">Listar Sistemas sonoros</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/materias/create">Crear Materia</a></li>
+                            <li><a href="/#!/materias">Listar Materias</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/generos/create">Crear Género o Forma</a></li>
+                            <li><a href="/#!/generos">Listar Géneros o Formas</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()">
+                                <a href="/#!/generosnomusicales/create">Crear Género o Forma no musical</a>
+                            </li>
+                            <li>
+                                <a href="/#!/generosnomusicales">Listar Géneros o Formas no musicales</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/idiomas/create">Crear idioma</a></li>
+                            <li><a href="/#!/idiomas">Listar idiomas</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()">
+                                <a href="/#!/diccionarios/create">Crear campo en diccionario</a>
+                            </li>
+                            <li>
+                                <a href="/#!/diccionarios">Listar Diccionario de datos</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li data-ng-if="canCreate()"><a href="/#!/listas">Gestión de Listas</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" data-ng-if="auth.isAuthenticated">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Utilidades<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/#!/search">Búsqueda General</a></li>
+                            <li><a href="/#!/graph">Grafo de Base de Datos</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" data-ng-if="isAdmin()">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Administración<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/#!/admin/usuarios">Gestión de Usuarios</a></li>
+                            <li><a href="/#!/admin/roles">Gestión de Roles</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/#!/admin/auditoria">Auditoría del Sistema</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href="https://github.com/fernandomoraangel/simr/wiki" target="_blank">Manual de
+                                    usuario</a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/fernandomoraangel/simr/issues" target="_blank">Reportar
+                                    novedad</a>
+                            </li>
+                            <li>
+                                <a style="cursor: pointer" ng-click="acercaDe()">Acerca de</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">
+                            <small>{{ auth.currentUser.fullName }}</small>
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu" data-ng-if="!auth.isAuthenticated">
+                            <li><a href="#!/login">Iniciar sesión</a></li>
+                            <li><a href="#!/signup">Registrarse</a></li>
+                        </ul>
+                        <ul class="dropdown-menu" data-ng-if="auth.isAuthenticated">
+                            <li>
+                                <a style="cursor: pointer" ng-click="logoutUser()">Terminar sesión</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div data-ng-if="auth.isAuthenticated == false">
+        <img src="img/sello.png" alt="Logo" class="img-resize" style="max-width: 100%" />
+        <h2>Bienvenido a nuestro Sistema de Información</h2>
+        <a href="#!/login">Iniciar sesión</a>
+        <a href="#!/signup">Registrarse</a>
+        <a href="https://github.com/fernandomoraangel/simr/wiki" target="_blank">Manual de usuario</a>
+        <a href="https://github.com/fernandomoraangel/simr/issues" target="_blank">Reportar situación</a>
+        <a style="cursor: pointer" ng-click="acercaDe()">Acerca de</a>
+    </div>
+</section>
+
+<div class="container-fluid" ng-controller="GraphController as vm">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Grafo de Base de Datos</h2>
+            <p class="text-muted">
+                Visualización interactiva de las relaciones entre entidades del sistema SIMR
+            </p>
+        </div>
+    </div>
+
+    <!-- Barra de control -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form ng-submit="vm.loadGraph()" class="mb-3">
+                        <div style="width:100%; display:flex; gap:10px; align-items:center;">
+                            <input type="text" class="form-control form-control-lg"
+                                style="flex:1; min-width:0; width:100%;"
+                                placeholder="Búsqueda opcional (ej: bachata OR salsa)" ng-model="vm.searchQuery">
+                            <button type="submit" class="btn btn-primary btn-lg" ng-disabled="vm.isLoading"
+                                style="white-space:nowrap;">
+                                <i class="glyphicon glyphicon-refresh" ng-if="!vm.isLoading"></i>
+                                <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"
+                                    ng-if="vm.isLoading"></i>
+                                {{ vm.isLoading ? 'Cargando...' : 'Generar Grafo' }}
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Opciones de control -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="search-options-icons-group">
+                                <div class="form-check d-inline-flex align-items-center" style="margin-bottom:0;">
+                                    <button type="button" class="glyphicon glyphicon-erase search-icon-btn"
+                                        ng-click="vm.clearGraph()" title="Limpiar grafo"></button>
+                                    <button type="button" class="glyphicon glyphicon-filter search-icon-btn"
+                                        ng-click="vm.showFilters = !vm.showFilters" title="Filtrar entidades"></button>
+                                    <button type="button" class="glyphicon glyphicon-eye-open search-icon-btn"
+                                        data-toggle="collapse" data-target="#helpPanel" aria-expanded="false"
+                                        aria-controls="helpPanel" title="Ver ayuda"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros de entidades -->
+    <div class="row mb-4" ng-if="vm.availableEntities.length > 0">
+        <div class="col-md-12">
+            <div class="card">
+                <div ng-show="vm.showFilters">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm mr-2"
+                                    ng-click="vm.selectAllEntities()">
+                                    Seleccionar todas
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    ng-click="vm.clearEntitySelection()">
+                                    Limpiar selección
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3" ng-repeat="entity in vm.availableEntities">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" ng-attr-id="entity-{{entity}}"
+                                        ng-checked="vm.isEntitySelected(entity)" ng-click="vm.toggleEntity(entity)">
+                                    <label class="form-check-label" ng-attr-for="entity-{{entity}}">
+                                        <span class="badge" ng-style="{'background-color': vm.entityColors[entity]}"
+                                            style="margin-right: 5px;">
+                                            &nbsp;
+                                        </span>
+                                        {{vm.getEntityDisplayName(entity)}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de ayuda -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div id="helpPanel" class="collapse">
+                    <div class="card-body">
+                        <h6 style="text-align: left;">Instrucciones de uso:</h6>
+                        <ul style="text-align: left;">
+                            <li>Selecciona una o más entidades para visualizar</li>
+                            <li>Opcionalmente, escribe una consulta de búsqueda con operadores booleanos (AND, OR, NOT)
+                            </li>
+                            <li>Haz clic en "Generar Grafo"</li>
+                            <li>Usa la rueda del mouse para hacer zoom</li>
+                            <li>Arrastra los nodos para reorganizarlos</li>
+                            <li>Pasa el cursor sobre un nodo para ver información</li>
+                            <li>Haz clic en un nodo para ver sus detalles</li>
+                        </ul>
+                        <h6 style="text-align: left;">Operadores de búsqueda:</h6>
+                        <ul style="text-align: left;">
+                            <li><code>AND</code> - Intersección de términos</li>
+                            <li><code>OR</code> - Unión de términos</li>
+                            <li><code>NOT</code> - Exclusión de términos</li>
+                            <li><code>()</code> - Agrupación de expresiones</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes de error -->
+    <div class="row" ng-if="vm.error">
+        <div class="col-md-12">
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Error:</strong> {{ vm.error }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del grafo -->
+    <div class="row" ng-if="vm.graphData">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <i class="glyphicon glyphicon-info-sign"></i>
+                <strong>Nodos:</strong> {{ vm.graphData.metadata.totalNodes }} |
+                <strong>Enlaces:</strong> {{ vm.graphData.metadata.totalLinks }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor del grafo -->
+    <div class="row" ng-if="vm.graphData || vm.isLoading">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body" style="padding: 0; position: relative;">
+                    <!-- Mensaje de carga -->
+                    <div ng-if="vm.isLoading" class="text-center" style="padding: 100px;">
+                        <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate" style="font-size: 48px;"></i>
+                        <h3>Cargando datos del grafo...</h3>
+                    </div>
+
+                    <!-- SVG del grafo -->
+                    <div id="graph-container" ng-if="!vm.isLoading"
+                        style="width: 100%; height: 600px; border: 1px solid #ddd; background-color: #fafafa;"></div>
+
+                    <!-- Tooltip -->
+                    <div id="graph-tooltip" style="
+                            position: absolute;
+                            display: none;
+                            background-color: rgba(0, 0, 0, 0.8);
+                            color: white;
+                            padding: 8px 12px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                            pointer-events: none;
+                            z-index: 1000;
+                        "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje inicial -->
+    <div class="row" ng-if="!vm.graphData && !vm.isLoading && !vm.error">
+        <div class="col-md-12">
+            <div class="well text-center" style="padding: 50px;">
+                <i class="glyphicon glyphicon-tree-deciduous" style="font-size: 48px; color: #999;"></i>
+                <h3>Grafo de Base de Datos</h3>
+                <p class="text-muted">
+                    Selecciona las entidades que deseas visualizar en el panel de filtros y haz clic en "Generar Grafo"
+                    para ver las relaciones entre ellas.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos adicionales -->
+<style>
+    .glyphicon-refresh-animate {
+        animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    #graph-container svg {
+        cursor: move;
+    }
+
+    #graph-container circle {
+        cursor: pointer;
+    }
+
+    #graph-container circle:hover {
+        filter: brightness(1.2);
+    }
+
+    .search-icon-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 8px;
+        margin-left: 10px;
+        color: #337ab7;
+    }
+
+    .search-icon-btn:hover {
+        color: #23527c;
+    }
+</style>

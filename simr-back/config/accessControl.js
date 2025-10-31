@@ -24,7 +24,9 @@ ac.grant("user")
   .readAny("diccionario")
   .readAny("idioma")
   // Usuarios pueden usar el sistema de búsqueda
-  .readAny("search");
+  .readAny("search")
+  // Usuarios pueden usar el grafo de base de datos
+  .readAny("graph");
 
 ac.grant("editor")
   .extend("user")
