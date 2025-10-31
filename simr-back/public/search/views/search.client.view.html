@@ -249,6 +249,8 @@
                                     <label class="form-check-label" for="exactSearch"
                                         style="margin-right: 16px; margin-left: 6px;">
                                         <span style="text-align: left; display: block;">Búsqueda exacta</span>
+                                        <small style="color: #666; font-size: 0.85em; display: block;">(desactivar para
+                                            búsqueda aproximada)</small>
                                     </label>
                                     <button type="button" class="glyphicon glyphicon-erase search-icon-btn"
                                         ng-click="vm.clearSearch()" title="Limpiar búsqueda"></button>
@@ -310,6 +312,12 @@
 
                 <div id="syntaxHelp" class="collapse">
                     <div class="card-body">
+                        <h6 style="text-align: left;">Búsqueda aproximada vs exacta:</h6>
+                        <ul style="text-align: left;">
+                            <li><strong>Sin checkbox:</strong> Búsqueda aproximada (tolera errores tipográficos como
+                                "bueni" → "bueno", "vueno" → "bueno")</li>
+                            <li><strong>Con checkbox:</strong> Búsqueda exacta (debe coincidir exactamente)</li>
+                        </ul>
                         <h6 style="text-align: left;">Operadores booleanos:</h6>
                         <ul style="text-align: left;">
                             <li><code>AND</code> - Intersección de términos</li>
@@ -319,8 +327,9 @@
                             <li><code>"texto"</code> - Búsqueda exacta de frases</li>
                         </ul>
                         <h6 style="text-align: left;">Ejemplos:</h6>
-                        <ul style="text-align: left;"">
-                            <li><code>bachata</code> - Buscar " bachata"</li>
+                        <ul style="text-align: left;">
+                            <li><code>bachata</code> - Buscar "bachata" (o variaciones como "bachata", "vachata" si está
+                                sin checkbox)</li>
                             <li><code>bachata AND salsa</code> - Bachata y salsa</li>
                             <li><code>bachata OR salsa</code> - Bachata o salsa</li>
                             <li><code>NOT bachata</code> - Todo excepto bachata</li>

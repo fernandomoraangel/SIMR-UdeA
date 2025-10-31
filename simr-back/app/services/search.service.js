@@ -182,8 +182,63 @@ class BooleanQueryParser {
     if (exact) {
       return { $eq: cleanTerm };
     } else {
-      return { $regex: cleanTerm, $options: "i" };
+      // Búsqueda aproximada: generar patrón regex tolerante a errores
+      const fuzzyPattern = this.createFuzzyPattern(cleanTerm);
+      return { $regex: fuzzyPattern, $options: "i" };
     }
+  }
+
+  // Crear patrón regex para búsqueda aproximada (fuzzy)
+  createFuzzyPattern(term) {
+    // Para términos muy cortos (< 3 caracteres), usar búsqueda normal
+    if (term.length < 3) {
+      return this.escapeRegex(term);
+    }
+
+    // Construir patrón flexible con sustituciones comunes
+    return this.createFlexiblePattern(term);
+  }
+
+  // Crear patrón flexible permitiendo errores tipográficos comunes
+  createFlexiblePattern(term) {
+    // Variaciones comunes de caracteres por errores tipográficos
+    const commonSubs = {
+      b: "[bv]",
+      v: "[bv]",
+      c: "[ckq]",
+      k: "[ckq]",
+      q: "[ckq]",
+      s: "[sz]",
+      z: "[sz]",
+      i: "[ieíí]",
+      y: "[iy]",
+      e: "[ei]",
+      o: "[ou]",
+      u: "[ou]",
+      h: "h?", // h opcional
+      n: "[nñ]",
+      ñ: "[nñ]",
+    };
+
+    // Construir patrón con sustituciones comunes
+    let flexPattern = "";
+    for (let i = 0; i < term.length; i++) {
+      const char = term[i].toLowerCase();
+
+      if (commonSubs[char]) {
+        flexPattern += commonSubs[char];
+      } else {
+        // Para otros caracteres, usar tal cual (escapado)
+        flexPattern += this.escapeRegex(char);
+      }
+    }
+
+    return flexPattern;
+  }
+
+  // Escapar caracteres especiales de regex
+  escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   evaluateRPN(tokens) {
@@ -254,6 +309,11 @@ class SearchService {
         };
       }
 
+      console.log(
+        "[SEARCH DEBUG] Parsed query:",
+        JSON.stringify(mongoQuery, null, 2)
+      );
+
       let totalResults = 0;
       let entityTotals = [];
       for (const entityName of searchEntities) {
@@ -262,6 +322,10 @@ class SearchService {
         const entityFields = fields || searchableFields[entityName] || [];
         if (entityFields.length === 0) continue;
         const entityQuery = this.buildEntityQuery(mongoQuery, entityFields);
+        console.log(
+          `[SEARCH DEBUG] ${entityName} query:`,
+          JSON.stringify(entityQuery, null, 2)
+        );
         let entityTotal = await Model.countDocuments(entityQuery);
         entityTotals.push({
           entityName,
@@ -304,18 +368,6 @@ class SearchService {
             },
           });
         }
-        if (entityName === "Proyecto") {
-          // No hay referencias, pero si las hubiera, aquí se agregan
-        }
-        if (entityName === "Fondo") {
-          // No hay referencias, pero si las hubiera, aquí se agregan
-        }
-        if (entityName === "Coleccion") {
-          // No hay referencias, pero si las hubiera, aquí se agregan
-        }
-        if (entityName === "Idioma") {
-          // No hay referencias, pero si las hubiera, aquí se agregan
-        }
 
         const entityResults = await queryExec.exec();
         entityResults.forEach((result) => {
@@ -357,32 +409,98 @@ class SearchService {
 
   // Construir consulta específica para una entidad
   buildEntityQuery(mongoQuery, fields) {
+    // Si mongoQuery es una expresión booleana, expandirla para cada campo
+    if (this.isBooleanExpression(mongoQuery)) {
+      return this.expandBooleanForFields(mongoQuery, fields);
+    }
+
+    // Para términos simples, crear condición OR entre todos los campos
     const orConditions = [];
 
-    // Para cada campo searchable, crear condición OR
     for (const field of fields) {
-      const fieldQuery = {};
-
-      // Manejar campos anidados (con punto)
-      if (field.includes(".")) {
-        // Para campos anidados en arrays, necesitamos usar $elemMatch
-        const parts = field.split(".");
-        if (parts.length === 2) {
-          // Ejemplo: descriptores.etiqueta -> { descriptores: { $elemMatch: { etiqueta: mongoQuery } } }
-          fieldQuery[parts[0]] = { $elemMatch: { [parts[1]]: mongoQuery } };
-        } else {
-          this.setNestedField(fieldQuery, field, mongoQuery);
-        }
-      } else {
-        fieldQuery[field] = mongoQuery;
+      const fieldCondition = this.applyConditionToField(field, mongoQuery);
+      if (fieldCondition) {
+        orConditions.push(fieldCondition);
       }
-
-      orConditions.push(fieldQuery);
     }
 
     return orConditions.length > 1
       ? { $or: orConditions }
       : orConditions[0] || {};
+  }
+
+  // Verificar si mongoQuery es una expresión booleana
+  isBooleanExpression(query) {
+    if (!query || typeof query !== "object") return false;
+    const keys = Object.keys(query);
+    return keys.some((key) => ["$and", "$or", "$nor"].includes(key));
+  }
+
+  // Expandir expresión booleana para múltiples campos
+  expandBooleanForFields(mongoQuery, fields) {
+    const operator = Object.keys(mongoQuery).find((k) =>
+      ["$and", "$or", "$nor"].includes(k)
+    );
+
+    if (!operator) {
+      // No es una expresión booleana válida
+      return this.buildEntityQuery(mongoQuery, fields);
+    }
+
+    const conditions = mongoQuery[operator];
+
+    if (!Array.isArray(conditions) || conditions.length === 0) {
+      return {};
+    }
+
+    // Para cada término en la expresión booleana, crear un OR de todos los campos
+    const expandedConditions = conditions.map((condition) => {
+      if (this.isBooleanExpression(condition)) {
+        // Recursivo para expresiones anidadas
+        return this.expandBooleanForFields(condition, fields);
+      } else {
+        // Crear OR de todos los campos para este término
+        return this.createFieldsOrCondition(condition, fields);
+      }
+    });
+
+    return { [operator]: expandedConditions };
+  }
+
+  // Crear condición OR para un término en todos los campos
+  createFieldsOrCondition(condition, fields) {
+    const orConditions = [];
+
+    for (const field of fields) {
+      const fieldCondition = this.applyConditionToField(field, condition);
+      if (fieldCondition) {
+        orConditions.push(fieldCondition);
+      }
+    }
+
+    return orConditions.length > 1
+      ? { $or: orConditions }
+      : orConditions[0] || {};
+  }
+
+  // Aplicar una condición simple a un campo específico
+  applyConditionToField(field, condition) {
+    const fieldQuery = {};
+
+    // Manejar campos anidados (con punto)
+    if (field.includes(".")) {
+      const parts = field.split(".");
+      if (parts.length === 2) {
+        // Para arrays con subdocumentos
+        fieldQuery[parts[0]] = { $elemMatch: { [parts[1]]: condition } };
+      } else {
+        this.setNestedField(fieldQuery, field, condition);
+      }
+    } else {
+      fieldQuery[field] = condition;
+    }
+
+    return fieldQuery;
   }
 
   // Establecer valor en campo anidado
