@@ -229,34 +229,40 @@
             <div class="card">
                 <div class="card-body">
                     <form ng-submit="vm.performSearch()" class="mb-3">
-                        <div class="input-group">
+                        <div style="width:100%; display:flex; gap:10px; align-items:center;">
                             <input type="text" class="form-control form-control-lg"
+                                style="flex:1; min-width:0; width:100%;"
                                 placeholder="Ingrese su consulta de búsqueda..." ng-model="vm.searchQuery" required>
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary btn-lg" ng-disabled="vm.isLoading">
-                                    <i class="fa fa-search" ng-if="!vm.isLoading"></i>
-                                    <i class="fa fa-spinner fa-spin" ng-if="vm.isLoading"></i>
-                                    Buscar
-                                </button>
-                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg" ng-disabled="vm.isLoading"
+                                style="white-space:nowrap;">
+                                <i class="fa fa-search" ng-if="!vm.isLoading"></i>
+                                <i class="fa fa-spinner fa-spin" ng-if="vm.isLoading"></i>
+                                Buscar
+                            </button>
                         </div>
                     </form>
 
-                    <!-- Opciones de búsqueda -->
+                    <!-- Opciones de búsqueda, filtro y ayuda agrupados -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="exactSearch"
-                                    ng-model="vm.searchOptions.exact">
-                                <label class="form-check-label" for="exactSearch">
-                                    Búsqueda exacta
-                                </label>
+                        <div class="col-md-12">
+                            <div class="search-options-icons-group">
+                                <div class="form-check d-inline-flex align-items-center" style="margin-bottom:0;">
+                                    <input class="form-check-input" type="checkbox" id="exactSearch"
+                                        ng-model="vm.searchOptions.exact">
+                                    <label class="form-check-label" for="exactSearch"
+                                        style="margin-right: 16px; margin-left: 6px;">
+                                        <span style="text-align: left; display: block;">Búsqueda exacta</span>
+                                    </label>
+                                    <button type="button" class="glyphicon glyphicon-erase search-icon-btn"
+                                        ng-click="vm.clearSearch()" title="Limpiar búsqueda"></button>
+                                    <button type="button" class="glyphicon glyphicon-filter search-icon-btn"
+                                        ng-click="vm.showEntityFilters = !vm.showEntityFilters"
+                                        title="Filtrar entidades"></button>
+                                    <button type="button" class="glyphicon glyphicon-eye-open search-icon-btn"
+                                        data-toggle="collapse" data-target="#syntaxHelp" aria-expanded="false"
+                                        aria-controls="syntaxHelp" title="Ver ayuda de sintaxis"></button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="vm.clearSearch()">
-                                <i class="fa fa-times"></i> Limpiar
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -268,14 +274,8 @@
     <div class="row mb-4" ng-if="vm.availableEntities.length > 0">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#entityFilters">
-                            <i class="fa fa-filter"></i> Filtrar por entidades
-                        </button>
-                    </h5>
-                </div>
-                <div id="entityFilters" class="collapse">
+
+                <div ng-show="vm.showEntityFilters">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12 mb-3">
@@ -310,26 +310,20 @@
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#syntaxHelp">
-                            <i class="fa fa-question-circle"></i> Ayuda de sintaxis
-                        </button>
-                    </h5>
-                </div>
+
                 <div id="syntaxHelp" class="collapse">
                     <div class="card-body">
-                        <h6>Operadores booleanos:</h6>
-                        <ul>
+                        <h6 style="text-align: left;">Operadores booleanos:</h6>
+                        <ul style="text-align: left;">
                             <li><code>AND</code> - Intersección de términos</li>
                             <li><code>OR</code> - Unión de términos</li>
                             <li><code>NOT</code> - Exclusión de términos</li>
                             <li><code>()</code> - Agrupación de expresiones</li>
                             <li><code>"texto"</code> - Búsqueda exacta de frases</li>
                         </ul>
-                        <h6>Ejemplos:</h6>
-                        <ul>
-                            <li><code>bachata</code> - Buscar "bachata"</li>
+                        <h6 style="text-align: left;">Ejemplos:</h6>
+                        <ul style="text-align: left;"">
+                            <li><code>bachata</code> - Buscar " bachata"</li>
                             <li><code>bachata AND salsa</code> - Bachata y salsa</li>
                             <li><code>bachata OR salsa</code> - Bachata o salsa</li>
                             <li><code>NOT bachata</code> - Todo excepto bachata</li>
@@ -374,13 +368,7 @@
                                 ng-repeat="result in vm.searchResults">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">{{vm.getResultTitle(result)}}</h5>
-                                    <small class="text-muted">
-                                        <span
-                                            class="badge badge-info">{{vm.getEntityDisplayName(result._entityType)}}</span>
-                                        <span class="badge badge-secondary" ng-if="result._searchScore">
-                                            Score: {{result._searchScore | number:2}}
-                                        </span>
-                                    </small>
+
                                 </div>
                                 <p class="mb-1">{{vm.getResultDescription(result)}}</p>
                                 <small class="text-muted" ng-if="result.creado">

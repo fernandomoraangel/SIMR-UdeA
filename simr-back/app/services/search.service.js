@@ -229,12 +229,20 @@ class SearchService {
       sort = { _searchScore: -1 },
     } = options;
 
-    // Asegurar que entities sea iterable
-    const searchEntities = Array.isArray(entities)
+    // Asegurar que entities sea iterable y filtrar solo entidades válidas
+    let searchEntities = Array.isArray(entities)
       ? entities
       : entities
       ? [entities]
       : Object.keys(models);
+    // Filtrar entidades inválidas
+    searchEntities = searchEntities.filter((e) => models[e]);
+
+    // DEBUG: Log entities and fields
+    console.log("[SEARCH DEBUG] Entities to search:", searchEntities);
+    if (fields) {
+      console.log("[SEARCH DEBUG] Custom fields:", fields);
+    }
 
     try {
       // Parsear la consulta booleana
@@ -265,6 +273,11 @@ class SearchService {
         // Construir consulta para esta entidad
         const entityQuery = this.buildEntityQuery(mongoQuery, entityFields);
 
+        // DEBUG: Log query for each entity
+        console.log(`[SEARCH DEBUG] Entity: ${entityName}`);
+        console.log(`[SEARCH DEBUG] Fields:`, entityFields);
+        console.log(`[SEARCH DEBUG] Mongo Query:`, JSON.stringify(entityQuery));
+
         try {
           // Ejecutar búsqueda simple primero (sin agregación compleja)
           const entityResults = await Model.find(entityQuery)
@@ -274,17 +287,21 @@ class SearchService {
             .populate("creador", "firstName lastName fullName")
             .exec();
 
-          // Agregar metadata de entidad y score básico
+          // Agregar metadata de entidad y score básico, y clonar para asegurar que _entityType se envía
           entityResults.forEach((result) => {
-            result._entityType = entityName;
-            result._searchScore = this.calculateBasicScore(
-              result,
+            // Convertir a objeto plano si es Mongoose Document
+            let plain =
+              typeof result.toObject === "function"
+                ? result.toObject()
+                : { ...result };
+            plain._entityType = entityName;
+            plain._searchScore = this.calculateBasicScore(
+              plain,
               query,
               entityFields
             );
+            results.push(plain);
           });
-
-          results.push(...entityResults);
           totalResults += entityResults.length;
         } catch (error) {
           console.warn(`Error searching in ${entityName}:`, error.message);
@@ -303,7 +320,7 @@ class SearchService {
         query: query,
         results: paginatedResults,
         total: totalResults,
-        entities: entities,
+        entities: searchEntities,
         exact: exact,
       };
     } catch (error) {

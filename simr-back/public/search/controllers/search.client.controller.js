@@ -10,6 +10,7 @@ angular.module("search").controller("SearchController", [
     var vm = this;
 
     // Inicialización
+    vm.showEntityFilters = false;
     vm.authentication = Authentication;
     vm.searchQuery = "";
     vm.searchResults = [];
@@ -55,6 +56,8 @@ angular.module("search").controller("SearchController", [
 
       SearchService.search(vm.searchQuery, options)
         .then(function (results) {
+          // LOG: Mostrar resultados crudos en consola para depuración
+          console.log("[SEARCH DEBUG] Resultados crudos:", results.results);
           vm.searchResults = results.results || [];
           vm.totalResults = results.total || 0;
           vm.isLoading = false;
@@ -130,40 +133,75 @@ angular.module("search").controller("SearchController", [
       return displayNames[entity] || entity;
     };
 
+    // Mostrar en el título el primer campo válido, y en la descripción los demás campos, eliminando cualquier campo que sea id
     vm.getResultTitle = function (result) {
-      // Determinar el título basado en el tipo de entidad
-      switch (result._entityType) {
-        case "Obra":
-          return result.titulo || "Sin título";
-        case "Actor":
-          return (
-            (result.nombres + " " + result.apellidos).trim() || "Sin nombre"
-          );
-        case "Recurso":
-          return result.titulo || "Sin título";
-        case "Genero":
-        case "GeneroNoMusical":
-          return result.nombre || "Sin nombre";
-        default:
-          return result.titulo || result.nombre || "Sin título";
+      const exclude = [
+        "_id",
+        "__v",
+        "_entityType",
+        "_searchScore",
+        "creado",
+        "modificado",
+        "$hashKey",
+        "$id",
+        "$$hashKey",
+      ];
+      let first = null;
+      for (const key in result) {
+        if (
+          !exclude.includes(key) &&
+          typeof result[key] !== "object" &&
+          result[key] !== undefined &&
+          result[key] !== null &&
+          String(result[key]).trim() !== "" &&
+          !/id$/i.test(key)
+        ) {
+          first = result[key];
+          break;
+        }
       }
+      let entityType = "";
+      if (result._entityType && typeof vm.getEntityDisplayName === "function") {
+        entityType = " (" + vm.getEntityDisplayName(result._entityType) + ")";
+      } else if (result._entityType) {
+        entityType = " (" + result._entityType + ")";
+      }
+      return first
+        ? String(first) + entityType
+        : "Sin información" + entityType;
     };
 
     vm.getResultDescription = function (result) {
-      // Determinar la descripción basada en el tipo de entidad
-      switch (result._entityType) {
-        case "Obra":
-          return result.descripcion || "Sin descripción";
-        case "Actor":
-          return result.nombreReunion || "Sin información adicional";
-        case "Recurso":
-          return result.descripcion || "Sin descripción";
-        case "Genero":
-        case "GeneroNoMusical":
-          return result.descripcion || "Sin descripción";
-        default:
-          return result.descripcion || "Sin descripción";
+      const exclude = [
+        "_id",
+        "__v",
+        "_entityType",
+        "_searchScore",
+        "creado",
+        "modificado",
+        "$hashKey",
+        "$id",
+        "$$hashKey",
+      ];
+      let desc = [];
+      let foundFirst = false;
+      for (const key in result) {
+        if (
+          !exclude.includes(key) &&
+          typeof result[key] !== "object" &&
+          result[key] !== undefined &&
+          result[key] !== null &&
+          String(result[key]).trim() !== "" &&
+          !/id$/i.test(key) // Excluir cualquier campo que termine en id (mayúscula o minúscula)
+        ) {
+          if (!foundFirst) {
+            foundFirst = true;
+            continue; // Saltar el primer campo (ya mostrado en título)
+          }
+          desc.push(key + ": " + result[key]);
+        }
       }
+      return desc.length > 0 ? desc.join(" | ") : "Sin información";
     };
 
     vm.getResultLink = function (result) {

@@ -1,3 +1,33 @@
+/* Agrupa los íconos junto al checkbox de búsqueda exacta y los alinea a la izquierda */
+.search-options-icons-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.search-options-icons-group .form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-icon-btn {
+  background: none;
+  border: none;
+  padding: 0 6px;
+  margin-left: 2px;
+  font-size: 1.2em;
+  color: var(--primary-green-dark) !important;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  transition: color 0.2s;
+}
+.search-icon-btn:hover {
+  color: var(--orange-accent) !important;
+}
 /*
  * SIMR - Sistema de Información de Músicas Regionales
  * Hoja de estilos principal
