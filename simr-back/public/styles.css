@@ -15,6 +15,24 @@
 
 .search-icon-btn {
   background: none;
+
+/* Estilos específicos para resultados de búsqueda */
+.list-group-item h5 {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: var(--primary-green-dark) !important;
+  margin-bottom: 8px !important;
+}
+
+.list-group-item p {
+  font-size: 1rem !important;
+  margin-bottom: 6px !important;
+}
+
+.list-group-item small {
+  font-size: 0.75rem !important;
+  color: var(--text-muted) !important;
+}
   border: none;
   padding: 0 6px;
   margin-left: 2px;
