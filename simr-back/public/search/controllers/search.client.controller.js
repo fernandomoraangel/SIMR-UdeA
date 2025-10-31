@@ -4,9 +4,11 @@
 angular.module("search").controller("SearchController", [
   "$scope",
   "$location",
+  "$sce",
+  "$filter",
   "SearchService",
   "Authentication",
-  function ($scope, $location, SearchService, Authentication) {
+  function ($scope, $location, $sce, $filter, SearchService, Authentication) {
     var vm = this;
     // Inicialización
     vm.showEntityFilters = false;
@@ -135,6 +137,16 @@ angular.module("search").controller("SearchController", [
       return displayNames[entity] || entity;
     };
 
+    // Función auxiliar para aplicar resaltado a texto
+    vm.highlightText = function (text) {
+      if (!text || !vm.searchQuery) {
+        return text;
+      }
+      var highlightFilter = $filter("highlight");
+      var highlighted = highlightFilter(text, vm.searchQuery);
+      return $sce.trustAsHtml(highlighted);
+    };
+
     // Mostrar en el título el primer campo válido, y en la descripción los demás campos, eliminando cualquier campo que sea id
     vm.getResultTitle = function (result) {
       const exclude = [
@@ -168,9 +180,16 @@ angular.module("search").controller("SearchController", [
       } else if (result._entityType) {
         entityType = " (" + result._entityType + ")";
       }
-      return first
+      var title = first
         ? String(first) + entityType
         : "Sin información" + entityType;
+      return title;
+    };
+
+    // Versión con resaltado del título
+    vm.getResultTitleHighlighted = function (result) {
+      var title = vm.getResultTitle(result);
+      return vm.highlightText(title);
     };
 
     vm.getResultDescription = function (result) {
@@ -203,7 +222,14 @@ angular.module("search").controller("SearchController", [
           desc.push(key + ": " + result[key]);
         }
       }
-      return desc.length > 0 ? desc.join(" | ") : "Sin información";
+      var description = desc.length > 0 ? desc.join(" | ") : "Sin información";
+      return description;
+    };
+
+    // Versión con resaltado de la descripción
+    vm.getResultDescriptionHighlighted = function (result) {
+      var description = vm.getResultDescription(result);
+      return vm.highlightText(description);
     };
 
     vm.getResultLink = function (result) {

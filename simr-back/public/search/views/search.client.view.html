@@ -365,10 +365,10 @@
                         <a href="{{vm.getResultLink(result)}}" class="list-group-item list-group-item-action"
                             ng-repeat="result in vm.searchResults">
                             <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{vm.getResultTitle(result)}}</h5>
+                                <h5 class="mb-1" ng-bind-html="vm.getResultTitleHighlighted(result)"></h5>
 
                             </div>
-                            <p class="mb-1">{{vm.getResultDescription(result)}}</p>
+                            <p class="mb-1" ng-bind-html="vm.getResultDescriptionHighlighted(result)"></p>
                             <small class="text-muted" ng-if="result.creado">
                                 Creado: {{result.creado | date:'dd/MM/yyyy'}}
                             </small>
