@@ -258,67 +258,71 @@ class SearchService {
         };
       }
 
-      const results = [];
+      // Calcular el total real de resultados ANTES de paginar
       let totalResults = 0;
-
-      // Buscar en cada entidad seleccionada
+      let entityTotals = [];
       for (const entityName of searchEntities) {
         if (!models[entityName]) continue;
-
         const Model = models[entityName];
         const entityFields = fields || searchableFields[entityName] || [];
-
         if (entityFields.length === 0) continue;
-
-        // Construir consulta para esta entidad
         const entityQuery = this.buildEntityQuery(mongoQuery, entityFields);
-
-        // DEBUG: Log query for each entity
-        console.log(`[SEARCH DEBUG] Entity: ${entityName}`);
-        console.log(`[SEARCH DEBUG] Fields:`, entityFields);
-        console.log(`[SEARCH DEBUG] Mongo Query:`, JSON.stringify(entityQuery));
-
-        try {
-          // Ejecutar búsqueda simple primero (sin agregación compleja)
-          const entityResults = await Model.find(entityQuery)
-            .sort(sort)
-            .skip(skip)
-            .limit(limit)
-            .populate("creador", "firstName lastName fullName")
-            .exec();
-
-          // Agregar metadata de entidad y score básico, y clonar para asegurar que _entityType se envía
-          entityResults.forEach((result) => {
-            // Convertir a objeto plano si es Mongoose Document
-            let plain =
-              typeof result.toObject === "function"
-                ? result.toObject()
-                : { ...result };
-            plain._entityType = entityName;
-            plain._searchScore = this.calculateBasicScore(
-              plain,
-              query,
-              entityFields
-            );
-            results.push(plain);
-          });
-          totalResults += entityResults.length;
-        } catch (error) {
-          console.warn(`Error searching in ${entityName}:`, error.message);
-          // Continuar con otras entidades
-        }
+        let entityTotal = await Model.countDocuments(entityQuery);
+        entityTotals.push({
+          entityName,
+          entityTotal,
+          entityQuery,
+          entityFields,
+        });
+        totalResults += entityTotal;
       }
 
-      // Ordenar resultados finales por score
-      results.sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0));
-
-      // Corregir paginación: devolver el slice correcto
-      const paginatedResults = results.slice(skip, skip + limit);
-
+      // Ahora aplicar paginación global sobre el conjunto combinado
+      let allResults = [];
+      let remaining = limit;
+      let currentSkip = skip;
+      for (const {
+        entityName,
+        entityTotal,
+        entityQuery,
+        entityFields,
+      } of entityTotals) {
+        if (entityTotal === 0) continue;
+        if (currentSkip >= entityTotal) {
+          currentSkip -= entityTotal;
+          continue;
+        }
+        let entityLimit = Math.min(remaining, entityTotal - currentSkip);
+        const Model = models[entityName];
+        const entityResults = await Model.find(entityQuery)
+          .sort(sort)
+          .skip(currentSkip)
+          .limit(entityLimit)
+          .populate("creador", "firstName lastName fullName")
+          .exec();
+        entityResults.forEach((result) => {
+          let plain =
+            typeof result.toObject === "function"
+              ? result.toObject()
+              : { ...result };
+          plain._entityType = entityName;
+          plain._searchScore = this.calculateBasicScore(
+            plain,
+            query,
+            entityFields
+          );
+          allResults.push(plain);
+        });
+        remaining -= entityResults.length;
+        currentSkip = 0;
+        if (remaining <= 0) break;
+      }
+      // Ordenar los resultados de la página por score
+      allResults.sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0));
       return {
         success: true,
         query: query,
-        results: paginatedResults,
+        results: allResults,
         total: totalResults,
         entities: searchEntities,
         exact: exact,

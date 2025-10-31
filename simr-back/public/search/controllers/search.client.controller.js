@@ -8,7 +8,6 @@ angular.module("search").controller("SearchController", [
   "Authentication",
   function ($scope, $location, SearchService, Authentication) {
     var vm = this;
-
     // Inicialización
     vm.showEntityFilters = false;
     vm.authentication = Authentication;
@@ -19,16 +18,13 @@ angular.module("search").controller("SearchController", [
     vm.currentPage = 1;
     vm.totalResults = 0;
     vm.pageSize = 20;
-
     // Opciones de búsqueda
     vm.searchOptions = {
       entities: [], // Todas por defecto
       fields: [], // Todos los campos por defecto
-      exact: false,
       limit: vm.pageSize,
       skip: 0,
     };
-
     // Metadatos de búsqueda
     vm.metadata = null;
     vm.availableEntities = [];
@@ -37,32 +33,38 @@ angular.module("search").controller("SearchController", [
     // Cargar metadatos al inicializar
     loadMetadata();
 
-    // Funciones del controlador
-    vm.performSearch = function () {
+    // Función principal de búsqueda
+    vm.performSearch = function (resetPage) {
       if (!vm.searchQuery.trim()) {
         vm.error = "Por favor ingrese un término de búsqueda";
         return;
       }
-
+      if (resetPage) vm.currentPage = 1;
+      if (vm.currentPage < 1) vm.currentPage = 1;
       vm.isLoading = true;
       vm.error = null;
-
       // Preparar opciones
       var options = angular.copy(vm.searchOptions);
       options.entities =
         vm.selectedEntities.length > 0 ? vm.selectedEntities : [];
       options.skip = (vm.currentPage - 1) * vm.pageSize;
       options.limit = vm.pageSize;
-
       SearchService.search(vm.searchQuery, options)
         .then(function (results) {
           // LOG: Mostrar resultados crudos en consola para depuración
           console.log("[SEARCH DEBUG] Resultados crudos:", results.results);
           vm.searchResults = results.results || [];
           vm.totalResults = results.total || 0;
+          // Si la página actual no tiene resultados pero existen resultados, ir a la última página válida
+          var totalPages = vm.getTotalPages();
+          if (vm.currentPage > totalPages && totalPages > 0) {
+            vm.currentPage = totalPages;
+            vm.performSearch();
+            return;
+          }
           vm.isLoading = false;
-
-          // Actualizar URL con parámetros de búsqueda
+          // Forzar la ruta a /search antes de actualizar los parámetros
+          $location.path("/search");
           $location.search({
             q: vm.searchQuery,
             entities: vm.selectedEntities.join(","),
@@ -81,6 +83,7 @@ angular.module("search").controller("SearchController", [
     };
 
     vm.clearSearch = function () {
+      vm.performSearch(true);
       vm.searchQuery = "";
       vm.searchResults = [];
       vm.totalResults = 0;
@@ -255,6 +258,7 @@ angular.module("search").controller("SearchController", [
     vm.nextPage = function () {
       if (vm.currentPage * vm.pageSize < vm.totalResults) {
         vm.currentPage++;
+        $location.path("/search");
         vm.performSearch();
       }
     };
@@ -262,6 +266,7 @@ angular.module("search").controller("SearchController", [
     vm.previousPage = function () {
       if (vm.currentPage > 1) {
         vm.currentPage--;
+        $location.path("/search");
         vm.performSearch();
       }
     };
@@ -269,6 +274,7 @@ angular.module("search").controller("SearchController", [
     vm.goToPage = function (page) {
       if (page >= 1 && page <= vm.getTotalPages()) {
         vm.currentPage = page;
+        $location.path("/search");
         vm.performSearch();
       }
     };
@@ -280,13 +286,20 @@ angular.module("search").controller("SearchController", [
     vm.getPageNumbers = function () {
       var totalPages = vm.getTotalPages();
       var pages = [];
-      var start = Math.max(1, vm.currentPage - 2);
-      var end = Math.min(totalPages, vm.currentPage + 2);
-
-      for (var i = start; i <= end; i++) {
-        pages.push(i);
+      var maxPagesToShow = 5;
+      var start = Math.max(1, vm.currentPage - Math.floor(maxPagesToShow / 2));
+      var end = Math.min(totalPages, start + maxPagesToShow - 1);
+      if (end - start < maxPagesToShow - 1) {
+        start = Math.max(1, end - maxPagesToShow + 1);
       }
-
+      // Solo agregar páginas si hay resultados para esa página
+      for (var i = start; i <= end; i++) {
+        var skip = (i - 1) * vm.pageSize;
+        // Si la página tiene al menos un resultado, mostrarla
+        if (skip < vm.totalResults) {
+          pages.push(i);
+        }
+      }
       return pages;
     };
 
