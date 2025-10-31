@@ -68,7 +68,6 @@ angular.module("search").controller("SearchController", [
           $location.search({
             q: vm.searchQuery,
             entities: vm.selectedEntities.join(","),
-            exact: vm.searchOptions.exact,
             page: vm.currentPage,
           });
         })
@@ -322,9 +321,6 @@ angular.module("search").controller("SearchController", [
       vm.searchQuery = searchParams.q;
       if (searchParams.entities) {
         vm.selectedEntities = searchParams.entities.split(",");
-      }
-      if (searchParams.exact) {
-        vm.searchOptions.exact = searchParams.exact === "true";
       }
       if (searchParams.page) {
         vm.currentPage = parseInt(searchParams.page) || 1;

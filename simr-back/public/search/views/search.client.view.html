@@ -244,14 +244,6 @@
                         <div class="col-md-12">
                             <div class="search-options-icons-group">
                                 <div class="form-check d-inline-flex align-items-center" style="margin-bottom:0;">
-                                    <input class="form-check-input" type="checkbox" id="exactSearch"
-                                        ng-model="vm.searchOptions.exact">
-                                    <label class="form-check-label" for="exactSearch"
-                                        style="margin-right: 16px; margin-left: 6px;">
-                                        <span style="text-align: left; display: block;">Búsqueda exacta</span>
-                                        <small style="color: #666; font-size: 0.85em; display: block;">(desactivar para
-                                            búsqueda aproximada)</small>
-                                    </label>
                                     <button type="button" class="glyphicon glyphicon-erase search-icon-btn"
                                         ng-click="vm.clearSearch()" title="Limpiar búsqueda"></button>
                                     <button type="button" class="glyphicon glyphicon-filter search-icon-btn"
@@ -268,35 +260,35 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Filtros de entidades -->
-    <div class="row mb-4" ng-if="vm.availableEntities.length > 0">
-        <div class="col-md-12">
-            <div class="card">
+<!-- Filtros de entidades -->
+<div class="row mb-4" ng-if="vm.availableEntities.length > 0">
+    <div class="col-md-12">
+        <div class="card">
 
-                <div ng-show="vm.showEntityFilters">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-2"
-                                    ng-click="vm.selectAllEntities()">
-                                    Seleccionar todas
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm"
-                                    ng-click="vm.clearEntitySelection()">
-                                    Limpiar selección
-                                </button>
-                            </div>
+            <div ng-show="vm.showEntityFilters">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm mr-2"
+                                ng-click="vm.selectAllEntities()">
+                                Seleccionar todas
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                ng-click="vm.clearEntitySelection()">
+                                Limpiar selección
+                            </button>
                         </div>
-                        <div class="row">
-                            <div class="col-md-3" ng-repeat="entity in vm.availableEntities">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" ng-attr-id="entity-{{entity}}"
-                                        ng-checked="vm.isEntitySelected(entity)" ng-click="vm.toggleEntity(entity)">
-                                    <label class="form-check-label" ng-attr-for="entity-{{entity}}">
-                                        {{vm.getEntityDisplayName(entity)}}
-                                    </label>
-                                </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3" ng-repeat="entity in vm.availableEntities">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" ng-attr-id="entity-{{entity}}"
+                                    ng-checked="vm.isEntitySelected(entity)" ng-click="vm.toggleEntity(entity)">
+                                <label class="form-check-label" ng-attr-for="entity-{{entity}}">
+                                    {{vm.getEntityDisplayName(entity)}}
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -304,114 +296,114 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Ayuda de sintaxis -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
+<!-- Ayuda de sintaxis -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
 
-                <div id="syntaxHelp" class="collapse">
-                    <div class="card-body">
-                        <h6 style="text-align: left;">Búsqueda aproximada vs exacta:</h6>
-                        <ul style="text-align: left;">
-                            <li><strong>Sin checkbox:</strong> Búsqueda aproximada (tolera errores tipográficos como
-                                "bueni" → "bueno", "vueno" → "bueno")</li>
-                            <li><strong>Con checkbox:</strong> Búsqueda exacta (debe coincidir exactamente)</li>
-                        </ul>
-                        <h6 style="text-align: left;">Operadores booleanos:</h6>
-                        <ul style="text-align: left;">
-                            <li><code>AND</code> - Intersección de términos</li>
-                            <li><code>OR</code> - Unión de términos</li>
-                            <li><code>NOT</code> - Exclusión de términos</li>
-                            <li><code>()</code> - Agrupación de expresiones</li>
-                            <li><code>"texto"</code> - Búsqueda exacta de frases</li>
-                        </ul>
-                        <h6 style="text-align: left;">Ejemplos:</h6>
-                        <ul style="text-align: left;">
-                            <li><code>bachata</code> - Buscar "bachata" (o variaciones como "bachata", "vachata" si está
-                                sin checkbox)</li>
-                            <li><code>bachata AND salsa</code> - Bachata y salsa</li>
-                            <li><code>bachata OR salsa</code> - Bachata o salsa</li>
-                            <li><code>NOT bachata</code> - Todo excepto bachata</li>
-                            <li><code>(bachata OR salsa) AND colombia</code> - Bachata o salsa de Colombia</li>
-                            <li><code>"bachata moderna"</code> - Frase exacta</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Resultados de búsqueda -->
-    <div class="row" ng-if="vm.searchResults.length > 0 || vm.isLoading || vm.error">
-        <div class="col-md-12">
-            <!-- Mensaje de error -->
-            <div class="alert alert-danger" ng-if="vm.error">
-                <i class="fa fa-exclamation-triangle"></i> {{vm.error}}
-            </div>
-
-            <!-- Cargando -->
-            <div class="text-center" ng-if="vm.isLoading">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Cargando...</span>
-                </div>
-                <p class="mt-2">Buscando...</p>
-            </div>
-
-            <!-- Resultados -->
-            <div ng-if="!vm.isLoading && vm.searchResults.length > 0">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fa fa-search"></i>
-                            Resultados de búsqueda
-                            <span class="badge badge-primary ml-2">{{vm.totalResults}}</span>
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group">
-                            <a href="{{vm.getResultLink(result)}}" class="list-group-item list-group-item-action"
-                                ng-repeat="result in vm.searchResults">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">{{vm.getResultTitle(result)}}</h5>
-
-                                </div>
-                                <p class="mb-1">{{vm.getResultDescription(result)}}</p>
-                                <small class="text-muted" ng-if="result.creado">
-                                    Creado: {{result.creado | date:'dd/MM/yyyy'}}
-                                </small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Paginación -->
-                <nav aria-label="Paginación de resultados" ng-if="vm.getTotalPages() > 1">
-                    <ul class="pagination justify-content-center mt-4">
-                        <li class="page-item" ng-class="{disabled: vm.currentPage === 1}">
-                            <a class="page-link" href="#" ng-click="vm.previousPage()" aria-label="Anterior">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item" ng-repeat="page in vm.getPageNumbers()"
-                            ng-class="{active: page === vm.currentPage}">
-                            <a class="page-link" href="#" ng-click="vm.goToPage(page)">{{page}}</a>
-                        </li>
-                        <li class="page-item" ng-class="{disabled: vm.currentPage === vm.getTotalPages()}">
-                            <a class="page-link" href="#" ng-click="vm.nextPage()" aria-label="Siguiente">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
+            <div id="syntaxHelp" class="collapse">
+                <div class="card-body">
+                    <h6 style="text-align: left;">Búsqueda aproximada (tolerante a errores):</h6>
+                    <ul style="text-align: left;">
+                        <li>El sistema tolera errores tipográficos automáticamente</li>
+                        <li>Ejemplos: "bueni" → "bueno", "vueno" → "bueno", "vachata" → "bachata"</li>
+                        <li>Encuentra resultados incluso con caracteres intercambiados (b/v, e/i, o/u, etc.)</li>
                     </ul>
-                </nav>
-            </div>
-
-            <!-- Sin resultados -->
-            <div class="alert alert-info"
-                ng-if="!vm.isLoading && vm.searchResults.length === 0 && vm.searchQuery && !vm.error">
-                <i class="fa fa-info-circle"></i>
-                No se encontraron resultados para "{{vm.searchQuery}}"
+                    <h6 style="text-align: left;">Operadores booleanos:</h6>
+                    <ul style="text-align: left;">
+                        <li><code>AND</code> - Intersección de términos</li>
+                        <li><code>OR</code> - Unión de términos</li>
+                        <li><code>NOT</code> - Exclusión de términos</li>
+                        <li><code>()</code> - Agrupación de expresiones</li>
+                        <li><code>"texto"</code> - Búsqueda de frases</li>
+                    </ul>
+                    <h6 style="text-align: left;">Ejemplos:</h6>
+                    <ul style="text-align: left;">
+                        <li><code>bachata</code> - Buscar "bachata" y variaciones similares</li>
+                        <li><code>bachata AND salsa</code> - Bachata y salsa</li>
+                        <li><code>bachata OR salsa</code> - Bachata o salsa</li>
+                        <li><code>NOT bachata</code> - Todo excepto bachata</li>
+                        <li><code>(bachata OR salsa) AND colombia</code> - Bachata o salsa de Colombia</li>
+                        <li><code>"bachata moderna"</code> - Frase específica</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Resultados de búsqueda -->
+<div class="row" ng-if="vm.searchResults.length > 0 || vm.isLoading || vm.error">
+    <div class="col-md-12">
+        <!-- Mensaje de error -->
+        <div class="alert alert-danger" ng-if="vm.error">
+            <i class="fa fa-exclamation-triangle"></i> {{vm.error}}
+        </div>
+
+        <!-- Cargando -->
+        <div class="text-center" ng-if="vm.isLoading">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Cargando...</span>
+            </div>
+            <p class="mt-2">Buscando...</p>
+        </div>
+
+        <!-- Resultados -->
+        <div ng-if="!vm.isLoading && vm.searchResults.length > 0">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fa fa-search"></i>
+                        Resultados de búsqueda
+                        <span class="badge badge-primary ml-2">{{vm.totalResults}}</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{vm.getResultLink(result)}}" class="list-group-item list-group-item-action"
+                            ng-repeat="result in vm.searchResults">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{vm.getResultTitle(result)}}</h5>
+
+                            </div>
+                            <p class="mb-1">{{vm.getResultDescription(result)}}</p>
+                            <small class="text-muted" ng-if="result.creado">
+                                Creado: {{result.creado | date:'dd/MM/yyyy'}}
+                            </small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <nav aria-label="Paginación de resultados" ng-if="vm.getTotalPages() > 1">
+                <ul class="pagination justify-content-center mt-4">
+                    <li class="page-item" ng-class="{disabled: vm.currentPage === 1}">
+                        <a class="page-link" href="#" ng-click="vm.previousPage()" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" ng-repeat="page in vm.getPageNumbers()"
+                        ng-class="{active: page === vm.currentPage}">
+                        <a class="page-link" href="#" ng-click="vm.goToPage(page)">{{page}}</a>
+                    </li>
+                    <li class="page-item" ng-class="{disabled: vm.currentPage === vm.getTotalPages()}">
+                        <a class="page-link" href="#" ng-click="vm.nextPage()" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Sin resultados -->
+        <div class="alert alert-info"
+            ng-if="!vm.isLoading && vm.searchResults.length === 0 && vm.searchQuery && !vm.error">
+            <i class="fa fa-info-circle"></i>
+            No se encontraron resultados para "{{vm.searchQuery}}"
+        </div>
+    </div>
+</div>
 </div>
