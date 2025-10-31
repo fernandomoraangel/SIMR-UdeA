@@ -238,8 +238,7 @@
                             </button>
                         </div>
                     </form>
-
-                    <!-- Opciones de búsqueda, filtro y ayuda agrupados -->
+                    <!-- Opciones de búsqueda, filtro, formato y ayuda agrupados -->
                     <div class="row">
                         <div class="col-md-12">
                             <div class="search-options-icons-group">
@@ -252,6 +251,17 @@
                                     <button type="button" class="glyphicon glyphicon-eye-open search-icon-btn"
                                         data-toggle="collapse" data-target="#syntaxHelp" aria-expanded="false"
                                         aria-controls="syntaxHelp" title="Ver ayuda de sintaxis"></button>
+
+                                    <!-- Selector de formato de metadatos -->
+                                    <label
+                                        style="margin-left: 20px; margin-right: 8px; font-weight: normal;">formato:</label>
+                                    <select ng-model="vm.metadataFormat"
+                                        ng-change="vm.changeMetadataFormat(vm.metadataFormat)" class="form-control"
+                                        style="width: auto; display: inline-block; height: 32px; padding: 4px 8px; font-size: 14px;">
+                                        <option ng-repeat="format in vm.availableFormats" value="{{format.value}}">
+                                            {{format.label}}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -260,6 +270,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- Filtros de entidades -->
@@ -366,9 +377,31 @@
                             ng-repeat="result in vm.searchResults">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1" ng-bind-html="vm.getResultTitleHighlighted(result)"></h5>
-
                             </div>
-                            <p class="mb-1" ng-bind-html="vm.getResultDescriptionHighlighted(result)"></p>
+
+                            <!-- Vista SIMR nativa -->
+                            <div ng-if="vm.metadataFormat === 'simr'">
+                                <p class="mb-1" ng-bind-html="vm.getResultDescriptionHighlighted(result)"></p>
+                            </div>
+
+                            <!-- Vista MARC 21 -->
+                            <div ng-if="vm.metadataFormat === 'marc21'" class="metadata-marc21">
+                                <div ng-repeat="field in vm.getFormattedMetadata(result)" class="marc-field">
+                                    <span class="marc-tag">{{field.tag}}</span>
+                                    <span class="marc-subfield">${{field.subfield}}</span>
+                                    <span class="marc-label">{{field.label}}:</span>
+                                    <span class="marc-value" ng-bind-html="vm.highlightText(field.value)"></span>
+                                </div>
+                            </div>
+
+                            <!-- Vista Dublin Core -->
+                            <div ng-if="vm.metadataFormat === 'dublincore'" class="metadata-dc">
+                                <div ng-repeat="field in vm.getFormattedMetadata(result)" class="dc-field">
+                                    <span class="dc-element">{{field.element}}:</span>
+                                    <span class="dc-value" ng-bind-html="vm.highlightText(field.value)"></span>
+                                </div>
+                            </div>
+
                             <small class="text-muted" ng-if="result.creado">
                                 Creado: {{result.creado | date:'dd/MM/yyyy'}}
                             </small>

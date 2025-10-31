@@ -8,7 +8,16 @@ angular.module("search").controller("SearchController", [
   "$filter",
   "SearchService",
   "Authentication",
-  function ($scope, $location, $sce, $filter, SearchService, Authentication) {
+  "MetadataMapper",
+  function (
+    $scope,
+    $location,
+    $sce,
+    $filter,
+    SearchService,
+    Authentication,
+    MetadataMapper
+  ) {
     var vm = this;
     // Inicialización
     vm.showEntityFilters = false;
@@ -20,6 +29,10 @@ angular.module("search").controller("SearchController", [
     vm.currentPage = 1;
     vm.totalResults = 0;
     vm.pageSize = 20;
+
+    // Formato de visualización de metadatos
+    vm.metadataFormat = "simr"; // Por defecto: SIMR nativo
+    vm.availableFormats = MetadataMapper.getAvailableFormats();
     // Opciones de búsqueda
     vm.searchOptions = {
       entities: [], // Todas por defecto
@@ -135,6 +148,24 @@ angular.module("search").controller("SearchController", [
         Lista: "Listas",
       };
       return displayNames[entity] || entity;
+    };
+
+    // Función para cambiar formato de metadatos
+    vm.changeMetadataFormat = function (format) {
+      vm.metadataFormat = format;
+    };
+
+    // Función para obtener metadatos formateados según el formato seleccionado
+    vm.getFormattedMetadata = function (result) {
+      switch (vm.metadataFormat) {
+        case "marc21":
+          return MetadataMapper.toMARC21(result);
+        case "dublincore":
+          return MetadataMapper.toDublinCore(result);
+        case "simr":
+        default:
+          return MetadataMapper.toSIMR(result);
+      }
     };
 
     // Función auxiliar para aplicar resaltado a texto

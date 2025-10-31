@@ -355,19 +355,10 @@ class SearchService {
         let queryExec = Model.find(entityQuery)
           .sort(sort)
           .skip(currentSkip)
-          .limit(entityLimit)
-          .populate("creador", "firstName lastName fullName");
+          .limit(entityLimit);
 
-        // Populate y filtro especial para campos referenciados
-        if (entityName === "Ejemplar") {
-          queryExec = queryExec.populate({
-            path: "recurso",
-            select: "titulo descripcion",
-            match: {
-              $or: [{ titulo: mongoQuery }, { descripcion: mongoQuery }],
-            },
-          });
-        }
+        // Populate campos referenciados según el tipo de entidad (si es necesario)
+        queryExec = this.addPopulateForEntity(queryExec, entityName);
 
         const entityResults = await queryExec.exec();
         entityResults.forEach((result) => {
@@ -557,6 +548,75 @@ class SearchService {
       }
       return current && current[key];
     }, obj);
+  }
+
+  // Agregar populates específicos según el tipo de entidad
+  addPopulateForEntity(query, entityName) {
+    // Configurar strictPopulate: false para permitir populates que no existen en el schema
+    query = query.setOptions({ strictPopulate: false });
+
+    // Populates específicos por entidad basados en los schemas reales
+    switch (entityName) {
+      case "Obra":
+        query = query.populate("generosFormas", "nombre");
+        query = query.populate("GenerosFormasNoMusicales", "nombre");
+        query = query.populate("materias", "nombre");
+        query = query.populate("mediosSonoros", "nombre");
+        query = query.populate("sistemasSonoros", "nombre");
+        query = query.populate("idiomas", "idioma");
+        query = query.populate("actores", "nombres apellidos nombreReunion");
+        query = query.populate("proyectos", "nombre");
+        break;
+
+      case "Actor":
+        query = query.populate("descriptores.genero", "nombre");
+        query = query.populate("descriptores.materia", "nombre");
+        break;
+
+      case "Recurso":
+        query = query.populate("numeroNormalizado", "nombre numero");
+        query = query.populate("descriptorLibre.genero", "nombre");
+        query = query.populate("descriptorLibre.materia", "nombre");
+        break;
+
+      case "Ejemplar":
+        query = query.populate({
+          path: "recurso",
+          select: "titulo descripcion numeroNormalizado",
+          populate: {
+            path: "numeroNormalizado",
+            select: "nombre numero",
+          },
+        });
+        break;
+
+      case "Genero":
+        query = query.populate("alias", "nombre");
+        query = query.populate("descriptorLibre.genero", "nombre");
+        query = query.populate("descriptorLibre.materia", "nombre");
+        break;
+
+      case "GeneroNoMusical":
+        query = query.populate("alias", "nombre");
+        query = query.populate("descriptorLibre.genero", "nombre");
+        query = query.populate("descriptorLibre.materia", "nombre");
+        break;
+
+      case "Proyecto":
+        query = query.populate("descriptoresLibres.genero", "nombre");
+        query = query.populate("descriptoresLibres.materia", "nombre");
+        break;
+
+      case "Lista":
+        query = query.populate("elementos", "titulo nombre");
+        break;
+
+      // Para otras entidades, no hacer populate por ahora
+      default:
+        break;
+    }
+
+    return query;
   }
 
   // Obtener lista de entidades disponibles
