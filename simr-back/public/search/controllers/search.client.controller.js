@@ -49,7 +49,7 @@ angular.module("search").controller("SearchController", [
       // Preparar opciones
       var options = angular.copy(vm.searchOptions);
       options.entities =
-        vm.selectedEntities.length > 0 ? vm.selectedEntities : null;
+        vm.selectedEntities.length > 0 ? vm.selectedEntities : [];
       options.skip = (vm.currentPage - 1) * vm.pageSize;
       options.limit = vm.pageSize;
 
@@ -167,21 +167,50 @@ angular.module("search").controller("SearchController", [
     };
 
     vm.getResultLink = function (result) {
-      // Generar enlace basado en el tipo de entidad
       var baseUrls = {
-        Obra: "#/obras/",
-        Actor: "#/actores/",
-        Recurso: "#/recursos/",
-        Genero: "#/generos/",
-        GeneroNoMusical: "#/generosnomusicales/",
+        Obra: "#!/obras/",
+        Actor: "#!/actores/",
+        Recurso: "#!/recursos/",
+        Genero: "#!/generos/",
+        GeneroNoMusical: "#!/generosnomusicales/",
+        Materia: "#!/materias/",
+        Instrumento: "#!/instrumentos/",
+        Proyecto: "#!/proyectos/",
+        Medio: "#!/medios/",
+        Sistema: "#!/sistemas/",
+        Fondo: "#!/fondos/",
+        Coleccion: "#!/colecciones/",
+        Ejemplar: "#!/ejemplares/",
+        Idioma: "#!/idiomas/",
+        Diccionario: "#!/diccionarios/",
+        Archivo: "#!/archivos/",
+        Lista: "#!/listas/",
       };
 
-      var baseUrl = baseUrls[result._entityType];
-      if (baseUrl && result._id) {
-        return baseUrl + result._id;
+      // Si hay _entityType y _id, usar baseUrl o fallback pluralizado
+      if (result._entityType && result._id) {
+        var baseUrl = baseUrls[result._entityType];
+        if (baseUrl) {
+          return baseUrl + result._id;
+        }
+        // Fallback: usar nombre en minúsculas y pluralizar (agregar 's')
+        return "#!/" + result._entityType.toLowerCase() + "s/" + result._id;
       }
 
-      return "#";
+      // Si no hay _entityType pero hay _id, intentar deducir entidad por campos típicos
+      if (result._id) {
+        // Heurística: buscar campo característico
+        if (result.titulo) return "#!/obras/" + result._id;
+        if (result.nombres && result.apellidos)
+          return "#!/actores/" + result._id;
+        if (result.nombreReunion) return "#!/actores/" + result._id;
+        if (result.nombre) return "#!/generos/" + result._id;
+        // Fallback genérico: usar 'obras'
+        return "#!/obras/" + result._id;
+      }
+
+      // Si no hay _id, no generar enlace
+      return "#!/";
     };
 
     // Paginación

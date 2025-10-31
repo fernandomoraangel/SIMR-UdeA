@@ -295,10 +295,13 @@ class SearchService {
       // Ordenar resultados finales por score
       results.sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0));
 
+      // Corregir paginación: devolver el slice correcto
+      const paginatedResults = results.slice(skip, skip + limit);
+
       return {
         success: true,
         query: query,
-        results: results.slice(0, limit),
+        results: paginatedResults,
         total: totalResults,
         entities: entities,
         exact: exact,

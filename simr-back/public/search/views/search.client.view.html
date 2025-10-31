@@ -293,8 +293,7 @@
                             <div class="col-md-3" ng-repeat="entity in vm.availableEntities">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" ng-attr-id="entity-{{entity}}"
-                                        ng-model="vm.selectedEntities" ng-checked="vm.isEntitySelected(entity)"
-                                        ng-click="vm.toggleEntity(entity)">
+                                        ng-checked="vm.isEntitySelected(entity)" ng-click="vm.toggleEntity(entity)">
                                     <label class="form-check-label" ng-attr-for="entity-{{entity}}">
                                         {{vm.getEntityDisplayName(entity)}}
                                     </label>
