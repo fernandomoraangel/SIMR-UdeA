@@ -64,13 +64,13 @@ const searchableFields = {
   ],
   Materia: ["nombre", "descripcion"],
   Instrumento: ["nombre", "descripcion"],
-  Proyecto: ["titulo", "descripcion"],
+  Proyecto: ["nombre", "estado", "descriptoresLibres.contenido"],
   Medio: ["nombre", "descripcion"],
   Sistema: ["nombre", "descripcion"],
-  Fondo: ["titulo", "descripcion"],
-  Coleccion: ["titulo", "descripcion"],
-  Ejemplar: ["titulo", "descripcion"],
-  Idioma: ["nombre", "descripcion"],
+  Fondo: ["nombre", "tipo", "propiedadComodato"],
+  Coleccion: ["nombre", "tipo", "propiedadComodato"],
+  Ejemplar: ["numeroEjemplar", "procedencia"],
+  Idioma: ["idioma"],
   Diccionario: ["titulo", "descripcion"],
   Archivo: ["titulo", "descripcion"],
   Lista: ["titulo", "descripcion"],
@@ -221,31 +221,27 @@ class SearchService {
 
   async search(query, options = {}) {
     const {
-      entities = Object.keys(models), // Todas las entidades por defecto
-      fields = null, // Campos específicos o null para todos
-      exact = false, // Búsqueda exacta o inexacta
+      entities = Object.keys(models),
+      fields = null,
+      exact = false,
       limit = 50,
       skip = 0,
       sort = { _searchScore: -1 },
     } = options;
 
-    // Asegurar que entities sea iterable y filtrar solo entidades válidas
     let searchEntities = Array.isArray(entities)
       ? entities
       : entities
       ? [entities]
       : Object.keys(models);
-    // Filtrar entidades inválidas
     searchEntities = searchEntities.filter((e) => models[e]);
 
-    // DEBUG: Log entities and fields
     console.log("[SEARCH DEBUG] Entities to search:", searchEntities);
     if (fields) {
       console.log("[SEARCH DEBUG] Custom fields:", fields);
     }
 
     try {
-      // Parsear la consulta booleana
       const tokens = this.parser.tokenize(query);
       const mongoQuery = this.parser.parseToMongoQuery(tokens, exact);
 
@@ -258,7 +254,6 @@ class SearchService {
         };
       }
 
-      // Calcular el total real de resultados ANTES de paginar
       let totalResults = 0;
       let entityTotals = [];
       for (const entityName of searchEntities) {
@@ -277,7 +272,6 @@ class SearchService {
         totalResults += entityTotal;
       }
 
-      // Ahora aplicar paginación global sobre el conjunto combinado
       let allResults = [];
       let remaining = limit;
       let currentSkip = skip;
@@ -294,12 +288,36 @@ class SearchService {
         }
         let entityLimit = Math.min(remaining, entityTotal - currentSkip);
         const Model = models[entityName];
-        const entityResults = await Model.find(entityQuery)
+        let queryExec = Model.find(entityQuery)
           .sort(sort)
           .skip(currentSkip)
           .limit(entityLimit)
-          .populate("creador", "firstName lastName fullName")
-          .exec();
+          .populate("creador", "firstName lastName fullName");
+
+        // Populate y filtro especial para campos referenciados
+        if (entityName === "Ejemplar") {
+          queryExec = queryExec.populate({
+            path: "recurso",
+            select: "titulo descripcion",
+            match: {
+              $or: [{ titulo: mongoQuery }, { descripcion: mongoQuery }],
+            },
+          });
+        }
+        if (entityName === "Proyecto") {
+          // No hay referencias, pero si las hubiera, aquí se agregan
+        }
+        if (entityName === "Fondo") {
+          // No hay referencias, pero si las hubiera, aquí se agregan
+        }
+        if (entityName === "Coleccion") {
+          // No hay referencias, pero si las hubiera, aquí se agregan
+        }
+        if (entityName === "Idioma") {
+          // No hay referencias, pero si las hubiera, aquí se agregan
+        }
+
+        const entityResults = await queryExec.exec();
         entityResults.forEach((result) => {
           let plain =
             typeof result.toObject === "function"
@@ -317,7 +335,6 @@ class SearchService {
         currentSkip = 0;
         if (remaining <= 0) break;
       }
-      // Ordenar los resultados de la página por score
       allResults.sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0));
       return {
         success: true,
