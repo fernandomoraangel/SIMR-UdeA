@@ -381,12 +381,15 @@
 
                             <!-- Vista SIMR nativa -->
                             <div ng-if="vm.metadataFormat === 'simr'">
-                                <p class="mb-1" ng-bind-html="vm.getResultDescriptionHighlighted(result)"></p>
+                                <p class="mb-1"
+                                    ng-bind-html="vm.getResultDescriptionHighlighted(vm.populateResultReferences(result))">
+                                </p>
                             </div>
 
                             <!-- Vista MARC 21 -->
                             <div ng-if="vm.metadataFormat === 'marc21'" class="metadata-marc21">
-                                <div ng-repeat="field in vm.getFormattedMetadata(result)" class="marc-field">
+                                <div ng-repeat="field in vm.getFormattedMetadata(vm.populateResultReferences(result))"
+                                    class="marc-field">
                                     <span class="marc-tag">{{field.tag}}</span>
                                     <span class="marc-subfield">${{field.subfield}}</span>
                                     <span class="marc-label">{{field.label}}:</span>
@@ -396,7 +399,8 @@
 
                             <!-- Vista Dublin Core -->
                             <div ng-if="vm.metadataFormat === 'dublincore'" class="metadata-dc">
-                                <div ng-repeat="field in vm.getFormattedMetadata(result)" class="dc-field">
+                                <div ng-repeat="field in vm.getFormattedMetadata(vm.populateResultReferences(result))"
+                                    class="dc-field">
                                     <span class="dc-element">{{field.element}}:</span>
                                     <span class="dc-value" ng-bind-html="vm.highlightText(field.value)"></span>
                                 </div>

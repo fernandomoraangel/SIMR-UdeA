@@ -146,6 +146,19 @@ angular.module("search").factory("SearchService", [
       },
     };
 
+    // Función auxiliar para hacer llamadas GET genéricas
+    service.get = function (url, config) {
+      return $http
+        .get(url, config || {})
+        .then(function (response) {
+          return response.data;
+        })
+        .catch(function (error) {
+          console.error("Error en llamada GET:", error);
+          return $q.reject(error);
+        });
+    };
+
     return service;
   },
 ]);

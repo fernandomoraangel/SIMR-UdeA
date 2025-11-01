@@ -207,7 +207,7 @@ angular.module("search").factory("MetadataMapper", [
           .join("; ");
       }
 
-      // Si es un objeto (referencia poblada)
+      // Si es un objeto (referencia poblada o no poblada)
       if (typeof value === "object") {
         // Intentar extraer el campo más relevante
         if (value.nombre) return value.nombre;
@@ -221,9 +221,32 @@ angular.module("search").factory("MetadataMapper", [
         if (value.obra) return extractValue(value.obra);
         if (value.instrumento) return extractValue(value.instrumento);
         if (value.recurso) return extractValue(value.recurso);
-        // Si tiene un _id, probablemente es una referencia no poblada
-        if (value._id)
-          return "[Ref: " + value._id.toString().substring(0, 8) + "...]";
+
+        // Si tiene un _id pero no los campos anteriores, intentar mostrar el primer campo útil
+        if (value._id) {
+          // Buscar el primer campo que no sea _id, __v, etc.
+          const usefulFields = [
+            "titulo",
+            "nombre",
+            "nombres",
+            "descripcion",
+            "numero",
+            "idioma",
+          ];
+          for (const field of usefulFields) {
+            if (
+              value[field] &&
+              typeof value[field] === "string" &&
+              value[field].trim()
+            ) {
+              return value[field];
+            }
+          }
+          // Si no hay campos útiles, intentar poblar desde el cliente
+          // Por ahora mostrar el ID sin prefijo
+          return value._id.toString();
+        }
+
         return "";
       }
 
@@ -278,6 +301,68 @@ angular.module("search").factory("MetadataMapper", [
       }
 
       return mapped;
+    }
+
+    // Función para poblar referencias desde el cliente
+    function populateReferences(result) {
+      // Recopilar todos los IDs de referencias que necesitan ser poblados
+      var referenceIds = {};
+
+      // Función recursiva para buscar referencias
+      function collectReferences(obj, path) {
+        if (obj && typeof obj === "object") {
+          if (Array.isArray(obj)) {
+            obj.forEach(function (item, index) {
+              collectReferences(item, path + "[" + index + "]");
+            });
+          } else {
+            for (var key in obj) {
+              if (obj[key] && typeof obj[key] === "object" && obj[key]._id) {
+                // Es una referencia no poblada
+                var refType = getReferenceType(key, obj[key]);
+                if (refType) {
+                  if (!referenceIds[refType]) {
+                    referenceIds[refType] = [];
+                  }
+                  referenceIds[refType].push(obj[key]._id);
+                }
+              }
+              collectReferences(obj[key], path + "." + key);
+            }
+          }
+        }
+      }
+
+      collectReferences(result, "");
+      return referenceIds;
+    }
+
+    // Determinar el tipo de referencia basado en el campo y contenido
+    function getReferenceType(fieldName, refObj) {
+      // Mapeo de campos a tipos de entidades
+      var fieldToEntityMap = {
+        generosFormas: "Genero",
+        GenerosFormasNoMusicales: "GeneroNoMusical",
+        materias: "Materia",
+        mediosSonoros: "Medio",
+        sistemasSonoros: "Sistema",
+        idiomas: "Idioma",
+        actores: "Actor",
+        proyectos: "Proyecto",
+        genero: "Genero",
+        materia: "Materia",
+        medio: "Medio",
+        sistema: "Sistema",
+        idioma: "Idioma",
+        actor: "Actor",
+        proyecto: "Proyecto",
+        recurso: "Recurso",
+        numeroNormalizado: "NumeroNormalizado",
+        alias: "Genero",
+        elementos: "Lista",
+      };
+
+      return fieldToEntityMap[fieldName] || null;
     }
 
     // Función para mapear a Dublin Core
@@ -373,6 +458,8 @@ angular.module("search").factory("MetadataMapper", [
       toMARC21: mapToMARC21,
       toDublinCore: mapToDublinCore,
       toSIMR: mapToSIMR,
+      populateReferences: populateReferences,
+      getReferenceType: getReferenceType,
 
       // Obtener lista de formatos disponibles
       getAvailableFormats: function () {
