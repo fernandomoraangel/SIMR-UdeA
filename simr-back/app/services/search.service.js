@@ -339,6 +339,37 @@ class SearchService {
       let allResults = [];
       let remaining = limit;
       let currentSkip = skip;
+      // Diccionario de campos a aplanar por entidad
+      const flattenMap = {
+        Obra: [
+          "contenedores",
+          "asientoLigado",
+          "generosFormas",
+          "GenerosFormasNoMusicales",
+          "materias",
+          "mediosSonoros",
+          "sistemasSonoros",
+          "idiomas",
+          "actores",
+          "proyectos",
+        ],
+        Recurso: ["obrasRelacionadas", "proyectos", "materia", "idiomas"],
+        Genero: [
+          "padres",
+          "hijos",
+          "idioma",
+          "sistemasSonoros",
+          "mediosSonoros",
+          "proyectosAsociados",
+        ],
+        GeneroNoMusical: ["padres", "hijos", "idioma"],
+        Materia: ["padres", "hijos"],
+        Instrumento: ["proyectosAsociados"],
+        Proyecto: ["investigadores"],
+        Medio: ["instrumentos", "proyectosAsociados"],
+        Sistema: ["padres", "hijos", "proyectosAsociados"],
+        Ejemplar: ["estados"],
+      };
       for (const {
         entityName,
         entityTotal,
@@ -366,6 +397,22 @@ class SearchService {
             typeof result.toObject === "function"
               ? result.toObject()
               : { ...result };
+          // Aplanar arrays de subdocumentos con campo id poblado
+          const flattenFields = flattenMap[entityName] || [];
+          for (const field of flattenFields) {
+            if (
+              Array.isArray(plain[field]) &&
+              plain[field].length > 0 &&
+              plain[field][0] &&
+              typeof plain[field][0] === "object" &&
+              "id" in plain[field][0]
+            ) {
+              // Si el id está poblado, reemplazar el array por el array de ids poblados
+              plain[field] = plain[field].map((item) =>
+                item.id && typeof item.id === "object" ? item.id : item
+              );
+            }
+          }
           plain._entityType = entityName;
           plain._searchScore = this.calculateBasicScore(
             plain,
@@ -552,9 +599,98 @@ class SearchService {
 
   // Agregar populates específicos según el tipo de entidad
   addPopulateForEntity(query, entityName) {
-    // Por ahora no hacer populate desde el servidor
-    // Los datos se poblarán desde el cliente usando el servicio MetadataMapper
-    return query;
+    // Diccionario de campos a poblar por entidad (solo rutas válidas y existentes)
+    const populateMap = {
+      Obra: [
+        { path: "contenedores.id", model: "Obra" },
+        { path: "asientoLigado.id", model: "Obra" },
+        { path: "asientoLigado.proyectoRelacionado", model: "Proyecto" },
+        { path: "generosFormas.id", model: "Genero" },
+        { path: "GenerosFormasNoMusicales.id", model: "GeneroNoMusical" },
+        { path: "materias.id", model: "Materia" },
+        { path: "mediosSonoros.id", model: "Medio" },
+        { path: "sistemasSonoros.id", model: "Sistema" },
+        { path: "idiomas.id", model: "Idioma" },
+        { path: "actores.id", model: "Actor" },
+        { path: "proyectos.id", model: "Proyecto" },
+        { path: "creador", model: "User" },
+      ],
+      Actor: [{ path: "creador", model: "User" }],
+      Recurso: [
+        { path: "obrasRelacionadas.id", model: "Obra" },
+        { path: "proyectos.id", model: "Proyecto" },
+        { path: "materia.id", model: "Materia" },
+        { path: "idiomas.id", model: "Idioma" },
+        { path: "creador", model: "User" },
+      ],
+      Genero: [
+        { path: "padres.id", model: "Genero" },
+        { path: "hijos.id", model: "Genero" },
+        { path: "idioma.id", model: "Idioma" },
+        { path: "sistemasSonoros.id", model: "Sistema" },
+        { path: "mediosSonoros.id", model: "Medio" },
+        { path: "proyectosAsociados.proyecto", model: "Proyecto" },
+        { path: "creador", model: "User" },
+      ],
+      GeneroNoMusical: [
+        { path: "padres.id", model: "GeneroNoMusical" },
+        { path: "hijos.id", model: "GeneroNoMusical" },
+        { path: "idioma.id", model: "Idioma" },
+        { path: "creador", model: "User" },
+      ],
+      Materia: [
+        { path: "padres.id", model: "Materia" },
+        { path: "hijos.id", model: "Materia" },
+        { path: "creador", model: "User" },
+      ],
+      Instrumento: [
+        { path: "proyectosAsociados.proyecto", model: "Proyecto" },
+        { path: "creador", model: "User" },
+      ],
+      Proyecto: [
+        { path: "investigadores.id", model: "Actor" },
+        { path: "creador", model: "User" },
+      ],
+      Medio: [
+        { path: "instrumentos.instrumento", model: "Instrumento" },
+        { path: "proyectosAsociados.proyecto", model: "Proyecto" },
+        { path: "creador", model: "User" },
+      ],
+      Sistema: [
+        { path: "padres.id", model: "Sistema" },
+        { path: "hijos.id", model: "Sistema" },
+        { path: "proyectosAsociados.proyecto", model: "Proyecto" },
+        { path: "creador", model: "User" },
+      ],
+      Fondo: [{ path: "creador", model: "User" }],
+      Coleccion: [{ path: "creador", model: "User" }],
+      Ejemplar: [
+        { path: "recurso", model: "Recurso" },
+        { path: "fondo", model: "Fondo" },
+        { path: "coleccion", model: "Coleccion" },
+        { path: "creador", model: "User" },
+      ],
+      Idioma: [{ path: "creador", model: "User" }],
+      Diccionario: [{ path: "creador", model: "User" }],
+      Archivo: [{ path: "creador", model: "User" }],
+      Lista: [{ path: "usuario_modifico", model: "User" }],
+      User: [{ path: "roles", model: "Role" }],
+    };
+
+    const populates = populateMap[entityName] || [];
+    let populatedQuery = query;
+    for (const pop of populates) {
+      try {
+        populatedQuery = populatedQuery.populate(pop);
+      } catch (err) {
+        // Si hay error de populate, ignorar ese path
+        console.warn(
+          `[SEARCH DEBUG] Error al poblar '${pop.path}':`,
+          err.message
+        );
+      }
+    }
+    return populatedQuery;
   }
 
   // Obtener lista de entidades disponibles
