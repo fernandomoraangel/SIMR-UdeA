@@ -413,6 +413,39 @@ class SearchService {
               );
             }
           }
+          // Aplanar idiomas: si es array de {id: Idioma}, devolver array de Idioma
+          if (
+            Array.isArray(plain.idiomas) &&
+            plain.idiomas.length > 0 &&
+            plain.idiomas[0] &&
+            typeof plain.idiomas[0] === "object" &&
+            "id" in plain.idiomas[0]
+          ) {
+            plain.idiomas = plain.idiomas
+              .map((item) =>
+                item.id && typeof item.id === "object" ? item.id : null
+              )
+              .filter(Boolean);
+          }
+          // Aplanar creador: si es objeto poblado, devolver el objeto, si no existe, devolver null
+          if (
+            plain.creador &&
+            typeof plain.creador === "object" &&
+            plain.creador._id
+          ) {
+            // ya está poblado, dejarlo así
+          } else if (plain.creador && typeof plain.creador === "string") {
+            // Si solo es un ID, probablemente el usuario no existe
+            plain.creador = null;
+          }
+          // Aplanar creador: si es objeto poblado, devolver el objeto
+          if (
+            plain.creador &&
+            typeof plain.creador === "object" &&
+            plain.creador._id
+          ) {
+            // ya está poblado, dejarlo así
+          }
           plain._entityType = entityName;
           plain._searchScore = this.calculateBasicScore(
             plain,
