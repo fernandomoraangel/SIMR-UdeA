@@ -19,7 +19,7 @@ import { environment } from '@env/environment';
   providedIn: 'root',
 })
 export class ArchivosService {
-  private readonly API_URL = `${environment.originUrl}/files`;
+  private readonly API_URL = `/angular/files`;
   private fileChangedSource = new Subject<void>();
 
   fileChanged$ = this.fileChangedSource.asObservable();

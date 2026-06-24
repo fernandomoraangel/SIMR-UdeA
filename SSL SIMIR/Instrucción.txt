@@ -1,0 +1,4 @@
+Se adjunta el certificado firmado, por favor retirar extensión .txt y dejarla
+en .cer, además también se adjunta los certificados raíz y secundaria para que
+esta cadena sea bien instalada en los servidores, quedo atento en los demás
+datos para seguir avanzando.
