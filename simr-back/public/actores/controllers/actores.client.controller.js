@@ -748,7 +748,7 @@ angular.module("actores").controller("ActoresController", [
         angularWindowFileUpload.focus();
       } else {
         angularWindowFileUpload = window.open(
-          "http://localhost/angular/files/upload",
+          angularAppOrigin + "/angular/files/upload",
           "AngularApp",
           "width=563,height=365"
         );
@@ -779,7 +779,7 @@ angular.module("actores").controller("ActoresController", [
         angularWindowFileList.focus();
       } else {
         angularWindowFileList = window.open(
-          angularAppOrigin + "/files",
+          angularAppOrigin + "/angular/files",
           "AngularApp",
           "_blank"
         );

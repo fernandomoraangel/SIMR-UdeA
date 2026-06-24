@@ -199,7 +199,7 @@ angular.module("archivos", []).factory("ArchivoService", [
 
         console.log("Abriendo popup de upload de archivos...");
         angularWindowFileUpload = $window.open(
-          angularAppOrigin + "/files/upload",
+          angularAppOrigin + "/angular/files/upload",
           "AngularApp",
           windowFeatures
         );
@@ -430,7 +430,7 @@ angular.module("archivos", []).factory("ArchivoService", [
       ].join(",");
 
       angularWindowFileList = $window.open(
-        angularAppOrigin + "/files",
+        angularAppOrigin + "/angular/files",
         "FileListWindow",
         windowFeatures
       );
