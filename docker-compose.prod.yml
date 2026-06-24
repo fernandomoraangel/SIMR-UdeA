@@ -43,7 +43,7 @@ services:
       retries: 5
       start_period: 30s
 
-  minio-init:
+   minio-init:
     image: minio/mc:latest
     depends_on:
       minio:
@@ -54,7 +54,7 @@ services:
     volumes:
       - ./init.minio.sh:/init.minio.sh
     entrypoint: /bin/sh
-    command: -c "/init.minio.sh"
+    command: /init.minio.sh
     networks:
       - simr-net-prod
     restart: on-failure
