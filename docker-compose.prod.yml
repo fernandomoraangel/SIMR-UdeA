@@ -36,15 +36,15 @@ services:
       - "9001:9001" # Consola de MinIO (exponer para debugging)
     networks:
       - simr-net-prod
-     healthcheck:
-       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-       interval: 10s
-       timeout: 5s
-       retries: 5
-       start_period: 30s
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-   minio-init:
-     image: minio/mc:latest
+  minio-init:
+    image: minio/mc:latest
     depends_on:
       minio:
         condition: service_healthy
