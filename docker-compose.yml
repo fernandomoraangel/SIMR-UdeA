@@ -79,12 +79,11 @@ services:
     image: nginx:latest
     restart: unless-stopped
     ports:
-      # Mapeamos el puerto 80 del Host al puerto 80 del Nginx
-      # Ahora, localhost apunta a Nginx (puerto por defecto).
       - "80:80"
+      - "443:443"
     volumes:
-      # Montamos la configuración del proxy de Nginx (creada abajo)
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/ssl/certs:ro
     depends_on:
       # Aseguramos que el backend esté arriba antes que Nginx
       - simr-back
