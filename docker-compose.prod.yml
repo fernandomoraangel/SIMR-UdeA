@@ -8,7 +8,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: sadmin1990
       MONGODB_AUTH_MECHANISM: SCRAM-SHA-256
     volumes:
-      - mongodb_data_prod:/data/db
+      - /mnt/data/mongodb:/data/db
       - ./init.mongo.js:/docker-entrypoint-initdb.d/init.mongo.js
     ports:
       - "27017:27017" # Exponer para debugging/Compass (comentar en producción final)
@@ -26,7 +26,7 @@ services:
     container_name: minio_prod
     restart: unless-stopped
     volumes:
-      - minio_data_prod:/data
+      - /mnt/data/minio:/data
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: superAdmin
@@ -99,20 +99,17 @@ services:
       - "443:443"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./ssl:/etc/ssl/certs:ro
+      - /mnt/data/ssl:/etc/ssl/certs:ro
     depends_on:
       - simr-back
       - simr-front
     networks:
       - simr-net-prod
 
-volumes:
-  mongodb_data_prod:
-    external: true
-    name: simr-udea_mongodb_data_prod
-  minio_data_prod:
-    external: true
-    name: simr-udea_minio_data_prod
+# Volúmenes ya no son necesarios al usar bind mounts directos
+# volumes:
+#   mongodb_data_prod:
+#   minio_data_prod:
 
 networks:
   simr-net-prod:
