@@ -457,6 +457,18 @@ code {
   border-radius: 6px;
 }
 
+/* El logo institucional usa trazos negros sobre fondo transparente: sobre
+   el navbar oscuro queda ilegible. Se le da una insignia clara ("chip") que
+   conserva los colores originales del logo sin necesidad de un nuevo asset. */
+.navbar-header img.img-resize {
+  background: var(--paper);
+  padding: 6px 16px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  vertical-align: middle;
+}
+
 /* ===================================
    6. TIPOGRAFÍA — jerarquía y etiquetas de ficha
    =================================== */

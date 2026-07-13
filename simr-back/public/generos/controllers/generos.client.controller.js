@@ -13,6 +13,7 @@ angular.module("generos").controller("GenerosController", [
   "Idiomas",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -24,7 +25,8 @@ angular.module("generos").controller("GenerosController", [
     Medios,
     Idiomas,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
@@ -32,7 +34,17 @@ angular.module("generos").controller("GenerosController", [
     $scope.medios = Medios.query();
     $scope.sistemas = Sistemas.query();
     $scope.idiomas = Idiomas.query();
-    $scope.dEtiquetas = dEtiquetas;
+
+    // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB)
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+    $scope.loadListas();
+
     $scope.idActores = [];
     $scope.idAnotacionesCartograficoTemporales = [];
     $scope.idProyectos = [];
@@ -51,8 +63,6 @@ angular.module("generos").controller("GenerosController", [
     $scope.idHijos = [];
     $scope.generos = Generos.query();
     $scope.diccionarios = Diccionarios.query();
-    $scope.lugares = lugares;
-    $scope.coberturas = coberturas;
     $scope.archivosCargados = [];
     $scope.documentId = $routeParams.generoId;
 

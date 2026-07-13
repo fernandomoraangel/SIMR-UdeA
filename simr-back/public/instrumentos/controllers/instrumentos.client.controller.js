@@ -10,6 +10,7 @@ angular.module("instrumentos").controller("InstrumentosController", [
   "Proyectos",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -18,14 +19,28 @@ angular.module("instrumentos").controller("InstrumentosController", [
     Instrumentos,
     Proyectos,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    $scope.coberturas = coberturas;
-    $scope.sitios = lugares;
-    $scope.dEtiquetas = dEtiquetas;
+
+    // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB).
+    // La vista de este módulo usa "sitios" (no "lugares") para el ng-repeat, por lo
+    // que se mantiene ese alias sin necesidad de tocar el HTML.
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+          if (lista.nombre_lista === "lugares") {
+            $scope.sitios = lista.elementos;
+          }
+        });
+      });
+    };
+    $scope.loadListas();
+
     $scope.idActores = [];
     $scope.idAnotacionesCartograficoTemporales = [];
     $scope.idProyectos = [];

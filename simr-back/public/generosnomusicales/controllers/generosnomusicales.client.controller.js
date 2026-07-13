@@ -12,6 +12,7 @@ angular
     "Idiomas",
     "Diccionarios",
     "ArchivoService",
+    "Listas",
     function (
       $scope,
       $routeParams,
@@ -20,14 +21,23 @@ angular
       GenerosNoMusicales,
       Idiomas,
       Diccionarios,
-      ArchivoService
+      ArchivoService,
+      Listas
     ) {
       //Exponer el servicio Authentication
       // $scope.authentication = Authentication;
       $scope.auth = Authentication.state;
-      $scope.lugares = lugares;
-      $scope.coberturas = coberturas;
-      $scope.dEtiquetas = dEtiquetas;
+
+      // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB)
+      $scope.loadListas = function () {
+        Listas.query(function (listas) {
+          listas.forEach(function (lista) {
+            $scope[lista.nombre_lista] = lista.elementos;
+          });
+        });
+      };
+      $scope.loadListas();
+
       $scope.idActores = [];
       $scope.idAnotacionesCartograficoTemporales = [];
       $scope.idDescriptores = [];

@@ -11,6 +11,7 @@ angular.module("medios").controller("MediosController", [
   "Proyectos",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -20,22 +21,34 @@ angular.module("medios").controller("MediosController", [
     Instrumentos,
     Proyectos,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
-    $scope.roles = [
-      "Acompañante",
-      "integrante",
-      "Invitado",
-      "Opcional",
-      "Solista",
-      "Solo",
-    ];
-    $scope.lugares = lugares;
-    $scope.coberturas = coberturas;
-    $scope.dEtiquetas = dEtiquetas;
+
+    // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB).
+    // Los roles de integrante de un medio sonoro son una lista propia ("rolesMedios",
+    // ej. "Solista", "Acompañante") distinta de la lista genérica "roles" de actores
+    // (autores, compositores, etc.), por eso se mapea a $scope.roles explícitamente
+    // y se excluye la lista genérica "roles" para no sobreescribirla por error.
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          if (lista.nombre_lista === "roles") {
+            return;
+          }
+          if (lista.nombre_lista === "rolesMedios") {
+            $scope.roles = lista.elementos;
+            return;
+          }
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+    $scope.loadListas();
+
     $scope.idAnotacionesCartograficoTemporales = [];
     $scope.instrumentos = Instrumentos.query();
     $scope.idInstrumentos = [];

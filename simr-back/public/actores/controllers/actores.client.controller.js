@@ -9,6 +9,7 @@ angular.module("actores").controller("ActoresController", [
   "Actores",
   "Diccionarios",
   "ArchivoService",
+  "Listas",
   function (
     $scope,
     $routeParams,
@@ -16,15 +17,24 @@ angular.module("actores").controller("ActoresController", [
     Authentication,
     Actores,
     Diccionarios,
-    ArchivoService
+    ArchivoService,
+    Listas
   ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
     $scope.diccionarios = Diccionarios.query();
-    $scope.coberturas = coberturas;
-    $scope.lugares = lugares;
-    $scope.dEtiquetas = dEtiquetas;
+
+    // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB)
+    $scope.loadListas = function () {
+      Listas.query(function (listas) {
+        listas.forEach(function (lista) {
+          $scope[lista.nombre_lista] = lista.elementos;
+        });
+      });
+    };
+    $scope.loadListas();
+
     $scope.idContenedores = [];
     $scope.idAnotacionesCartograficoTemporales = [];
     $scope.idDescriptores = [];

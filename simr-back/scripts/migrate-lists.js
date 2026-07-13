@@ -8,20 +8,17 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
+const config = require("../config/config");
 
-// Conectar a MongoDB
+// Conectar a MongoDB usando la configuración del entorno (config/env/*.js),
+// igual que el resto de la aplicación y que scripts/insert-nNormalizados-lista.js.
+// En producción resuelve a process.env.MONGO_URI (mongodb://.../simr, host "mongodb"
+// dentro de la red de Docker); en desarrollo, a la URI local definida en config/env/development.js.
 const connectDB = async () => {
   try {
-    // Conectar primero a la base por defecto y luego cambiar a simr-dev
-    const mongoUri = "mongodb://superAdmin:sadmin1990@localhost:27017/";
-    console.log("Using MongoDB URI:", mongoUri);
-
-    await mongoose.connect(mongoUri);
+    console.log("Using MongoDB URI:", config.db);
+    await mongoose.connect(config.db);
     console.log("✅ Conectado a MongoDB");
-
-    // Cambiar a la base de datos simr-dev
-    const db = mongoose.connection.useDb("simr-dev");
-    console.log("✅ Cambiado a base de datos simr-dev");
   } catch (error) {
     console.error("❌ Error conectando a MongoDB:", error);
     process.exit(1);
@@ -203,6 +200,14 @@ const readListasFile = () => {
         "Mundo",
         "País",
       ],
+      rolesMedios: [
+        "Acompañante",
+        "integrante",
+        "Invitado",
+        "Opcional",
+        "Solista",
+        "Solo",
+      ],
       roles: [
         "Actor al que se refiere la obra",
         "Adaptación",
@@ -254,19 +259,10 @@ const readListasFile = () => {
   }
 };
 
-// Modelo de Lista (temporal para migración)
-const ListaSchema = new mongoose.Schema({
-  nombre_lista: { type: String, required: true, index: true },
-  elementos: { type: [String], required: true },
-  metadata: { type: mongoose.Schema.Types.Mixed },
-  fecha_creacion: { type: Date, default: Date.now },
-  fecha_modificacion: { type: Date, default: Date.now },
-  usuario_modifico: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-});
-
-// Usar la base de datos simr-dev
-const db = mongoose.connection.useDb("simr-dev");
-const Lista = db.model("Lista", ListaSchema);
+// Modelo de Lista: se reutiliza el esquema real de la aplicación en vez de
+// definir uno temporal, para evitar divergencias con app/models/lista.server.model.js
+require("../app/models/lista.server.model");
+const Lista = mongoose.model("Lista");
 
 // Función para migrar listas simples (arrays de strings)
 const migrateSimpleList = async (nombreLista, elementos) => {
@@ -346,6 +342,7 @@ const migrateLists = async () => {
     await migrateSimpleList("lugares", listas.lugares);
     await migrateSimpleList("coberturas", listas.coberturas);
     await migrateSimpleList("roles", listas.roles);
+    await migrateSimpleList("rolesMedios", listas.rolesMedios);
 
     // Migrar lista compleja
     await migrateComplexList("nNormalizados", listas.nNormalizados);
@@ -363,6 +360,7 @@ const migrateLists = async () => {
     console.log("   - lugares");
     console.log("   - coberturas");
     console.log("   - roles");
+    console.log("   - rolesMedios");
     console.log("   - nNormalizados (compleja)");
   } catch (error) {
     console.error("❌ Error durante la migración:", error);
