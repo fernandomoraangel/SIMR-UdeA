@@ -10,8 +10,8 @@
   <!-- <base href="!"> -->
   <link rel="stylesheet" href="../lib/bootstrap-css/css/bootstrap.css" />
   <link rel="stylesheet" type="text/css" href="/styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- <script src="/lib/sweetalert2/dist/sweetalert2.all.min.js"></script> -->
+  <!-- SweetAlert2 servido localmente (antes CDN cdn.jsdelivr.net, sin SRI) -->
+  <script src="/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
   <script src="funcionesGenerales.js"></script>
   <script src="listas.js"></script>
   <link rel="shorcut icon" href="img/favicon.png" />
@@ -172,7 +172,8 @@
   <script type="text/javascript" src="/search/controllers/search.client.controller.js"></script>
 
   <!-- D3.js para visualización de grafos -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- D3.js servido localmente (antes CDN d3js.org, sin SRI) -->
+  <script src="/lib/d3/d3.v7.min.js"></script>
 
   <!-- Sistema de grafo de base de datos -->
   <script type="text/javascript" src="/graph/graph.client.module.js"></script>
