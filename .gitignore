@@ -78,10 +78,11 @@ volumes/logs/
 /mnt/data/
 /mnt/data/**
 
-# SSL certificates with private keys (COMMENTED FOR DEVELOPMENT - UNCOMMENT IN PRODUCTION)
-# *.key
-# *.pem
-# ssl/private/
+# SSL certificates con llaves privadas: nunca deben ir al repositorio
+# (no afecta a "SSL SIMIR/" que solo contiene certificados públicos .cer)
+*.key
+*.pem
+ssl/
 
 #========================================
 # [ENVIRONMENT & CONFIG]
