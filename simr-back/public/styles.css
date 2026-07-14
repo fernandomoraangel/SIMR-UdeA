@@ -619,7 +619,12 @@ h6 {
   padding: 10px 14px;
   border-radius: 2px;
   margin: 22px 0 14px;
-  display: block;
+  /* En los formularios de crear/editar, esta etiqueta comparte el mismo
+     <div> con los botones de ayuda (ojo) y despliegue (flecha) que la
+     preceden en el HTML: deben quedar en la misma línea (ojo, flecha,
+     nombre de la sección), no cada uno en su propia fila. */
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .campo {
