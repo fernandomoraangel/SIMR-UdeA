@@ -1,4 +1,4 @@
 "use strict";
 
 // Módulo de búsqueda general para SIMR
-angular.module("search", ["ngRoute", "ngResource"]);
+angular.module("search", ["ngRouteShim", "ngResourceShim"]);

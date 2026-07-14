@@ -1,8 +1,11 @@
 var mainApplicationModuleName = "simr";
 
 var mainApplicationModule = angular.module(mainApplicationModuleName, [
-  "ngResource",
-  "ngRoute",
+  // "ngResource" y "ngRoute" (AngularJS EOL, Severidad ALTA en ZAP) fueron
+  // sustituidos por shims propios sin dependencias externas.
+  // Ver simr-back/public/lib/shims/.
+  "ngResourceShim",
+  "ngRouteShim",
   "authentication",
   "permissions",
   "core",

@@ -39,22 +39,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-resource.min.js"></script> -->
 
-  <!-- AngularJS@1.5.8 -->
-  <!--
-      <script type="text/javascript" src="/lib/angular/angular.js"></script>
-      <script
-        type="text/javascript"
-        src="/lib/angular-route/angular-route.js"
-      ></script>
-      <script
-        type="text/javascript"
-        src="/lib/angular-resource/angular-resource.js"
-      ></script>
-    -->
-
   <script type="text/javascript" src="/lib/angular@1.8.2/angular/angular.js"></script>
-  <script type="text/javascript" src="/lib/angular@1.8.2/angular-route/angular-route.js"></script>
-  <script type="text/javascript" src="/lib/angular@1.8.2/angular-resource/angular-resource.js"></script>
+
+  <!--
+    Reemplazo propio de "angular-route.js" y "angular-resource.js"
+    (ambos EOL, marcados como Severidad ALTA en el escaneo OWASP ZAP:
+    CVE-2024-8372, CVE-2024-21490, CVE-2025-0716, CVE-2025-2336, etc.).
+    Estos dos shims reimplementan únicamente el subconjunto de la API
+    que usa esta aplicación, apoyándose solo en el núcleo de angular.js
+    (no señalado por el escaneo). Ver simr-back/public/lib/shims/.
+  -->
+  <script type="text/javascript" src="/lib/shims/resource-shim.client.js"></script>
+  <script type="text/javascript" src="/lib/shims/route-shim.client.js"></script>
 
   <!-- Modulo 'archivos' -->
   <!-- <script type="text/javascript" src="/archivos/archivos2.client.service.js"></script> -->
