@@ -834,7 +834,7 @@ a:focus-visible,
 }
 
 .btn-primary,
-button[class*="btn"]:not(.btn-danger):not(.btn-warning):not(.btn-success):not(.btn-info):not(.btn-default):not(.swal2-cancel) {
+button[class*="btn"]:not(.btn-danger):not(.btn-warning):not(.btn-success):not(.btn-info):not(.btn-default):not(.swal2-cancel):not(.btn-lg):not(.btn-lg2):not(.btn-lg3) {
   background-color: var(--forest) !important;
   border-color: var(--forest) !important;
   color: var(--white) !important;
