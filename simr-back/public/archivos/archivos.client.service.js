@@ -7,7 +7,12 @@ angular.module("archivos", []).factory("ArchivoService", [
   function ($resource, $http, $window, $rootScope, $q) {
     // Variables globales del servicio - usando variables de entorno inyectadas
     const angularJSOrigin = window.ANGULARJS_URL || "http://localhost:3000";
-    const apiUrl = (window.API_URL || "http://localhost:3000") + "/files";
+    // IMPORTANTE: el router de archivos/MinIO se monta en server.js como
+    // `app.use("/files", minioRouter)`, SIN el prefijo "/api". Por eso aquí
+    // se usa angularJSOrigin (sin /api) y no window.API_URL (que sí lo
+    // incluye) para construir esta URL base; usar API_URL causaba 404 en
+    // GET /api/files/document-files.
+    const apiUrl = angularJSOrigin + "/files";
     const angularAppOrigin = window.FRONTEND_URL || window.location.origin;
     const Archivo = $resource(
       apiUrl + "/api/archivos/:archivoId",

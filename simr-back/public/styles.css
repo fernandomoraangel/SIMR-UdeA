@@ -25,7 +25,9 @@
  */
 
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+/* Font Awesome ahora se carga localmente desde index.ejs
+   (../lib/font-awesome/css/font-awesome.min.css); el @import a cdnjs.cloudflare.com
+   quedaba bloqueado por el CSP de producción (style-src no incluye ese CDN). */
 
 /* ===================================
    1. TOKENS
@@ -250,6 +252,7 @@ code {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--paper-dim) !important;
+  background: transparent !important;
   padding-top: 18px;
   padding-bottom: 18px;
   position: relative;
@@ -270,7 +273,11 @@ code {
 }
 
 .navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > li > a:active,
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
   color: var(--white) !important;
   background: transparent !important;
 }
