@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0f0f0;
+  background-color: #fff;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -100,7 +100,7 @@ label {
 
 .login-links {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 10px;
 }
 

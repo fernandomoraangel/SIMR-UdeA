@@ -1,59 +1,112 @@
-.container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/*
+ * Estilos del registro — mismo tratamiento visual que el login
+ * (login.component.css): tarjeta centrada, logo institucional, botón
+ * azul primario, fondo blanco (igual al resto de la aplicación, que
+ * usa el blanco por defecto de Bootstrap).
+ */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: #fcfcfc;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  padding: 30px 30px 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.signup-card {
+  max-width: 460px;
+}
+
+.login-logo {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+.login-card h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #333;
 }
 
 .form-group {
-    margin-bottom: 15px;
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
 }
 
-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.form-control {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
-input.error {
-    border-color: #ff0000;
+.text-danger {
+  display: block;
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 10px;
+.btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
-button:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
+.btn-primary {
+  background-color: #007bff;
+  color: white;
 }
 
-.redirect-btn {
-    background-color: #28a745;
+.btn-primary:hover:not(:disabled) {
+  background-color: #0069d9;
 }
 
-.error-message {
-    color: #ff0000;
-    margin-top: 10px;
-    text-align: center;
+.btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.login-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.login-links a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
 }
