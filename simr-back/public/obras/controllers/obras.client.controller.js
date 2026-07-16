@@ -7,6 +7,7 @@ angular.module("obras").controller("ObrasController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Obras",
   "Actores",
   "Generos",
@@ -25,6 +26,7 @@ angular.module("obras").controller("ObrasController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Obras,
     Actores,
     Generos,
@@ -50,6 +52,27 @@ angular.module("obras").controller("ObrasController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    // Retorna true si tiene permiso "any" sobre el recurso, o si tiene
+    // permiso "own" y es el creador del registro.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "obra",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "obra",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
 
     // Cargar listas dinámicas desde la API
     $scope.loadListas = function () {

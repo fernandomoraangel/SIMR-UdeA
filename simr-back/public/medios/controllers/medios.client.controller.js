@@ -6,6 +6,7 @@ angular.module("medios").controller("MediosController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Medios",
   "Instrumentos",
   "Proyectos",
@@ -17,6 +18,7 @@ angular.module("medios").controller("MediosController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Medios,
     Instrumentos,
     Proyectos,
@@ -27,6 +29,26 @@ angular.module("medios").controller("MediosController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "medio",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "medio",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
 
     // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB).
     // Los roles de integrante de un medio sonoro son una lista propia ("rolesMedios",

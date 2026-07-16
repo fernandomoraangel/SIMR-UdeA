@@ -6,6 +6,7 @@ angular.module("proyectos").controller("ProyectosController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Proyectos",
   "Actores",
   "Diccionarios",
@@ -16,6 +17,7 @@ angular.module("proyectos").controller("ProyectosController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Proyectos,
     Actores,
     Diccionarios,
@@ -25,6 +27,26 @@ angular.module("proyectos").controller("ProyectosController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "proyecto",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "proyecto",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
     // Cargar listas dinámicas desde la API
     $scope.loadListas = function () {
       Listas.query(function (listas) {

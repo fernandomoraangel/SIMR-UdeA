@@ -13,9 +13,9 @@
         <div class="tituloVistaView" data-ng-bind="obra.titulo | uppercase"></div>
         <!-- Mostrar los botones de edición según permisos -->
         <div>
-          <a href="/#!/obras/{{obra._id}}/edit" has-permission="obra:update"><span
+          <a href="/#!/obras/{{obra._id}}/edit" data-ng-show="canUpdate(obra)"><span
               class="glyphicon glyphicon-pencil"></span></a>
-          <a href="#" data-ng-click="delete();" has-permission="obra:delete"><span
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(obra)"><span
               class="glyphicon glyphicon-remove"></span></a>
         </div>
 

@@ -6,6 +6,7 @@ angular.module("generos").controller("GenerosController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Generos",
   "Proyectos",
   "Sistemas",
@@ -19,6 +20,7 @@ angular.module("generos").controller("GenerosController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Generos,
     Proyectos,
     Sistemas,
@@ -31,6 +33,26 @@ angular.module("generos").controller("GenerosController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "genero",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "genero",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
     $scope.medios = Medios.query();
     $scope.sistemas = Sistemas.query();
     $scope.idiomas = Idiomas.query();

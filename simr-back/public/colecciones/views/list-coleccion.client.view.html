@@ -63,8 +63,11 @@
               <td data-ng-bind="coleccion.tipo"></td>
               <td data-ng-bind="coleccion.propiedadComodato"></td>
               <td data-ng-bind="formatDate(coleccion.fechaDeCreacion,coleccion.precision)"></td>
-              <td data-ng-show="auth.currentUser.id == coleccion.creador.id">
+              <td data-ng-show="canUpdate(coleccion)">
                 <a href="/#!/colecciones/{{coleccion._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(coleccion)">
+                <a href="#" data-ng-click="delete(coleccion)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

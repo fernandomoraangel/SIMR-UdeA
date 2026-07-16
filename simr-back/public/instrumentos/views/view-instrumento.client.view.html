@@ -14,12 +14,12 @@
           class="tituloVistaView"
           data-ng-bind="instrumento.nombre | uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == instrumento.creador.id">
-          <a href="/#!/instrumentos/{{instrumento._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(instrumento) || canDelete(instrumento)">
+          <a href="/#!/instrumentos/{{instrumento._id}}/edit" data-ng-show="canUpdate(instrumento)"
             ><span class="glyphicon glyphicon-pencil"></span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(instrumento)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

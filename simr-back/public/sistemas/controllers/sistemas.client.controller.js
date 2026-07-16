@@ -6,6 +6,7 @@ angular.module("sistemas").controller("SistemasController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Sistemas",
   "Proyectos",
   "Diccionarios",
@@ -16,6 +17,7 @@ angular.module("sistemas").controller("SistemasController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Sistemas,
     Proyectos,
     Diccionarios,
@@ -25,6 +27,26 @@ angular.module("sistemas").controller("SistemasController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "sistema",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "sistema",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
 
     // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB).
     // La vista de este módulo usa "sitios" (no "lugares") para el ng-repeat, por lo

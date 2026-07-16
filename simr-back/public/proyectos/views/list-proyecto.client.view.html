@@ -66,8 +66,11 @@
               <td data-ng-bind="proyecto.estado"></td>
               <td data-ng-bind="verFechas(proyecto.fechasAsociadas)"></td>
 
-              <td data-ng-show="auth.currentUser.id == proyecto.creador.id">
+              <td data-ng-show="canUpdate(proyecto)">
                 <a href="/#!/proyectos/{{proyecto._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(proyecto)">
+                <a href="#" data-ng-click="delete(proyecto)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

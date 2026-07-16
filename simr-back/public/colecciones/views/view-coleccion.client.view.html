@@ -13,12 +13,12 @@
           class="tituloVistaView"
           data-ng-bind="coleccion.nombre | uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == coleccion.creador.id">
-          <a href="/#!/colecciones/{{coleccion._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(coleccion) || canDelete(coleccion)">
+          <a href="/#!/colecciones/{{coleccion._id}}/edit" data-ng-show="canUpdate(coleccion)"
             ><span class="glyphicon glyphicon-pencil"></span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(coleccion)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

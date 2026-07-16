@@ -2,29 +2,37 @@
 
 //Cargar dependencias
 
-var users = require('../../app/controllers/users.server.controller'),
-	actores = require('../../app/controllers/actores.server.controller');
+const passport = require('passport');
+const actores = require('../../app/controllers/actores.server.controller');
+const { authorize } = require('../middleware/authorize.middleware');
+
+const requireAuth = passport.authenticate('jwt', { session: false });
 
 //Definir el método routes del módulo
 module.exports = function (app) {
 	//Configurar ruta base a 'actores'
 	app.route('/api/actores')
-		// .get(users.requiresLogin, actores.list)
-		.get(actores.list)
-		.post(users.requiresLogin, actores.create);
+		.get(requireAuth, authorize('actor', 'read'), actores.list)
+		.post(requireAuth, authorize('actor', 'create'), actores.create);
 
 	//Configurar las rutas a 'actores' parametrizadas
 	app.route('/api/actores/:actorId')
-		.get(actores.read)
-		.put(users.requiresLogin, actores.hasAuthorization, actores.update)
-		.delete(users.requiresLogin, actores.hasAuthorization, actores.delete);
+		.get(requireAuth, authorize('actor', 'read'), actores.read)
+		.put(
+			requireAuth,
+			authorize('actor', 'update', {
+				checkOwnership: (req) => req.actor.creador.id === req.user.id,
+			}),
+			actores.update
+		)
+		.delete(
+			requireAuth,
+			authorize('actor', 'delete', {
+				checkOwnership: (req) => req.actor.creador.id === req.user.id,
+			}),
+			actores.delete
+		);
 
-	//Configurar el parámetro middleware obraId
+	//Configurar el parámetro middleware actorId
 	app.param('actorId', actores.actorByID);
 };
-
-// .get((req, res, next) => {
-// 	res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
-// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-// 	actores.list(req, res, next);
-// })

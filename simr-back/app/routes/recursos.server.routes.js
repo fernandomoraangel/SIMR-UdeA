@@ -2,22 +2,37 @@
 
 //Cargar dependencias
 
-var users=require('../../app/controllers/users.server.controller'),
-	recursos=require('../../app/controllers/recursos.server.controller');
+const passport = require('passport');
+const recursos = require('../../app/controllers/recursos.server.controller');
+const { authorize } = require('../middleware/authorize.middleware');
+
+const requireAuth = passport.authenticate('jwt', { session: false });
 
 //Definir el método routes del módulo
 module.exports=function(app){
-	//Configurar ruta base a 'obras'
+	//Configurar ruta base a 'recursos'
 	app.route('/api/recursos')
-	.get(recursos.list)
-	.post(users.requiresLogin,recursos.create);
+	.get(requireAuth, authorize('recurso', 'read'), recursos.list)
+	.post(requireAuth, authorize('recurso', 'create'), recursos.create);
 
 	//Configurar las rutas a 'recursos' parametrizadas
 	app.route('/api/recursos/:recursoId')
-	.get(recursos.read)
-	.put(users.requiresLogin,recursos.hasAuthorization,recursos.update)
-	.delete(users.requiresLogin,recursos.hasAuthorization,recursos.delete);
+	.get(requireAuth, authorize('recurso', 'read'), recursos.read)
+	.put(
+		requireAuth,
+		authorize('recurso', 'update', {
+			checkOwnership: (req) => req.recurso.creador.id === req.user.id,
+		}),
+		recursos.update
+	)
+	.delete(
+		requireAuth,
+		authorize('recurso', 'delete', {
+			checkOwnership: (req) => req.recurso.creador.id === req.user.id,
+		}),
+		recursos.delete
+	);
 
-	//Configurar el parámetro middleware obraId
+	//Configurar el parámetro middleware recursoId
 	app.param('recursoId',recursos.recursoByID);
 };

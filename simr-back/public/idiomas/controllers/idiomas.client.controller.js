@@ -6,13 +6,41 @@ angular.module("idiomas").controller("IdiomasController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Idiomas",
-  function ($scope, $routeParams, $location, Authentication, Idiomas) {
+  function (
+    $scope,
+    $routeParams,
+    $location,
+    Authentication,
+    PermissionsService,
+    Idiomas
+  ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
 
     $scope.auth = Authentication.state;
     console.log("IdiomasController - authentication: ", $scope.auth);
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "idioma",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "idioma",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
 
     $scope.idEstados = [];
     //Preparar datos

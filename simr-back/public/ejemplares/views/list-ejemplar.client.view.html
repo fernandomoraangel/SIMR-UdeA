@@ -81,8 +81,11 @@
               <td data-ng-bind="ejemplar.numeroEjemplar"></td>
               <td data-ng-bind="ejemplar.disponibilidad"></td>
               <td data-ng-bind="verEstados(ejemplar.estados)"></td>
-              <td data-ng-show="auth.currentUser.id == ejemplar.creador.id">
+              <td data-ng-show="canUpdate(ejemplar)">
                 <a href="/#!/ejemplares/{{ejemplar._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(ejemplar)">
+                <a href="#" data-ng-click="delete(ejemplar)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

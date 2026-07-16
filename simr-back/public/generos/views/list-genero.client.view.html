@@ -80,8 +80,11 @@
               <td data-ng-bind="verGeneros(genero.padres)"></td>
               <td data-ng-bind="verGeneros(genero.hijos)"></td>
               <td data-ng-bind="verIdiomas(genero.idioma)"></td>
-              <td data-ng-show="auth.currentUser.id == genero.creador.id">
+              <td data-ng-show="canUpdate(genero)">
                 <a href="/#!/generos/{{genero._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(genero)">
+                <a href="#" data-ng-click="delete(genero)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

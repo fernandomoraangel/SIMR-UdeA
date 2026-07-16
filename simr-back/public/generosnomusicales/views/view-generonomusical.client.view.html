@@ -16,12 +16,12 @@
           class="tituloVistaView"
           data-ng-bind="generoNoMusical.nombre | uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == generoNoMusical.creador.id">
-          <a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(generoNoMusical) || canDelete(generoNoMusical)">
+          <a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit" data-ng-show="canUpdate(generoNoMusical)"
             ><span class="glyphicon glyphicon-pencil"> </span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(generoNoMusical)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

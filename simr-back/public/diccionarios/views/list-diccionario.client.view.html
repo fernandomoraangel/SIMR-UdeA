@@ -63,8 +63,11 @@
               <td data-ng-bind="diccionario.campo"></td>
               <td data-ng-bind="diccionario.campoLargo"></td>
               <td data-ng-bind="diccionario.definicion"></td>
-              <td data-ng-show="auth.currentUser.id == diccionario.creador.id">
+              <td data-ng-show="canUpdate(diccionario)">
                 <a href="/#!/diccionarios/{{diccionario._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(diccionario)">
+                <a href="#" data-ng-click="delete(diccionario)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

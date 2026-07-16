@@ -64,8 +64,11 @@
               <td data-ng-bind="instrumento.clasificacion"></td>
               <td data-ng-bind="verAlias(instrumento.alias)"></td>
               <td data-ng-bind="verProyecto(instrumento.proyectosAsociados)"></td>
-              <td data-ng-show="auth.currentUser.id == instrumento.creador.id">
+              <td data-ng-show="canUpdate(instrumento)">
                 <a href="/#!/instrumentos/{{instrumento._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(instrumento)">
+                <a href="#" data-ng-click="delete(instrumento)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

@@ -63,8 +63,11 @@
               <td class="descripcion" data-ng-bind="fondo.tipo"></td>
               <td class="descripcion" data-ng-bind="fondo.propiedadComodato"></td>
               <td class="descripcion" data-ng-bind="formatDate(fondo.fechaDeCreacion,fondo.precision)"></td>
-              <td data-ng-show="auth.currentUser.id == fondo.creador.id">
+              <td data-ng-show="canUpdate(fondo)">
                 <a href="/#!/fondos/{{fondo._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(fondo)">
+                <a href="#" data-ng-click="delete(fondo)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

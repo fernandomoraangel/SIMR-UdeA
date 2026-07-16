@@ -73,6 +73,34 @@ angular
           return permissions[resource][action] === "own";
         },
 
+        // Verificar si el usuario puede realizar una acción sobre un registro específico.
+        // Retorna true si:
+        //   - el permiso configurado es "any" (puede sobre cualquier registro), o
+        //   - el permiso configurado es "own" Y el usuario es el creador del registro
+        // Se usa en vistas de detalle/edición, donde sí se conoce el creador del registro.
+        // creatorId/currentUserId se comparan como string para evitar problemas de tipo (ObjectId vs String).
+        hasPermissionOwn: function (resource, action, creatorId, currentUserId) {
+          if (!permissions || !permissions[resource]) {
+            return false;
+          }
+
+          var permissionValue = permissions[resource][action];
+
+          if (permissionValue === "any") {
+            return true;
+          }
+
+          if (permissionValue === "own") {
+            return (
+              !!creatorId &&
+              !!currentUserId &&
+              String(creatorId) === String(currentUserId)
+            );
+          }
+
+          return false;
+        },
+
         // Verificar si el usuario es administrador
         isAdmin: function () {
           return userRole === "admin";

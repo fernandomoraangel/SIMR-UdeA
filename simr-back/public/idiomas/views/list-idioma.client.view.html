@@ -38,9 +38,14 @@
                 <a href="/#!/idiomas/{{idioma._id}}"><span class="glyphicon glyphicon-sunglasses"></span></a>
               </td>
               <td class="descripcion" data-ng-bind="idioma.idioma"></td>
-              <td data-ng-show="auth.currentUser.id == idioma.creador.id">
+              <td data-ng-show="canUpdate(idioma)">
                 <a href="/#!/idiomas/{{idioma._id}}/edit">
                   <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+              </td>
+              <td data-ng-show="canDelete(idioma)">
+                <a href="#" data-ng-click="delete(idioma)">
+                  <span class="glyphicon glyphicon-remove"></span>
                 </a>
               </td>
             </tr>

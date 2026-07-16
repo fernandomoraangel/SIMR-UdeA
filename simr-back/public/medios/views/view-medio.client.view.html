@@ -13,12 +13,12 @@
           class="tituloVistaView"
           data-ng-bind="medio.nombre| uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == medio.creador.id">
-          <a href="/#!/medios/{{medio._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(medio) || canDelete(medio)">
+          <a href="/#!/medios/{{medio._id}}/edit" data-ng-show="canUpdate(medio)"
             ><span class="glyphicon glyphicon-pencil"></span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(medio)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

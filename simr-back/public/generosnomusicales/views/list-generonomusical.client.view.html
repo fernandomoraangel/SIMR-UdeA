@@ -81,9 +81,12 @@
               <td data-ng-bind="verGeneros(generoNoMusical.padres)"></td>
               <td data-ng-bind="verGeneros(generoNoMusical.hijos)"></td>
               <td data-ng-bind="verIdiomas(generoNoMusical.idioma)"></td>
-              <td data-ng-show="auth.currentUser.id == generoNoMusical.creador.id">
+              <td data-ng-show="canUpdate(generoNoMusical)">
                 <a href="/#!/generosnomusicales/{{generoNoMusical._id}}/edit"><span
                     class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(generoNoMusical)">
+                <a href="#" data-ng-click="delete(generoNoMusical)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

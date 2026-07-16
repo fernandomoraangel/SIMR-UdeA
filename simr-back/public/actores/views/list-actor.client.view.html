@@ -58,8 +58,11 @@
               <td data-ng-bind="actor.apellidos"></td>
               <td data-ng-bind="actor.nombreReunion"></td>
               <td data-ng-bind="verContenedores(actor.contenedor)"></td>
-              <td data-ng-show="auth.currentUser.id == actor.creador.id">
+              <td data-ng-show="canUpdate(actor)">
                 <a href="/#!/actores/{{actor._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(actor)">
+                <a href="#" data-ng-click="delete(actor)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

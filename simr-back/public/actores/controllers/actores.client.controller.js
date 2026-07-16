@@ -6,6 +6,7 @@ angular.module("actores").controller("ActoresController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Actores",
   "Diccionarios",
   "ArchivoService",
@@ -15,6 +16,7 @@ angular.module("actores").controller("ActoresController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Actores,
     Diccionarios,
     ArchivoService,
@@ -23,6 +25,26 @@ angular.module("actores").controller("ActoresController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "actor",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "actor",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
     $scope.diccionarios = Diccionarios.query();
 
     // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB)

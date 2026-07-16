@@ -64,8 +64,11 @@
               <td data-ng-bind="verAlias(medio.alias)"></td>
               <td data-ng-bind="verInstrumento(medio.instrumentos)"></td>
               <td data-ng-bind="verProyecto(medio.proyectosAsociados)"></td>
-              <td data-ng-show="auth.currentUser.id == medio.creador.id">
+              <td data-ng-show="canUpdate(medio)">
                 <a href="/#!/medios/{{medio._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(medio)">
+                <a href="#" data-ng-click="delete(medio)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

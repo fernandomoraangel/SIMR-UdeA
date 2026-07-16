@@ -72,8 +72,11 @@
               <td data-ng-bind="verMaterias(materia.materiasRelacionadas)"></td>
               <td data-ng-bind="verMaterias(materia.padres)"></td>
               <td data-ng-bind="verMaterias(materia.hijos)"></td>
-              <td data-ng-show="auth.currentUser.id == materia.creador.id">
+              <td data-ng-show="canUpdate(materia)">
                 <a href="/#!/materias/{{materia._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(materia)">
+                <a href="#" data-ng-click="delete(materia)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

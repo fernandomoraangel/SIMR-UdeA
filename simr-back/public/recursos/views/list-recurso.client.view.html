@@ -90,8 +90,11 @@
               <td data-ng-bind="verIdiomas(recurso.idiomas)"></td>
               <td data-ng-bind="verDTecnica(recurso.descripcionTecnica)"></td>
               <td data-ng-bind="recurso.faceta"></td>
-              <td data-ng-show="auth.currentUser.id == recurso.creador.id">
+              <td data-ng-show="canUpdate(recurso)">
                 <a href="/#!/recursos/{{recurso._id}}/edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              </td>
+              <td data-ng-show="canDelete(recurso)">
+                <a href="#" data-ng-click="delete(recurso)"><span class="glyphicon glyphicon-remove"></span></a>
               </td>
             </tr>
           </tbody>

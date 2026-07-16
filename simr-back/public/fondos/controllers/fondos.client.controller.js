@@ -6,6 +6,7 @@ angular.module("fondos").controller("FondosController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Obras",
   "Actores",
   "Fondos",
@@ -16,6 +17,7 @@ angular.module("fondos").controller("FondosController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Obras,
     Actores,
     Fondos,
@@ -25,6 +27,26 @@ angular.module("fondos").controller("FondosController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "fondo",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "fondo",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
 
     // Cargar listas dinámicas desde la API
     $scope.loadListas = function () {

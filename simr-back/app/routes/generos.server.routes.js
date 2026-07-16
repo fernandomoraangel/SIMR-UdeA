@@ -2,22 +2,37 @@
 
 //Cargar dependencias
 
-var users=require('../../app/controllers/users.server.controller'),
-	generos=require('../../app/controllers/generos.server.controller');
+const passport = require('passport');
+const generos = require('../../app/controllers/generos.server.controller');
+const { authorize } = require('../middleware/authorize.middleware');
+
+const requireAuth = passport.authenticate('jwt', { session: false });
 
 //Definir el método routes del módulo
 module.exports=function(app){
-	//Configurar ruta base a 'obras'
+	//Configurar ruta base a 'generos'
 	app.route('/api/generos')
-	.get(generos.list)
-	.post(users.requiresLogin,generos.create);
+	.get(requireAuth, authorize('genero', 'read'), generos.list)
+	.post(requireAuth, authorize('genero', 'create'), generos.create);
 
 	//Configurar las rutas a 'generos' parametrizadas
 	app.route('/api/generos/:generoId')
-	.get(generos.read)
-	.put(users.requiresLogin,generos.hasAuthorization,generos.update)
-	.delete(users.requiresLogin,generos.hasAuthorization,generos.delete);
+	.get(requireAuth, authorize('genero', 'read'), generos.read)
+	.put(
+		requireAuth,
+		authorize('genero', 'update', {
+			checkOwnership: (req) => req.genero.creador.id === req.user.id,
+		}),
+		generos.update
+	)
+	.delete(
+		requireAuth,
+		authorize('genero', 'delete', {
+			checkOwnership: (req) => req.genero.creador.id === req.user.id,
+		}),
+		generos.delete
+	);
 
-	//Configurar el parámetro middleware obraId
+	//Configurar el parámetro middleware generoId
 	app.param('generoId',generos.generoByID);
 };

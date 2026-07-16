@@ -13,12 +13,12 @@
           class="tituloVistaView"
           data-ng-bind="proyecto.nombre | uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == proyecto.creador.id">
-          <a href="/#!/proyectos/{{proyecto._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(proyecto) || canDelete(proyecto)">
+          <a href="/#!/proyectos/{{proyecto._id}}/edit" data-ng-show="canUpdate(proyecto)"
             ><span class="glyphicon glyphicon-pencil"></span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(proyecto)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

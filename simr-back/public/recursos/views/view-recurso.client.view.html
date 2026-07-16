@@ -13,12 +13,12 @@
           class="tituloVistaView"
           data-ng-bind="recurso.titulo | uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == recurso.creador.id">
-          <a href="/#!/recursos/{{recurso._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(recurso) || canDelete(recurso)">
+          <a href="/#!/recursos/{{recurso._id}}/edit" data-ng-show="canUpdate(recurso)"
             ><span class="glyphicon glyphicon-pencil"></span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(recurso)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

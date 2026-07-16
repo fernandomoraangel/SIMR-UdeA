@@ -8,6 +8,7 @@ angular
     "$routeParams",
     "$location",
     "Authentication",
+    "PermissionsService",
     "GenerosNoMusicales",
     "Idiomas",
     "Diccionarios",
@@ -18,6 +19,7 @@ angular
       $routeParams,
       $location,
       Authentication,
+      PermissionsService,
       GenerosNoMusicales,
       Idiomas,
       Diccionarios,
@@ -27,6 +29,26 @@ angular
       //Exponer el servicio Authentication
       // $scope.authentication = Authentication;
       $scope.auth = Authentication.state;
+
+      // Verifica si el usuario puede editar/eliminar un registro específico.
+      $scope.canUpdate = function (item) {
+        return PermissionsService.hasPermissionOwn(
+          "genero_no_musical",
+          "update",
+          item && item.creador && item.creador.id,
+          $scope.auth.currentUser && $scope.auth.currentUser.id
+        );
+      };
+
+      $scope.canDelete = function (item) {
+        return PermissionsService.hasPermissionOwn(
+          "genero_no_musical",
+          "delete",
+          item && item.creador && item.creador.id,
+          $scope.auth.currentUser && $scope.auth.currentUser.id
+        );
+      };
+
 
       // Cargar listas dinámicas desde la API (fuente única: colección Lista en MongoDB)
       $scope.loadListas = function () {

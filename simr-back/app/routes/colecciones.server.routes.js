@@ -2,22 +2,37 @@
 
 //Cargar dependencias
 
-var users=require('../../app/controllers/users.server.controller'),
-	colecciones=require('../../app/controllers/colecciones.server.controller');
+const passport = require('passport');
+const colecciones = require('../../app/controllers/colecciones.server.controller');
+const { authorize } = require('../middleware/authorize.middleware');
+
+const requireAuth = passport.authenticate('jwt', { session: false });
 
 //Definir el método routes del módulo
 module.exports=function(app){
-	//Configurar ruta base a 'obras'
+	//Configurar ruta base a 'colecciones'
 	app.route('/api/colecciones')
-	.get(colecciones.list)
-	.post(users.requiresLogin,colecciones.create);
+	.get(requireAuth, authorize('coleccion', 'read'), colecciones.list)
+	.post(requireAuth, authorize('coleccion', 'create'), colecciones.create);
 
 	//Configurar las rutas a 'colecciones' parametrizadas
 	app.route('/api/colecciones/:coleccionId')
-	.get(colecciones.read)
-	.put(users.requiresLogin,colecciones.hasAuthorization,colecciones.update)
-	.delete(users.requiresLogin,colecciones.hasAuthorization,colecciones.delete);
+	.get(requireAuth, authorize('coleccion', 'read'), colecciones.read)
+	.put(
+		requireAuth,
+		authorize('coleccion', 'update', {
+			checkOwnership: (req) => req.coleccion.creador.id === req.user.id,
+		}),
+		colecciones.update
+	)
+	.delete(
+		requireAuth,
+		authorize('coleccion', 'delete', {
+			checkOwnership: (req) => req.coleccion.creador.id === req.user.id,
+		}),
+		colecciones.delete
+	);
 
-	//Configurar el parámetro middleware obraId
+	//Configurar el parámetro middleware coleccionId
 	app.param('coleccionId',colecciones.coleccionByID);
 };

@@ -6,13 +6,41 @@ angular.module("diccionarios").controller("DiccionariosController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Diccionarios",
-  function ($scope, $routeParams, $location, Authentication, Diccionarios) {
+  function (
+    $scope,
+    $routeParams,
+    $location,
+    Authentication,
+    PermissionsService,
+    Diccionarios
+  ) {
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
     $scope.idEstados = [];
     $scope.diccionarios = Diccionarios.query();
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "diccionario",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "diccionario",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
     //Preparar datos
     $scope.actualizarTodo = function () {
       $scope.idEstados = this.diccionario.estados;

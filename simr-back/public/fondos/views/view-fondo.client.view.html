@@ -13,12 +13,12 @@
           class="tituloVistaView"
           data-ng-bind="fondo.nombre | uppercase"
         ></div>
-        <!-- Mostrar los botones de edición para el creador del artículo-->
-        <div data-ng-show="auth.currentUser.id == fondo.creador.id">
-          <a href="/#!/fondos/{{fondo._id}}/edit"
+        <!-- Mostrar los botones de edición según permisos -->
+        <div data-ng-show="canUpdate(fondo) || canDelete(fondo)">
+          <a href="/#!/fondos/{{fondo._id}}/edit" data-ng-show="canUpdate(fondo)"
             ><span class="glyphicon glyphicon-pencil"></span
           ></a>
-          <a href="#" data-ng-click="delete();"
+          <a href="#" data-ng-click="delete();" data-ng-show="canDelete(fondo)"
             ><span class="glyphicon glyphicon-remove"></span
           ></a>
         </div>

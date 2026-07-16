@@ -6,6 +6,7 @@ angular.module("recursos").controller("RecursosController", [
   "$routeParams",
   "$location",
   "Authentication",
+  "PermissionsService",
   "Recursos",
   "Obras",
   "Actores",
@@ -20,6 +21,7 @@ angular.module("recursos").controller("RecursosController", [
     $routeParams,
     $location,
     Authentication,
+    PermissionsService,
     Recursos,
     Obras,
     Actores,
@@ -33,6 +35,26 @@ angular.module("recursos").controller("RecursosController", [
     //Exponer el servicio Authentication
     // $scope.authentication = Authentication;
     $scope.auth = Authentication.state;
+
+    // Verifica si el usuario puede editar/eliminar un registro específico.
+    $scope.canUpdate = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "recurso",
+        "update",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
+    $scope.canDelete = function (item) {
+      return PermissionsService.hasPermissionOwn(
+        "recurso",
+        "delete",
+        item && item.creador && item.creador.id,
+        $scope.auth.currentUser && $scope.auth.currentUser.id
+      );
+    };
+
 
     // Cargar listas dinámicas desde la API
     $scope.loadListas = function () {
