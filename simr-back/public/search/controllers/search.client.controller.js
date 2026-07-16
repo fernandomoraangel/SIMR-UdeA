@@ -316,8 +316,13 @@ angular.module("search").controller("SearchController", [
     };
 
     // Función auxiliar para aplicar resaltado a texto
+    // NOTA DE SEGURIDAD (XSS corregido): antes, si no había searchQuery,
+    // se retornaba "text" crudo (sin escapar, sin $sce.trustAsHtml) y aun
+    // así se enlazaba vía ng-bind-html. Ahora siempre se pasa por el
+    // filtro "highlight" (que escapa entidades HTML) y siempre se marca
+    // explícitamente como HTML confiable, de forma consistente.
     vm.highlightText = function (text) {
-      if (!text || !vm.searchQuery) {
+      if (!text) {
         return text;
       }
       var highlightFilter = $filter("highlight");

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LoginCredentials } from '../../../core/auth/auth.interface';
 import { environment } from '@env/environment';
@@ -20,10 +20,17 @@ export class LoginComponent implements OnInit {
 
   showTest = false; // Variable para mostrar el botón de prueba
 
+  // Ruta legacy (AngularJS) a la que se debe regresar tras autenticarse,
+  // provista por el middleware de auth-gating de simr-back
+  // (app/middleware/legacyShellGuard.js) cuando un visitante anónimo
+  // intenta acceder al shell legacy o a sus assets estáticos.
+  private returnTo: string | null = null;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
@@ -32,10 +39,29 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+
     // Si ya está autenticado, redirigir
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.goToDestination();
     }
+  }
+
+  // Tras un login exitoso: si se llegó aquí porque el backend legacy
+  // bloqueó una visita anónima (ver legacyShellGuard.js), se regresa al
+  // recurso legacy solicitado a través de /redirect-to-legacy (ya
+  // autenticado, con la cookie de sesión recién emitida). En cualquier
+  // otro caso, se mantiene el comportamiento original (ir al dashboard
+  // de Angular 20).
+  private goToDestination(): void {
+    if (this.returnTo) {
+      const backendOrigin = environment.originUrl;
+      window.location.href = `${backendOrigin}/redirect-to-legacy?returnTo=${encodeURIComponent(
+        this.returnTo
+      )}`;
+      return;
+    }
+    this.router.navigate(['/dashboard']);
   }
 
   onSubmit(): void {
@@ -58,8 +84,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
-        this.router.navigate(['/dashboard']);
-        // this.router.navigate([API_URL]);
+        this.goToDestination();
 
         this.showTest = true;
       },

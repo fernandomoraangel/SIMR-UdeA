@@ -12,11 +12,18 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const crypto = require("crypto");
+const legacyShellGuard = require("../app/middleware/legacyShellGuard");
 
 // Función para inicializar la aplicación express
 module.exports = function () {
   //* Instanciar la aplicación
   const app = express();
+
+  //* Confiar en el proxy inverso (Nginx) para X-Forwarded-Proto/-For,
+  //* necesario para que legacyShellGuard construya URLs absolutas
+  //* correctas (https) y para que las cookies "secure" funcionen bien
+  //* detrás de TLS terminado en Nginx.
+  app.set("trust proxy", 1);
 
   //* Rutas para la API
   const apiRouter = express.Router();
@@ -304,7 +311,12 @@ module.exports = function () {
   app.use(handleAuthError);
 
   // Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
-  app.use(express.static("./public"));
+  // Auth-gating: se protege TODO /public (incluye angular.js v1.8.2 EOL,
+  // jquery, bootstrap, y los *.client.*.js/*.client.view.html del legacy)
+  // detrás de la misma verificación de sesión que el shell ('/'). Ver
+  // app/middleware/legacyShellGuard.js. Las rutas /api/* NO se ven
+  // afectadas (login/signup/verify siguen siendo anónimas).
+  app.use(legacyShellGuard, express.static("./public"));
 
   // Devuelve la instancia de la aplicación
   return app;

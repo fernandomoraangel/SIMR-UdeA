@@ -70,8 +70,15 @@ module.exports = function (app) {
   // Ruta para redirección desde Angular a AngularJS
   app.route('/redirect-to-legacy')
     .get(passport.authenticate('jwt', { session: false }), (req, res) => {
-      // El usuario ya está autenticado por JWT, redirigir a AngularJS
-      const legacyAppUrl = process.env.ANGULARJS_APP_URL || 'http://localhost:3000';
-      res.redirect(legacyAppUrl);
+      // El usuario ya está autenticado por JWT. Se usa una redirección
+      // relativa (mismo origen) en vez de una URL absoluta configurada
+      // por variable de entorno: evita que quede mal apuntada (p.ej. a
+      // localhost) si ANGULARJS_APP_URL no está definida, y funciona
+      // igual en cualquier entorno (dev/prod) porque este endpoint ya
+      // vive en el mismo backend que sirve el shell legacy en '/'.
+      const returnTo = typeof req.query.returnTo === 'string' && req.query.returnTo.startsWith('/')
+        ? req.query.returnTo
+        : '/';
+      res.redirect(returnTo);
     });
 };
