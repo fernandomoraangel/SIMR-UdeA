@@ -1,7 +1,7 @@
 # Plan de Migración de AngularJS a Angular (SIMR-UdeA)
 
-> **Estado:** Plan de diseño. No ejecutar todavía — este documento es la referencia que se seguirá módulo por módulo cuando se autorice la ejecución.
-> **Última actualización:** 2026-07-20 (Pivot de enfoque: el shell y módulos se construyen con **Angular Material** (estética moderna), no fiel a Bootstrap 3. Solo se conserva Bootstrap 3 CSS para los módulos ya migrados idiomas/diccionarios que usan clases .btn/.container, y Font Awesome 5 para sus iconos `fas`.)
+> **Estado:** En ejecución (rama `migracion`).
+> **Última actualización:** 2026-07-20 (Pivot de enfoque definitivo: **Angular Material + identidad SIMR propia, diseño COMPLETAMENTE NUEVO, CERO Bootstrap, CERO Font Awesome, CERO jQuery**). Se conserva la paridad **funcional** con el legacy (mismas acciones, campos, validaciones, permisos, endpoints), pero la apariencia es nueva con Material. Esto reemplaza el principio original de "replicación fiel 1:1 con Bootstrap 3".)
 
 ## 1. Resumen del proyecto
 
@@ -39,7 +39,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | # | Módulo | Tipo | CRUD completo | Usa `<archivo-manager>` (MinIO) | Estado en `simr-front` |
 |---|---|---|---|---|---|
 | 1 | `authentication` | Auth | — | No | 🟡 Reutilizable (login/registro), ajustar apariencia al legacy |
-| 2 | `core` | Shell/menú/guard | — | No | 🟡 **Fase 1 en curso (enfoque Material):** `ShellComponent` rediseñado con **Angular Material** (`mat-toolbar` + `mat-menu`, iconos `mat-icon`), sin Bootstrap JS ni jQuery. Los dropdowns se controlan con Angular (antes fallaba el `data-toggle` de Bootstrap porque Angular monta el DOM tras `DOMContentLoaded`). Módulos no migrados → ruta `/no-implementado/:modulo` (página temporal dentro de Angular); idiomas/diccionarios → rutas Angular reales. `AuthorizationService` + carga de permisos conservados. `styles.css` importa Bootstrap 3 CSS + Font Awesome 5 (para los módulos migrados que usan `.btn`/`fas`). Smoke 3/3 en verde. **Pendiente:** revisión visual lado a lado y ajuste fino de apariencia Material. |
+| 2 | `core` | Shell/menú/guard | — | No | ✅ **Migrado (Material):** `ShellComponent` con `mat-toolbar` + `mat-menu` + `mat-icon`, login/registro como popup (`AuthDialogComponent`), marca de agua en `/`, bienvenida sin formularios. Módulos no migrados → `/no-implementado/:modulo`; idiomas/diccionarios → rutas reales. `AuthorizationService` + `AuthDialogService` + `SweetAlertService`. Cero Bootstrap/FA/jQuery. Smoke 3/3 en verde. |
 | 3 | `admin` | Gestión roles/usuarios | No (forms propios) | No | ❌ Pendiente |
 | 4 | `auditoria` | Solo lectura | No (list) | No | ❌ Pendiente |
 | 5 | `listas` | Datos de referencia transversales | No (list) | No | ❌ Pendiente (bloqueante para el resto) |
@@ -77,7 +77,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 
 ## 3. Principios y convenciones a aplicar en cada módulo migrado
 
-1. **Replicación fiel 1:1 del legacy.** Cada vista migrada debe copiar el HTML y la lógica del controlador AngularJS correspondiente (mismas clases CSS Bootstrap 3 del `styles.css` legacy, mismo menú shell embebido, mismo comportamiento de botones/tablas/formularios). No se "reinventa" la UI con componentes nuevos. `features/<modulo>/{components,services,models}` como estructura de carpetas.
+1. **Paridad funcional 1:1, diseño nuevo con Angular Material.** Cada vista migrada debe replicar **el comportamiento** del controlador AngularJS correspondiente (mismas acciones, campos, validaciones, permisos, endpoints `/api/<modulo>`), pero con una **interfaz completamente nueva en Angular Material + identidad SIMR** (tokens en `src/assets/styles/styles.css`, `mat-*` components, `mat-icon`). **No se usa Bootstrap, Font Awesome ni jQuery en ningún módulo migrado.** `features/<modulo>/{components,services,models}` como estructura de carpetas.
 2. **Componentes CRUD estándar por módulo**: `<modulo>-list`, `<modulo>-create`, `<modulo>-edit`, `<modulo>-detail` replicando las 4 vistas del legacy (`list-*.client.view.html`, `create-*.client.view.html`, `edit-*.client.view.html`, `view-*.client.view.html`).
 3. **Servicio HTTP dedicado** `<modulo>.service.ts` que reemplace 1:1 al factory `$resource` legacy, consumiendo los mismos endpoints `/api/<modulo>` (sin tocar el backend salvo necesidades puntuales documentadas).
 4. **Rutas**: lazy-loaded vía `loadChildren`, protegidas con `AuthGuard`/`RoleGuard` replicando el `permission`/`resource` que hoy está declarado en `*.client.routes.js` del legacy.
@@ -85,7 +85,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 6. **Listas de referencia**: consumir el servicio de `listas` migrado (Fase Core) en vez de duplicar `Listas.query()`.
 7. **Manejo de errores y notificaciones**: usar `NotificationService`/`SweetAlertService` ya existentes en `core/services` (paridad con SweetAlert2 del legacy).
 8. **Pruebas obligatorias por módulo** (ver sección 8): specs de servicio + specs de cada componente + al menos un test e2e de flujo CRUD completo.
-9. **Fidelidad visual obligatoria (paridad de apariencia).** No basta con que el módulo funcione: debe **verse exactamente igual que el legacy**. Para lograrlo se parte de `simr-back/public/styles.css` importado en el build de `simr-front` (Fase 0.8). En cada módulo migrado se exige una **revisión visual lado a lado** (legacy servido en `:3000` / estáticos vs Angular en `:4200`) comparando: layout de formularios, tablas/listados, botones, diálogos (SweetAlert2), componentes de archivos, colores y tipografía. El módulo NO se aprueba sin esta verificación documentada (capturas comparativas en el checklist). Los módulos 🟡 preexistentes deben someterse a esta misma revisión antes de considerarse aprobados.
+9. **Coherencia visual con el sistema SIMR (Material).** No basta con que el módulo funcione: debe ser **coherente con la identidad SIMR / Angular Material** ya establecida en el shell (paleta tinta/papel/sello/cobre/musgo, tipografías Fraunces/Inter/IBM Plex Mono, firma de onda). En cada módulo migrado se exige revisión visual comparando contra el shell y contra el legacy para garantizar **paridad funcional** (mismas acciones/campos/permisos), sin necesidad de igualdad estética con Bootstrap.
 10. **No modificar el backend** salvo que se detecte una incompatibilidad real; si se requiere, documentarla explícitamente en el PR/commit del módulo.
 11. **Feature flag de corte por módulo**: mientras un módulo esté en migración, el legacy sigue siendo la fuente de verdad para ese módulo; al cerrar la fase de ese módulo, se deshabilita su ruta en `public/application.js` (comentar el módulo en el array, no borrar aún) y se redirige `#!/<modulo>` hacia `/**` (Angular) desde el shell legacy o desde Nginx. El borrado físico del código legacy ocurre solo en la Fase 6.
 
@@ -104,7 +104,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 - [ ] **0.5. Preparar entorno de staging con datos de prueba** (Mongo + MinIO) reproducible (seed scripts) para poder repetir pruebas de cada módulo sin afectar producción.
 - [ ] **0.6. Tablero de seguimiento.** Crear un tablero/checklist (puede ser este mismo archivo) con una fila por módulo y su estado: `Pendiente / En progreso / Migrado (con pruebas) / Legacy desactivado`.
 - [ ] **0.7. Backup/tag de versión previa.** Etiquetar el repo (`git tag pre-migracion-angular`) antes de iniciar cambios, para poder comparar/revertir con facilidad.
-- [ ] **0.8. Importar y unificar estilos del legacy (fidelidad visual).** Incorporar `simr-back/public/styles.css` (y `stylesold.css` si aplica) al build de `simr-front` (ej. importarlo desde `src/styles.css` o `angular.json` `styles`), conservando el look & feel del legacy. Esto es obligatorio: cada módulo migrado debe **verse idéntico** al legacy, no solo funcionar. Documentar en el checklist de cada módulo una verificación visual lado a lado (legacy vs Angular) con capturas de pantalla comparativas.
+- [ ] **0.8. Sistema de diseño SIMR (Material).** Los módulos migrados usan **Angular Material + tokens de la identidad SIMR** (`src/assets/styles/styles.css`, `src/styles.css`), no los estilos Bootstrap del legacy. Cada módulo debe verse coherente con el shell Material ya construido. Verificación visual = coherencia con el sistema SIMR, no igualdad con el legacy.
 - [ ] **0.9. Criterio de aceptación de apariencia.** Definir qué significa "igual": mismos colores, tipografía, disposición de formularios, tablas, botones, diálogos (SweetAlert2 ya presente en ambos) y componentes de archivos. Los módulos 🟡 existentes (authentication, diccionarios, idiomas, actores, archivos) deben someterse a esta revisión antes de marcarse como aprobados.
 
 ---
@@ -141,7 +141,7 @@ Objetivo: que Angular tenga el shell de navegación (menú principal), guards de
   - [ ] **Pendiente validación manual lado a lado (principio 9):** comparar visualmente el shell Angular (`http://localhost/angular/` o `:4200`) contra el legacy (`http://localhost/#!/`) y registrar capturas. Lo mismo para login (ajuste visual ya hecho en paso previo).
 - [ ] **Checkpoint de cierre de fase:** no continuar a Fase 2 sin que 1.1–1.5 tengan pruebas en verde y validación manual documentada. (1.2–1.5 = listas/search/admin/auditoria, aún pendientes; ver nota abajo)
 
-> **Nota de alcance de Fase 1 (2026-07-19):** en esta entrega se completó **1.1 (Shell + AuthorizationService)** y **1.6 (validación automatizada)**. Los submódulos transversales **1.2 listas, 1.3 search, 1.4 admin, 1.5 auditoria** se dejan para después de los CRUD de negocio (Fase 3) o en una Fase 1.B, porque el shell ya delega estos ítems al legacy vía `href="/#!/..."` sin romper nada. El plan original los ponía antes de los CRUD, pero dado que el shell enlaza al legacy para lo no migrado, no son bloqueantes para iniciar Fase 3. Se reconsiderará al llegar a ellos.
+> **Nota de alcance de Fase 1 (2026-07-20):** en esta entrega se completó **1.1 (Shell Material + AuthorizationService + AuthDialog)** y **1.6 (validación automatizada)**. Se ejecuta ahora **1.2 listas, 1.3 search, 1.4 admin, 1.5 auditoria** con enfoque Angular Material (paridad funcional con el legacy, diseño nuevo SIMR). El shell ya delega estos ítems a rutas Angular reales (ya no a `href="/#!/..."` legacy). Cada módulo se cierra con specs + e2e antes de avanzar.
 
 ---
 

@@ -1,0 +1,168 @@
+<div class="listas-page">
+  <header class="listas-head">
+    <div>
+      <h1 class="listas-title">Listas de referencia</h1>
+      <p class="simr-eyebrow">Datos de catálogo compartidos por todos los módulos</p>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="listas-loading">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="listas-error">{{ error }}</div>
+
+  <div class="listas-layout" *ngIf="!loading && !error">
+    <!-- Panel izquierdo: listas -->
+    <mat-card class="panel-listas" appearance="outlined">
+      <mat-form-field appearance="outline" class="filtro">
+        <mat-label>Filtrar listas</mat-label>
+        <input matInput [(ngModel)]="filtro" />
+        <button
+          mat-icon-button
+          matSuffix
+          *ngIf="filtro"
+          (click)="clearFilter()"
+          aria-label="Limpiar"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          *ngFor="let lista of filteredListas"
+          (click)="select(lista)"
+          [class.active]="selected && selected._id === lista._id"
+        >
+          <span matListItemTitle class="lista-nombre">{{ lista.nombre_lista }}</span>
+          <span matListItemMeta class="lista-count"
+            >{{ lista.elementos.length }}</span
+          >
+        </a>
+      </mat-nav-list>
+      <p class="empty" *ngIf="filteredListas.length === 0">
+        No hay listas que coincidan.
+      </p>
+    </mat-card>
+
+    <!-- Panel derecho: elementos -->
+    <mat-card class="panel-elementos" appearance="outlined" *ngIf="selected">
+      <div class="elementos-head">
+        <h2 class="elementos-titulo">{{ selected.nombre_lista | titlecase }}</h2>
+        <button
+          mat-stroked-button
+          color="warn"
+          *ngIf="canWrite"
+          (click)="deleteLista()"
+        >
+          <mat-icon>delete</mat-icon> Eliminar lista
+        </button>
+      </div>
+      <p class="elementos-meta" *ngIf="selected.fecha_modificacion">
+        Última modificación: {{ selected.fecha_modificacion | date: 'dd/MM/yyyy HH:mm' }}
+      </p>
+
+      <mat-list>
+        <mat-list-item *ngFor="let el of selected.elementos; let i = index">
+          <span matListItemTitle>
+            <ng-container *ngIf="editIndex !== i">
+              {{ elementLabel(selected, i) }}
+            </ng-container>
+            <ng-container *ngIf="editIndex === i">
+              <span *ngIf="!isNNormalizados">
+                <input
+                  class="edit-input"
+                  [(ngModel)]="editValue"
+                  (keyup.enter)="saveEdit()"
+                />
+              </span>
+              <span *ngIf="isNNormalizados" class="edit-nnormalizados">
+                <input
+                  class="edit-input"
+                  [(ngModel)]="editSigla"
+                  placeholder="Sigla"
+                  (keyup.enter)="saveEdit()"
+                />
+                <input
+                  class="edit-input"
+                  [(ngModel)]="editFrase"
+                  placeholder="Frase"
+                  (keyup.enter)="saveEdit()"
+                />
+              </span>
+            </ng-container>
+          </span>
+          <span matListItemMeta class="elemento-acciones" *ngIf="canWrite">
+            <button
+              mat-icon-button
+              *ngIf="editIndex !== i"
+              (click)="startEdit(i, selected!.elementos[i], selected!.metadata?.[i]?.sigla, selected!.metadata?.[i]?.frase)"
+              aria-label="Editar"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              *ngIf="editIndex === i"
+              (click)="saveEdit()"
+              aria-label="Guardar"
+            >
+              <mat-icon>check</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              *ngIf="editIndex === i"
+              (click)="cancelEdit()"
+              aria-label="Cancelar"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              *ngIf="editIndex !== i"
+              (click)="deleteElement(i)"
+              aria-label="Eliminar"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+        </mat-list-item>
+      </mat-list>
+
+      <p class="empty" *ngIf="selected.elementos.length === 0">
+        Esta lista no tiene elementos.
+      </p>
+
+      <!-- Agregar elemento -->
+      <div class="agregar" *ngIf="canWrite">
+        <ng-container *ngIf="isNNormalizados; else agregarSimple">
+          <mat-form-field appearance="outline">
+            <mat-label>Sigla</mat-label>
+            <input matInput [(ngModel)]="newElementSigla" (keyup.enter)="addElement()" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Frase</mat-label>
+            <input matInput [(ngModel)]="newElementFrase" (keyup.enter)="addElement()" />
+          </mat-form-field>
+        </ng-container>
+        <ng-template #agregarSimple>
+          <mat-form-field appearance="outline" class="agregar-input">
+            <mat-label>Nuevo elemento</mat-label>
+            <input matInput [(ngModel)]="newElement" (keyup.enter)="addElement()" />
+          </mat-form-field>
+        </ng-template>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="addElement()"
+          [disabled]="isNNormalizados ? !newElementSigla.trim() : !newElement.trim()"
+        >
+          <mat-icon>add</mat-icon> Agregar
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

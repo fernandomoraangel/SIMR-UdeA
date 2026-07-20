@@ -84,7 +84,7 @@ export class ShellComponent implements OnInit {
         { label: 'Listar idiomas', ruta: '/idiomas' },
         { label: 'Crear campo en diccionario', ruta: '/diccionarios/create' },
         { label: 'Listar Diccionario de datos', ruta: '/diccionarios' },
-        { label: 'Gestión de Listas', ruta: '/no-implementado/listas' },
+        { label: 'Gestión de Listas', ruta: '/listas' },
       ],
     },
     {

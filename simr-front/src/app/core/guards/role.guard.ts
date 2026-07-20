@@ -1,34 +1,35 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { AuthorizationService } from '../services/authorization.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authorizationService: AuthorizationService,
+    private router: Router
+  ) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    return false; // Temporarily returning false to prevent access
-    
-    // const requiredRoles = route.data['roles'] as string[];
+    const requiredRoles = (route.data['roles'] as string[]) ?? [];
 
-    // if (!requiredRoles || requiredRoles.length === 0) {
-    //   return true;
-    // }
+    if (!this.authorizationService.requireAuth()) {
+      this.router.navigate(['/login']);
+      return false;
+    }
 
-    // if (!this.authService.isAuthenticated) {
-    //   this.router.navigate(['/login']);
-    //   return false;
-    // }
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
 
-    // const hasRole = this.authService.hasAnyRole(requiredRoles);
+    const hasRole = this.authorizationService.hasAnyRole(requiredRoles);
 
-    // if (!hasRole) {
-    //   this.router.navigate(['/unauthorized']);
-    //   return false;
-    // }
+    if (!hasRole) {
+      this.router.navigate(['/no-implementado/admin-usuarios']);
+      return false;
+    }
 
-    // return true;
+    return true;
   }
 }

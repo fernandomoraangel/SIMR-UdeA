@@ -1,0 +1,145 @@
+.listas-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+.listas-head {
+  margin-bottom: 18px;
+}
+
+.listas-title {
+  font-family: var(--simr-display);
+  color: var(--simr-tinta);
+  font-size: 1.9rem;
+  margin: 0;
+}
+
+.simr-eyebrow {
+  font-family: var(--simr-body);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--simr-tinta);
+  opacity: 0.6;
+  margin: 6px 0 0;
+}
+
+.listas-loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.listas-error {
+  color: var(--simr-sello);
+  font-family: var(--simr-body);
+  padding: 16px;
+}
+
+.listas-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.panel-listas,
+.panel-elementos {
+  background: var(--simr-hueso);
+}
+
+.filtro {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.lista-nombre {
+  font-family: var(--simr-body);
+  text-transform: capitalize;
+  color: var(--simr-tinta);
+}
+
+.lista-count {
+  font-family: var(--simr-mono);
+  font-size: 0.72rem;
+  background: var(--simr-papel);
+  border-radius: 10px;
+  padding: 1px 8px;
+  color: var(--simr-tinta);
+  opacity: 0.7;
+}
+
+.panel-listas a.active {
+  background: rgba(200, 119, 46, 0.14);
+  border-left: 3px solid var(--simr-cobre);
+}
+
+.elementos-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.elementos-titulo {
+  font-family: var(--simr-display);
+  color: var(--simr-tinta);
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.elementos-meta {
+  font-family: var(--simr-mono);
+  font-size: 0.72rem;
+  color: var(--simr-tinta);
+  opacity: 0.6;
+  margin: 2px 0 12px;
+}
+
+.elemento-acciones {
+  display: inline-flex;
+}
+
+.edit-input {
+  font-family: var(--simr-body);
+  border: 1px solid var(--simr-cobre);
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-right: 6px;
+  background: #fff;
+  color: var(--simr-tinta);
+}
+
+.edit-nnormalizados {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.agregar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(31, 42, 36, 0.1);
+}
+
+.agregar-input {
+  flex: 1 1 240px;
+}
+
+.empty {
+  font-family: var(--simr-body);
+  color: var(--simr-tinta);
+  opacity: 0.6;
+  font-size: 0.88rem;
+  padding: 8px 4px;
+}
+
+@media (max-width: 760px) {
+  .listas-layout {
+    grid-template-columns: 1fr;
+  }
+}

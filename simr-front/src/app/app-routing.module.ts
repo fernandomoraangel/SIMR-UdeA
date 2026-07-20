@@ -8,6 +8,7 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 import { LoginComponent } from './features/auth/login/login.component';
 import { SignupComponent } from './features/auth/signup/signup.component';
 import { AuthRouteComponent } from './features/auth/auth-route.component';
+import { RoleGuard } from './core/guards/role.guard';
 import { AuthGuard } from './core/auth/auth.guard';
 import { ListaTareasComponent } from '@features/__pruebas__/lista-tareas.component';
 // import { CustomPreloadingStrategy } from './core/services/preloading-strategy.service';
@@ -54,6 +55,11 @@ const routes: Routes = [
     path: 'idiomas',
     loadChildren: () =>
       import('./features/idiomas/idiomas.routes').then((r) => r.IDIOMAS_ROUTES),
+  },
+  {
+    path: 'listas',
+    loadChildren: () =>
+      import('./features/listas/listas.routes').then((r) => r.LISTAS_ROUTES),
   },
   {
     path: 'files',
