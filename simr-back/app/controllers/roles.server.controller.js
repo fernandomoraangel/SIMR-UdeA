@@ -273,12 +273,12 @@ exports.update = async (req, res) => {
   try {
     const role = req.role;
 
-    // Los roles del sistema pueden editar permisos, herencia y estado, pero
-    // no su nombre (name) ni su prioridad (priority), que son fijos.
-    if (role.isSystem && (req.body.name !== undefined || req.body.priority !== undefined)) {
+    // Los roles del sistema pueden editar permisos, herencia, estado y
+    // prioridad, pero NO su nombre (name), que es fijo del sistema.
+    if (role.isSystem && req.body.name !== undefined && req.body.name !== role.name) {
       return errorResponse(
         res,
-        "No se puede modificar el nombre ni la prioridad de un rol del sistema",
+        "No se puede modificar el nombre de un rol del sistema",
         403
       );
     }

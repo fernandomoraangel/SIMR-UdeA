@@ -88,6 +88,8 @@ class BooleanQueryParser {
     let current = "";
     let inQuotes = false;
 
+    const isWordOperator = (w) => ["AND", "OR", "NOT"].includes(w.toUpperCase());
+
     for (let i = 0; i < query.length; i++) {
       const char = query[i];
 
@@ -96,28 +98,27 @@ class BooleanQueryParser {
         current += char;
       } else if (inQuotes) {
         current += char;
-      } else if (char === " " || char === "\t" || char === "\n") {
+      } else if (char === "(" || char === ")") {
         if (current) {
-          tokens.push(current);
-          current = "";
-        }
-      } else if (
-        this.operators.includes(char) ||
-        char === "(" ||
-        char === ")"
-      ) {
-        if (current) {
-          tokens.push(current);
+          if (isWordOperator(current)) tokens.push(current.toUpperCase());
+          else tokens.push(current);
           current = "";
         }
         tokens.push(char);
+      } else if (char === " " || char === "\t" || char === "\n") {
+        if (current) {
+          if (isWordOperator(current)) tokens.push(current.toUpperCase());
+          else tokens.push(current);
+          current = "";
+        }
       } else {
         current += char;
       }
     }
 
     if (current) {
-      tokens.push(current);
+      if (isWordOperator(current)) tokens.push(current.toUpperCase());
+      else tokens.push(current);
     }
 
     return tokens;

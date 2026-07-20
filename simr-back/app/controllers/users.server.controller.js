@@ -1,7 +1,9 @@
 "use strict";
 
-const User = require("mongoose").model("User");
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
 const passport = require("passport");
+const logAudit = require("../services/audit.service").logAudit;
 const {
   generateTokens,
   verifyRefreshToken,
@@ -419,6 +421,8 @@ exports.read = async (req, res) => {
     console.log("firstName:", req.requestedUser.firstName);
     console.log("lastName:", req.requestedUser.lastName);
 
+    await req.requestedUser.populate("roles", "name displayName description priority");
+
     const safeUser = req.requestedUser.getSafeUser();
 
     console.log(
@@ -495,6 +499,58 @@ exports.delete = async (req, res, next) => {
     // Verificar que no se esté eliminando a sí mismo
     if (req.requestedUser._id.toString() === req.user._id.toString()) {
       return errorResponse(res, "No puedes eliminar tu propia cuenta", 400);
+    }
+
+    const userId = req.requestedUser._id;
+    const transferTo = req.body && req.body.transferTo ? req.body.transferTo : null;
+
+    if (transferTo) {
+      if (transferTo.toString() === userId.toString()) {
+        return errorResponse(
+          res,
+          "El usuario destino de la reasignación no puede ser el mismo que se elimina",
+          400
+        );
+      }
+
+      const target = await User.findById(transferTo);
+      if (!target || !target.isActive) {
+        return errorResponse(
+          res,
+          "El usuario destino de la reasignación no existe o está inactivo",
+          400
+        );
+      }
+
+      // Reasignar la propiedad (campo `creador`) en todas las colecciones que lo usen
+      const modelNames = mongoose.modelNames();
+      let reassigned = 0;
+      for (const name of modelNames) {
+        const Model = mongoose.model(name);
+        if (!Model.schema || !Model.schema.path("creador")) continue;
+        const result = await Model.updateMany(
+          { creador: userId },
+          { $set: { creador: transferTo } }
+        );
+        reassigned += result.modifiedCount || 0;
+      }
+
+      await logAudit(req, "user_deleted", "user", userId, {
+        deletedUser: {
+          username: req.requestedUser.username,
+          email: req.requestedUser.email,
+        },
+        transferTo,
+        reassignedDocuments: reassigned,
+      });
+    } else {
+      // Sin reasignación: registrar la eliminación tal cual
+      await logAudit(req, "user_deleted", "user", userId, {
+        deletedUser: {
+          username: req.requestedUser.username,
+          email: req.requestedUser.email,
+        },
+      });
     }
 
     // Usamos el método 'deleteOne' de la instancia 'User' para eliminar un documento

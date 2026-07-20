@@ -26,6 +26,11 @@ const AuditLogSchema = new Schema(
         "permission_added",
         "permission_removed",
         "permission_updated",
+        "user_created",
+        "user_updated",
+        "user_deleted",
+        "user_role_assigned",
+        "user_role_removed",
       ],
     },
     performedBy: {
@@ -40,6 +45,14 @@ const AuditLogSchema = new Schema(
     targetRole: {
       type: Schema.Types.ObjectId,
       ref: "Role",
+    },
+    targetType: {
+      type: String,
+      trim: true,
+    },
+    targetId: {
+      type: Schema.Types.ObjectId,
+      refPath: "targetType",
     },
     changes: {
       type: Schema.Types.Mixed, // Almacena el objeto completo de cambios
