@@ -199,10 +199,9 @@ class BooleanQueryParser {
     return this.createFlexiblePattern(term);
   }
 
-  // Crear patrón flexible permitiendo errores tipográficos comunes
-  createFlexiblePattern(term) {
-    // Variaciones comunes de caracteres por errores tipográficos
-    const commonSubs = {
+  // Variaciones comunes de caracteres por errores tipográficos
+  getCommonSubs() {
+    return {
       b: "[bv]",
       v: "[bv]",
       c: "[ckq]",
@@ -219,36 +218,50 @@ class BooleanQueryParser {
       n: "[nñ]",
       ñ: "[nñ]",
     };
+  }
 
+  // Genera las palabras candidatas a distancia de edición ~1 del término,
+  // usando las sustituciones tipográficas comunes. Se usa tanto para el
+  // patrón fuzzy como para la sugerencia "¿quiso decir ...?".
+  getEditVariants(term) {
+    const commonSubs = this.getCommonSubs();
     const charClass = (ch) => {
       const c = ch.toLowerCase();
       if (commonSubs[c]) return commonSubs[c];
       return this.escapeRegex(c);
     };
+    const chars = Array.from(term);
+    const base = chars.map(charClass).join("");
+    const variants = [base];
+    for (let i = 0; i < chars.length; i++) {
+      // Omitir el carácter i
+      variants.push(chars.filter((_, idx) => idx !== i).map(charClass).join(""));
+      // Sustituir el carácter i por cualquier carácter
+      variants.push(chars.map((c, idx) => (idx === i ? "." : charClass(c))).join(""));
+      // Insertar un carácter antes de i
+      variants.push(chars.map((c, idx) => (idx === i ? "." + charClass(c) : charClass(c))).join(""));
+    }
+    // Insertar un carácter al final
+    variants.push(base + ".");
+    return [...new Set(variants.filter((v) => v.length > 0))];
+  }
 
+  // Crear patrón flexible permitiendo errores tipográficos comunes
+  createFlexiblePattern(term) {
     // Patrón base: cada carácter con su clase de sustitución
-    const base = Array.from(term).map(charClass).join("");
+    const base = Array.from(term)
+      .map((ch) => {
+        const commonSubs = this.getCommonSubs();
+        const c = ch.toLowerCase();
+        return commonSubs[c] ? commonSubs[c] : this.escapeRegex(c);
+      })
+      .join("");
 
     // Tolerancia a errores (distancia de edición ~1): se genera un patrón
     // alternativo que permite omitir, sustituir por cualquier carácter o
     // insertar un carácter en cada posición del término. Esto hace que
     // "Bueno" también coincida con "Bueni", "Buena", "Buenos", etc.
-    const variants = [base];
-    const chars = Array.from(term);
-    for (let i = 0; i < chars.length; i++) {
-      // Omitir el carácter i
-      variants.push(chars.filter((_, idx) => idx !== i).map(charClass).join(""));
-      // Sustituir el carácter i por cualquier carácter
-      const sub = chars
-        .map((c, idx) => (idx === i ? "." : charClass(c)))
-        .join("");
-      variants.push(sub);
-      // Insertar un carácter antes de i
-      const ins = chars.map((c, idx) => (idx === i ? "." + charClass(c) : charClass(c))).join("");
-      variants.push(ins);
-    }
-    // Insertar un carácter al final
-    variants.push(base + ".");
+    const variants = this.getEditVariants(term);
 
     // Eliminar duplicados y unir en una alternancia
     const unique = [...new Set(variants.filter((v) => v.length > 0))];
@@ -478,6 +491,7 @@ class SearchService {
         if (remaining <= 0) break;
       }
       allResults.sort((a, b) => (b._searchScore || 0) - (a._searchScore || 0));
+      const suggestion = this.getSuggestion(query, allResults);
       return {
         success: true,
         query: query,
@@ -485,6 +499,7 @@ class SearchService {
         total: totalResults,
         entities: searchEntities,
         exact: exact,
+        suggestion: suggestion,
       };
     } catch (error) {
       console.error("Search error:", error);
@@ -763,6 +778,97 @@ class SearchService {
     } catch (error) {
       return false;
     }
+  }
+
+  // Extrae la primera palabra significativa de una consulta (ignora
+  // operadores booleanos y comillas) para la sugerencia de búsqueda.
+  extractPrimaryTerm(query) {
+    if (!query) return "";
+    const cleaned = query.replace(/"/g, " ").replace(/[()]/g, " ");
+    const tokens = cleaned.split(/\s+/).filter(Boolean);
+    const operators = new Set(["AND", "OR", "NOT", "Y", "O"]);
+    const term = tokens.find((t) => !operators.has(t.toUpperCase())) || tokens[0] || "";
+    return term.trim();
+  }
+
+  // Distancia de Levenshtein entre dos cadenas
+  levenshtein(a, b) {
+    const m = a.length;
+    const n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    const prev = new Array(n + 1);
+    const curr = new Array(n + 1);
+    for (let j = 0; j <= n; j++) prev[j] = j;
+    for (let i = 1; i <= m; i++) {
+      curr[0] = i;
+      for (let j = 1; j <= n; j++) {
+        const cost = a[i - 1].toLowerCase() === b[j - 1].toLowerCase() ? 0 : 1;
+        curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+      }
+      for (let j = 0; j <= n; j++) prev[j] = curr[j];
+    }
+    return prev[n];
+  }
+
+  // Devuelve una sugerencia "¿quiso decir X?" a partir de los resultados
+  // obtenidos: si el término buscado no aparece como palabra real pero existe
+  // una palabra muy similar (distancia de edición <= 2) frecuente en los
+  // resultados, se sugiere como corrección.
+  getSuggestion(query, results) {
+    const term = this.extractPrimaryTerm(query);
+    if (!term || term.length < 3) {
+      return null;
+    }
+    if (/\b(AND|OR|NOT)\b/i.test(query) && /\s/.test(query)) {
+      return null;
+    }
+    const lowerTerm = term.toLowerCase();
+
+    // Recolectar palabras de los campos de texto de los resultados
+    const wordFreq = new Map();
+    const wordRegex = /[a-záéíóúñüA-ZÁÉÍÓÚÑÜ]+/g;
+    const collect = (obj) => {
+      if (obj === null || obj === undefined) return;
+      if (typeof obj === "string") {
+        const matches = obj.match(wordRegex);
+        if (matches) {
+          for (const w of matches) {
+            if (w.length < 3) continue;
+            const lw = w.toLowerCase();
+            wordFreq.set(lw, (wordFreq.get(lw) || 0) + 1);
+          }
+        }
+      } else if (Array.isArray(obj)) {
+        obj.forEach(collect);
+      } else if (typeof obj === "object") {
+        for (const k of Object.keys(obj)) collect(obj[k]);
+      }
+    };
+    results.forEach(collect);
+
+    // El término original ya aparece como palabra real en los resultados
+    if ((wordFreq.get(lowerTerm) || 0) > 0) {
+      return null;
+    }
+
+    // Buscar la palabra más frecuente a distancia de edición <= 2
+    let best = null;
+    let bestFreq = 0;
+    for (const [word, freq] of wordFreq.entries()) {
+      if (word === lowerTerm) continue;
+      if (this.levenshtein(term, word) <= 2 && freq > bestFreq) {
+        bestFreq = freq;
+        best = word;
+      }
+    }
+
+    if (best && bestFreq >= 2) {
+      // Devolver con la grafía del término original (respetando mayúsculas)
+      const display = term[0].toUpperCase() + best.slice(1);
+      return { term: display, for: term };
+    }
+    return null;
   }
 }
 

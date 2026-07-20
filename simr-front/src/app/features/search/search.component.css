@@ -269,6 +269,34 @@
   padding: 0 1px;
 }
 
+/* Sugerencia "¿quiso decir ...?" */
+.search-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: rgba(200, 119, 46, 0.12);
+  border: 1px solid var(--simr-cobre);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-family: var(--simr-body);
+  color: var(--simr-tinta);
+}
+.search-suggestion mat-icon {
+  color: var(--simr-cobre);
+}
+.search-suggestion .suggestion-text {
+  flex: 1 1 auto;
+}
+.search-suggestion .suggestion-text strong {
+  color: var(--simr-sello);
+}
+.search-suggestion .suggestion-apply {
+  border-color: var(--simr-cobre) !important;
+  color: var(--simr-sello) !important;
+}
+
 .paginacion {
   display: flex;
   align-items: center;

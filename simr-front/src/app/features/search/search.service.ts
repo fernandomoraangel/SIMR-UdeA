@@ -11,6 +11,11 @@ export interface SearchResult {
   [key: string]: any;
 }
 
+export interface SearchSuggestion {
+  term: string;
+  for: string;
+}
+
 export interface SearchResponse {
   success: boolean;
   query?: string;
@@ -19,6 +24,7 @@ export interface SearchResponse {
   entities?: string[];
   exact?: boolean;
   message?: string;
+  suggestion?: SearchSuggestion | null;
 }
 
 export interface SearchMetadata {
@@ -81,6 +87,7 @@ export class SearchService {
           entities: res.entities,
           exact: res.exact,
           message: res.message,
+          suggestion: res.suggestion ?? null,
         })),
         catchError(this.handleError)
       );

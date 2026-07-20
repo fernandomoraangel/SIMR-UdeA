@@ -28,23 +28,26 @@ describe('Módulo Search (Fase 1.3)', () => {
     }).as('metadata');
 
     cy.intercept('GET', '**/api/search', (req) => {
+      const q = req.query.q;
+      const isTypo = q && q.toString().toLowerCase() === 'bueni';
       req.reply({
         statusCode: 200,
         body: {
           success: true,
-          query: 'mapa',
+          query: q,
           results: [
             {
               _id: 'o1',
               _entityType: 'Obra',
               _searchScore: 1,
-              titulo: 'Mapa sonoro',
+              titulo: 'Bueno resultado',
               descripcion: 'Registro de campo',
               genero: 'Bambuco',
               creado: '2024-01-01T00:00:00Z',
             },
           ],
           total: 1,
+          suggestion: isTypo ? { term: 'Bueno', for: 'bueni' } : null,
         },
       });
     }).as('search');
@@ -95,5 +98,19 @@ describe('Módulo Search (Fase 1.3)', () => {
     cy.wait('@search');
     cy.get('a.result-link').first().click();
     cy.url().should('include', '/no-implementado/obras/');
+  });
+
+  it('muestra sugerencia de correccion y resalta el termino sugerido', () => {
+    cy.get('input[ng-reflect-name="q"]').type('bueni');
+    cy.contains('Buscar').click();
+    cy.wait('@search');
+    cy.contains('Se encontró').should('be.visible');
+    cy.contains('Bueno').should('be.visible');
+    cy.contains('bueni').should('be.visible');
+    // El término sugerido debe resaltarse en los resultados
+    cy.get('.search-hit').should('contain.text', 'Bueno');
+    // Aplicar la corrección re-busca con el término correcto
+    cy.get('.suggestion-apply').click();
+    cy.wait('@search');
   });
 });

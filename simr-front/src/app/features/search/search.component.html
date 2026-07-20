@@ -91,6 +91,20 @@
     No se encontraron resultados para "{{ query }}".
   </div>
 
+  <div class="search-suggestion" *ngIf="!loading && suggestion" role="status">
+    <mat-icon>auto_awesome</mat-icon>
+    <span class="suggestion-text">
+      Se encontró <strong>{{ suggestion.term }}</strong> en lugar de
+      <strong>{{ suggestion.for }}</strong>.
+    </span>
+    <button mat-stroked-button type="button" class="suggestion-apply" (click)="applySuggestion()">
+      Buscar "{{ suggestion.term }}"
+    </button>
+    <button mat-icon-button type="button" class="suggestion-dismiss" (click)="dismissSuggestion()" aria-label="Descartar sugerencia">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
   <div class="search-results" *ngIf="!loading && results.length">
     <div class="resultados-bar">
       <span>{{ total }} resultado(s)</span>

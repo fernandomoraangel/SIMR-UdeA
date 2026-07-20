@@ -14,7 +14,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 
-import { SearchService, SearchResult, SearchMetadata } from './search.service';
+import { SearchService, SearchResult, SearchMetadata, SearchSuggestion } from './search.service';
 import {
   MetadataMapperService,
   MarcField,
@@ -96,6 +96,11 @@ export class SearchComponent implements OnInit {
   formato: 'simr' | 'marc21' | 'dublincore' = 'simr';
   showHelp = false;
 
+  suggestion: SearchSuggestion | null = null;
+  // Término usado para resaltar los resultados (puede diferir de query
+  // cuando se aplica una corrección sugerida).
+  highlightTerm: string = '';
+
   loading = false;
   error = '';
   results: SearchResult[] = [];
@@ -166,6 +171,10 @@ export class SearchComponent implements OnInit {
         next: (res) => {
           this.results = res.results || [];
           this.total = res.total || 0;
+          this.suggestion = res.suggestion || null;
+          // Resaltar con la corrección sugerida si existe; de lo contrario
+          // con el término buscado.
+          this.highlightTerm = this.suggestion ? this.suggestion.term : this.query.trim();
           this.loading = false;
         },
         error: (err) => {
@@ -189,7 +198,24 @@ export class SearchComponent implements OnInit {
     this.results = [];
     this.total = 0;
     this.error = '';
+    this.suggestion = null;
+    this.highlightTerm = '';
     this.currentPage = 1;
+  }
+
+  // Aplicar la corrección sugerida: re-buscar con el término correcto
+  applySuggestion(): void {
+    if (!this.suggestion) {
+      return;
+    }
+    this.query = this.suggestion.term;
+    this.performSearch(1);
+  }
+
+  // Descartar la sugerencia (mantener el término original)
+  dismissSuggestion(): void {
+    this.highlightTerm = this.query.trim();
+    this.suggestion = null;
   }
 
   resultTitle(result: SearchResult): string {
@@ -262,7 +288,7 @@ export class SearchComponent implements OnInit {
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
-    const q = this.query.trim();
+    const q = this.highlightTerm.trim();
     if (!q) {
       return this.sanitizer.bypassSecurityTrustHtml(escaped);
     }
