@@ -1,0 +1,76 @@
+<div class="archivo-manager">
+  @if (documentName) {
+    <h3 class="archivo-manager__title">{{ documentName | capitalizeWords }}</h3>
+  }
+
+  <div class="archivo-manager__upload">
+    <input type="file" (change)="onFileSelected($event)" [disabled]="uploading" #fileInput />
+    <button mat-flat-button color="primary" (click)="uploadFile()" [disabled]="!selectedFile || uploading">
+      {{ uploading ? "Subiendo..." : "Subir" }}
+    </button>
+    @if (selectedFile) {
+      <span class="archivo-manager__selected">Archivo seleccionado: {{ selectedFile.name }}</span>
+    }
+    @if (uploading) {
+      <div class="archivo-manager__progress">
+        <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+        <span>{{ processingFile ? "Procesando archivo..." : uploadProgress + "%" }}</span>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="archivo-manager__loading">
+      <mat-spinner diameter="28"></mat-spinner>
+      <span>Cargando archivos...</span>
+    </div>
+  }
+
+  @if (!loading && files.length > 0) {
+    <div class="archivo-manager__actions">
+      <button mat-stroked-button color="warn" (click)="deleteSelectedFiles()" [disabled]="selectedFiles.length === 0">
+        Eliminar seleccionados ({{ selectedFiles.length }})
+      </button>
+    </div>
+    <table class="archivo-manager__table">
+      <thead>
+        <tr>
+          <th>
+            <mat-checkbox [checked]="allSelected" (change)="toggleAllSelection()" aria-label="Seleccionar todos"></mat-checkbox>
+          </th>
+          <th>Nombre</th>
+          <th>Tamaño</th>
+          <th>Última modificación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (file of files; track file.id) {
+          <tr>
+            <td>
+              <mat-checkbox [checked]="isInSelectedFiles(file.id)" (change)="toggleFileSelection(file)" [attr.aria-label]="'Seleccionar ' + file.name"></mat-checkbox>
+            </td>
+            <td>{{ file.name }}</td>
+            <td>{{ formatBytes(file.size) }}</td>
+            <td>{{ file.lastModified | date: 'medium' }}</td>
+            <td class="archivo-manager__row-actions">
+              <button mat-icon-button color="primary" matTooltip="Descargar" (click)="downloadFile(file.name)">
+                <mat-icon>download</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" matTooltip="Ver" (click)="viewFile(file.name)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="deleteFile(file)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!loading && files.length === 0) {
+    <div class="archivo-manager__empty">No hay archivos disponibles.</div>
+  }
+</div>

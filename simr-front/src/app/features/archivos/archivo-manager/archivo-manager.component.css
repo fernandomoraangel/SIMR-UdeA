@@ -1,0 +1,67 @@
+.archivo-manager {
+  display: block;
+  padding: 0.5rem 0;
+}
+
+.archivo-manager__title {
+  font-style: italic;
+  margin: 0 0 0.75rem;
+  font-weight: 500;
+}
+
+.archivo-manager__upload {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.archivo-manager__selected {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.archivo-manager__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-basis: 100%;
+}
+
+.archivo-manager__progress mat-progress-bar {
+  flex: 1;
+}
+
+.archivo-manager__actions {
+  margin-bottom: 0.5rem;
+}
+
+.archivo-manager__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.archivo-manager__table th,
+.archivo-manager__table td {
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.archivo-manager__row-actions {
+  white-space: nowrap;
+}
+
+.archivo-manager__loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+.archivo-manager__empty {
+  padding: 1rem 0;
+  color: rgba(0, 0, 0, 0.55);
+  font-style: italic;
+}

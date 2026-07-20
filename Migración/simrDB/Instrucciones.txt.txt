@@ -1,0 +1,6 @@
+Hacer el backup
+mongodump "mongodb://superAdmin:SOh3TbYhx8ypJPxmt1oOfL@172.23.0.97:27017/simr" --db=simr --out=/home/fma
+Copiarlo a equipo local
+scp fma@172.23.0.97:'/home/fma/simr/*.bson' "C:\Users\Música\Desktop\simr"
+Copiarlo a Mongo
+mongorestore --db=simr --drop C:\Users\Música\Desktop\simr

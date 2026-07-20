@@ -6,11 +6,9 @@ import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 
 
 @NgModule({
-  declarations: [
-    CapitalizeWordsPipe
-  ],
   imports: [
-    CommonModule
+    CommonModule,
+    CapitalizeWordsPipe
   ],
   exports: [
     CapitalizeWordsPipe
