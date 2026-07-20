@@ -82,7 +82,7 @@ angular.module("authentication").factory("Authentication", [
         "%c[Auth - startRefreshTimer()]",
         "color: white; background: blue; font-weight: bold; padding: 2px 6px; border-radius: 4px;"
       );
-      const refreshBefore = 60; // Renovar 60s antes de expirar
+      const refreshBefore = 120; // Renovar 120s antes de expirar (unificado con Angular nuevo)
       const intervalMs = Math.max((expiresIn - refreshBefore) * 1000, 5000);
       // const intervalMs = (expiresIn - refreshBefore) * 1000;
       // const intervalMs = 15 * 1000;

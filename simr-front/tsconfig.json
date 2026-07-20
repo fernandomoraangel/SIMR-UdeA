@@ -1,6 +1,14 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "baseUrl": "src",
+    "paths": {
+      "@env/*": ["environments/*"],
+      "@core/*": ["app/core/*"],
+      "@shared/*": ["app/shared/*"],
+      "@features/*": ["app/features/*"]
+    }
   },
   "files": [],
   "references": [

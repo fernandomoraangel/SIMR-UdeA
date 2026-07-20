@@ -1,115 +1,26 @@
 /*
- * Estilos del login — restaurados para mantener la estética original
- * (tarjeta centrada tipo "jumbotron" de Bootstrap 3, logo institucional,
- * botón azul primario) que tenía el login legacy de AngularJS
- * (simr-back/public/authentication/views/login.client.view.html),
- * ahora que esta página de Angular 20 es la única puerta de entrada
- * anónima de la aplicación (ver legacyShellGuard.js en simr-back).
+ * Login — se reutilizan las clases del legacy (jumbotron, container,
+ * form-login, form-control, btn btn-primary pull-right) definidas en
+ * src/assets/styles/legacy-styles.css. Este archivo solo aporta ajustes
+ * mínimos de soporte y NO redefine estilos del legacy para no romper
+ * la paridad visual.
  */
 
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 420px;
-  background-color: #fcfcfc;
-  border: 1px solid #e3e3e3;
-  border-radius: 6px;
-  padding: 30px 30px 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  text-align: center;
-}
-
-.login-logo {
+section.jumbotron .container img {
   max-width: 200px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-.login-card h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 22px;
-  color: #333;
+section.jumbotron form.form-login {
+  max-width: 360px;
 }
 
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-label {
+section.jumbotron form.form-login label {
   display: block;
-  margin-bottom: 5px;
+  margin-top: 10px;
   font-weight: bold;
-  color: #333;
 }
 
-.form-control {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-.form-control.error {
-  border-color: #ff0000;
-}
-
-.btn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 15px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #0069d9;
-}
-
-.btn:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.error-message {
-  color: #ff0000;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.login-links {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.login-links a {
-  color: #007bff;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.login-links a:hover {
-  text-decoration: underline;
+section.jumbotron form.form-login input[type="submit"] {
+  margin-top: 14px;
 }

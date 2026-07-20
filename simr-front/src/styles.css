@@ -1,3 +1,8 @@
+/* Importa la hoja de estilos del legacy (SIMR catálogo) para mantener
+   paridad visual durante la migración. Debe ir al inicio (restricción @import). */
+@import "./assets/styles/legacy-styles.css";
+@import "./assets/styles/legacy-stylesold.css";
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;

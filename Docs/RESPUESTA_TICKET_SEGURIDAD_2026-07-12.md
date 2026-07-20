@@ -5,7 +5,7 @@
 **Aplicación:** SIMSR — `simsr.udea.edu.co` (servidor `172.23.0.97`)
 **Responsable técnico:** fma
 
----
+***
 
 ## 1. Resumen ejecutivo
 
@@ -13,7 +13,7 @@ Se corrigieron las **5 discrepancias críticas de red** (puertos 80, 9000, 9001,
 
 La alerta de riesgo **ALTO** (librerías JS vulnerables: jQuery 2.1.4, Bootstrap 3.3.6, bootstrap-select 1.10.0) fue **diagnosticada y su causa raíz identificada**, pero se propone como una fase separada de mejora continua (ver sección 5), dado el riesgo real de romper funcionalidad crítica del frontend legacy AngularJS si se actualiza sin un ciclo de pruebas exhaustivo.
 
----
+***
 
 ## 2. Causa raíz identificada — "Efecto Docker"
 
@@ -33,6 +33,7 @@ Chain DOCKER (nat) - reglas encontradas ANTES de la corrección:
 ```
 
 Y en `firewalld` (zona `public`):
+
 ```
 ports: 443/tcp 27017/tcp 2222/tcp   <- 80, 9000, 9001 ni siquiera figuran en la lista
 rich rules: rule family="ipv4" port port="27017" protocol="tcp" reject
@@ -42,15 +43,16 @@ rich rules: rule family="ipv4" port port="27017" protocol="tcp" reject
 
 Adicionalmente, se identificó que el puerto 80 tenía un **segundo problema independiente**, no relacionado con Docker/firewalld: `nginx.prod.conf` contenía dos bloques `server { listen 80; }`. El bloque con `server_name simsr.udea.edu.co` redirigía correctamente a HTTPS, pero al no tener un `server_name` coincidente, Nginx usaba como *default* el primer bloque (`server_name localhost`), que no redirigía y exponía `/health`, `/files/`, `/api` en texto plano — exactamente el comportamiento que ve un escáner que apunta a la IP sin `Host` header válido.
 
----
+***
 
 ## 3. Parte I — Corrección de Infraestructura y Red
 
 ### 3.1 Solución aplicada
 
-Siguiendo la recomendación del ticket, se optó por la solución de menor riesgo y sin necesidad de tocar reglas de `iptables`/`firewalld` manualmente (frágiles ante reinicios de Docker): **bindear los puertos publicados por Docker a `127.0.0.1`**, de forma que Docker nunca cree la regla DNAT en `0.0.0.0`.
+Siguiendo la recomendación del ticket, se optó por la solución de menor riesgo y sin necesidad de tocar reglas de `iptables`/`firewalld` manualmente (frágiles ante reinicios de Docker): **bindear los puertos publicados por Docker a** **`127.0.0.1`**, de forma que Docker nunca cree la regla DNAT en `0.0.0.0`.
 
 **`docker-compose.prod.yml`:**
+
 ```diff
    mongodb:
      ports:
@@ -69,14 +71,14 @@ Para el puerto 80, se eliminó el bloque `server` default permisivo y se dejó u
 
 ### 3.2 Matriz de validación — Antes vs. Después
 
-| Puerto / Servicio | Estado reportado por Seguridad TI (03/07) | Estado verificado AHORA (12/07, reescaneo externo real) |
-|---|---|---|
-| 80/tcp (HTTP Nginx) | ABIERTO ⚠️ — expone `/health`, `/files/` en texto plano | **Solo redirige 301 a HTTPS**, sin excepción, incluso sin `Host` header válido ✅ |
-| 443/tcp (HTTPS Nginx) | ABIERTO ✓ | Sin cambios, operando correctamente ✅ |
-| 2222/tcp (SSH admin) | ABIERTO ✓ (alertas por versión) | Sin cambios en el puerto; ver sección 5 sobre hardening adicional |
-| 9000/tcp (MinIO API) | ABIERTO ⚠️ — expuesto directamente | **CERRADO/FILTRADO** desde el exterior ✅ |
-| 9001/tcp (MinIO Console) | ABIERTO ⚠️ — consola expuesta | **CERRADO/FILTRADO** desde el exterior ✅ |
-| 27017/tcp (MongoDB) | ABIERTO ⚠️ — rich-rule evadida | **CERRADO/FILTRADO** desde el exterior ✅ |
+| Puerto / Servicio        | Estado reportado por Seguridad TI (03/07)              | Estado verificado AHORA (12/07, reescaneo externo real)                          |
+| ------------------------ | ------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| 80/tcp (HTTP Nginx)      | ABIERTO ⚠️ — expone `/health`, `/files/` en texto plano | **Solo redirige 301 a HTTPS**, sin excepción, incluso sin `Host` header válido ✅ |
+| 443/tcp (HTTPS Nginx)    | ABIERTO ✓                                              | Sin cambios, operando correctamente ✅                                            |
+| 2222/tcp (SSH admin)     | ABIERTO ✓ (alertas por versión)                        | Sin cambios en el puerto; ver sección 5 sobre hardening adicional                |
+| 9000/tcp (MinIO API)     | ABIERTO ⚠️ — expuesto directamente                      | **CERRADO/FILTRADO** desde el exterior ✅                                         |
+| 9001/tcp (MinIO Console) | ABIERTO ⚠️ — consola expuesta                           | **CERRADO/FILTRADO** desde el exterior ✅                                         |
+| 27017/tcp (MongoDB)      | ABIERTO ⚠️ — rich-rule evadida                          | **CERRADO/FILTRADO** desde el exterior ✅                                         |
 
 ### 3.3 Evidencia — Reescaneo de puertos (12/07/2026, 18:14, cliente externo)
 
@@ -128,10 +130,12 @@ nginx_prod     0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
 ### 3.6 Continuidad operativa — sin pérdida de funcionalidad
 
 El acceso legítimo a MinIO y MongoDB **no se perdió**, se reubicó de forma segura:
-- **Consola/API de MinIO**: sigue accesible para administradores vía `https://simsr.udea.edu.co/minio/` y `/minio-api/` (proxy Nginx ya existente).
-- **MongoDB (Compass/debug)**: accesible únicamente mediante túnel SSH (`ssh -p 2222 -L 27017:127.0.0.1:27017 fma@172.23.0.97`), nunca expuesto directamente a Internet.
 
----
+* **Consola/API de MinIO**: sigue accesible para administradores vía `https://simsr.udea.edu.co/minio/` y `/minio-api/` (proxy Nginx ya existente).
+
+* **MongoDB (Compass/debug)**: accesible únicamente mediante túnel SSH (`ssh -p 2222 -L 27017:127.0.0.1:27017 fma@172.23.0.97`), nunca expuesto directamente a Internet.
+
+***
 
 ## 4. Parte II — Capa de Aplicación Web (OWASP ZAP)
 
@@ -147,6 +151,7 @@ connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'
 ```
 
 **Evidencia (antes / después):**
+
 ```
 ANTES:  (sin cabecera Content-Security-Policy)
 AHORA:  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; ...
@@ -163,12 +168,13 @@ Se verificó explícitamente que la consola de MinIO (que ya traía su propio CS
 
 Siguiendo la opción **preferida** indicada en el propio ticket ("descargar los recursos de manera local"), en lugar de solo agregar atributos `integrity`/`crossorigin`, se eliminó por completo la dependencia de CDNs externos:
 
-| Recurso | Antes | Ahora |
-|---|---|---|
+| Recurso     | Antes                                                                     | Ahora                                                                         |
+| ----------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | SweetAlert2 | `https://cdn.jsdelivr.net/npm/sweetalert2@11` (versión flotante, sin SRI) | `/lib/sweetalert2/dist/sweetalert2.all.min.js` (v11.14.3, servido localmente) |
-| D3.js | `https://d3js.org/d3.v7.min.js` (sin SRI) | `/lib/d3/d3.v7.min.js` (v7.9.0, servido localmente) |
+| D3.js       | `https://d3js.org/d3.v7.min.js` (sin SRI)                                 | `/lib/d3/d3.v7.min.js` (v7.9.0, servido localmente)                           |
 
 **Evidencia:**
+
 ```
 $ grep script.*src index.ejs (renderizado real)
 <script src="/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
@@ -189,34 +195,25 @@ No quedan referencias activas a `cdn.jsdelivr.net` ni `d3js.org` en el HTML serv
 ANTES:  Server: nginx/1.29.1
 AHORA:  Server: nginx
 ```
+
 Aplicado vía `server_tokens off;` en el bloque HTTPS de `nginx.prod.conf`.
 
 ### 4.4 Vulnerable JS Library (riesgo ALTO) — Diagnosticado, en plan de mejora continua
 
 Se identificó el origen exacto de esta alerta: el frontend legacy AngularJS vendorea librerías desactualizadas:
 
-| Librería | Versión actual | Antigüedad aprox. |
-|---|---|---|
-| jQuery | 2.1.4 | 2015 |
-| Bootstrap | 3.3.6 | 2016 |
-| bootstrap-select | 1.10.0 | 2015 |
-| AngularJS | 1.5.8 / 1.8.2 (coexisten) | EOL, sin soporte de seguridad desde 2021 |
+| Librería         | Versión actual            | Antigüedad aprox.                        |
+| ---------------- | ------------------------- | ---------------------------------------- |
+| jQuery           | 2.1.4                     | 2015                                     |
+| Bootstrap        | 3.3.6                     | 2016                                     |
+| bootstrap-select | 1.10.0                    | 2015                                     |
+| AngularJS        | 1.5.8 / 1.8.2 (coexisten) | EOL, sin soporte de seguridad desde 2021 |
 
 **Por qué no se aplica en este ciclo:** `bootstrap-select` depende funcionalmente de jQuery y Bootstrap; un salto de versión mayor de jQuery (2.x→3.x) elimina APIs deprecadas que pueden romper selects, modales y formularios en la totalidad de los módulos del sistema (actores, obras, recursos, géneros, etc.). Dado que la prioridad indicada es *"cambios mínimos, verificando cada paso, sin dejar de funcionar"*, se propone abordar esta actualización en un ciclo separado con pruebas de regresión completas en el entorno de desarrollo (`docker-compose.dev.yml`) antes de tocar producción.
 
 **Se solicita a Seguridad TI** contemplar esta alerta como aceptada con plan de remediación a mediano plazo, no bloqueante para la asignación de la IP pública, dado que el riesgo de explotación real (XSS vía jQuery `<3.5.0`) requiere condiciones adicionales (inyección de contenido no confiable en el DOM) que no se han identificado como vector activo en el código propio de la aplicación (ver Anexo C).
 
----
-
-## 5. Hallazgos adicionales fuera del alcance directo del ticket
-
-Durante el diagnóstico se identificaron los siguientes puntos, que no bloquean la aprobación de la IP pública pero se reportan por transparencia:
-
-1. **Puerto 22 además del 2222**: el servidor tiene `sshd` escuchando en ambos puertos (`Port 22` y `Port 2222` en `sshd_config`), aunque el 22 no está expuesto por firewalld/Docker (confirmado cerrado externamente). Se recomienda remover la directiva `Port 22` no utilizada para reducir superficie de ataque en la red interna.
-2. **Credenciales compartidas**: `MONGO_ROOT_PASSWORD` / `MINIO_ROOT_PASSWORD` (`sadmin1990`) y `JWT_SECRET` de ejemplo, repetidos en todos los entornos (`.env.production`, `.env.development`) y hardcodeados en `config/env/*.js`. Se recomienda rotarlos y moverlos a un gestor de secretos, fuera de este ciclo.
-3. **Bucket MinIO con lectura pública anónima** (`mc anonymous set public`) — a evaluar si es el comportamiento deseado para el bucket `sistema-archivos-simr`.
-
----
+***
 
 ## 6. Solicitud a Seguridad TI
 
@@ -224,7 +221,7 @@ Con los cambios de las secciones 3 y 4 aplicados y verificados en producción, *
 
 La alerta ALTA de librerías JS vulnerables queda documentada en la sección 4.4 como plan de mejora continua, dado el riesgo de regresión funcional; quedo atento a la valoración del equipo de Seguridad TI sobre si esto es aceptable para continuar o si debe resolverse antes de esta etapa.
 
----
+***
 
 ## Anexo A — Diff completo `nginx.prod.conf` (puerto 80)
 

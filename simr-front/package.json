@@ -6,7 +6,29 @@
     "start": "ng serve --host 0.0.0.0 --port 4200 --hmr",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "e2e": "cypress run"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.1.4",
+    "@angular/cli": "^20.1.4",
+    "@angular/compiler-cli": "^20.1.4",
+    "@types/angular": "^1.8.9",
+    "@types/jasmine": "~5.1.8",
+    "cypress": "^13.17.0",
+    "jasmine-core": "~5.9.0",
+    "jquery": "^3.7.1",
+    "karma": "~6.4.4",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.8.3"
+  },
+  "cypress": {
+    "version": "13.17.0"
   },
   "private": true,
   "dependencies": {
@@ -26,19 +48,5 @@
     "sweetalert2": "^11.22.2",
     "tslib": "^2.8.1",
     "zone.js": "~0.15.1"
-  },
-  "devDependencies": {
-    "@angular/build": "^20.1.4",
-    "@angular/cli": "^20.1.4",
-    "@angular/compiler-cli": "^20.1.4",
-    "@types/angular": "^1.8.9",
-    "@types/jasmine": "~5.1.8",
-    "jasmine-core": "~5.9.0",
-    "karma": "~6.4.4",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.1",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.3"
   }
 }

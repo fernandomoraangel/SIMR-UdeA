@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ActorCreateComponent } from './actor-create.component';
 
@@ -8,7 +9,8 @@ describe('ActorCreateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ActorCreateComponent]
+      declarations: [ActorCreateComponent],
+      imports: [HttpClientTestingModule]
     })
     .compileComponents();
 

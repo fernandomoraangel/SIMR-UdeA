@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ActorDetailComponent } from './actor-detail.component';
 
@@ -8,7 +9,8 @@ describe('ActorDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ActorDetailComponent]
+      declarations: [ActorDetailComponent],
+      imports: [HttpClientTestingModule]
     })
     .compileComponents();
 
