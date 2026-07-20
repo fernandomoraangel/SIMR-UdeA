@@ -24,6 +24,9 @@
         <button mat-flat-button color="primary" type="submit" [disabled]="!query.trim() || loading">
           <mat-icon>search</mat-icon> Buscar
         </button>
+        <button mat-stroked-button type="button" (click)="showHelp = !showHelp" aria-label="Ayuda de búsqueda">
+          <mat-icon>help_outline</mat-icon> Ayuda
+        </button>
       </div>
     </form>
 
@@ -49,6 +52,33 @@
         <button mat-button type="button" (click)="clearEntities()">Limpiar selección</button>
       </div>
     </mat-expansion-panel>
+
+    <mat-card class="search-help" appearance="outlined" *ngIf="showHelp">
+      <h3 class="help-title">Ayuda de búsqueda</h3>
+      <h6 class="help-sub">Búsqueda aproximada (tolerante a errores)</h6>
+      <ul class="help-list">
+        <li>El sistema tolera errores tipográficos automáticamente.</li>
+        <li>Ejemplos: "bueni" → "bueno", "vueno" → "bueno", "vachata" → "bachata".</li>
+        <li>Encuentra resultados incluso con caracteres intercambiados (b/v, e/i, o/u, etc.).</li>
+      </ul>
+      <h6 class="help-sub">Operadores booleanos</h6>
+      <ul class="help-list">
+        <li><code>AND</code> — Intersección de términos.</li>
+        <li><code>OR</code> — Unión de términos.</li>
+        <li><code>NOT</code> — Exclusión de términos.</li>
+        <li><code>()</code> — Agrupación de expresiones.</li>
+        <li><code>"texto"</code> — Búsqueda de frases exactas.</li>
+      </ul>
+      <h6 class="help-sub">Ejemplos</h6>
+      <ul class="help-list">
+        <li><code>bachata</code> — Busca "bachata" y variaciones similares.</li>
+        <li><code>bachata AND salsa</code> — Bachata y salsa.</li>
+        <li><code>bachata OR salsa</code> — Bachata o salsa.</li>
+        <li><code>NOT bachata</code> — Todo excepto bachata.</li>
+        <li><code>(bachata OR salsa) AND colombia</code> — Bachata o salsa de Colombia.</li>
+        <li><code>"bachata moderna"</code> — Frase específica.</li>
+      </ul>
+    </mat-card>
   </mat-card>
 
   <div *ngIf="loading" class="search-loading">
@@ -85,7 +115,31 @@
           <span class="result-type">({{ r._entityType }})</span>
         </h3>
       </a>
-      <div class="result-desc" [innerHTML]="resultDescription(r)"></div>
+      <div class="result-desc" [class.metadata-marc21]="formato === 'marc21'" [class.metadata-dc]="formato === 'dublincore'">
+        <ng-container [ngSwitch]="formato">
+          <div class="simr-field" *ngSwitchCase="'simr'">
+            <span class="simr-pair" *ngFor="let f of resultFields(r)">
+              <span class="simr-key">{{ f.field }}:</span>
+              <span class="simr-val" [innerHTML]="highlightValue(f.value)"></span>
+            </span>
+          </div>
+          <div class="marc-field" *ngSwitchCase="'marc21'">
+            <div class="marc-row" *ngFor="let f of resultFields(r)">
+              <span class="marc-tag">{{ f.tag }}</span>
+              <span class="marc-subfield">\${{ f.subfield }}</span>
+              <span class="marc-label">{{ f.label }}:</span>
+              <span class="marc-value" [innerHTML]="highlightValue(f.value)"></span>
+            </div>
+          </div>
+          <div class="dc-field" *ngSwitchCase="'dublincore'">
+            <div class="dc-row" *ngFor="let f of resultFields(r)">
+              <span class="dc-element">{{ f.element }}:</span>
+              <span class="dc-label" *ngIf="f.label !== f.element">({{ f.label }})</span>
+              <span class="dc-value" [innerHTML]="highlightValue(f.value)"></span>
+            </div>
+          </div>
+        </ng-container>
+      </div>
       <div class="result-meta" *ngIf="r['creado']">
         {{ r['creado'] | date: 'dd/MM/yyyy' }}
       </div>

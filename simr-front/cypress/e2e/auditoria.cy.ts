@@ -59,15 +59,30 @@ describe('Módulo Administración - Roles y Auditoría (Fase 1.4/1.5)', () => {
       statusCode: 200,
       body: {
         success: true,
-        data: { name: 'lector', displayName: 'Lector', priority: 10, isSystem: true },
+        data: {
+          name: 'lector',
+          displayName: 'Lector',
+          priority: 10,
+          isSystem: true,
+          permissions: {
+            obras: { read: ['any'], create: ['own'] },
+            users: { read: ['any'] },
+          },
+        },
       },
     }).as('roleById');
 
     cy.visit('/angular/admin/roles/r2/editar');
     cy.wait('@verify');
     cy.wait('@resources');
+    cy.wait('@roleById');
     cy.contains('Permisos directos').should('be.visible');
     cy.contains('Recurso').should('be.visible');
+    // El campo displayName debe cargarse
+    cy.get('input[formcontrolname="displayName"]').should('have.value', 'Lector');
+    // Tras la corrección del mapeo plural->singular, los permisos deben cargarse
+    // y reflejarse como botones activos en la matriz
+    cy.get('button.scope-btn.active').should('have.length.at.least', 1);
   });
 
   it('muestra la auditoría del sistema', () => {

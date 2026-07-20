@@ -15,6 +15,23 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 
 import { SearchService, SearchResult, SearchMetadata } from './search.service';
+import {
+  MetadataMapperService,
+  MarcField,
+  DcField,
+  SimrField,
+} from './metadata-mapper.service';
+
+type FormattedResult = FormattedField[];
+
+interface FormattedField {
+  tag?: string;
+  subfield?: string;
+  label?: string;
+  element?: string;
+  field?: string;
+  value: string;
+}
 
 const ENTITY_ROUTE: Record<string, string> = {
   Obra: 'obras',
@@ -77,6 +94,7 @@ export class SearchComponent implements OnInit {
   entities: string[] = [];
   availableEntities: string[] = [];
   formato: 'simr' | 'marc21' | 'dublincore' = 'simr';
+  showHelp = false;
 
   loading = false;
   error = '';
@@ -88,7 +106,8 @@ export class SearchComponent implements OnInit {
     private searchService: SearchService,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private mapper: MetadataMapperService
   ) {}
 
   ngOnInit(): void {
@@ -197,55 +216,66 @@ export class SearchComponent implements OnInit {
     return `/no-implementado/${(result._entityType || '').toLowerCase()}s`;
   }
 
-  resultDescription(result: SearchResult): SafeHtml {
-    const pairs: { field: string; value: string }[] = [];
-    const keys = Object.keys(result).filter(
-      (k) => !EXCLUDED_FIELDS.has(k) && !k.endsWith('id') && k !== 'creado'
-    );
-    keys.slice(1).forEach((k) => {
-      const raw = result[k];
-      if (raw == null) {
-        return;
-      }
-      let value: string;
-      if (typeof raw === 'object') {
-        value = String(
-          raw.nombre || raw.titulo || raw.nombres || raw.firstName || JSON.stringify(raw)
-        );
-      } else {
-        value = String(raw);
-      }
-      pairs.push({ field: k, value });
-    });
-
-    let text: string;
-    if (this.formato === 'marc21') {
-      text = pairs.map((p) => `= ${p.field.toUpperCase()}  ${p.value}`).join('\n');
-    } else if (this.formato === 'dublincore') {
-      text = pairs.map((p) => `dc.${p.field} = ${p.value}`).join('\n');
-    } else {
-      text = pairs.map((p) => `${p.field}: ${p.value}`).join('  |  ');
+  resultFields(result: SearchResult): FormattedResult {
+    const populated = this.populateReferences(result);
+    switch (this.formato) {
+      case 'marc21':
+        return this.mapper.toMARC21(populated as Record<string, any>) as FormattedField[];
+      case 'dublincore':
+        return this.mapper.toDublinCore(populated as Record<string, any>) as FormattedField[];
+      default:
+        return this.mapper.toSIMR(populated as Record<string, any>) as FormattedField[];
     }
-    return this.sanitizer.bypassSecurityTrustHtml(this.highlight(text));
   }
 
-  private highlight(text: string): string {
-    const escaped = text
+  // Poblar referencias conocidas a partir del caché local de resultados obtenidos
+  private referenceCache = new Map<string, any>();
+
+  private populateReferences(result: SearchResult): SearchResult {
+    const clone: any = { ...result };
+    const walk = (obj: any): any => {
+      if (obj && typeof obj === 'object') {
+        if (Array.isArray(obj)) {
+          return obj.map(walk);
+        }
+        const out: any = {};
+        for (const k of Object.keys(obj)) {
+          const v = obj[k];
+          if (v && typeof v === 'object' && v._id) {
+            const cached = this.referenceCache.get(v._id.toString());
+            out[k] = cached ? { ...v, ...cached } : v;
+          } else if (v && typeof v === 'object') {
+            out[k] = walk(v);
+          } else {
+            out[k] = v;
+          }
+        }
+        return out;
+      }
+      return obj;
+    };
+    return walk(clone);
+  }
+
+  highlightValue(value: string): SafeHtml {
+    const escaped = value
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
     const q = this.query.trim();
     if (!q) {
-      return escaped;
+      return this.sanitizer.bypassSecurityTrustHtml(escaped);
     }
     const terms = q
       .split(/\s+/)
       .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
       .filter(Boolean);
     if (!terms.length) {
-      return escaped;
+      return this.sanitizer.bypassSecurityTrustHtml(escaped);
     }
     const re = new RegExp(`(${terms.join('|')})`, 'gi');
-    return escaped.replace(re, '<mark class="search-hit">$1</mark>');
+    return this.sanitizer.bypassSecurityTrustHtml(
+      escaped.replace(re, '<mark class="search-hit">$1</mark>')
+    );
   }
 }

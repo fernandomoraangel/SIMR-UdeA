@@ -18,6 +18,29 @@ import { Role } from '@core/models/user.model';
 const ACCIONES = ['create', 'read', 'update', 'delete', 'list'];
 type Scope = 'own' | 'any' | null;
 
+// El backend devuelve los permisos con claves en plural; el formulario
+// trabaja con las claves en singular que entrega /api/roles/resources.
+const PLURAL_TO_SINGULAR: Record<string, string> = {
+  obras: 'obra',
+  actores: 'actor',
+  recursos: 'recurso',
+  ejemplares: 'ejemplar',
+  proyectos: 'proyecto',
+  fondos: 'fondo',
+  colecciones: 'coleccion',
+  medios: 'medio',
+  sistemas: 'sistema',
+  materias: 'materia',
+  generos: 'genero',
+  generosNoMusicales: 'genero_no_musical',
+  instrumentos: 'instrumento',
+  idiomas: 'idioma',
+  diccionarios: 'diccionario',
+  archivos: 'archivo',
+  users: 'user',
+  roles: 'role',
+};
+
 @Component({
   selector: 'app-roles-form',
   standalone: true,
@@ -143,7 +166,10 @@ export class RolesFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.rolesService.getResources().subscribe((res) => (this.resources = res));
+    this.rolesService.getResources().subscribe((res) => {
+      const list = res.includes('search') ? res : [...res, 'search'];
+      this.resources = list;
+    });
     this.rolesService.getAll(true).subscribe((roles) => (this.allRoles = roles));
     this.roleId = this.route.snapshot.paramMap.get('roleId') || '';
     this.isEdit = !!this.roleId;
@@ -170,8 +196,9 @@ export class RolesFormComponent implements OnInit {
     this.permisos = {};
     this.resources.forEach((res) => {
       this.permisos[res] = {};
+      const pluralKey = PLURAL_TO_SINGULAR[res] || res;
       this.acciones.forEach((acc) => {
-        const scope = p?.[res]?.[acc];
+        const scope = p?.[pluralKey]?.[acc];
         this.permisos[res][acc] = scope ? (scope[0] as Scope) : null;
       });
     });
