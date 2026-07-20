@@ -61,4 +61,61 @@ describe('Módulo Administración - Usuarios (Fase 1.4)', () => {
     cy.contains('Confirmar').click();
     cy.wait('@del');
   });
+
+  describe('Roles', () => {
+    beforeEach(() => {
+      cy.intercept('GET', '**/api/roles*', {
+        statusCode: 200,
+        body: {
+          success: true,
+          data: [
+            { _id: 'r1', name: 'admin', displayName: 'Administrador', priority: 100, isSystem: true },
+            { _id: 'r2', name: 'lector', displayName: 'Lector', priority: 10, isSystem: true },
+          ],
+        },
+      }).as('roles');
+      cy.intercept('GET', '**/api/roles/resources', {
+        statusCode: 200,
+        body: {
+          success: true,
+          data: [
+            { key: 'user', name: 'Usuarios' },
+            { key: 'obra', name: 'Obras' },
+          ],
+        },
+      }).as('resources');
+      cy.intercept('GET', '**/api/roles/r2', {
+        statusCode: 200,
+        body: {
+          success: true,
+          data: {
+            _id: 'r2',
+            name: 'lector',
+            displayName: 'Lector',
+            priority: 10,
+            isSystem: true,
+            permissions: { obras: { read: ['any'] }, users: { read: ['any'] } },
+          },
+        },
+      }).as('roleById');
+
+      cy.visit('/angular/admin/roles');
+      cy.wait('@verify');
+      cy.wait('@roles');
+    });
+
+    it('el enlace de edición usa el id real (no undefined)', () => {
+      cy.contains('Lector').parent().find('a[aria-label="Editar"]').should('have.attr', 'href').and('include', '/r2/editar');
+      cy.contains('Lector').parent().find('a[aria-label="Editar"]').should('have.attr', 'href').and('not.include', 'undefined');
+    });
+
+    it('al editar carga los datos del rol y sus permisos', () => {
+      cy.contains('Lector').parent().find('a[aria-label="Editar"]').click();
+      cy.url().should('include', '/admin/roles/r2/editar');
+      cy.wait('@roleById');
+      cy.get('input[formcontrolname="displayName"]').should('have.value', 'Lector');
+      cy.get('input[formcontrolname="priority"]').should('have.value', '10');
+      cy.get('button.scope-btn.active').should('have.length.at.least', 1);
+    });
+  });
 });

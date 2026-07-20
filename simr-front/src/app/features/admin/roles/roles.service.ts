@@ -26,7 +26,12 @@ export class RolesService {
     return this.http
       .get<Wrapped<Role[]>>(this.API, { params: params as any, withCredentials: true })
       .pipe(
-        map((r) => (r.data as Role[]) || []),
+        map((r) =>
+          ((r.data as any[]) || []).map((role) => ({
+            ...role,
+            id: role.id ?? role._id,
+          }))
+        ),
         catchError(this.handleError)
       );
   }
@@ -38,7 +43,7 @@ export class RolesService {
         { withCredentials: true }
       )
       .pipe(
-        map((r) => r.data as any),
+        map((r) => ({ ...(r.data as any), id: (r.data as any)?.id ?? (r.data as any)?._id })),
         catchError(this.handleError)
       );
   }

@@ -220,20 +220,39 @@ class BooleanQueryParser {
       ñ: "[nñ]",
     };
 
-    // Construir patrón con sustituciones comunes
-    let flexPattern = "";
-    for (let i = 0; i < term.length; i++) {
-      const char = term[i].toLowerCase();
+    const charClass = (ch) => {
+      const c = ch.toLowerCase();
+      if (commonSubs[c]) return commonSubs[c];
+      return this.escapeRegex(c);
+    };
 
-      if (commonSubs[char]) {
-        flexPattern += commonSubs[char];
-      } else {
-        // Para otros caracteres, usar tal cual (escapado)
-        flexPattern += this.escapeRegex(char);
-      }
+    // Patrón base: cada carácter con su clase de sustitución
+    const base = Array.from(term).map(charClass).join("");
+
+    // Tolerancia a errores (distancia de edición ~1): se genera un patrón
+    // alternativo que permite omitir, sustituir por cualquier carácter o
+    // insertar un carácter en cada posición del término. Esto hace que
+    // "Bueno" también coincida con "Bueni", "Buena", "Buenos", etc.
+    const variants = [base];
+    const chars = Array.from(term);
+    for (let i = 0; i < chars.length; i++) {
+      // Omitir el carácter i
+      variants.push(chars.filter((_, idx) => idx !== i).map(charClass).join(""));
+      // Sustituir el carácter i por cualquier carácter
+      const sub = chars
+        .map((c, idx) => (idx === i ? "." : charClass(c)))
+        .join("");
+      variants.push(sub);
+      // Insertar un carácter antes de i
+      const ins = chars.map((c, idx) => (idx === i ? "." + charClass(c) : charClass(c))).join("");
+      variants.push(ins);
     }
+    // Insertar un carácter al final
+    variants.push(base + ".");
 
-    return flexPattern;
+    // Eliminar duplicados y unir en una alternancia
+    const unique = [...new Set(variants.filter((v) => v.length > 0))];
+    return unique.join("|");
   }
 
   // Escapar caracteres especiales de regex
