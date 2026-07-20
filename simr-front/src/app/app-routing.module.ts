@@ -62,6 +62,16 @@ const routes: Routes = [
       import('./features/listas/listas.routes').then((r) => r.LISTAS_ROUTES),
   },
   {
+    path: 'search',
+    loadChildren: () =>
+      import('./features/search/search.routes').then((r) => r.SEARCH_ROUTES),
+  },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./features/admin/admin.routes').then((r) => r.ADMIN_ROUTES),
+  },
+  {
     path: 'files',
     loadChildren: () =>
       import('./features/archivos/archivos.module').then(

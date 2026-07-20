@@ -1,0 +1,112 @@
+<div class="search-page">
+  <header class="search-head">
+    <h1 class="search-title">Búsqueda general</h1>
+    <p class="simr-eyebrow">Encuentra obras, actores, términos y más en el acervo</p>
+  </header>
+
+  <mat-card class="search-box" appearance="outlined">
+    <form (ngSubmit)="performSearch(1)">
+      <div class="search-row">
+        <mat-form-field appearance="outline" class="search-input">
+          <mat-label>Término de búsqueda</mat-label>
+          <input matInput [(ngModel)]="query" name="q" required />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            *ngIf="query"
+            (click)="clearSearch()"
+            aria-label="Limpiar"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!query.trim() || loading">
+          <mat-icon>search</mat-icon> Buscar
+        </button>
+      </div>
+    </form>
+
+    <mat-expansion-panel class="filtros">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon> Filtrar por tipo de entidad
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="entity-grid">
+        <mat-checkbox
+          *ngFor="let ent of availableEntities"
+          [checked]="entities.includes(ent)"
+          (change)="toggleEntity(ent)"
+          name="ent"
+        >
+          {{ ent }}
+        </mat-checkbox>
+      </div>
+      <div class="filtros-acciones">
+        <button mat-button type="button" (click)="selectAllEntities()">Seleccionar todas</button>
+        <button mat-button type="button" (click)="clearEntities()">Limpiar selección</button>
+      </div>
+    </mat-expansion-panel>
+  </mat-card>
+
+  <div *ngIf="loading" class="search-loading">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="search-error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && query && results.length === 0" class="search-empty">
+    No se encontraron resultados para "{{ query }}".
+  </div>
+
+  <div class="search-results" *ngIf="!loading && results.length">
+    <div class="resultados-bar">
+      <span>{{ total }} resultado(s)</span>
+      <mat-form-field appearance="outline" class="formato">
+        <mat-label>Formato</mat-label>
+        <mat-select [(ngModel)]="formato" name="formato">
+          <mat-option value="simr">SIMR nativo</mat-option>
+          <mat-option value="marc21">MARC 21</mat-option>
+          <mat-option value="dublincore">Dublin Core</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-card
+      class="result-card"
+      appearance="outlined"
+      *ngFor="let r of results"
+    >
+      <a class="result-link" [routerLink]="resultLink(r)">
+        <h3 class="result-title">
+          {{ resultTitle(r) }}
+          <span class="result-type">({{ r._entityType }})</span>
+        </h3>
+      </a>
+      <div class="result-desc" [innerHTML]="resultDescription(r)"></div>
+      <div class="result-meta" *ngIf="r['creado']">
+        {{ r['creado'] | date: 'dd/MM/yyyy' }}
+      </div>
+    </mat-card>
+
+    <div class="paginacion" *ngIf="totalPages > 1">
+      <button mat-icon-button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button
+        mat-button
+        *ngFor="let p of pageNumbers"
+        [color]="p === currentPage ? 'primary' : undefined"
+        (click)="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+      <button mat-icon-button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+      <span class="pag-text">Página {{ currentPage }} de {{ totalPages }}</span>
+    </div>
+  </div>
+</div>

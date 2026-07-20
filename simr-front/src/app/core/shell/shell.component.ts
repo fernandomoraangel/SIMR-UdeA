@@ -90,7 +90,7 @@ export class ShellComponent implements OnInit {
     {
       label: 'Utilidades',
       items: [
-        { label: 'Búsqueda General', ruta: '/no-implementado/search' },
+        { label: 'Búsqueda General', ruta: '/search' },
         { label: 'Grafo de Base de Datos', ruta: '/no-implementado/graph' },
       ],
     },
@@ -98,11 +98,11 @@ export class ShellComponent implements OnInit {
 
   adminGroup: MenuGroup = {
     label: 'Administración',
-    items: [
-      { label: 'Gestión de Usuarios', ruta: '/no-implementado/admin-usuarios' },
-      { label: 'Gestión de Roles', ruta: '/no-implementado/admin-roles' },
-      { label: 'Auditoría del Sistema', ruta: '/no-implementado/admin-auditoria' },
-    ],
+      items: [
+        { label: 'Gestión de Usuarios', ruta: '/admin/usuarios' },
+        { label: 'Gestión de Roles', ruta: '/admin/roles' },
+        { label: 'Auditoría del Sistema', ruta: '/admin/auditoria' },
+      ],
   };
 
   constructor(
