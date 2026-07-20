@@ -2,6 +2,8 @@
 
 > **Estado:** En ejecución (rama `migracion`).
 > **Última actualización:** 2026-07-20 (Pivot de enfoque definitivo: **Angular Material + identidad SIMR propia, diseño COMPLETAMENTE NUEVO, CERO Bootstrap, CERO Font Awesome, CERO jQuery**). Se conserva la paridad **funcional** con el legacy (mismas acciones, campos, validaciones, permisos, endpoints), pero la apariencia es nueva con Material. Esto reemplaza el principio original de "replicación fiel 1:1 con Bootstrap 3".)
+>
+> **Avance (2026-07-20):** Fase 1 completa (shell, listas, search, admin, auditoria + validación automatizada; ver `cbce08c`..`f8c933a`). Iniciada **Fase 2 — Consolidación de gestión de archivos (MinIO)**. Backlog vivo en sección 4.B.
 
 ## 1. Resumen del proyecto
 
@@ -122,19 +124,19 @@ Objetivo: que Angular tenga el shell de navegación (menú principal), guards de
   - [x] Integrado en `app.component.html` (`<app-shell>` + `<router-outlet>`). `User` model unificado (roles incluidos) y `auth.interface.ts` re-exporta el `User` del modelo.
   - [x] **Corrección base-href:** `index.html` cambiado de `<base href="/angular/">` a `<base href="/">`. Razón: nginx dev/prod ya hace `rewrite ^/angular/(.*)$ /$1 break;` al contenedor `simr-front` (escucha en `/`), así que el Angular debe servir con base `/` (no `/angular/`). Esto arregló que el shell no se hidratara en dev/e2e.
   - [x] Pruebas: `authorization.service.spec.ts` (6 specs), `shell.component.spec.ts` (4 specs), `app.component.spec.ts` actualizado. Suite `ng test` **30/30 verde**. Cypress smoke (shell + bienvenida sin sesión) **2/2 verde** (Chrome headless). `ng build` OK.
-- [ ] **1.2. Servicio de `listas` (datos de referencia).**
-  - [ ] Crear `features/listas` (o extender `shared/reference-data/`) con servicio que consuma `GET /api/listas` y `GET /api/listas/:nombre_lista`.
-  - [ ] Vista de administración de listas (create/edit/delete) restringida a roles `admin`/`bibliotecólogo`, replicando `list-listas.client.view.html`.
-  - [ ] Pruebas: spec de servicio + spec de componente de administración.
-- [ ] **1.3. Módulo `search` (buscador global).**
-  - [ ] Componente de búsqueda global consumiendo el mismo endpoint que `search.client.view.html`.
-  - [ ] Pruebas: spec de componente + caso e2e de búsqueda con resultado y sin resultado.
-- [ ] **1.4. Módulo `admin` (roles y usuarios).**
-  - [ ] Migrar las 4 vistas (`roles-form`, `roles-lista`, `usuarios-form`, `usuarios-lista`) a componentes Angular con sus servicios.
-  - [ ] Pruebas: specs de servicios + specs de componentes + e2e de asignación de rol.
-- [ ] **1.5. Módulo `auditoria` (solo lectura).**
-  - [ ] Componente de listado con filtros equivalentes a `auditoria-lista.client.view.html`.
-  - [ ] Pruebas: spec de componente + e2e de filtro/paginación.
+- [x] **1.2. Servicio de `listas` (datos de referencia).** (completado 2026-07-20)
+  - [x] `features/listas` con servicio que consume `GET /api/listas` y `GET /api/listas/:nombre_lista`.
+  - [x] Vista de administración de listas (create/edit/delete) restringida a roles `admin`/`bibliotecólogo`, replicando `list-listas.client.view.html`.
+  - [x] Pruebas: spec de servicio + spec de componente de administración.
+- [x] **1.3. Módulo `search` (buscador global).** (completado 2026-07-20)
+  - [x] Componente de búsqueda global consumiendo el mismo endpoint que `search.client.view.html`.
+  - [x] Pruebas: spec de componente + caso e2e de búsqueda con resultado y sin resultado + "¿quiso decir?" (sugerencia fuzzy).
+- [x] **1.4. Módulo `admin` (roles y usuarios).** (completado 2026-07-20)
+  - [x] Migrar las 4 vistas (`roles-form`, `roles-lista`, `usuarios-form`, `usuarios-lista`) a componentes Angular con sus servicios.
+  - [x] Pruebas: specs de servicios + specs de componentes + e2e de asignación de rol + edición de rol del sistema (priority) + detalles (RoleDetailDialog/UserDetailDialog).
+- [x] **1.5. Módulo `auditoria` (solo lectura).** (completado 2026-07-20)
+  - [x] Componente de listado con filtros equivalentes a `auditoria-lista.client.view.html`.
+  - [x] Pruebas: spec de componente + e2e de filtro/paginación.
 - [x] **1.6. Validación integral de Fase 1.** (completado 2026-07-19)
   - [x] El menú Angular navega a módulos ya migrados por `routerLink` y a los no migrados por `href="/#!/..."` (legacy), preservando acceso durante la transición (Strangler).
   - [x] Suite `ng test` 30/30 verde; Cypress smoke 2/2 verde; `ng build` OK.
@@ -145,7 +147,7 @@ Objetivo: que Angular tenga el shell de navegación (menú principal), guards de
 
 ---
 
-### **Fase 2 — Consolidación de gestión de archivos (MinIO)**
+### **Fase 2 — Consolidación de gestión de archivos (MinIO)** — 🟡 *En progreso (iniciada 2026-07-20)*
 
 Objetivo: dejar un único componente/servicio Angular de gestión de archivos, listo para ser reutilizado sin popups por cada módulo CRUD que se migre después.
 
@@ -276,6 +278,26 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
   - [ ] Smoke test manual de despliegue completo (build de producción, Docker, Nginx) para confirmar que no quedaron referencias rotas a `/public` o rutas hash `#!/`.
 - [ ] **6.7. Actualizar `Docs/HTTPS_DEPLOYMENT_PLAN.md` y demás documentación de despliegue** para eliminar menciones a la convivencia de dos frontends.
 - [ ] **Checkpoint final:** merge/tag `post-migracion-angular` y comunicación de cierre del proyecto.
+
+---
+
+## 4.B Lista viva de pendientes (backlog de la migración)
+
+> Lista acumulativa de tareas/bugs pendientes que NO bloquean la fase actual pero deben resolverse antes del cierre de la migración. Se van tachando conforme se cierran.
+
+### Auditoría global (cualquier módulo)
+- [ ] **AUD-1.** Definir alcance real de "auditar cambios en CUALQUIER módulo". Hoy solo `roles` (vía `logAudit` local en `roles.server.controller.js`) y `users` (vía nuevo `audit.service.js`) registran eventos. Los módulos de negocio (obras, actores, recursos, fondos, etc.) aún NO llaman `logAudit`, por lo que no aparecen en la auditoría.
+- [ ] **AUD-2.** Extender `audit.service.js` (servicio genérico ya creado) para que los controladores de cada módulo CRUD llamen `logAudit(req, "<modulo>_created|updated|deleted", "<modulo>", id, changes)` al hacer CUD.
+- [ ] **AUD-3.** Ampliar el `enum` de `action` en `auditlog.server.model.js` para incluir acciones de los módulos de negocio (o hacer el enum más permisivo) y añadir índices/templates de populate por `targetType`.
+- [ ] **AUD-4.** La UI de `auditoria` (Fase 1.5) debe listar eventos de todos los módulos (hoy filtra implícitamente solo roles/usuarios vía `targetRole`/`targetUser`). Verificar que el listado y los filtros soporten `targetType`/`action` genéricos.
+
+### Bugs/mejoras reportadas pendientes
+- [ ] **BUG-OR.** (Resuelto 2026-07-20) El parser booleano de búsqueda no reconocía `OR` como operador; corregido en `search.service.js:tokenize`. *Dejar tachado como referencia.*
+- [ ] **BUG-DET-USER.** (Resuelto 2026-07-20) La vista de detalle de usuario mostraba IDs en vez de nombres de roles; corregido poblando `roles` en `users.server.controller.js:read`. *Dejar tachado como referencia.*
+- [ ] **BUG-DEL-AUDIT.** (Resuelto 2026-07-20) El borrado de usuario no registraba auditoría; corregido en `users.server.controller.js:delete` (action `user_deleted`).
+- [ ] **FEAT-REASSIGN.** (Implementado backend 2026-07-20) Reasignación de propiedad (`creador`) al borrar usuario vía `transferTo`. Falta la UI en `usuarios` (diálogo para elegir usuario destino al eliminar).
+- [ ] **BUG-ROLES-SISTEMA.** (Resuelto 2026-07-20) Roles del sistema editables: se permite editar `priority`/`permissions` pero se bloquea el cambio de `name`. Verificar manualmente en UI.
+- [ ] **PEND-VALIDACION-MANUAL.** (Pendiente) Validación visual lado a lado del shell/login (Fase 1.6) y de los módulos admin/auditoria implementados.
 
 ---
 
