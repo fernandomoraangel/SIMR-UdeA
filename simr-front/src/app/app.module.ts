@@ -11,6 +11,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Material Modules
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 // Feature Modules
 // import { ActorModule } from './modules/actor/actor.module';
@@ -25,6 +29,10 @@ import { HomeComponent } from './features/home/home.component';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { SignupComponent } from './features/auth/signup/signup.component';
+import { AuthRouteComponent } from './features/auth/auth-route.component';
+import { ShellComponent } from './core/shell/shell.component';
+import { NoImplementadoComponent } from './shared/no-implementado/no-implementado.component';
+import { SoundWaveComponent } from './shared/sound-wave/sound-wave.component';
 
 // Services and Guards
 import { AuthService } from './core/auth/auth.service';
@@ -38,6 +46,9 @@ import { AuthInterceptor } from './core/auth/auth.interceptor';
     PageNotFoundComponent,
     LoginComponent,
     SignupComponent,
+    AuthRouteComponent,
+    ShellComponent,
+    NoImplementadoComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,6 +58,11 @@ import { AuthInterceptor } from './core/auth/auth.interceptor';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatIconModule,
+    MatCardModule,
+    SoundWaveComponent,
     AppRoutingModule, // siempre el último en 'imports'
   ],
   providers: [

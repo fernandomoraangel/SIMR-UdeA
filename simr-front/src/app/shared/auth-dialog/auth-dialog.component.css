@@ -1,0 +1,89 @@
+.auth-dialog {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 24px;
+  background: var(--simr-hueso);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.auth-cerrar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--simr-tinta);
+  opacity: 0.7;
+}
+
+.auth-cabecera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0 4px;
+  text-align: center;
+}
+
+.auth-logo {
+  height: 46px;
+  width: auto;
+}
+
+.auth-cabecera .simr-eyebrow {
+  margin: 6px 0 0;
+  font-family: var(--simr-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--simr-tinta);
+  opacity: 0.65;
+}
+
+.auth-tabs {
+  margin-top: 6px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 4px 4px;
+}
+
+.auth-fila {
+  display: flex;
+  gap: 12px;
+}
+
+.auth-fila .campo {
+  flex: 1 1 0;
+}
+
+.campo {
+  width: 100%;
+}
+
+.auth-error {
+  color: var(--simr-sello);
+  font-family: var(--simr-body);
+  font-size: 0.82rem;
+  margin: 4px 0 2px;
+}
+
+.auth-submit {
+  margin-top: 10px;
+  height: 44px;
+  font-family: var(--simr-body);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+::ng-deep .simr-auth-dialog .mat-mdc-dialog-surface {
+  border-radius: 14px !important;
+  background: var(--simr-hueso) !important;
+}
+
+::ng-deep .auth-tabs .mat-mdc-tab-header {
+  --mdc-tab-indicator-active-color: var(--simr-sello);
+}

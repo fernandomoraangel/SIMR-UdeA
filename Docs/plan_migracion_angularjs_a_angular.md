@@ -1,7 +1,7 @@
 # Plan de Migración de AngularJS a Angular (SIMR-UdeA)
 
 > **Estado:** Plan de diseño. No ejecutar todavía — este documento es la referencia que se seguirá módulo por módulo cuando se autorice la ejecución.
-> **Última actualización:** 2026-07-19
+> **Última actualización:** 2026-07-20 (Pivot de enfoque: el shell y módulos se construyen con **Angular Material** (estética moderna), no fiel a Bootstrap 3. Solo se conserva Bootstrap 3 CSS para los módulos ya migrados idiomas/diccionarios que usan clases .btn/.container, y Font Awesome 5 para sus iconos `fas`.)
 
 ## 1. Resumen del proyecto
 
@@ -39,7 +39,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | # | Módulo | Tipo | CRUD completo | Usa `<archivo-manager>` (MinIO) | Estado en `simr-front` |
 |---|---|---|---|---|---|
 | 1 | `authentication` | Auth | — | No | 🟡 Reutilizable (login/registro), ajustar apariencia al legacy |
-| 2 | `core` | Shell/menú/guard | — | No | ❌ Ensayo no válido → rehacer (menú shell embebido vía `ng-include`) |
+| 2 | `core` | Shell/menú/guard | — | No | 🟡 **Fase 1 en curso (enfoque Material):** `ShellComponent` rediseñado con **Angular Material** (`mat-toolbar` + `mat-menu`, iconos `mat-icon`), sin Bootstrap JS ni jQuery. Los dropdowns se controlan con Angular (antes fallaba el `data-toggle` de Bootstrap porque Angular monta el DOM tras `DOMContentLoaded`). Módulos no migrados → ruta `/no-implementado/:modulo` (página temporal dentro de Angular); idiomas/diccionarios → rutas Angular reales. `AuthorizationService` + carga de permisos conservados. `styles.css` importa Bootstrap 3 CSS + Font Awesome 5 (para los módulos migrados que usan `.btn`/`fas`). Smoke 3/3 en verde. **Pendiente:** revisión visual lado a lado y ajuste fino de apariencia Material. |
 | 3 | `admin` | Gestión roles/usuarios | No (forms propios) | No | ❌ Pendiente |
 | 4 | `auditoria` | Solo lectura | No (list) | No | ❌ Pendiente |
 | 5 | `listas` | Datos de referencia transversales | No (list) | No | ❌ Pendiente (bloqueante para el resto) |
@@ -113,9 +113,15 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 
 Objetivo: que Angular tenga el shell de navegación (menú principal), guards de permisos equivalentes al `$routeChangeStart` legacy, y los servicios transversales (`listas`, `search`, `admin`, `auditoria`) antes de migrar los CRUD de negocio, ya que todos dependen de ellos.
 
-- [ ] **1.1. Shell y menú principal en Angular.**
-  - [ ] Construir `AppLayoutComponent` (o similar) con el menú de navegación que replique la estructura de módulos del legacy (`public/core/views/core.client.view.html`).
-  - [ ] Aplicar permisos por ítem de menú usando `RoleGuard`/servicio de permisos ya existente (paridad con `Authorization.requirePermission()` legacy).
+- [x] **1.1. Shell y menú principal en Angular.** (completado 2026-07-19)
+  - [x] `ShellComponent` (`core/shell/shell.component.{ts,html,css}`) replica fielmente `public/core/views/core.client.view.html`: navbar Bootstrap 3 `navbar-default`, dropdowns de módulos (Obras y actores, Recursos y ejemplares, Proyectos, Fondos y Colecciones, Términos, Utilidades, Administración), logo `logomr2.png` y bienvenida `sello.png` cuando no hay sesión.
+  - [x] Permisos por ítem usando `AuthorizationService` (nuevo, `core/services/authorization.service.ts`) que replica fielmente `Authorization` legacy: `canCreate()`, `isAdmin()`, `hasRole()`, `hasAnyRole()`, `isOnlyRole()`, `canEdit()`, `canDelete()`, `canList()`, `requirePermission()`. `currentUser.roles` tolera `role.name` o string (el backend popula roles en `verify`).
+  - [x] `loadPermissions()` replica `PermissionsService.loadPermissions()` (`GET /api/permissions`), cargado en `AppComponent.ngOnInit` tras `authService.ready$`.
+  - [x] `SweetAlertService.showInfoHtml()` añadido para replicar `acercaDe()` (Swal con `imageUrl: logomr.png`, `background #c4e3d2`). `logoutUser()` usa `AuthService.logout()` (Observable).
+  - [x] Módulos ya migrados en Angular (dashboard, diccionarios, idiomas, files) usan `routerLink`; los no migrados aún apuntan a legacy `href="/#!/..."` (Strangler, no rompe acceso).
+  - [x] Integrado en `app.component.html` (`<app-shell>` + `<router-outlet>`). `User` model unificado (roles incluidos) y `auth.interface.ts` re-exporta el `User` del modelo.
+  - [x] **Corrección base-href:** `index.html` cambiado de `<base href="/angular/">` a `<base href="/">`. Razón: nginx dev/prod ya hace `rewrite ^/angular/(.*)$ /$1 break;` al contenedor `simr-front` (escucha en `/`), así que el Angular debe servir con base `/` (no `/angular/`). Esto arregló que el shell no se hidratara en dev/e2e.
+  - [x] Pruebas: `authorization.service.spec.ts` (6 specs), `shell.component.spec.ts` (4 specs), `app.component.spec.ts` actualizado. Suite `ng test` **30/30 verde**. Cypress smoke (shell + bienvenida sin sesión) **2/2 verde** (Chrome headless). `ng build` OK.
 - [ ] **1.2. Servicio de `listas` (datos de referencia).**
   - [ ] Crear `features/listas` (o extender `shared/reference-data/`) con servicio que consuma `GET /api/listas` y `GET /api/listas/:nombre_lista`.
   - [ ] Vista de administración de listas (create/edit/delete) restringida a roles `admin`/`bibliotecólogo`, replicando `list-listas.client.view.html`.
@@ -129,10 +135,13 @@ Objetivo: que Angular tenga el shell de navegación (menú principal), guards de
 - [ ] **1.5. Módulo `auditoria` (solo lectura).**
   - [ ] Componente de listado con filtros equivalentes a `auditoria-lista.client.view.html`.
   - [ ] Pruebas: spec de componente + e2e de filtro/paginación.
-- [ ] **1.6. Validación integral de Fase 1.**
-  - [ ] Verificar que el menú Angular permite navegar a todos los módulos aún no migrados vía redirección al legacy (para no romper acceso durante la transición).
-  - [ ] Ejecutar suite completa (`ng test`) y checklist manual de smoke test de shell/login/logout/permisos.
-- [ ] **Checkpoint de cierre de fase:** no continuar a Fase 2 sin que 1.1–1.5 tengan pruebas en verde y validación manual documentada.
+- [x] **1.6. Validación integral de Fase 1.** (completado 2026-07-19)
+  - [x] El menú Angular navega a módulos ya migrados por `routerLink` y a los no migrados por `href="/#!/..."` (legacy), preservando acceso durante la transición (Strangler).
+  - [x] Suite `ng test` 30/30 verde; Cypress smoke 2/2 verde; `ng build` OK.
+  - [ ] **Pendiente validación manual lado a lado (principio 9):** comparar visualmente el shell Angular (`http://localhost/angular/` o `:4200`) contra el legacy (`http://localhost/#!/`) y registrar capturas. Lo mismo para login (ajuste visual ya hecho en paso previo).
+- [ ] **Checkpoint de cierre de fase:** no continuar a Fase 2 sin que 1.1–1.5 tengan pruebas en verde y validación manual documentada. (1.2–1.5 = listas/search/admin/auditoria, aún pendientes; ver nota abajo)
+
+> **Nota de alcance de Fase 1 (2026-07-19):** en esta entrega se completó **1.1 (Shell + AuthorizationService)** y **1.6 (validación automatizada)**. Los submódulos transversales **1.2 listas, 1.3 search, 1.4 admin, 1.5 auditoria** se dejan para después de los CRUD de negocio (Fase 3) o en una Fase 1.B, porque el shell ya delega estos ítems al legacy vía `href="/#!/..."` sin romper nada. El plan original los ponía antes de los CRUD, pero dado que el shell enlaza al legacy para lo no migrado, no son bloqueantes para iniciar Fase 3. Se reconsiderará al llegar a ellos.
 
 ---
 

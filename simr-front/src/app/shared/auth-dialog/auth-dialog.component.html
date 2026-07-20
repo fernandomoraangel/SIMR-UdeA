@@ -1,0 +1,80 @@
+<div class="auth-dialog">
+  <button mat-icon-button class="auth-cerrar" (click)="dialogRef.close()" aria-label="Cerrar">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <header class="auth-cabecera">
+    <img src="assets/images/logomr2.png" alt="SIMR" class="auth-logo" />
+    <app-sound-wave [width]="120" [height]="26" [color]="'#b5432a'" [animated]="true"></app-sound-wave>
+    <p class="simr-eyebrow">Sistema de Información de Músicas Regionales</p>
+  </header>
+
+  <mat-tab-group [selectedIndex]="mode === 'signup' ? 1 : 0" class="auth-tabs">
+    <mat-tab label="Iniciar sesión">
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username" autocomplete="username" />
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="current-password" />
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Mostrar' : 'Ocultar'">
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <div class="auth-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="loginForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Identificarse</span>
+          <span *ngIf="isLoading">Validando…</span>
+        </button>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Registrarse">
+      <form class="auth-form" [formGroup]="signupForm" (ngSubmit)="submitSignup()">
+        <div class="auth-fila">
+          <mat-form-field appearance="outline" class="campo">
+            <mat-label>Nombres</mat-label>
+            <input matInput formControlName="firstName" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="campo">
+            <mat-label>Apellidos</mat-label>
+            <input matInput formControlName="lastName" />
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput formControlName="email" type="email" autocomplete="email" />
+          <mat-icon matSuffix>mail</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username" autocomplete="username" />
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="new-password" />
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <div class="auth-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="signupForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Crear cuenta</span>
+          <span *ngIf="isLoading">Registrando…</span>
+        </button>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</div>

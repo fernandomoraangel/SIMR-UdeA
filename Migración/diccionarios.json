@@ -1,0 +1,2330 @@
+[{
+  "_id": {
+    "$oid": "62bf972fe31541806e889b5f"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "título",
+  "definicion": "Título de la obra",
+  "campoLargo": "Título uniforme",
+  "creado": {
+    "$date": {
+      "$numberLong": "1656723247216"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62cdab923669a9f46eaa2466"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Descripción",
+  "definicion": "Texto que resume de manera abreviada, objetiva y precisa, aspectos como la procedencia, el tipo y las características de la obra, sin interpretación crítica y sin mención expresa del autor del resumen.",
+  "campoLargo": "Descripción",
+  "creado": {
+    "$date": {
+      "$numberLong": "1657645970451"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62cdac1f3669a9f46eaa2467"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Tipo",
+  "definicion": "Medio dentro del cual se expresa una creación.",
+  "campoLargo": "Tipo de obra",
+  "creado": {
+    "$date": {
+      "$numberLong": "1657646111613"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62cdacb83669a9f46eaa2468"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Contenedor",
+  "definicion": "Indicación que precisa si una determinada obra contiene o no otras obras y cuáles son los títulos de esas obras.",
+  "campoLargo": "Contenedores",
+  "creado": {
+    "$date": {
+      "$numberLong": "1657646264772"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62cf7c90b9eca784760219c2"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Asiento ligado",
+  "definicion": "Es un identificador de una segunda obra y su relación con la actual.Sus campo son: dirección (A-B: de la obra actual a la registrada como asiento ligado, B-A o bi-direccional); Fuente (Nombre del actor que proporciona la información necesaria para establecer la relación)",
+  "campoLargo": "Asiento ligado",
+  "creado": {
+    "$date": {
+      "$numberLong": "1657765008351"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d2f31d524b82184bf81c40"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "GéneroForma",
+  "definicion": "Categoría que reúne obras musicales que comparten diversos criterios de afinidad en términos estructurales, de función social o de contexto o denominación por parte de un grupo social determinado",
+  "campoLargo": "Término de indexación género-forma-especie",
+  "creado": {
+    "$date": {
+      "$numberLong": "1657991965703"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d2f977987ec1c44d985a5a"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Materia",
+  "definicion": "Áreas o campos del conocimiento dentro de los cuales se inscribe o podría relacionarse el recurso.",
+  "campoLargo": "Materia campo temático",
+  "creado": {
+    "$date": {
+      "$numberLong": "1657993591997"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d48c4860da30186563e629"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "MedioSonoro",
+  "definicion": "Tipo de agrupación, instrumento o Instrumentos musicales (cantidad) que caracterizan el recurso (aplica únicamente a recursos de carácter musical).",
+  "campoLargo": "Medio sonoro-formato",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658096712045"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d48ceb60da30186563e62a"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "SistemaSonoro",
+  "definicion": "Conjunto de elementos correlacionados que definen la estructura musical en relación con un aspecto específico (aplica únicamente a recursos de carácter musical). Por ejemplo: Sistemas de afinación (temperado, no temperado, afinación justa); sistema de organización melódico-armónica-contrapuntística (tonal, modal, interválica libre, serial, politonal, polimodal); Sistemas rítmicos (polirítmia, heterorítmia, libre, independiente, en compases-compas-); polimétrico, heterométrico.",
+  "campoLargo": "SIstema sonoro",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658096875989"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d4c4e547fdf39c4e99f436"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Idioma",
+  "definicion": "Sistema o sistemas lingüisticos en los que está construido el recurso. Puede referirse a familia lingüistica, idioma o dialecto. Por lo tanto no coincide totalmente con el estándar ISO 639-1.",
+  "campoLargo": "Idioma",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658111205328"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d5b1df87e355981f7092a0"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "Actor",
+  "definicion": "Sujeto(s) que interviene en el evento relacionado con la obra Incluye las menciones de responsabilidad pero no se limita a ellas.",
+  "campoLargo": "Actor",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658171871163"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d644e4178cf0a80f2c0437"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "DenominacionRegional",
+  "definicion": "Nombre con el cual un grupo social determinado identifica la obra.",
+  "campoLargo": "Denominación regional-socio-cultural",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658209508421"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d64785f1fe2ed40d889472"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "GéneroFormaNoMusical",
+  "definicion": "Categorías que reúnen obras que comparten diversos criterios de afinidad en términos estructurales, de función social o de contexto y se aplican a obras no musicales o a asuntos no musicales de obras musicales.",
+  "campoLargo": "Término de indexación género-forma no-musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658210181637"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d839e1dae7da3c649578ee"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "AnotaciónCartográficoTemporal",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia de una obra en términos cartográficos (geográfico, socio-cultural)  y cronológicos",
+  "campoLargo": "Anotación cartográfico temporal",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658337761463"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d83a5ddae7da3c649578ef"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "DescriptorLibre",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptor LIbre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658337885949"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d83ab9dae7da3c649578f0"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "ProyectosAsociados",
+  "definicion": "Proyectos de investigación asociados a la obra",
+  "campoLargo": "Proyectos Asociados",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658337977586"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "62d83b5adae7da3c649578f1"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Obra",
+  "campo": "EnlacesyArchivos",
+  "definicion": "URLs de recursos relacionados con la obra.",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1658338138720"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901460f5ca03f862dacfc7"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "Nombre",
+  "definicion": "El nombre constituye un nombre de pila o es un nombre que consiste en palabras, iniciales, letras, etc. que tiene un formato en orden directo.",
+  "campoLargo": "Nombre personal",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670386784318"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901484f5ca03f862dacfc8"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "Apellidos",
+  "definicion": "El nombre corresponde a un apellido simple o compuesto con formato en orden invertido; o a un nombre simple sin nombres de pila, que se sabe es usado como apellido.",
+  "campoLargo": "Apellido",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670386820266"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901508f5ca03f862dacfc9"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "AsientoLigado",
+  "definicion": "Es un identificador de un segundo recurso y su relación con el recurso actual",
+  "campoLargo": "Asiento ligado",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670386952880"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390156bf5ca03f862dacfca"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "NombreDeReunión",
+  "definicion": "Nombre de un conjunto de actores reunidos para un evento determinado",
+  "campoLargo": "Nombre de reunión",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670387051485"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901598f5ca03f862dacfcb"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "DescriptorLibre",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptor libre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670387096354"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901611f5ca03f862dacfcc"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "AnotacionesCartograficoTemporales",
+  "definicion": "Fecha o rango de fechas (año, mes, día) asociados a la obra por distintas razones (composición, grabación, copyright).",
+  "campoLargo": "Anotaciones cartográfico temporales",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670387217152"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390168af5ca03f862dacfcd"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "EnlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con el actor",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670387338737"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901791f5ca03f862dacfce"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "NombreCorporativo",
+  "definicion": "El nombre de una entidad corporativa o de la primera entidad subordinada cuando hay alguna presente; el nombre de una jurisdicción bajo la cual se asientan: una entidad corporativa, la sección de una ciudad o el título de una obra; o el nombre de una jurisdicción que corresponde también a una entidad eclesiástica.",
+  "campoLargo": "Nombre corporativo",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670387601919"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63901d3c1949e01cf59a4d9c"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Actor",
+  "campo": "contenedor",
+  "definicion": "Actores que forman parte de una reunión",
+  "campoLargo": "Contenedor (actores en reunión)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670389052580"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c2028f1fe59cf751e6c2"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "titulo",
+  "definicion": "Título completo del documento",
+  "campoLargo": "Título uniforme",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431234995"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c24e8f1fe59cf751e6c3"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "descripcion",
+  "definicion": "Texto que resume de manera abreviada, objetiva y precisa, aspectos como la procedencia, el tipo y el contenido del recurso, sin interpretación crítica y sin mención expresa del autor del resumen.",
+  "campoLargo": "Descripción",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431310907"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c2a48f1fe59cf751e6c4"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "obrasRelacionadas",
+  "definicion": "Obras que están incluidas o mencionadas en el recurso",
+  "campoLargo": "Obras relacionadas",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431396288"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c2f68f1fe59cf751e6c5"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "numerosNormalizados",
+  "definicion": "Estándar que identifica unívocamente el recurso y sigla que identifica el estándar universal correspondiente",
+  "campoLargo": "Números normalizados",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431478357"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c3108f1fe59cf751e6c6"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "faceta",
+  "definicion": "Código alfanumérico interno, propio de la unidad de información, que identifica el recurso",
+  "campoLargo": "Faceta",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431504961"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c35b8f1fe59cf751e6c7"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "mencionesDeResponsabilidad",
+  "definicion": "Actores responsables de la existencia del recurso.",
+  "campoLargo": "Menciones de responsabilidad",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431579308"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c3848f1fe59cf751e6c8"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "contenedor",
+  "definicion": "Indicación que precisa si un determinado recurso contiene o no otros recursos",
+  "campoLargo": "Contenedor",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670431620197"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390c6157aa1ca9caa2e3188"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "fuente",
+  "definicion": "Datos técnicos relacionados con el origen del recurso.",
+  "campoLargo": "Fuente",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670432277360"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390cd4a189a1938301aa8db"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "tipo",
+  "definicion": "Descripción de la categoría a la que pertenece el recurso",
+  "campoLargo": "Tipo de recurso",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670434122446"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390e20b189a1938301aa8dc"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "AnotacionesCartograficoTemporales",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia del recurso en términos cartográficos (geográfico, socio-cultural)  y cronológicos",
+  "campoLargo": "Anotaciones cartográfico temporales",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670439435154"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390e304dc3704bce57bbf7a"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "materia",
+  "definicion": "Áreas o campos del conocimiento dentro de los cuales se inscribe o podría relacionarse el recurso.",
+  "campoLargo": "Materia campo temático",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670439684513"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390e8513c574590f9480eda"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "Idiomas",
+  "definicion": "Sistema o sistemas lingüisticos en los que está construido el recurso. Puede referirse a familia lingüistica, idioma o dialecto. Por lo tanto no coincide totalmente con el estándar ISO 639-1.",
+  "campoLargo": "Idiomas",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441041534"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390e8d13c574590f9480edb"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "descripciónTécnica",
+  "definicion": "Identificación de  parámetros tecnológicos asociados al recurso.",
+  "campoLargo": "Descripción técnica",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441169084"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390eaf5b83fb420f1efba2b"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "materialAcompañante",
+  "definicion": "Recurso que hace parte integral y depende del recurso en referencia.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441717625"
+    }
+  },
+  "__v": 0,
+  "campoLargo": "Material acompañante"
+},{
+  "_id": {
+    "$oid": "6390eb16b83fb420f1efba2c"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "mencionDeSerie",
+  "definicion": "Título de una colección a la cual pertenece el recurso",
+  "campoLargo": "Mención de serie",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441750794"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390eb5fb83fb420f1efba2d"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "proyectosAsociados",
+  "definicion": "Proyectos de investigación asociados al recurso",
+  "campoLargo": "Proyectos asociados",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441823746"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390eb91b83fb420f1efba2e"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "descriptorLibre",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "DescriptorLibre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441873234"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6390ebf1b83fb420f1efba2f"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Recurso",
+  "campo": "enlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con el recurso",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670441969342"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63926347e3b3742416e97ba4"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "recurso",
+  "definicion": "Elemento tangible que hace parte de la colección y que puede o no contener otros recursos.",
+  "campoLargo": "Recurso",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538055200"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639263c3e3b3742416e97ba5"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "idEjemplar",
+  "definicion": "Número que identifica unívocamente un ejemplar correspondiente a un recurso determinado",
+  "campoLargo": "Identificador de ejemplar",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538179826"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63926425e3b3742416e97ba6"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "disponibilidad",
+  "definicion": "Palabra o frase que describe si el ejemplar se encuentra dispuesto para su uso y en caso contrario, en dónde se encuentra.",
+  "campoLargo": "Disponibilidad",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538277945"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63926460e3b3742416e97ba7"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "fondo",
+  "definicion": "Conjunto orgánico de documentos reunidos en un proceso natural que han sido generados o recibidos por una persona física o jurídica, pública o privada, a lo largo de su existencia y en el ejercicio de las actividades y las funciones que le son propias",
+  "campoLargo": "Fondo documental",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538336777"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63926488e3b3742416e97ba8"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "coleccion",
+  "definicion": "Es el conjunto de documentos reunidos según criterios subjetivos (un tema determinado) y que por lo tanto, no conserva una estructura orgánica ni responde al principio de procedencia",
+  "campoLargo": "Colección",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538376119"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639264b4e3b3742416e97ba9"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "procedencia",
+  "definicion": "Es el conjunto de documentos reunidos según criterios subjetivos (un tema determinado) y que por lo tanto, no conserva una estructura orgánica ni responde al principio de procedencia",
+  "campoLargo": "Procedencia del ejemplar",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538420833"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6392652ce3b3742416e97baa"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "Ejemplar",
+  "campo": "estado",
+  "definicion": "Descripción del momento del ciclo de vida y propiedades fìsicas actuales de un ejemplar.",
+  "campoLargo": "Estado del ejemplar",
+  "creado": {
+    "$date": {
+      "$numberLong": "1670538540810"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399ded02f6d2964f3e21120"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "proyecto",
+  "campo": "nombreProyecto",
+  "definicion": "Nombre que identifica unívocamente el proyecto de investigación.",
+  "campoLargo": "Nombre del proyecto",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671028432468"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399df052f6d2964f3e21121"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "proyecto",
+  "campo": "estadoProyecto",
+  "definicion": "Momento actual del ciclo de vida del proyecto.",
+  "campoLargo": "Estado del proyecto",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671028485414"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399df532f6d2964f3e21122"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "proyecto",
+  "campo": "actoresProyecto",
+  "definicion": "Actores relacionados con el proyecto, definidos con su rol dentro del mismo y las fechas en las que se da esa relación",
+  "campoLargo": "Actores del proyecto",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671028563352"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399dfab2f6d2964f3e21123"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "proyecto",
+  "campo": "fechasProyecto",
+  "definicion": "Fechas relacionadas con el desarrollo o el objeto del proyecto.",
+  "campoLargo": "Fechas asociadas al proyecto",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671028651350"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399dfe12f6d2964f3e21124"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "proyecto",
+  "campo": "descriptoresLibres",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptores libres",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671028705041"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399e0062f6d2964f3e21125"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "proyecto",
+  "campo": "enlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con el proyecto",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671028742367"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399f4bb921a7cf814c6fd9a"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "fondo",
+  "campo": "nombreDelFondo",
+  "definicion": "Nombre que identifica unívocamente el fondo documental y que fue asignado en el momento de su constitución",
+  "campoLargo": "Nombre del fondo documental",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671034043172"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399f4ef921a7cf814c6fd9b"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "fondo",
+  "campo": "fechaCreacionFondo",
+  "definicion": "Fecha en la cual se constituye, formalmente, el fondo documental",
+  "campoLargo": "Fecha de creación del fondo documental",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671034095070"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399f54a921a7cf814c6fd9c"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "fondo",
+  "campo": "tipoFondo",
+  "definicion": "Categoría que describe o agrupa el tipo de elementos principales presentes en el fondo documental",
+  "campoLargo": "Tipo de fondo documental",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671034186585"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6399f5c9921a7cf814c6fd9d"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "fondo",
+  "campo": "propiedadComodato",
+  "definicion": "Descripción concisa del tipo de relación de posesión que se tiene sobre el fondo documental y documentos que respaldan esa relación",
+  "campoLargo": "Propiedad o Comodato (del fondo documental)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671034313207"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aa550ea5cfda44da9734d"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "coleccion",
+  "campo": "nombreColeccion",
+  "definicion": "Nombre que identifica unívocamente la colección documental y que fue asignado en el momento de su constitución",
+  "campoLargo": "Nombre de la colección documental",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671079248366"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aa57fea5cfda44da9734e"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "coleccion",
+  "campo": "fechaColeccion",
+  "definicion": "Fecha en la cual se constituye, formalmente, la colección documental",
+  "campoLargo": "Fecha de la colección",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671079295863"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aa5e6ea5cfda44da9734f"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "coleccion",
+  "campo": "tipoColeccion",
+  "definicion": "Categoría que describe o agrupa el tipo de elementos principales presentes en la colección documental",
+  "campoLargo": "Tipo de colección",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671079398423"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aa623ea5cfda44da97350"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "coleccion",
+  "campo": "propiedadComodatoColeccion",
+  "definicion": "Descripción concisa del tipo de relación de posesión que se tiene sobre el fondo documental y documentos que respaldan esa relación",
+  "campoLargo": "Propiedad o Comodato (de la colección documental)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671079459113"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aaddcea2002701a04e398"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "NombreInstrumento",
+  "definicion": "Denominación comúnmente utilizada para designar el instrumento musical",
+  "campoLargo": "Nombre del Instrumento",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081436850"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aae08ea2002701a04e399"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "clasificacionInstrumento",
+  "definicion": "Sistema de clasificación de instrumentos musicales creado por Erich Moritz von Hornbostel y Curt Sachs.",
+  "campoLargo": "Clasificación Hornbostel-Sachs del instrumento",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081480443"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aae47ea2002701a04e39a"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "nombresAlternativos",
+  "definicion": "Otras denominaciones del instrumento asociadas a determinado contexto sociocultural.",
+  "campoLargo": "Nombres alternativos del instrumento",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081543896"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aae9eea2002701a04e39b"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "proyectosAsociadosInstrumento",
+  "definicion": "Proyectos de investigación asociados al instrumento",
+  "campoLargo": "Proyectos de investigación asociados al instrumento",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081630329"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aaee2ea2002701a04e39c"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "AnotacionesCartograficoTemporalesIntrumento",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia de un instrumento en términos cartográficos (geográfico, socio-cultural) y cronológicos",
+  "campoLargo": "Anotaciones cartográfico-temporales del instrumento",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081698380"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aaf0aea2002701a04e39d"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "descriptorLibreInstrumento",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptor libre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081738645"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639aaf33ea2002701a04e39e"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "instrumento",
+  "campo": "enlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con el instrumento",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081779074"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab007ea2002701a04e39f"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "nombreMedio",
+  "definicion": "Denominación comúnmente utilizada para designar el medio sonoro o formato",
+  "campoLargo": "Nombre del medio sonoro o formato",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671081991698"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab03fea2002701a04e3a0"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "nombresAlternativos",
+  "definicion": "Otras denominaciones del medio sonoro o el formato asociadas a determinado contexto sociocultural.",
+  "campoLargo": "Nombres alternativos del medio o formato",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671082047741"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab115ea2002701a04e3a1"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "instrumentos",
+  "definicion": "Instrumentos musicales (convencionales o no) que participan del medio sonoro o formato, acompañados de su rol (Función que desempeña cada instrumento dentro del discurso sonoro) y cantidad (Número que representa la cantidad de instrumentos que participan del medio o formato).",
+  "campoLargo": "Instrumentos del medio sonoro o formato",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671082261881"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab166ea2002701a04e3a2"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "proyectosAsociados",
+  "definicion": "Proyectos de investigación asociados al medio o formato",
+  "campoLargo": "Proyectos de investigación asociados",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671082342800"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab19eea2002701a04e3a3"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "anotacionesCT",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia dede un medio o formato en términos cartográficos (geográfico, socio-cultural) y cronológicos",
+  "campoLargo": "Anotaciones cartográfico-temporales",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671082398979"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab1d1ea2002701a04e3a4"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "descriptorLibre",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptores libres",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671082449241"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ab1f0ea2002701a04e3a5"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "medio",
+  "campo": "EnlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con el medio",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671082480498"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b69a142b7dd884104ba6e"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "nombreSistema",
+  "definicion": "Denominación comúnmente utilizada para designar el sistema sonoro. (Ejemplos) Sistema de afinación (temperado, no temperado, afinación justa); sistema de organización melódico-armónica-contrapuntística (tonal, modal, interválica libre, serial, politonal, polimodal); Sistemas rítmicos (polirítmia, heterorrítmia, libre, independiente, en compases-compas-); polimétrico, heterométrico;",
+  "campoLargo": "Nombre del sistema sonoro",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129505273"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b69e642b7dd884104ba6f"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "descripción",
+  "definicion": "Texto que resume de manera abreviada, objetiva y precisa, aspectos como la procedencia, el tipo y las características del sistema sonoro, sin interpretación crítica y sin mención expresa del autor del resumen.",
+  "campoLargo": "Descripción del sistema sonoro",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129574312"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6a2542b7dd884104ba70"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "nombresAlternativos",
+  "definicion": "Otras denominaciones del sistema sonoro asociadas a determinado contexto sociocultural.",
+  "campoLargo": "Nombres alternativos del sistema sonoro",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129637081"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6aa242b7dd884104ba71"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "SistemasRelacionados",
+  "definicion": "Sistemas sonoros que guardan alguna relación (no jerárquica) con el sistema actual",
+  "campoLargo": "SIstemas Relacionados",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129762024"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6af442b7dd884104ba72"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "sistemasPadre",
+  "definicion": "Sistemas de los cuales proviene el actual (relación jerárquica)",
+  "campoLargo": "Sistemas padre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129844086"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6b1a42b7dd884104ba73"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "sistemasHijo",
+  "definicion": "Sistemas que se derivan del actual (relación jerárquica)",
+  "campoLargo": "Sistemas hijo",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129882888"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6b4042b7dd884104ba74"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "proyectosAsociados",
+  "definicion": "Proyectos de investigación asociados al sistema",
+  "campoLargo": "Proyectos asociados al sistema",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671129920477"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6b9442b7dd884104ba75"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "anotacionesCT",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia de un sistema sonoro en términos cartográficos (geográfico, socio-cultural) y cronológicos",
+  "campoLargo": "Anotaciones cartográfico-temporales",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671130004106"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6bd442b7dd884104ba76"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "descriptoresLibres",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptores libres del sistema",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671130068127"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b6bf942b7dd884104ba77"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "sistema",
+  "campo": "EnlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con el sistema sonoro",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671130105745"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b864c9f2f1288e09db315"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "nombreMateria",
+  "definicion": "Denominación formal y estandarizada utilizada para designarla materia o disciplina",
+  "campoLargo": "Nombre de la materia",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671136844051"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b868d9f2f1288e09db316"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "descripcion",
+  "definicion": "Texto que resume de manera abreviada, objetiva y precisa, aspectos como la procedencia, el tipo y las características de la materia o disciplina, sin interpretación crítica y sin mención expresa del autor del resumen",
+  "campoLargo": "Descripción de la materia",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671136909787"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b86fe9f2f1288e09db317"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "nombresAlternativos",
+  "definicion": "Otras denominaciones de la materia o disciplina asociadas a determinado contexto epistemológico, académico, regional o sociocultural",
+  "campoLargo": "Nombres alternativos (alias) de la materia",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671137022748"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b873f9f2f1288e09db318"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "materiasRelacionadas",
+  "definicion": "Materias o disciplinas que guardan alguna relación (no jerárquica) con la materia actual",
+  "campoLargo": "Materias relacionadas",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671137087006"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b87789f2f1288e09db319"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "padre",
+  "definicion": "Materias o disciplinas de las cuales proviene la actual (relación jerárquica)",
+  "campoLargo": "Materias padre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671137144111"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b879f9f2f1288e09db31a"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "hijas",
+  "definicion": "Materias o disciplinas que se derivan del actual (relación jerárquica)",
+  "campoLargo": "Materias hijas",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671137183658"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b87c69f2f1288e09db31b"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "descriptoresLibres",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "campoLargo": "Descriptores libres",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671137222790"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639b87f69f2f1288e09db31c"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "materia",
+  "campo": "enlacesYArchivos",
+  "definicion": "URLs de recursos relacionados con la materia o disciplina",
+  "campoLargo": "Enlaces y archivos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671137270244"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be732fedab024238374d0"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "nombreGenero",
+  "definicion": "Denominación comúnmente utilizada para designar el género o forma musical",
+  "campoLargo": "Nombre del género o la forma",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671161650733"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be75afedab024238374d1"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "descripcion",
+  "definicion": "Texto que resume de manera abreviada, objetiva y precisa, aspectos como la procedencia, el tipo y las características de la materia o disciplina, sin interpretación crítica y sin mención expresa del autor del resumen",
+  "campoLargo": "Descripción del género o forma musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671161690206"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be7a3fedab024238374d2"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "nombresAlternativos",
+  "definicion": "Otras denominaciones del género o forma musical asociadas a determinado contexto sociocultural",
+  "campoLargo": "Nombres alternativos (Alias)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671161763351"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be7e4fedab024238374d3"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "generosRelacionados",
+  "definicion": "Géneros o formas musicales que guardan alguna relación (no jerárquica) con el género actual",
+  "campoLargo": "Géneros o formas musicales relacionadas",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671161828220"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be84cfedab024238374d4"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "padres",
+  "definicion": "Géneros o formas musicales de los cuales proviene el actual (relación jerárquica)",
+  "campoLargo": "Géneros padre",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671161932593"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be882fedab024238374d5"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "hijos",
+  "definicion": "Géneros o formas musicales que se derivan del actual (relación jerárquica)",
+  "campoLargo": "Géneros hijo",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671161986130"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be8edfedab024238374d6"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "mediosAsociados",
+  "definicion": "Medios sonoros o formatos en los cuales se suele interpretar el género o forma musical",
+  "campoLargo": "Medios sonoros asociados",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671162093414"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639be929fedab024238374d7"
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "tabla": "genero",
+  "campo": "sistemasAsociados",
+  "definicion": "Sistemas sonoros relacionados con el género o forma musical",
+  "campoLargo": "Sistemas sonoros asociados al género o forma musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671162153575"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c0be9b63d84a3227e745f"
+  },
+  "tabla": "genero",
+  "campo": "idioma",
+  "campoLargo": "Idioma asociado al género",
+  "definicion": "Sistema o sistemas lingüisticos en los que está construido el recurso. Puede referirse a familia lingüística, idioma o dialecto. Por lo tanto no coincide totalmente con el estándar ISO 639-1.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671171049455"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c0c1bb63d84a3227e7466"
+  },
+  "tabla": "genero",
+  "campo": "proyectosAsociados",
+  "campoLargo": "Proyectos asociados al género",
+  "definicion": "Proyectos de investigación asociados al género o forma musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671171099209"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c0c64b63d84a3227e746c"
+  },
+  "tabla": "genero",
+  "campo": "anotacionesCT",
+  "campoLargo": "Anotaciones cartográfico-temporales",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia género o forma musical en términos cartográficos (geográfico, socio-cultural) y cronológicos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671171172230"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c0c87b63d84a3227e7472"
+  },
+  "tabla": "genero",
+  "campo": "descriptoresLibres",
+  "campoLargo": "Descriptores libres",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671171207375"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c0cd2b63d84a3227e748a"
+  },
+  "tabla": "genero",
+  "campo": "enlacesYArchivos",
+  "campoLargo": "Enlaces y archivos",
+  "definicion": "URLs de recursos relacionados con el género o forma musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671171282785"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c20980b4c4e81dd507af3"
+  },
+  "tabla": "diccionario",
+  "campo": "tabla",
+  "campoLargo": "Tabla",
+  "definicion": "Entidad de la base de datos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671176344352"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c20c50b4c4e81dd507afa"
+  },
+  "tabla": "diccionario",
+  "campo": "campoAbreviado",
+  "campoLargo": "Campo abreviado",
+  "definicion": "Abreviatura del nombre del campo",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671176389138"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c20df0b4c4e81dd507b00"
+  },
+  "tabla": "diccionario",
+  "campo": "campoLargo",
+  "campoLargo": "Campo largo",
+  "definicion": "Nombre extendido del campo",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671176415695"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c2629ab6b01e394c0a421"
+  },
+  "tabla": "diccionario",
+  "campo": "definicion",
+  "campoLargo": "Definición",
+  "definicion": "Expresión que explica y delimita el concepto del campo",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671177769598"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c897e6ef6984ccfc9d3ae"
+  },
+  "tabla": "genero no Musical",
+  "campo": "nombreGenero",
+  "campoLargo": "Nombre del género o la forma no musical",
+  "definicion": "Denominación comúnmente utilizada para designar el género no musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671203198839"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8a086ef6984ccfc9d499"
+  },
+  "tabla": "genero no Musical",
+  "campo": "descripcion",
+  "campoLargo": "Descripción",
+  "definicion": "Texto que resume de manera abreviada, objetiva y precisa, aspectos como la procedencia, el tipo y las características del género o forma no musical, sin interpretación crítica y sin mención expresa del autor del resumen.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671203336796"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8a766ef6984ccfc9d4a5"
+  },
+  "tabla": "genero no Musical",
+  "campo": "nombresAlternativos",
+  "campoLargo": "Nombres alternativos (Alias)",
+  "definicion": "Otras denominaciones del genero o forma no musical asociadas a determinado contexto sociocultural.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671203446091"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8c6c6ef6984ccfc9d52e"
+  },
+  "tabla": "genero no Musical",
+  "campo": "generosRelacionados",
+  "campoLargo": "Géneros o formas no musicales relacionados",
+  "definicion": "Géneros o formas no musicales que guardan alguna relación (no jerárquica) con el género actual",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671203948101"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8ca16ef6984ccfc9d558"
+  },
+  "tabla": "genero no Musical",
+  "campo": "padres",
+  "campoLargo": "Géneros no musicales padre",
+  "definicion": "Géneros o formas no musicales de los cuales proviene el actual (relación jerárquica)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671204001624"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8ccd6ef6984ccfc9d564"
+  },
+  "tabla": "genero no Musical",
+  "campo": "hijos",
+  "campoLargo": "Hijos de géneros o formas no musicales",
+  "definicion": "Géneros o formas no musicales que se derivan del actual (relación jerárquica)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671204045648"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8d176ef6984ccfc9d669"
+  },
+  "tabla": "genero no Musical",
+  "campo": "idiomas",
+  "campoLargo": "Idiomas relacionados con el género no musical",
+  "definicion": "Sistema o sistemas lingüísticos en los que está construido el género o forma no musical. Puede referirse a familia lingüística, idioma o dialecto. Por lo tanto no coincide totalmente con el estándar ISO 639-1.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671204119084"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8d5f6ef6984ccfc9d682"
+  },
+  "tabla": "genero no Musical",
+  "campo": "anotacionesCT",
+  "campoLargo": "Anotaciones cartográfico-temporales",
+  "definicion": "Descripción del origen, localización y ámbito de vigencia del género o forma no musical en términos cartográficos (geográfico, socio-cultural) y cronológicos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671204191955"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8d946ef6984ccfc9d68e"
+  },
+  "tabla": "genero no Musical",
+  "campo": "descriptoresLibres",
+  "campoLargo": "Descriptores libres",
+  "definicion": "Categoría que agrupa un conjunto de elementos específicos no clasificables en términos de los demás descriptores de la base de datos",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671204244261"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639c8dbd6ef6984ccfc9d69a"
+  },
+  "tabla": "genero no Musical",
+  "campo": "enlacesYArchivos",
+  "campoLargo": "Enlaces y archivos",
+  "definicion": "URLs de recursos relacionados con el género o forma no musical",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671204285167"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "639ecbc4dfa7a25277c7e7e2"
+  },
+  "tabla": "Obra",
+  "campo": "Obra",
+  "campoLargo": "Obra",
+  "definicion": "Elemento abstracto que hace referencia al resultado de un trabajo creativo que constituye una unidad en si mismo.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1671351236922"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e54321541e662dc042c7e7"
+  },
+  "tabla": "Actor",
+  "campo": "Actor",
+  "campoLargo": "Actor",
+  "definicion": "Sujeto (natural o jurídico) relacionado con un registro por distintas razones",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675969313380"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e54379541e662dc042c8dc"
+  },
+  "tabla": "Recurso",
+  "campo": "Recurso",
+  "campoLargo": "Recurso",
+  "definicion": "Elemento tangible que hace parte de la colección y que puede o no contener otros recursos.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675969401061"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e54474541e662dc042cb14"
+  },
+  "tabla": "Ejemplar",
+  "campo": "Ejemplar",
+  "campoLargo": "Ejemplar",
+  "definicion": "Cada uno de las ítems de un documento resultado de una determinada edición o tiraje. (Dirección de Bibliotecas Tecnológico de Monterrey, 2015)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675969652867"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e5456a541e662dc042cc0b"
+  },
+  "tabla": "Proyecto",
+  "campo": "Proyecto",
+  "campoLargo": "Proyecto",
+  "definicion": "Proyectos de investigación o extensión asociados a un registro",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675969898604"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e54612541e662dc042cd03"
+  },
+  "tabla": "Fondo",
+  "campo": "Fondo",
+  "campoLargo": "Fondo documental",
+  "definicion": "Fondo bibliográfico de una unidad de información o una parte bien caracterizada por  su disciplina, procedencia, o encuadernación, etc. (Dirección de Bibliotecas  Tecnológico de Monterrey, 2015)",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675970066899"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e5468f541e662dc042ce2d"
+  },
+  "tabla": "Colección",
+  "campo": "Colección",
+  "campoLargo": "Colección documental",
+  "definicion": "Conjunto de elementos pertenecientes a la unidad de información que presenta una unidad temática",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675970191632"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e59ad574935dcc6467fe96"
+  },
+  "tabla": "Instrumento",
+  "campo": "Instrumento",
+  "campoLargo": "Instrumento musical",
+  "definicion": "Objeto que produce sonido y es utilizado para hacer música.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675991765790"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e59b5074935dcc6467ffec"
+  },
+  "tabla": "Medio",
+  "campo": "Medio",
+  "campoLargo": "Medio sonoro",
+  "definicion": "Tipo de agrupación, instrumento o Instrumentos musicales (cantidad) que caracterizan el recurso (aplica únicamente a recursos de carácter musical).",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675991888897"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e59f8d74935dcc64680257"
+  },
+  "tabla": "Sistema",
+  "campo": "Sistema",
+  "campoLargo": "Sistema sonoro",
+  "definicion": "Conjunto de elementos correlacionados que definen la estructura musical en relación con un aspecto específico (aplica únicamente a recursos de carácter musical).",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675992973973"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e59fc174935dcc64680344"
+  },
+  "tabla": "Materia",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675993025300"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0,
+  "campo": "Materia",
+  "campoLargo": "Materia",
+  "definicion": "Áreas o campos del conocimiento dentro de los cuales se inscribe o podría relacionarse el recurso."
+},{
+  "_id": {
+    "$oid": "63e5a05974935dcc6468048a"
+  },
+  "tabla": "Género",
+  "campo": "Género",
+  "campoLargo": "Género o forma musical",
+  "definicion": "Categoría que reúne obras musicales que comparten diversos criterios de afinidad en términos estructurales, de función social o de contexto.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675993177861"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63e5a16a74935dcc64680633"
+  },
+  "tabla": "Género no Musical",
+  "campo": "Género no Musical",
+  "campoLargo": "Género no Musical",
+  "definicion": "Categoría que reúne recursos que comparten diversos criterios, no musicales, de afinidad en términos estructurales, de función social o de contexto.",
+  "creado": {
+    "$date": {
+      "$numberLong": "1675993450446"
+    }
+  },
+  "creador": {
+    "$oid": "627362f43fcedc440b7adafe"
+  },
+  "__v": 0
+}]

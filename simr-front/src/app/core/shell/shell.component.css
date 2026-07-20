@@ -1,0 +1,185 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--simr-papel);
+  position: relative;
+}
+
+.shell-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 12px;
+  box-shadow: 0 1px 0 rgba(31, 42, 36, 0.12);
+  overflow-x: auto;
+  overflow-y: visible;
+  white-space: nowrap;
+}
+
+/* Marca */
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--simr-hueso);
+  padding-right: 14px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.marca-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.marca-onda {
+  display: block;
+  border-right: 1px solid rgba(251, 249, 244, 0.25);
+  padding-right: 10px;
+}
+
+.marca-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.marca-sigla {
+  font-family: var(--simr-display);
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+.marca-sub {
+  font-family: var(--simr-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Forzar tipografía y tamaño de los botones del menú (Material usa su propio
+   theme tipográfico; lo sobreescribimos con ng-deep por especificidad). */
+.shell-bar ::ng-deep .mat-mdc-button,
+.shell-bar ::ng-deep .mat-mdc-outlined-button {
+  font-family: var(--simr-body) !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  height: 38px !important;
+  min-width: 0 !important;
+  padding: 0 10px !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap;
+}
+
+.shell-bar ::ng-deep .mat-mdc-button .mat-icon,
+.shell-bar ::ng-deep .mat-mdc-outlined-button .mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 2px !important;
+}
+
+.menu-grupo,
+.menu-usuario {
+  display: inline-flex;
+  align-items: center;
+}
+
+.menu-usuario .mat-icon:first-child {
+  margin-right: 4px !important;
+}
+
+/* Contenido de rutas */
+.contenido {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  width: 100%;
+  background: transparent;
+}
+
+/* Marca de agua: logo grande centrado cuando no hay módulo cargado */
+.marca-agua {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.marca-agua img {
+  width: min(520px, 78vw);
+  max-width: 78vw;
+  height: auto;
+  opacity: 0.08;
+  filter: sepia(0.35) saturate(1.4) hue-rotate(-12deg);
+}
+
+/* Bienvenida */
+.bienvenida {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 64px;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(200, 119, 46, 0.12), transparent 60%);
+}
+
+.bienvenida-interna {
+  max-width: 640px;
+  width: 100%;
+  text-align: center;
+}
+
+.bienvenida-titulo {
+  font-family: var(--simr-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1.05;
+  margin: 0.4em 0 0.5em;
+}
+
+.bienvenida-titulo em {
+  font-style: italic;
+  color: var(--simr-sello);
+}
+
+.bienvenida-copete {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--simr-tinta-2);
+  max-width: 52ch;
+  margin: 0 auto 1.6em;
+}
+
+.bienvenida-acciones {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.4em;
+}
+
+.bienvenida-onda {
+  display: flex;
+  justify-content: center;
+  opacity: 0.9;
+}

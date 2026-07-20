@@ -2,21 +2,26 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 
 // Componentes
-import { HomeComponent } from './features/home/home.component';
+import { BienvenidaComponent } from './features/bienvenida/bienvenida.component';
+import { NoImplementadoComponent } from './shared/no-implementado/no-implementado.component';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { SignupComponent } from './features/auth/signup/signup.component';
+import { AuthRouteComponent } from './features/auth/auth-route.component';
 import { AuthGuard } from './core/auth/auth.guard';
 import { ListaTareasComponent } from '@features/__pruebas__/lista-tareas.component';
 // import { CustomPreloadingStrategy } from './core/services/preloading-strategy.service';
 // import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 const routes: Routes = [
-  // { path: '', redirectTo: '/', pathMatch: 'full' },
-  { path: '', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  // Ruta por defecto: muestra el shell con el bloque de bienvenida legacy
+  // (el shell ya renderiza sello.png + enlaces cuando no hay sesión).
+  { path: '', component: BienvenidaComponent },
+  { path: 'login', component: AuthRouteComponent },
+  { path: 'signup', component: AuthRouteComponent },
   { path: 'listado-tareas', component: ListaTareasComponent },
+  // Página temporal para módulos aún no migrados desde AngularJS
+  { path: 'no-implementado/:modulo', component: NoImplementadoComponent },
 
   // Lazy loaded routes
   {

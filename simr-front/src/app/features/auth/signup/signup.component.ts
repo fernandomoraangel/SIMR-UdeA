@@ -47,7 +47,7 @@ export class SignupComponent implements OnInit {
         // console.log('Registration successful', response);
         // Creación de cuenta exitosa
         console.log('Creación de cuenta exitosa', response);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/']);
       },
       error: (error) => {
         console.error('Error during registration', error);

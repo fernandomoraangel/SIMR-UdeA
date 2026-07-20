@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppComponent } from './app.component';
+import { ShellComponent } from './core/shell/shell.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -11,7 +12,8 @@ describe('AppComponent', () => {
         HttpClientTestingModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        ShellComponent
       ],
     }).compileComponents();
   });

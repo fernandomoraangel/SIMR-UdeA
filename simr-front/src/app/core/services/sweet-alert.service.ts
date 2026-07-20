@@ -40,4 +40,29 @@ export class SweetAlertService {
       cancelButtonText: cancelText,
     });
   }
+
+  showError(title: string, text: string): Promise<any> {
+    return Swal.fire({
+      title,
+      text,
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
+  }
+
+  showInfoHtml(
+    html: string,
+    title: string = '',
+    imageUrl?: string
+  ): Promise<any> {
+    return Swal.fire({
+      html,
+      title,
+      imageUrl,
+      timer: 8000,
+      width: '50em',
+      background: '#c4e3d2',
+      showConfirmButton: false,
+    });
+  }
 }

@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
       )}`;
       return;
     }
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/']);
   }
 
   onSubmit(): void {

@@ -1,124 +1,89 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f0f0f0;
+/* SIMR — estilos globales (build de desarrollo). Espejo de src/styles.css.
+   Sin Bootstrap. Identidad propia en Angular Material. */
+:root {
+  --simr-tinta: #1f2a24;
+  --simr-tinta-2: #2f3d35;
+  --simr-papel: #f3efe6;
+  --simr-hueso: #fbf9f4;
+  --simr-sello: #b5432a;
+  --simr-sello-osc: #8f3320;
+  --simr-cobre: #c8772e;
+  --simr-musgo: #5c7a5a;
+
+  --simr-display: "Fraunces", Georgia, serif;
+  --simr-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --simr-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: var(--simr-papel);
+  color: var(--simr-tinta);
+  font-family: var(--simr-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 h1,
-h2 {
-  color: #333;
+h2,
+h3 {
+  font-family: var(--simr-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--simr-tinta);
+  margin: 0 0 0.5em;
 }
 
-button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 4px;
+.simr-eyebrow {
+  font-family: var(--simr-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--simr-sello);
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.simr-codigo {
+  font-family: var(--simr-mono);
+  font-size: 0.8rem;
+  color: var(--simr-musgo);
 }
 
-input[type="file"] {
-  margin-bottom: 10px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+:focus-visible {
+  outline: 2px solid var(--simr-cobre);
+  outline-offset: 2px;
 }
 
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+:root {
+  --mat-sys-primary: var(--simr-tinta);
+  --mat-sys-on-primary: var(--simr-hueso);
+  --mat-sys-primary-container: #e7ded0;
+  --mat-sys-on-primary-container: var(--simr-tinta);
+  --mat-sys-secondary: var(--simr-musgo);
+  --mat-sys-on-secondary: var(--simr-hueso);
+  --mat-sys-tertiary: var(--simr-cobre);
+  --mat-sys-error: var(--simr-sello);
+  --mat-sys-surface: var(--simr-hueso);
+  --mat-sys-on-surface: var(--simr-tinta);
+  --mat-sys-surface-container: #efe9dd;
+  --mat-sys-surface-container-high: #e9e2d4;
+  --mat-sys-outline: #cdbfa6;
+  --mat-sys-background: var(--simr-papel);
 }
-
-th {
-  background-color: #4CAF50;
-  color: white;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.loading,
-.no-files {
-  text-align: center;
-  margin-top: 20px;
-  font-style: italic;
-  color: #667;
-}
-
-.file-upload,
-.file-list {
-  background-color: white;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.view-btn {
-  background-color: #2196F3;
-  margin-left: 5px;
-}
-
-.delete-btn {
-  background-color: #f44336;
-  margin-left: 5px;
-}
-
-.delete-btn:hover {
-  background-color: #d32f2f;
-}
-
-.delete-multiple-btn {
-  background-color: #f44336;
-  margin-bottom: 10px;
-}
-
-.delete-multiple-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.delete-multiple-btn:hover:not(:disabled) {
-  background-color: #d32f2f;
-}
-
-input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-th input[type="checkbox"],
-td input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-th input[type="checkbox"] {
-  margin-right: 5px;
-}
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

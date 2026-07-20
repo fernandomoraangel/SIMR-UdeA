@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import * as fs from "fs";
 
 export default defineConfig({
   e2e: {
@@ -8,6 +9,12 @@ export default defineConfig({
     video: false,
     defaultCommandTimeout: 10000,
     setupNodeEvents(on, config) {
+      on("task", {
+        logError(message: string) {
+          fs.appendFileSync("cypress/error-log.txt", message + "\n");
+          return null;
+        },
+      });
       return config;
     },
   },

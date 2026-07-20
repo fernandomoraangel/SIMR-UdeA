@@ -1,3 +1,11 @@
+export interface Role {
+  id?: string;
+  name: string;
+  displayName?: string;
+  description?: string;
+  priority?: number;
+  isActive?: boolean;
+}
 
 export interface User {
   id?: string;
@@ -10,8 +18,9 @@ export interface User {
   providerId?: string;
   providerData?: any;
   created?: Date;
-  refreshTokens: string[];
+  refreshTokens?: string[];
   fullName?: string;
+  roles?: (Role | string)[];
 }
 
 // export interface User {

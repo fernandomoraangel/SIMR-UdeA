@@ -1,105 +1,107 @@
-// src/app/features/idiomas/pages/idioma-detail/idioma-detail.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IdiomasStore } from '../../../state/idiomas.store';
 
 @Component({
   selector: 'app-idioma-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+  ],
   providers: [IdiomasStore],
   template: `
     <div class="detail-container">
-      <div class="detail-header">
-        <button (click)="goBack()" class="btn btn-outline">
-          <i class="fas fa-arrow-left"></i>
-          Volver
+      <header class="detail-header">
+        <button mat-icon-button (click)="goBack()" aria-label="Volver" class="volver">
+          <mat-icon>arrow_back</mat-icon>
         </button>
-
         @if (store.selectedIdioma(); as idioma) {
         <div class="header-actions">
-          <button (click)="navigateToEdit(idioma._id)" class="btn btn-primary">
-            <i class="fas fa-edit"></i>
+          <button mat-stroked-button (click)="navigateToEdit(idioma._id)">
+            <mat-icon>edit</mat-icon>
             Editar
           </button>
-          <button (click)="confirmDelete(idioma._id)" class="btn btn-danger">
-            <i class="fas fa-trash"></i>
+          <button mat-stroked-button color="warn" (click)="confirmDelete(idioma._id)">
+            <mat-icon>delete</mat-icon>
             Eliminar
           </button>
         </div>
         }
-      </div>
+      </header>
 
       @if (store.isLoading()) {
-      <div class="loading">
-        <i class="fas fa-spinner fa-spin"></i>
-        Cargando detalles del idioma...
+      <div class="cargando">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando detalles del idioma…</span>
       </div>
       } @if (store.hasError()) {
-      <div class="error-message">
-        <i class="fas fa-exclamation-triangle"></i>
-        {{ store.error() }}
-        <button (click)="store.clearError()" class="btn-close">×</button>
+      <div class="alerta">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ store.error() }}</span>
+        <button mat-button (click)="store.clearError()">Cerrar</button>
       </div>
       } @if (store.selectedIdioma(); as idioma) {
-      <div class="detail-card">
-        <div class="card-header">
-          <div class="idioma-title">
-            <i class="fas fa-language"></i>
+      <mat-card class="ficha" appearance="outlined">
+        <div class="ficha-cabecera">
+          <div class="titulo">
+            <mat-icon>translate</mat-icon>
             <h1>{{ idioma.idioma }}</h1>
           </div>
-          <div class="idioma-id">
-            <small>ID: {{ idioma._id }}</small>
-          </div>
+          <span class="simr-codigo">ID {{ idioma._id }}</span>
         </div>
 
-        <div class="card-body">
-          <div class="detail-section">
-            <h3><i class="fas fa-user"></i> Información del Creador</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <label>Nombre completo:</label>
-                <span>{{ idioma.creador.fullName }}</span>
-              </div>
-              <div class="info-item">
-                <label>ID del creador:</label>
-                <span>{{ idioma.creador._id }}</span>
-              </div>
+        <section class="seccion">
+          <h3><mat-icon>person</mat-icon> Información del Creador</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Nombre completo</label>
+              <span>{{ idioma.creador.fullName }}</span>
+            </div>
+            <div class="info-item">
+              <label>ID del creador</label>
+              <span class="simr-codigo">{{ idioma.creador._id }}</span>
             </div>
           </div>
+        </section>
 
-          <div class="detail-section">
-            <h3><i class="fas fa-clock"></i> Información de Fechas</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <label>Fecha de creación:</label>
-                <span>{{ idioma.creado | date : 'dd/MM/yyyy HH:mm:ss' }}</span>
-              </div>
-              <div class="info-item">
-                <label>Hace:</label>
-                <span>{{ getTimeAgo(idioma.creado) }}</span>
-              </div>
+        <section class="seccion">
+          <h3><mat-icon>schedule</mat-icon> Información de Fechas</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Fecha de creación</label>
+              <span>{{ idioma.creado | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Hace</label>
+              <span>{{ getTimeAgo(idioma.creado) }}</span>
             </div>
           </div>
+        </section>
 
-          <div class="detail-section">
-            <h3><i class="fas fa-info-circle"></i> Estadísticas</h3>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-value">{{ idioma.idioma.length }}</div>
-                <div class="stat-label">Caracteres</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-value">
-                  {{ idioma.idioma.split(' ').length }}
-                </div>
-                <div class="stat-label">Palabras</div>
-              </div>
-            </div>
+        <section class="seccion">
+          <h3><mat-icon>insights</mat-icon> Estadísticas</h3>
+          <div class="stats-grid">
+            <mat-card class="stat" appearance="outlined">
+              <div class="stat-value">{{ idioma.idioma.length }}</div>
+              <div class="stat-label">Caracteres</div>
+            </mat-card>
+            <mat-card class="stat" appearance="outlined">
+              <div class="stat-value">{{ idioma.idioma.split(' ').length }}</div>
+              <div class="stat-label">Palabras</div>
+            </mat-card>
           </div>
-        </div>
-      </div>
+        </section>
+      </mat-card>
       }
     </div>
   `,
@@ -110,199 +112,137 @@ import { IdiomasStore } from '../../../state/idiomas.store';
         margin: 2rem auto;
         padding: 0 2rem;
       }
-
       .detail-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
       }
-
       .header-actions {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
       }
-
-      .detail-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      .ficha {
+        border-radius: 14px !important;
+        border-color: var(--mat-sys-outline) !important;
         overflow: hidden;
       }
-
-      .card-header {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        color: white;
-        padding: 2rem;
+      .ficha-cabecera {
+        background: var(--simr-tinta);
+        color: var(--simr-hueso);
+        padding: 1.75rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
       }
-
-      .idioma-title {
+      .titulo {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.75rem;
       }
-
-      .idioma-title i {
+      .titulo mat-icon {
         font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
+        color: var(--simr-cobre);
       }
-
-      .idioma-title h1 {
+      .titulo h1 {
         margin: 0;
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-family: var(--simr-display);
+        font-weight: 600;
+        font-size: 2.2rem;
+        color: var(--simr-hueso);
       }
-
-      .idioma-id {
-        opacity: 0.8;
+      .ficha-cabecera .simr-codigo {
+        color: rgba(251, 249, 244, 0.7);
       }
-
-      .card-body {
-        padding: 2rem;
+      .seccion {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--mat-sys-outline);
       }
-
-      .detail-section {
-        margin-bottom: 2rem;
+      .seccion:last-child {
+        border-bottom: none;
       }
-
-      .detail-section:last-child {
-        margin-bottom: 0;
-      }
-
-      .detail-section h3 {
+      .seccion h3 {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        margin-bottom: 1rem;
-        color: #495057;
-        font-size: 1.25rem;
+        margin: 0 0 1rem;
+        font-family: var(--simr-body);
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--simr-sello);
       }
-
+      .seccion h3 mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: var(--simr-sello);
+      }
       .info-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1rem;
       }
-
       .info-item {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #007bff;
+        background: var(--simr-papel);
+        padding: 1rem 1.25rem;
+        border-radius: 10px;
+        border-left: 3px solid var(--simr-cobre);
       }
-
       .info-item label {
         display: block;
         font-weight: 600;
-        color: #6c757d;
-        font-size: 0.9rem;
+        color: var(--simr-tinta-2);
+        font-size: 0.8rem;
         margin-bottom: 0.25rem;
       }
-
       .info-item span {
-        color: #212529;
+        color: var(--simr-tinta);
         font-size: 1rem;
       }
-
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 1rem;
       }
-
-      .stat-card {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 8px;
+      .stat {
         text-align: center;
-        border: 2px solid #e9ecef;
-        transition: transform 0.2s;
+        border-radius: 12px !important;
+        border-color: var(--mat-sys-outline) !important;
       }
-
-      .stat-card:hover {
-        transform: translateY(-2px);
-      }
-
       .stat-value {
+        font-family: var(--simr-display);
         font-size: 2rem;
-        font-weight: 700;
-        color: #007bff;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--simr-sello);
+        margin: 0.5rem 0 0.25rem;
       }
-
       .stat-label {
-        color: #6c757d;
-        font-size: 0.9rem;
-        font-weight: 500;
+        color: var(--simr-tinta-2);
+        font-size: 0.85rem;
       }
-
-      .loading {
-        text-align: center;
-        padding: 3rem;
-        color: #6c757d;
-      }
-
-      .error-message {
-        background: #f8d7da;
-        color: #721c24;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
+      .cargando {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 1rem;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--simr-tinta-2);
       }
-
-      .btn-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #721c24;
-      }
-
-      .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        display: inline-flex;
+      .alerta {
+        display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s;
-      }
-
-      .btn-outline {
-        background: white;
-        border: 1px solid #dee2e6;
-        color: #6c757d;
-      }
-
-      .btn-outline:hover {
-        background: #f8f9fa;
-        border-color: #adb5bd;
-      }
-
-      .btn-primary {
-        background: #007bff;
-        color: white;
-      }
-
-      .btn-primary:hover {
-        background: #0056b3;
-      }
-
-      .btn-danger {
-        background: #dc3545;
-        color: white;
-      }
-
-      .btn-danger:hover {
-        background: #c82333;
+        gap: 0.75rem;
+        background: #fbeae6;
+        color: var(--simr-sello-osc);
+        border: 1px solid var(--simr-sello);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.25rem;
       }
     `,
   ],
@@ -313,7 +253,6 @@ export class IdiomaDetailComponent implements OnInit {
   protected readonly store = inject(IdiomasStore);
 
   ngOnInit() {
-    console.log('IdiomaDetailComponent initialized');
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.store.loadIdiomaById(id);
@@ -339,7 +278,6 @@ export class IdiomaDetailComponent implements OnInit {
   confirmDelete(id: string) {
     if (confirm('¿Estás seguro de que deseas eliminar este idioma?')) {
       this.store.deleteIdioma(id);
-      // Navigate back to list after deletion
       setTimeout(() => {
         if (!this.store.hasError()) {
           this.goBack();

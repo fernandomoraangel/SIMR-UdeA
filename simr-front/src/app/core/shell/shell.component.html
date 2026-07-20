@@ -1,0 +1,86 @@
+<section class="shell">
+  <mat-toolbar class="shell-bar" color="primary">
+    <a class="marca" routerLink="/" aria-label="Inicio SIMR">
+      <img class="marca-logo" src="assets/images/logomr2.png" alt="SIMR" />
+      <span class="marca-onda">
+        <app-sound-wave [width]="90" [height]="30" [color]="'#fbf9f4'" [animated]="true"></app-sound-wave>
+      </span>
+      <span class="marca-texto">
+        <span class="marca-sigla">SIMR</span>
+        <span class="marca-sub">Músicas Regionales</span>
+      </span>
+    </a>
+
+    <span class="spacer"></span>
+
+    <ng-container *ngIf="isAuthenticated">
+      <ng-container *ngFor="let grupo of grupos">
+        <button mat-button [matMenuTriggerFor]="menu" class="menu-grupo">
+          {{ grupo.label }}
+          <mat-icon>expand_more</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <a mat-menu-item *ngFor="let item of grupo.items" [routerLink]="item.ruta">
+            {{ item.label }}
+          </a>
+        </mat-menu>
+      </ng-container>
+
+      <button mat-button [matMenuTriggerFor]="adminMenu" *ngIf="isAdmin()" class="menu-grupo">
+        Administración
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #adminMenu="matMenu">
+        <a mat-menu-item *ngFor="let item of adminGroup.items" [routerLink]="item.ruta">
+          {{ item.label }}
+        </a>
+        <a mat-menu-item href="https://github.com/fernandomoraangel/simr/wiki" target="_blank">
+          Manual de usuario
+        </a>
+        <a mat-menu-item href="https://github.com/fernandomoraangel/simr/issues" target="_blank">
+          Reportar novedad
+        </a>
+        <button mat-menu-item (click)="acercaDe()">Acerca de</button>
+      </mat-menu>
+    </ng-container>
+
+    <button mat-button [matMenuTriggerFor]="userMenu" class="menu-usuario">
+      <mat-icon>account_circle</mat-icon>
+      <span *ngIf="currentUser; else invitado">{{ currentUser.fullName }}</span>
+      <ng-template #invitado>Cuenta</ng-template>
+      <mat-icon>expand_more</mat-icon>
+    </button>
+     <mat-menu #userMenu="matMenu">
+       <button mat-menu-item *ngIf="!isAuthenticated" (click)="abrirLogin()">Iniciar sesión</button>
+       <button mat-menu-item *ngIf="!isAuthenticated" (click)="abrirRegistro()">Registrarse</button>
+       <button mat-menu-item *ngIf="isAuthenticated" (click)="logoutUser()">Terminar sesión</button>
+     </mat-menu>
+  </mat-toolbar>
+
+  <main class="contenido" *ngIf="mostrarContenido">
+    <router-outlet></router-outlet>
+  </main>
+
+  <div class="marca-agua" *ngIf="mostrarMarcaAgua" aria-hidden="true">
+    <img src="assets/images/logomr.png" alt="" />
+  </div>
+
+  <div class="bienvenida" *ngIf="!isAuthenticated">
+    <div class="bienvenida-interna">
+      <p class="simr-eyebrow">Archivo de músicas regionales · Universidad de Antioquia</p>
+      <h1 class="bienvenida-titulo">
+        El sonido de la<br />tradición, <em>catalogado</em>.
+      </h1>
+      <p class="bienvenida-copete">
+        SIMR reúne obras, intérpretes, instrumentos y géneros de las músicas del
+        territorio. Explora el catálogo o abre una ficha de archivo.
+      </p>
+      <div class="bienvenida-acciones">
+        <button mat-flat-button color="primary" (click)="abrirLogin()">Iniciar sesión</button>
+      </div>
+      <div class="bienvenida-onda">
+        <app-sound-wave [width]="420" [height]="56" [color]="'#b5432a'" [animated]="true"></app-sound-wave>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,10 +1,6 @@
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  fullName: string;
-  //   roles: string[];
-}
+import { User } from '../models/user.model';
+
+export { User };
 
 export interface SignupCredentials {
   username: string;

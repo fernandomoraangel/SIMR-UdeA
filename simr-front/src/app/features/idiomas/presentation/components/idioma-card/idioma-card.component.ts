@@ -1,137 +1,94 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { Idioma } from '../../../domain/idioma.interface';
 
 @Component({
   selector: 'app-idioma-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule],
   template: `
-    <div class="idioma-card">
-      <div class="card-header">
-        <h3>{{ idioma.idioma }}</h3>
+    <mat-card class="idioma-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ idioma.idioma }}</mat-card-title>
         <div class="card-actions">
-          <button
-            (click)="onView.emit(idioma._id)"
-            class="btn btn-outline btn-sm"
-            title="Ver detalles"
-          >
-            <i class="fas fa-eye"></i>
+          <button mat-icon-button (click)="onView.emit(idioma._id)" title="Ver detalles" aria-label="Ver detalles">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button (click)="onEdit.emit(idioma._id)" title="Editar" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
           </button>
           <button
-            (click)="onEdit.emit(idioma._id)"
-            class="btn btn-outline btn-sm"
-            title="Editar"
-          >
-            <i class="fas fa-edit"></i>
-          </button>
-          <button
+            mat-icon-button
+            color="warn"
             (click)="onDelete.emit(idioma._id)"
-            class="btn btn-danger btn-sm"
             title="Eliminar"
+            aria-label="Eliminar"
           >
-            <i class="fas fa-trash"></i>
+            <mat-icon>delete</mat-icon>
           </button>
         </div>
-      </div>
-
-      <div class="card-body">
-        <div class="creator-info">
-          <i class="fas fa-user"></i>
-          <span>{{ idioma.creador.fullName }}</span>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="meta">
+          <span class="meta-item">
+            <mat-icon>person</mat-icon>
+            <span>{{ idioma.creador.fullName }}</span>
+          </span>
+          <span class="meta-item">
+            <mat-icon>event</mat-icon>
+            <span>{{ idioma.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </span>
         </div>
-
-        <div class="date-info">
-          <i class="fas fa-calendar"></i>
-          <span>{{ idioma.creado | date : 'dd/MM/yyyy HH:mm' }}</span>
-        </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   `,
   styles: [
     `
       .idioma-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
-        overflow: hidden;
+        border-radius: 14px !important;
+        border-color: var(--mat-sys-outline) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-
       .idioma-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 22px rgba(31, 42, 36, 0.14) !important;
       }
-
-      .card-header {
+      mat-card-header {
         display: flex;
-        justify-content: space-between;
         align-items: flex-start;
-        padding: 1.5rem 1.5rem 1rem;
-        border-bottom: 1px solid #e9ecef;
+        justify-content: space-between;
       }
-
-      .card-header h3 {
-        margin: 0;
-        color: #212529;
+      mat-card-title {
+        font-family: var(--simr-display);
         font-weight: 600;
+        font-size: 1.2rem;
+        color: var(--simr-tinta);
       }
-
       .card-actions {
         display: flex;
+        gap: 2px;
+      }
+      .meta {
+        display: flex;
+        flex-direction: column;
         gap: 0.5rem;
+        margin-top: 0.5rem;
       }
-
-      .card-body {
-        padding: 1.5rem;
-      }
-
-      .creator-info,
-      .date-info {
+      .meta-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        margin-bottom: 0.75rem;
-        color: #6c757d;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        color: var(--simr-tinta-2);
       }
-
-      .creator-info:last-child,
-      .date-info:last-child {
-        margin-bottom: 0;
-      }
-
-      .btn {
-        padding: 0.5rem;
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        background: white;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 32px;
-        height: 32px;
-      }
-
-      .btn-outline:hover {
-        background: #f8f9fa;
-        border-color: #adb5bd;
-      }
-
-      .btn-danger {
-        border-color: #dc3545;
-        color: #dc3545;
-      }
-
-      .btn-danger:hover {
-        background: #dc3545;
-        color: white;
-      }
-
-      .btn-sm {
-        font-size: 0.8rem;
+      .meta-item mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--simr-musgo);
       }
     `,
   ],
