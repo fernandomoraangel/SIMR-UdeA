@@ -160,3 +160,6 @@ Thumbs.db
 *.tar.gz
 *.rar
 *.7z
+
+# Dumps/exports de base de datos (no versionar)
+Migración/simrDB/
