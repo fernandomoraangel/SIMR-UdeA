@@ -12,6 +12,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UsersService } from './users.service';
 import { User } from '@core/models/user.model';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
+import { UserDetailDialogComponent } from '@shared/user-detail-dialog/user-detail-dialog.component';
 
 @Component({
   selector: 'app-usuarios-lista',
@@ -65,6 +66,9 @@ import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.co
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>
             <td mat-cell *matCellDef="let u">
+              <button mat-icon-button (click)="ver(u)" aria-label="Ver detalles">
+                <mat-icon>visibility</mat-icon>
+              </button>
               <button mat-icon-button [routerLink]="u.id + '/editar'" aria-label="Editar">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -114,6 +118,13 @@ export class UsuariosListaComponent implements OnInit {
 
   roleNames(u: User): string[] {
     return (u.roles || []).map((r) => (typeof r === 'string' ? r : r.name));
+  }
+
+  ver(u: User): void {
+    this.dialog.open(UserDetailDialogComponent, {
+      data: { id: u.id || (u as any)._id },
+      width: '520px',
+    });
   }
 
   load(): void {

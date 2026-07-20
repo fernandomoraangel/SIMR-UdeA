@@ -21,7 +21,9 @@ export class UsersService {
     return this.http
       .get<Wrapped<User[]>>(this.API, { withCredentials: true })
       .pipe(
-        map((r) => (r.data as User[]) || []),
+        map((r) =>
+          ((r.data as any[]) || []).map((u) => ({ ...u, id: u.id ?? u._id }))
+        ),
         catchError(this.handleError)
       );
   }
@@ -30,7 +32,7 @@ export class UsersService {
     return this.http
       .get<Wrapped<User>>(`${this.API}/${id}`, { withCredentials: true })
       .pipe(
-        map((r) => r.data as User),
+        map((r) => ({ ...(r.data as any), id: (r.data as any)?.id ?? (r.data as any)?._id })),
         catchError(this.handleError)
       );
   }

@@ -13,6 +13,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RolesService } from './roles.service';
 import { Role } from '@core/models/user.model';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
+import { RoleDetailDialogComponent } from '@shared/role-detail-dialog/role-detail-dialog.component';
 
 @Component({
   selector: 'app-roles-lista',
@@ -67,6 +68,9 @@ import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.co
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>
             <td mat-cell *matCellDef="let r">
+              <button mat-icon-button (click)="ver(r)" aria-label="Ver detalles">
+                <mat-icon>visibility</mat-icon>
+              </button>
               <button mat-icon-button [routerLink]="r.id + '/editar'" aria-label="Editar">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -122,6 +126,13 @@ export class RolesListaComponent implements OnInit {
         (this.roles = data.sort((a, b) => (b.priority || 0) - (a.priority || 0))),
       error: (err) => (this.error = err),
       complete: () => (this.loading = false),
+    });
+  }
+
+  ver(r: Role): void {
+    this.dialog.open(RoleDetailDialogComponent, {
+      data: { id: r.id || (r as any)._id, nombre: r.displayName || r.name },
+      width: '560px',
     });
   }
 

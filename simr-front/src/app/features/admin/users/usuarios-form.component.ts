@@ -160,14 +160,11 @@ export class UsuariosFormComponent implements OnInit {
     }
 
     const onDone = (id: string) => {
-      if (this.isEdit) {
-        this.usersService.updateRoles(id, this.selectedRoles).subscribe({
-          next: () => this.finish(),
-          error: (err) => this.fail(err),
-        });
-      } else {
-        this.finish();
-      }
+      // Siempre sincronizar los roles asignados (edición o creación)
+      this.usersService.updateRoles(id, this.selectedRoles).subscribe({
+        next: () => this.finish(),
+        error: (err) => this.fail(err),
+      });
     };
 
     const op = this.isEdit
@@ -177,7 +174,7 @@ export class UsuariosFormComponent implements OnInit {
     op.subscribe({
       next: (res: any) => {
         const id = this.isEdit ? this.userId : res?.data?.user?.id || res?.data?.id;
-        if (this.isEdit || !id) {
+        if (!id) {
           this.finish();
         } else {
           onDone(id);
