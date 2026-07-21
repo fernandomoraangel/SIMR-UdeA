@@ -132,7 +132,7 @@ export class UsuariosFormComponent implements OnInit {
           provider: u.provider,
         };
         this.selectedRoles = (u.roles || [])
-          .map((r) => (typeof r === 'string' ? r : r.id || r.name))
+          .map((r) => (typeof r === 'string' ? r : (r as any)._id || r.id))
           .filter((x): x is string => !!x);
       });
     }

@@ -18,8 +18,6 @@ import { Role } from '@core/models/user.model';
 const ACCIONES = ['create', 'read', 'update', 'delete', 'list'];
 type Scope = 'own' | 'any' | null;
 
-// El backend devuelve los permisos con claves en plural; el formulario
-// trabaja con las claves en singular que entrega /api/roles/resources.
 const PLURAL_TO_SINGULAR: Record<string, string> = {
   obras: 'obra',
   actores: 'actor',
@@ -40,6 +38,10 @@ const PLURAL_TO_SINGULAR: Record<string, string> = {
   users: 'user',
   roles: 'role',
 };
+
+const SINGULAR_TO_PLURAL: Record<string, string> = Object.fromEntries(
+  Object.entries(PLURAL_TO_SINGULAR).map(([p, s]) => [s, p])
+);
 
 @Component({
   selector: 'app-roles-form',
@@ -97,11 +99,21 @@ const PLURAL_TO_SINGULAR: Record<string, string> = {
           <h3>Permisos directos</h3>
           <table mat-table [dataSource]="resources" class="perm-table">
             <ng-container matColumnDef="recurso">
-              <th mat-header-cell *matHeaderCellDef>Recurso</th>
-              <td mat-cell *matCellDef="let res">{{ res }}</td>
+              <th mat-header-cell *matHeaderCellDef>
+                <button type="button" class="col-btn" title="Seleccionar todos" (click)="toggleAllRow('any')">+</button>
+                Recurso
+              </th>
+              <td mat-cell *matCellDef="let res">
+                <button type="button" class="row-btn" title="Alternar todos" (click)="toggleRow(res)">+</button>
+                {{ res }}
+              </td>
             </ng-container>
             <ng-container *ngFor="let acc of acciones" [matColumnDef]="acc">
-              <th mat-header-cell *matHeaderCellDef>{{ acc }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                <button type="button" class="col-btn" [title]="'Todo ' + acc + ' any'" (click)="toggleColumn(acc, 'any')">A</button>
+                <button type="button" class="col-btn" [title]="'Todo ' + acc + ' own'" (click)="toggleColumn(acc, 'own')">O</button>
+                {{ acc }}
+              </th>
               <td mat-cell *matCellDef="let res">
                 <button type="button" class="scope-btn" [class.active]="getScope(res, acc) === 'own'"
                   (click)="setScope(res, acc, 'own')">own</button>
@@ -133,6 +145,12 @@ const PLURAL_TO_SINGULAR: Record<string, string> = {
       .herencia mat-checkbox { display: inline-block; margin-right: 14px; }
       h3 { font-family: var(--simr-body); color: var(--simr-tinta); margin: 16px 0 8px; }
       .perm-table { width: 100%; background: var(--simr-hueso); }
+      .perm-table th { text-align: center; white-space: nowrap; }
+      .perm-table td { text-align: center; }
+      .col-btn { font-family: var(--simr-mono); font-size: 0.65rem; border: 1px solid var(--simr-cobre); background: #fff; color: var(--simr-tinta); border-radius: 4px; padding: 0 5px; margin-right: 2px; cursor: pointer; line-height: 1.4; }
+      .col-btn:hover { background: var(--simr-cobre); color: #fff; }
+      .row-btn { font-family: var(--simr-mono); font-size: 0.65rem; border: 1px solid var(--simr-cobre); background: #fff; color: var(--simr-tinta); border-radius: 4px; padding: 0 5px; margin-right: 4px; cursor: pointer; line-height: 1.4; }
+      .row-btn:hover { background: var(--simr-cobre); color: #fff; }
       .scope-btn { font-family: var(--simr-mono); font-size: 0.72rem; border: 1px solid var(--simr-cobre); background: #fff; color: var(--simr-tinta); border-radius: 6px; padding: 2px 8px; margin-right: 4px; cursor: pointer; }
       .scope-btn.active { background: var(--simr-cobre); color: #fff; }
       .form-acciones { margin-top: 16px; }
@@ -184,7 +202,7 @@ export class RolesFormComponent implements OnInit {
         this.isSystem = !!r.isSystem;
         if (Array.isArray(r.inheritsFrom)) {
           this.selectedInherits = r.inheritsFrom
-            .map((x: any) => (typeof x === 'string' ? x : x.id))
+            .map((x: any) => (typeof x === 'string' ? x : x._id || x.id))
             .filter(Boolean);
         }
         this.loadPermisos(r.permissions);
@@ -196,7 +214,7 @@ export class RolesFormComponent implements OnInit {
     this.permisos = {};
     this.resources.forEach((res) => {
       this.permisos[res] = {};
-      const pluralKey = PLURAL_TO_SINGULAR[res] || res;
+      const pluralKey = SINGULAR_TO_PLURAL[res] || res;
       this.acciones.forEach((acc) => {
         const scope = p?.[pluralKey]?.[acc];
         this.permisos[res][acc] = scope ? (scope[0] as Scope) : null;
@@ -219,6 +237,37 @@ export class RolesFormComponent implements OnInit {
     this.selectedInherits = this.selectedInherits.includes(id)
       ? this.selectedInherits.filter((x) => x !== id)
       : [...this.selectedInherits, id];
+  }
+
+  toggleColumn(acc: string, scope: 'own' | 'any'): void {
+    this.resources.forEach((res) => {
+      if (!this.permisos[res]) {
+        this.permisos[res] = {};
+      }
+      this.permisos[res][acc] = this.permisos[res][acc] === scope ? null : scope;
+    });
+  }
+
+  toggleRow(res: string): void {
+    if (!this.permisos[res]) {
+      this.permisos[res] = {};
+    }
+    const allSet = this.acciones.every((acc) => this.permisos[res][acc] != null);
+    this.acciones.forEach((acc) => {
+      this.permisos[res][acc] = allSet ? null : 'any';
+    });
+  }
+
+  toggleAllRow(scope: 'own' | 'any'): void {
+    this.resources.forEach((res) => {
+      if (!this.permisos[res]) {
+        this.permisos[res] = {};
+      }
+      const allSet = this.acciones.every((acc) => this.permisos[res][acc] != null);
+      this.acciones.forEach((acc) => {
+        this.permisos[res][acc] = allSet ? null : scope;
+      });
+    });
   }
 
   private buildPermissions(): { resource: string; actions: Record<string, 'any' | 'own'> }[] {

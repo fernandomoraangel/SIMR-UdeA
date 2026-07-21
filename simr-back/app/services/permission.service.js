@@ -24,18 +24,16 @@ class PermissionService {
   async getUserPermissions(user) {
     const userId = typeof user === "string" ? user : user._id.toString();
 
-    // Verificar caché
     const cached = this.permissionCache.get(userId);
     if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
       return cached.permissions;
     }
 
-    // Obtener usuario con roles populated
     const User = mongoose.model("User");
     const userDoc = await User.findById(userId).populate("roles").exec();
 
     if (!userDoc || !userDoc.roles || userDoc.roles.length === 0) {
-      return new Map(); // Usuario sin roles
+      return new Map();
     }
 
     // Combinar permisos de todos los roles
@@ -120,10 +118,8 @@ class PermissionService {
 
     if (!actionScope) return false;
 
-    // Si el permiso es "any", cubre tanto "any" como "own"
     if (actionScope === "any") return true;
 
-    // Si el permiso es "own", solo permite operaciones con scope "own"
     if (actionScope === "own" && scope === "own") return true;
 
     return false;

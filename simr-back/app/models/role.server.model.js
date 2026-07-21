@@ -118,14 +118,12 @@ RoleSchema.index({ isActive: 1 });
 RoleSchema.methods.getAllPermissions = async function () {
   const allPermissions = new Map();
 
-  // Función recursiva para obtener permisos heredados
   const getInheritedPermissions = async (role) => {
     if (role.inheritsFrom && role.inheritsFrom.length > 0) {
       for (const parentRoleId of role.inheritsFrom) {
         const parentRole = await mongoose.model("Role").findById(parentRoleId);
         if (parentRole) {
           await getInheritedPermissions(parentRole);
-          // Agregar permisos del padre
           for (const perm of parentRole.permissions) {
             const key = perm.resource;
             if (!allPermissions.has(key)) {
@@ -137,10 +135,8 @@ RoleSchema.methods.getAllPermissions = async function () {
     }
   };
 
-  // Primero obtener permisos heredados
   await getInheritedPermissions(this);
 
-  // Luego sobrescribir con permisos propios (mayor prioridad)
   for (const perm of this.permissions) {
     allPermissions.set(perm.resource, perm);
   }
@@ -772,7 +768,16 @@ RoleSchema.statics.createSystemRoles = async function () {
         createdRoles.push(role);
         console.log(`✅ Rol del sistema creado: ${role.name}`);
       } else {
-        console.log(`ℹ️  Rol del sistema ya existe: ${roleData.name}`);
+        const needsUpdate =
+          JSON.stringify(existingRole.permissions) !== JSON.stringify(roleData.permissions);
+        if (needsUpdate) {
+          existingRole.permissions = roleData.permissions;
+          await existingRole.save();
+          createdRoles.push(existingRole);
+          console.log(`🔄 Rol del sistema actualizado: ${roleData.name}`);
+        } else {
+          console.log(`ℹ️  Rol del sistema ya existe y está actualizado: ${roleData.name}`);
+        }
       }
     } catch (error) {
       console.error(`❌ Error creando rol ${roleData.name}:`, error.message);

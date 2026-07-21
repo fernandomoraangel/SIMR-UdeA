@@ -748,6 +748,29 @@ exports.updateUserRoles = async (req, res) => {
     // Guardar roles anteriores para auditoría
     const previousRoles = user.roles || [];
 
+    // Verificar que no se quite el último administrador
+    const adminRole = await Role.findOne({ name: "admin", isActive: true });
+    if (adminRole) {
+      const adminIdStr = adminRole._id.toString();
+      const hadAdmin = previousRoles.some(
+        (r) => (r._id || r).toString() === adminIdStr
+      );
+      const willHaveAdmin = roles.some((r) => r === adminIdStr);
+      if (hadAdmin && !willHaveAdmin) {
+        const otherAdminCount = await User.countDocuments({
+          _id: { $ne: userId },
+          roles: adminRole._id,
+        });
+        if (otherAdminCount === 0) {
+          return errorResponse(
+            res,
+            "No puedes quitar el rol de administrador al último administrador del sistema",
+            400
+          );
+        }
+      }
+    }
+
     // Actualizar roles
     user.roles = roles;
     await user.save();
