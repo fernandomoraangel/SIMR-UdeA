@@ -865,8 +865,8 @@ class SearchService {
     }
 
     if (best && bestFreq >= 2) {
-      // Devolver con la grafía del término original (respetando mayúsculas)
-      const display = term[0].toUpperCase() + best.slice(1);
+      // Devolver con la grafía del término CORRECTO (respetando mayúsculas)
+      const display = best[0].toUpperCase() + best.slice(1);
       return { term: display, for: term };
     }
     return null;
