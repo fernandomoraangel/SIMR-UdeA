@@ -3,12 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { ArchivoListaComponent } from './archivo-lista/archivo-lista.component';
 import { ArchivoSubidaComponent } from './archivo-subida/archivo-subida.component';
 import { ArchivoVistaComponent } from './archivo-vista/archivo-vista.component';
+import { ArchivoManagerComponent } from './archivo-manager/archivo-manager.component';
 
 // Rutas
 const routes: Routes = [
   { path: '', component: ArchivoListaComponent },
   { path: 'upload', component: ArchivoSubidaComponent },
   { path: 'preview', component: ArchivoVistaComponent },
+  { path: 'manager', component: ArchivoManagerComponent },
 ];
 
 @NgModule({
