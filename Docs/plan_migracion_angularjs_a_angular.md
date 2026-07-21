@@ -99,15 +99,15 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 
 ### **Fase 0 — Preparación y línea base**
 
-- [ ] **0.1. Congelar alcance funcional del legacy.** Acordar con el equipo que no se agregarán features nuevas a `public/` durante la migración (solo bugfixes críticos).
-- [ ] **0.2. Inventario de endpoints backend por módulo.** Confirmar que cada endpoint `/api/<modulo>` usado por el legacy está documentado (usar `app/routes/*.server.routes.js` como fuente) y que `simr-front` puede consumirlos sin cambios.
-- [ ] **0.3. Unificar configuración de refresh de token.** Igualar el intervalo de refresh (60s vs 120s) entre `authentication.client.service.js` (legacy) y `auth.service.ts` (Angular), dejando ambos en el mismo valor mientras coexistan.
-- [ ] **0.4. Definir convención de pruebas e2e.** Elegir herramienta (Cypress o Playwright) para pruebas end-to-end contra la app Angular + backend real/staging con MinIO de pruebas. Documentar comandos (`npm run e2e`) en `simr-front/package.json`.
-- [ ] **0.5. Preparar entorno de staging con datos de prueba** (Mongo + MinIO) reproducible (seed scripts) para poder repetir pruebas de cada módulo sin afectar producción.
-- [ ] **0.6. Tablero de seguimiento.** Crear un tablero/checklist (puede ser este mismo archivo) con una fila por módulo y su estado: `Pendiente / En progreso / Migrado (con pruebas) / Legacy desactivado`.
-- [ ] **0.7. Backup/tag de versión previa.** Etiquetar el repo (`git tag pre-migracion-angular`) antes de iniciar cambios, para poder comparar/revertir con facilidad.
-- [ ] **0.8. Sistema de diseño SIMR (Material).** Los módulos migrados usan **Angular Material + tokens de la identidad SIMR** (`src/assets/styles/styles.css`, `src/styles.css`), no los estilos Bootstrap del legacy. Cada módulo debe verse coherente con el shell Material ya construido. Verificación visual = coherencia con el sistema SIMR, no igualdad con el legacy.
-- [ ] **0.9. Criterio de aceptación de apariencia.** Definir qué significa "igual": mismos colores, tipografía, disposición de formularios, tablas, botones, diálogos (SweetAlert2 ya presente en ambos) y componentes de archivos. Los módulos 🟡 existentes (authentication, diccionarios, idiomas, actores, archivos) deben someterse a esta revisión antes de marcarse como aprobados.
+- [ ] **0.1. Congelar alcance funcional del legacy.** Acordar con el equipo que no se agregarán features nuevas a `public/` durante la migración (solo bugfixes críticos). *Pendiente: decisión de gobernanza.*
+- [x] **0.2. Inventario de endpoints backend por módulo.** Confirmado que cada endpoint `/api/<modulo>` usado por el legacy está documentado en `app/routes/*.server.routes.js` y que `simr-front` puede consumirlos sin cambios. (Realizado durante Fase 1: `roles`, `users`, `listas`, `search`, `auditoria`, `archivos`/`minio`).
+- [x] **0.3. Unificar configuración de refresh de token.** (completado 2026-07-20) Ambos frontends usan `refreshBefore = 120` segundos antes de expirar. Legacy: `authentication.client.service.js` línea 85. Angular: `auth.service.ts` línea 344 (`2 * 60`).
+- [x] **0.4. Definir convención de pruebas e2e.** (completado) **Cypress** elegido. Ya instalado en `simr-front` con `cypress.config.ts` y scripts `cypress:open` / `cypress:run` / `e2e` en `package.json`. Specs en `simr-front/cypress/e2e/`.
+- [x] **0.5. Preparar entorno de staging con datos de prueba** (Mongo + MinIO) reproducible. (Disponible) Contenedores `mongodb_dev`, `minio_dev`, `simr-back_dev`, `simr-front_dev` levantados con datos reales (MongoDB). MinIO bucket `sistema-archivos-simr` inicializado y funcional (upload/list/download/delete verificados).
+- [x] **0.6. Tablero de seguimiento.** Este mismo archivo (`Docs/plan_migracion_angularjs_a_angular.md`) actúa como checklist con una fila por módulo y su estado (ver tabla 2.1 y checklists por fase).
+- [x] **0.7. Backup/tag de versión previa.** Etiqueta `pre-migracion-angular` creada y pusheada al origin.
+- [x] **0.8. Sistema de diseño SIMR (Material).** Los módulos migrados usan **Angular Material + tokens de la identidad SIMR** (`src/assets/styles/styles.css`, `src/styles.css`), no los estilos Bootstrap del legacy. El shell Material (`ShellComponent`, `AuthDialogComponent`, `AuthorizationService`) ya está construido y verificado (smoke tests).
+- [x] **0.9. Criterio de aceptación de apariencia.** (Definido) Coherencia con el sistema SIMR / Angular Material (paleta tinta/papel/sello/cobre/musgo, tipografías Fraunces/Inter/IBM Plex Mono, firma de onda), no igualdad estética con Bootstrap. Los módulos 🟡 existentes (authentication, diccionarios, idiomas, actores, archivos) deben someterse a esta revisión antes de marcarse aprobados. *Validación manual lado a lado pendiente (ver 1.6).*
 
 ---
 
