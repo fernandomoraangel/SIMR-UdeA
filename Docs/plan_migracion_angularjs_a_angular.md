@@ -51,8 +51,8 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 5 | `listas` | Datos de referencia transversales | No (list) | No | ❌ Pendiente (bloqueante para el resto) |
 | 6 | `diccionarios` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
 | 7 | `idiomas` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
-| 8 | `materias` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-21):** gestión unificada (list/create/edit/detail) con Angular Material, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna persistidas. Pendiente: specs unitarias y revisión visual. |
-| 9 | `medios` | CRUD | ✅ | Sí | ❌ Pendiente |
+| 8 | `materias` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-21):** gestión unificada (list/create/edit/detail) con Angular Material, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna persistidas. |
+| 9 | `medios` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** mismo patrón que Materias, Reactive Forms, CollapsibleSectionComponent, AnotacionMapComponent con MapLibre GL JS (no Leaflet). Incluye anotaciones cartográfico-temporales con timeline + mapa + formulario de coordenadas. |
 | 10 | `sistemas` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 11 | `instrumentos` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 12 | `generos` | CRUD | ✅ | Sí | ❌ Pendiente |
@@ -170,9 +170,9 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 **Orden de migración** (de menor a mayor complejidad relacional, aprovechando aprendizaje incremental):
 
-1. ✅ `materias` — **completado (2026-07-21):** gestión unificada con Angular Material + `ArchivoManagerComponent` + `ColumnSelectorComponent` + preferencias de columna. Pendiente: specs unitarias y validación visual.
-2. `medios`
-3. `sistemas`
+1. ✅ `materias` — **completado (2026-07-21):** gestión unificada con Angular Material + `ArchivoManagerComponent` + `ColumnSelectorComponent` + preferencias de columna.
+2. ✅ `medios` — **completado (2026-07-22):** mismo patrón que Materias, Reactive Forms, CollapsibleSectionComponent, anotaciones cartográfico-temporales con MapLibre GL JS (timeline + mapa + formulario de coordenadas).
+3. `sistemas` ← **siguiente**
 4. `instrumentos`
 5. `generos`
 6. `generosnomusicales`
@@ -187,7 +187,9 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 > Nota: los módulos 10 y 13 ya tienen implementación funcional; en este plan se tratan como "cerrar deuda de pruebas + reconectar gestión de archivos consolidada", no como migración desde cero.
 
-**Novedad del patrón de migración (2026-07-21):** cada módulo migrado desde este punto usará **gestión unificada** (única entrada en menú "Gestión de X", vista de listado como hub). Se aplicará retroactivamente a `idiomas` y `diccionarios` cuando se revise su menú.
+**Principio de consistencia visual (2026-07-22):** cada módulo nuevo debe lucir como el que se acaba de migrar. Misma estructura de componentes, mismos shared components (CollapsibleSectionComponent, AnotacionesCartograficasComponent, ArchivoManagerComponent, ColumnSelectorComponent), mismo layout de formulario, mismo estilo de tabla/tarjetas, mismo mapa (MapLibre GL JS). El usuario debe sentir que "Sistemas" es "Medios" pero con otros campos.
+
+**Patrón de migración (2026-07-21):** cada módulo migrado desde este punto usará **gestión unificada** (única entrada en menú, vista de listado como hub). El título de cada módulo en la vista de listado es el nombre corto ("Materias", "Medios", "Sistemas"), no "Gestión de X".
 
 #### 3.A Plantilla reutilizable por módulo (repetir para cada uno de la lista anterior)
 
