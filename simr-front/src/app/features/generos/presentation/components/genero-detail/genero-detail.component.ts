@@ -92,8 +92,7 @@ import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaci
                 @for (rel of g.generoRelacionado; track $index) {
                   <div class="kv-item clickable" (click)="navigateToGenero(rel.id)">
                     <span class="kv-key">{{ getGeneroNombre(rel.id) }}</span>
-                    <span class="kv-value">{{ rel.centro }}</span>
-                  </div>
+                    </div>
                 }
               </div>
             </app-collapsible-section>
@@ -105,7 +104,6 @@ import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaci
                 @for (p of g.padres; track $index) {
                   <div class="kv-item clickable" (click)="navigateToGenero(p.id)">
                     <span class="kv-key">{{ getGeneroNombre(p.id) }}</span>
-                    <span class="kv-value">{{ p.centro }}</span>
                   </div>
                 }
               </div>
@@ -118,7 +116,6 @@ import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaci
                 @for (h of g.hijos; track $index) {
                   <div class="kv-item clickable" (click)="navigateToGenero(h.id)">
                     <span class="kv-key">{{ getGeneroNombre(h.id) }}</span>
-                    <span class="kv-value">{{ h.centro }}</span>
                   </div>
                 }
               </div>

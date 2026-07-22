@@ -17,7 +17,6 @@ export interface ArchivoAdjunto {
 
 export interface GeneroRelacion {
   id: string;
-  centro: string;
 }
 
 export interface ProyectoAsociado {

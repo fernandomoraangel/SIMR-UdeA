@@ -107,10 +107,6 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
                     }
                   </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Centro</mat-label>
-                  <input matInput [formControl]="centroRelacionadoControl" placeholder="Ej: Centro de documentación" />
-                </mat-form-field>
                 <button mat-stroked-button type="button" (click)="addGeneroRelacionado()" [disabled]="!generoRelacionadoControl.value">
                   <mat-icon>add</mat-icon>
                   Agregar
@@ -121,7 +117,6 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
                   @for (rel of generoRelacionadoItems; track $index) {
                     <div class="rel-item">
                       <span class="rel-nombre">{{ getGeneroNombre(rel.id) }}</span>
-                      <span class="rel-detalle">{{ rel.centro }}</span>
                       <button mat-icon-button (click)="removeGeneroRelacionado($index)" color="warn" matTooltip="Eliminar" type="button">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -147,10 +142,6 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
                     }
                   </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Centro</mat-label>
-                  <input matInput [formControl]="centroPadreControl" placeholder="Ej: Centro de documentación" />
-                </mat-form-field>
                 <button mat-stroked-button type="button" (click)="addPadre()" [disabled]="!padreControl.value">
                   <mat-icon>add</mat-icon>
                   Agregar
@@ -161,7 +152,6 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
                   @for (p of padresItems; track $index) {
                     <div class="rel-item">
                       <span class="rel-nombre">{{ getGeneroNombre(p.id) }}</span>
-                      <span class="rel-detalle">{{ p.centro }}</span>
                       <button mat-icon-button (click)="removePadre($index)" color="warn" matTooltip="Eliminar" type="button">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -187,10 +177,6 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
                     }
                   </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Centro</mat-label>
-                  <input matInput [formControl]="centroHijoControl" placeholder="Ej: Centro de documentación" />
-                </mat-form-field>
                 <button mat-stroked-button type="button" (click)="addHijo()" [disabled]="!hijoControl.value">
                   <mat-icon>add</mat-icon>
                   Agregar
@@ -201,7 +187,6 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
                   @for (h of hijosItems; track $index) {
                     <div class="rel-item">
                       <span class="rel-nombre">{{ getGeneroNombre(h.id) }}</span>
-                      <span class="rel-detalle">{{ h.centro }}</span>
                       <button mat-icon-button (click)="removeHijo($index)" color="warn" matTooltip="Eliminar" type="button">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -377,11 +362,8 @@ export class GeneroFormComponent implements OnInit {
   protected documentId = signal<string>('');
 
   protected generoRelacionadoControl = this.fb.control<string | null>(null);
-  protected centroRelacionadoControl = this.fb.control<string>('');
   protected padreControl = this.fb.control<string | null>(null);
-  protected centroPadreControl = this.fb.control<string>('');
   protected hijoControl = this.fb.control<string | null>(null);
-  protected centroHijoControl = this.fb.control<string>('');
 
   generoForm: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
@@ -481,11 +463,9 @@ export class GeneroFormComponent implements OnInit {
 
   protected addGeneroRelacionado() {
     const id = this.generoRelacionadoControl.value;
-    const centro = this.centroRelacionadoControl.value || '';
     if (!id) return;
-    this.generoRelacionadoItems = [...this.generoRelacionadoItems, { id, centro }];
+    this.generoRelacionadoItems = [...this.generoRelacionadoItems, { id }];
     this.generoRelacionadoControl.reset();
-    this.centroRelacionadoControl.reset();
   }
 
   protected removeGeneroRelacionado(index: number) {
@@ -494,11 +474,9 @@ export class GeneroFormComponent implements OnInit {
 
   protected addPadre() {
     const id = this.padreControl.value;
-    const centro = this.centroPadreControl.value || '';
     if (!id) return;
-    this.padresItems = [...this.padresItems, { id, centro }];
+    this.padresItems = [...this.padresItems, { id }];
     this.padreControl.reset();
-    this.centroPadreControl.reset();
   }
 
   protected removePadre(index: number) {
@@ -507,11 +485,9 @@ export class GeneroFormComponent implements OnInit {
 
   protected addHijo() {
     const id = this.hijoControl.value;
-    const centro = this.centroHijoControl.value || '';
     if (!id) return;
-    this.hijosItems = [...this.hijosItems, { id, centro }];
+    this.hijosItems = [...this.hijosItems, { id }];
     this.hijoControl.reset();
-    this.centroHijoControl.reset();
   }
 
   protected removeHijo(index: number) {
