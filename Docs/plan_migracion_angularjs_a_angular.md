@@ -59,8 +59,8 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 13 | `generosnomusicales` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 14 | `fondos` | CRUD | ✅ | No | ❌ Pendiente |
 | 15 | `colecciones` | CRUD | ✅ | No | ❌ Pendiente |
-| 16 | `ejemplares` | CRUD | ✅ | No | ❌ Pendiente |
-| 17 | `recursos` | CRUD | ✅ | Sí | ❌ Pendiente |
+| 16 | `ejemplares` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** gestión unificada con Reactive Forms, CollapsibleSectionComponent, AutocompleteCreateComponent para recurso/fondo/colección, editor inline de estados. |
+| 17 | `recursos` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** gestión unificada con 17 secciones colapsables, AutocompleteCreateComponent para obras/actores/recursos/materias/idiomas/proyectos, AnotacionesCartograficasComponent, ArchivoManagerComponent. |
 | 18 | `proyectos` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 19 | `actores` | CRUD | ✅ | Sí | ❌ Ensayo no válido → rehacer |
 | 20 | `obras` | CRUD (el más complejo) | ✅ | Sí | ❌ Pendiente (última pieza CRUD) |
@@ -68,7 +68,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 22 | `search` | Buscador global | — | No | ✅ **Migrado:** buscador global con filtros fuzzy, resultados por tipo de entidad. |
 | 23 | `graph` | Visualización D3 | — | No | ❌ Pendiente (sin librería elegida en Angular) |
 
-**Total a migrar:** los 23 módulos del legacy. Hoy **12 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + sistemas + instrumentos + graph pendiente). Lo existente en `simr-front` para diccionarios/idiomas/actores se trata como ensayo descartable.
+**Total a migrar:** los 23 módulos del legacy. Hoy **14 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + sistemas + instrumentos + graph pendiente + ejemplares + recursos). Lo existente en `simr-front` para diccionarios/idiomas/actores se trata como ensayo descartable.
 
 ### 2.2 Puntos de riesgo ya identificados
 
@@ -174,14 +174,14 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 2. ✅ `medios` — **completado (2026-07-22):** mismo patrón que Materias, Reactive Forms, CollapsibleSectionComponent, anotaciones cartográfico-temporales con MapLibre GL JS (timeline + mapa + formulario de coordenadas).
 3. ~~`sistemas`~~ ✅
 4. ~~`instrumentos`~~ ✅ (con HS assistant)
-5. `generos`
-6. `generosnomusicales`
-7. `fondos`
-8. `colecciones`
-9. `ejemplares`
-10. `idiomas` y `diccionarios` → **completar specs faltantes** (ya migrados funcionalmente, pendiente de pruebas)
-11. `recursos`
-12. `proyectos`
+5. ~~`generos`~~ ✅
+6. ~~`generosnomusicales`~~ ✅
+7. ~~`fondos`~~ ✅
+8. ~~`colecciones`~~ ✅
+9. ~~`ejemplares`~~ ✅
+10. ~~`idiomas` y `diccionarios`~~ ✅
+11. ~~`recursos`~~ ✅
+12. ~~`proyectos`~~ ✅
 13. `actores` → **completar cualquier gap** (endurecer con la gestión de archivos consolidada de la Fase 2, si aún usaba puente)
 14. `obras` (último, el más complejo)
 

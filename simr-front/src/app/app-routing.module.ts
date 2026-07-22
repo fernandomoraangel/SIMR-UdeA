@@ -97,9 +97,19 @@ const routes: Routes = [
       import('./features/idiomas/idiomas.routes').then((r) => r.IDIOMAS_ROUTES),
   },
   {
+    path: 'ejemplares',
+    loadChildren: () =>
+      import('./features/ejemplares/ejemplares.routes').then((r) => r.EJEMPLARES_ROUTES),
+  },
+  {
     path: 'proyectos',
     loadChildren: () =>
       import('./features/proyectos/proyectos.routes').then((r) => r.PROYECTOS_ROUTES),
+  },
+  {
+    path: 'recursos',
+    loadChildren: () =>
+      import('./features/recursos/recursos.routes').then((r) => r.RECURSOS_ROUTES),
   },
   {
     path: 'listas',

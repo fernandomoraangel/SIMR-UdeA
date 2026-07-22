@@ -40,8 +40,8 @@ export class ShellComponent implements OnInit {
     {
       label: 'Recursos',
       items: [
-        { label: 'Recursos', ruta: '/no-implementado/recursos' },
-        { label: 'Ejemplares', ruta: '/no-implementado/ejemplares' },
+        { label: 'Recursos', ruta: '/recursos' },
+        { label: 'Ejemplares', ruta: '/ejemplares' },
       ],
     },
     {
