@@ -75,12 +75,15 @@ const PRECISION_DATE_OPTIONS = ['Año', 'Mes', 'Día'];
             </mat-form-field>
             <mat-form-field appearance="outline" class="campo">
               <mat-label>Estado</mat-label>
-              <mat-select formControlName="estado">
-                <mat-option value="">— Seleccione —</mat-option>
-                @for (e of estados(); track e) {
+              <input matInput formControlName="estado" [matAutocomplete]="estadoAuto" placeholder="Buscar estado..." />
+              <mat-autocomplete #estadoAuto="matAutocomplete">
+                @for (e of filteredEstados(); track e) {
                   <mat-option [value]="e">{{ e }}</mat-option>
                 }
-              </mat-select>
+                @if (filteredEstados().length === 0 && proyectoForm.get('estado')?.value?.trim()) {
+                  <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                }
+              </mat-autocomplete>
             </mat-form-field>
           </div>
 
@@ -310,6 +313,7 @@ export class ProyectoFormComponent implements OnInit {
 
   protected actores = signal<any[]>([]);
   protected estados = signal<string[]>([]);
+  protected filteredEstados = signal<string[]>([]);
   protected filteredActores = signal<any[]>([]);
   protected documentId = signal<string>('');
 
@@ -346,6 +350,13 @@ export class ProyectoFormComponent implements OnInit {
         );
       }
     });
+
+    this.proyectoForm.get('estado')?.valueChanges.subscribe((val) => {
+      const term = (val || '').toLowerCase().trim();
+      this.filteredEstados.set(
+        this.estados().filter((e) => e.toLowerCase().includes(term))
+      );
+    });
   }
 
   ngOnInit() {
@@ -381,9 +392,14 @@ export class ProyectoFormComponent implements OnInit {
     this.http.get(`${apiUrl}/listas/estadosProyectos`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
-        this.estados.set(Array.isArray(list) ? list : []);
+        const arr = Array.isArray(list) ? list : [];
+        this.estados.set(arr);
+        this.filteredEstados.set(arr);
       },
-      error: () => this.estados.set([]),
+      error: () => {
+        this.estados.set([]);
+        this.filteredEstados.set([]);
+      },
     });
   }
 
