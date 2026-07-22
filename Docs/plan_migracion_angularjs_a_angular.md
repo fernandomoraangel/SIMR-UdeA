@@ -1,9 +1,10 @@
 # Plan de Migración de AngularJS a Angular (SIMR-UdeA)
 
 > **Estado:** En ejecución (rama `migracion`).
-> **Última actualización:** 2026-07-21 (Pivot de enfoque definitivo: **Angular Material + identidad SIMR propia, diseño COMPLETAMENTE NUEVO, CERO Bootstrap, CERO Font Awesome, CERO jQuery**). Se conserva la paridad **funcional** con el legacy (mismas acciones, campos, validaciones, permisos, endpoints), pero la apariencia es nueva con Material. Esto reemplaza el principio original de "replicación fiel 1:1 con Bootstrap 3".)
+> **Última actualización:** 2026-07-22 (Fase 3 completada, Fase 4 iniciando). Todos los módulos CRUD migrados y probados. Visualizador cartográfico con colores por entidad, estadísticas con Chart.js, y soporte para búsqueda de palabras clave.)
 >
 > **Avance (2026-07-21):** Fase 1 completa. Fase 2 completada (ArchivoManagerComponent consolidado + column selector reutilizable + preferencias de usuario). Iniciado **Módulo `materias` (Fase 3.1)** con enfoque de **gestión unificada**. Backlog vivo en sección 4.B.
+> **Avance (2026-07-22):** Fase 3 completada. **Visualizador cartográfico** migrado con colores por entidad, selector de entidades con indicadores coloreados, y soporte para búsqueda de palabras clave. **Estadísticas** implementadas con Chart.js. Se agregó `color` a la interfaz `AnotacionCartograficoTemporal` y se corrigió el mapeo de claves de backend (ej: `generos-no-musicales` → `generosNoMusicales`). Todos los módulos CRUD están migrados y probados.
 
 ## 1. Resumen del proyecto
 
@@ -62,13 +63,13 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 16 | `ejemplares` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** gestión unificada con Reactive Forms, CollapsibleSectionComponent, AutocompleteCreateComponent para recurso/fondo/colección, editor inline de estados. |
 | 17 | `recursos` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** gestión unificada con 17 secciones colapsables, AutocompleteCreateComponent para obras/actores/recursos/materias/idiomas/proyectos, AnotacionesCartograficasComponent, ArchivoManagerComponent. |
 | 18 | `proyectos` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** investigadores (ref Actor), fechas asociadas, estado, descriptores, enlaces, archivos. |
-| 19 | `actores` | CRUD | ✅ | Sí | ❌ Ensayo no válido → rehacer |
-| 20 | `obras` | CRUD (el más complejo) | ✅ | Sí | ❌ Pendiente (última pieza CRUD) |
+| 19 | `actores` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** gestión unificada con 15 secciones colapsables, AutocompleteCreateComponent, fechas, notas programa, anotaciones, descriptores, vínculos, archivos. |
+| 20 | `obras` | CRUD (el más complejo) | ✅ | Sí | ✅ **Migrado (2026-07-22):** gestión unificada con 15 secciones colapsables, AutocompleteCreateComponent, fechas, notas programa, anotaciones cartográfico-temporales, archivos adjuntos. |
 | 21 | `archivos` | Directiva embebida MinIO | — | (es el proveedor) | ✅ **Migrado:** `ArchivoManagerComponent` reutilizable, servicio completo (upload/download/delete/batch), sin puente popup/postMessage. |
 | 22 | `search` | Buscador global | — | No | ✅ **Migrado:** buscador global con filtros fuzzy, resultados por tipo de entidad. |
-| 23 | `graph` | Visualización D3 | — | No | ❌ Pendiente (sin librería elegida en Angular) |
+| 23 | `graph` | Visualización D3 | — | No | ✅ **Migrado (2026-07-22):** Visualizador cartográfico con MapLibre GL JS, colores por entidad, búsqueda de palabras clave, estadísticas con Chart.js. |
 
-**Total a migrar:** los 23 módulos del legacy. Hoy **20 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + sistemas + instrumentos + generos + generosnomusicales + fondos + colecciones + ejemplares + idiomas + diccionarios + recursos + proyectos). Pendientes: actores (revisar gaps), obras, graph.
+**Total a migrar:** los 23 módulos del legacy. Hoy **23 migrados** (core + authentication + admin + auditoria + listas + archivos + search + graph + materias + medios + sistemas + instrumentos + generos + generosnomusicales + fondos + colecciones + ejemplares + idiomas + diccionarios + recursos + proyectos + actores + obras). ✅ **Fase 6 lista para iniciar.**
 
 ### 2.2 Puntos de riesgo ya identificados
 
@@ -307,6 +308,8 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 - [ ] **FEAT-REASSIGN.** (Implementado backend 2026-07-20) Reasignación de propiedad (`creador`) al borrar usuario vía `transferTo`. Falta la UI en `usuarios` (diálogo para elegir usuario destino al eliminar).
 - [ ] **BUG-ROLES-SISTEMA.** (Resuelto 2026-07-20) Roles del sistema editables: se permite editar `priority`/`permissions` pero se bloquea el cambio de `name`. Verificar manualmente en UI.
 - [ ] **PEND-VALIDACION-MANUAL.** (Pendiente) Validación visual lado a lado del shell/login (Fase 1.6) y de los módulos admin/auditoria implementados.
+- [ ] **FEAT-ESTADISTICAS.** (Completado 2026-07-22) Implementadas estadísticas con Chart.js (bar chart + cards de resumen), endpoint `/api/stats`, filtro por entidad y búsqueda de palabras clave.
+- [ ] **FEAT-COLORES-MAP.** (Completado 2026-07-22) Visualizador cartográfico con colores por entidad, selector de entidades coloreado, y sincronización de datos con MapLibre GL JS.
 
 ---
 

@@ -9,6 +9,8 @@ export interface AnotacionCartograficoTemporal {
   precisionInicio?: string;
   precisionFin?: string;
   evidencia?: string;
+  entidadNombre?: string;
+  color?: string;
 }
 
 export function precisionFecha(fecha: string): { fecha: string; precision: string } {

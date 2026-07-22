@@ -14,6 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
 import maplibregl from 'maplibre-gl';
 import { AnotacionCartograficoTemporal, toDisplayFecha, formatDate } from '../models/anotacion-cartografica.interface';
 
+interface AnotacionWithColor extends AnotacionCartograficoTemporal {
+  color?: string;
+}
+
 const MEDELLIN: [number, number] = [-75.5658, 6.2476];
 
 @Component({
@@ -80,7 +84,7 @@ const MEDELLIN: [number, number] = [-75.5658, 6.2476];
   `],
 })
 export class AnotacionMapComponent implements OnDestroy {
-  readonly anotaciones = input.required<AnotacionCartograficoTemporal[]>();
+  readonly anotaciones = input.required<AnotacionWithColor[]>();
 
   protected mapContainer = viewChild<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -211,7 +215,7 @@ export class AnotacionMapComponent implements OnDestroy {
     if (!this.map) return;
     const anots = this.anotacionesConCoordenadas();
 
-    const features: GeoJSON.Feature<GeoJSON.Point, Partial<AnotacionCartograficoTemporal>>[] = [];
+    const features: GeoJSON.Feature<GeoJSON.Point, AnotacionWithColor>[] = [];
     for (const a of anots) {
       if (!a.coordenadas || a.coordenadas.length < 2) continue;
       const lng = Number(a.coordenadas[0]);
@@ -220,7 +224,10 @@ export class AnotacionMapComponent implements OnDestroy {
       features.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [lng, lat] },
-        properties: { ...a },
+        properties: {
+          ...a,
+          color: a.color || '#c8772e'
+        },
       });
     }
 
@@ -238,12 +245,17 @@ export class AnotacionMapComponent implements OnDestroy {
         source: 'markers',
         paint: {
           'circle-radius': 10,
-          'circle-color': '#c8772e',
+          'circle-color': ['get', 'color'],
           'circle-opacity': 0.9,
           'circle-stroke-width': 2,
           'circle-stroke-color': '#ffffff',
         },
       });
+    }
+    
+    const layer = this.map.getLayer('markers');
+    if (layer) {
+      this.map.setPaintProperty('markers', 'circle-color', ['get', 'color']);
     }
   }
 
@@ -254,6 +266,10 @@ export class AnotacionMapComponent implements OnDestroy {
 
     if (a.evento) {
       rows.push(`<div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1rem;color:#1f2a24;border-bottom:1px solid #cdbfa6;padding-bottom:5px;margin-bottom:7px;letter-spacing:-0.01em">${esc(a.evento)}</div>`);
+    }
+
+    if (a.entidadNombre) { // Added this to show which entity
+       rows.push(`<div style="margin-bottom:4px;font-size:0.7rem;font-weight:600;color:#c8772e;text-transform:uppercase">${esc(a.entidadNombre)}</div>`);
     }
 
     if (a.lugar) {
@@ -291,7 +307,7 @@ export class AnotacionMapComponent implements OnDestroy {
     return rows.join('');
   }
 
-  protected anotacionesConCoordenadas(): AnotacionCartograficoTemporal[] {
+  protected anotacionesConCoordenadas(): AnotacionWithColor[] {
     return this.anotaciones().filter((a) => a.coordenadas && a.coordenadas.length >= 2);
   }
 

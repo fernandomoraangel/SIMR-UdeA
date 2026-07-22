@@ -23,19 +23,41 @@ const getModelNames = () => [
 
 exports.getAll = async (req, res) => {
   try {
+    const { entities, query } = req.query;
+    const selectedModels = entities ? entities.split(',') : null;
+    const searchQuery = query || '';
+
     const models = getModelNames();
-    const counts = await Promise.all(
+    const results = await Promise.all(
       models.map(async (m) => {
+        if (selectedModels && !selectedModels.includes(m.name.toLowerCase())) {
+          return null;
+        }
+
         try {
           const Model = mongoose.model(m.name);
-          const count = await Model.countDocuments();
+          let filter = {};
+          
+          if (searchQuery) {
+            // Busqueda simple en campos comunes
+            filter = {
+              $or: [
+                { titulo: { $regex: searchQuery, $options: 'i' } },
+                { nombre: { $regex: searchQuery, $options: 'i' } },
+                { fullName: { $regex: searchQuery, $options: 'i' } },
+                { descripcion: { $regex: searchQuery, $options: 'i' } }
+              ]
+            };
+          }
+          
+          const count = await Model.countDocuments(filter);
           return { key: m.name.toLowerCase(), label: m.label, count };
         } catch {
           return { key: m.name.toLowerCase(), label: m.label, count: 0 };
         }
       })
     );
-    res.json(counts);
+    res.json(results.filter(r => r !== null));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
