@@ -75,6 +75,7 @@ import { MatIconModule } from '@angular/material/icon';
     }
     .collapsible-body.open {
       max-height: 2000px;
+      overflow: visible;
       padding: 0 1.5rem 1.25rem;
     }
   `],

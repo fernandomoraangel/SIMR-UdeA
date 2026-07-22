@@ -3,7 +3,7 @@
    Hojas de estilo globales. SIN Bootstrap. Identidad propia en Angular Material.
    ========================================================================= */
 
-@import 'leaflet/dist/leaflet.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 :root {
   /* Paleta SIMR */

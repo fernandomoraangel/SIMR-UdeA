@@ -67,7 +67,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
       <header class="header">
         <div>
           <p class="simr-eyebrow">Términos · Vocabulario controlado</p>
-          <h1>Gestión de Materias</h1>
+           <h1>Materias</h1>
         </div>
         <a mat-raised-button color="primary" routerLink="create">
           <mat-icon>add</mat-icon>
