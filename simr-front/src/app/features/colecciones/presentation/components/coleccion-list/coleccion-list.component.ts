@@ -25,13 +25,28 @@ const ALL_FIELDS = [
   { key: 'creado', label: 'Creado' },
 ];
 
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+function formatFechaConPrecision(fecha: string | Date | null | undefined, precision: string | null | undefined): string {
+  if (!fecha) return '—';
+  const dateStr = typeof fecha === 'object' ? fecha.toISOString().split('T')[0] : fecha;
+  const d = new Date(dateStr + 'T12:00:00');
+  if (isNaN(d.getTime())) return String(fecha);
+  const y = d.getFullYear();
+  const m = d.getMonth();
+  const p = precision || 'AMD';
+  if (p === 'A') return String(y);
+  if (p === 'AM') return `${MESES[m]} de ${y}`;
+  return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
 const PREFS_KEY_TABLE = 'coleccionTableFields';
 const PREFS_KEY_CARD = 'coleccionCardFields';
 
 const TABLE_COL_MAP: Record<string, TableColumn> = {
   nombre: { key: 'nombre', label: 'Nombre', sortable: true, truncateTo: 30 },
   tipo: { key: 'tipo', label: 'Tipo', sortable: true },
-  fechaDeCreacion: { key: 'fechaDeCreacion', label: 'Fecha de creación', type: 'date', sortable: true },
+  fechaDeCreacion: { key: '_fechaDisplay', label: 'Fecha de creación', sortable: true },
   propiedadComodato: { key: 'propiedadComodato', label: 'Propiedad/Comodato', sortable: true },
   creador: { key: 'creador', label: 'Creador', sortable: true },
   creado: { key: 'creado', label: 'Creado', type: 'date', sortable: true },
@@ -115,7 +130,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
                     @if (cardFieldVisible('fechaDeCreacion') && coleccion.fechaDeCreacion) {
                       <div class="meta-row">
                         <mat-icon>calendar_today</mat-icon>
-                        <span>{{ coleccion.fechaDeCreacion | date:'yyyy' }}</span>
+                        <span>{{ formatFechaConPrecision(coleccion.fechaDeCreacion, coleccion.precision) }}</span>
                       </div>
                     }
                     @if (cardFieldVisible('propiedadComodato') && coleccion.propiedadComodato) {
@@ -225,10 +240,11 @@ export class ColeccionesListComponent implements OnInit {
   protected filteredColecciones = computed(() => {
     const colecciones = this.store.colecciones();
     const term = this.searchTerm().toLowerCase().trim();
-    if (!term) return colecciones;
-    return colecciones.filter((c) =>
-      c.nombre.toLowerCase().includes(term)
-    );
+    let result = term ? colecciones.filter((c) => c.nombre.toLowerCase().includes(term)) : colecciones;
+    return result.map((c) => ({
+      ...c,
+      _fechaDisplay: formatFechaConPrecision(c.fechaDeCreacion, c.precision),
+    }));
   });
 
   protected effectiveView = computed<ViewMode>(() => {
@@ -320,6 +336,10 @@ export class ColeccionesListComponent implements OnInit {
 
   onSearchChange(term: string) {
     this.searchTerm.set(term);
+  }
+
+  formatFechaConPrecision(fecha: string | Date | null | undefined, precision: string | null | undefined): string {
+    return formatFechaConPrecision(fecha, precision);
   }
 
   onViewChange(mode: ViewMode) {

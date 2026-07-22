@@ -77,13 +77,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
 
           @if (f.fechaDeCreacion) {
             <app-collapsible-section title="Fecha de creación" icon="calendar_month">
-              <p class="desc-text">{{ f.fechaDeCreacion | date:'dd/MM/yyyy' }}</p>
-            </app-collapsible-section>
-          }
-
-          @if (f.precision) {
-            <app-collapsible-section title="Precisión" icon="tune">
-              <p class="desc-text">{{ f.precision }}</p>
+              <p class="desc-text">{{ formatFechaConPrecision(f.fechaDeCreacion, f.precision) }}</p>
             </app-collapsible-section>
           }
 
@@ -163,6 +157,19 @@ export class FondoDetailComponent implements OnInit {
     if (creador.fullName) return creador.fullName;
     const parts = [creador.firstName, creador.lastName].filter(Boolean);
     return parts.length ? parts.join(' ') : '—';
+  }
+
+  protected formatFechaConPrecision(fecha: string | null | undefined, precision: string | null | undefined): string {
+    if (!fecha) return '—';
+    const d = new Date(fecha + 'T12:00:00');
+    if (isNaN(d.getTime())) return fecha;
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    const p = precision || 'AMD';
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    if (p === 'A') return String(y);
+    if (p === 'AM') return `${meses[m]} de ${y}`;
+    return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   navigateToEdit(id: string) {

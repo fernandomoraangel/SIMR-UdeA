@@ -25,6 +25,20 @@ const ALL_FIELDS = [
   { key: 'creado', label: 'Creado' },
 ];
 
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+function formatFechaConPrecision(fecha: string | null | undefined, precision: string | null | undefined): string {
+  if (!fecha) return '—';
+  const d = new Date(fecha + 'T12:00:00');
+  if (isNaN(d.getTime())) return fecha;
+  const y = d.getFullYear();
+  const m = d.getMonth();
+  const p = precision || 'AMD';
+  if (p === 'A') return String(y);
+  if (p === 'AM') return `${MESES[m]} de ${y}`;
+  return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
 const PREFS_KEY_TABLE = 'fondoTableFields';
 const PREFS_KEY_CARD = 'fondoCardFields';
 
@@ -32,7 +46,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
   nombre: { key: 'nombre', label: 'Nombre', sortable: true, truncateTo: 30 },
   tipo: { key: 'tipo', label: 'Tipo', sortable: true },
   propiedadComodato: { key: 'propiedadComodato', label: 'Propiedad/Comodato', sortable: true },
-  fechaDeCreacion: { key: 'fechaDeCreacion', label: 'Fecha de creación', type: 'date', sortable: true },
+  fechaDeCreacion: { key: '_fechaDisplay', label: 'Fecha de creación', sortable: true },
   creador: { key: 'creador', label: 'Creador', sortable: true },
   creado: { key: 'creado', label: 'Creado', type: 'date', sortable: true },
 };
@@ -121,7 +135,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
                     @if (cardFieldVisible('fechaDeCreacion') && f.fechaDeCreacion) {
                       <div class="meta-row">
                         <mat-icon>calendar_month</mat-icon>
-                        <span>{{ f.fechaDeCreacion | date:'dd/MM/yyyy' }}</span>
+                        <span>{{ formatFechaConPrecision(f.fechaDeCreacion, f.precision) }}</span>
                       </div>
                     }
                     @if (cardFieldVisible('creador') && f.creador) {
@@ -226,10 +240,11 @@ export class FondoListComponent implements OnInit {
   protected filteredFondos = computed(() => {
     const fondos = this.store.fondos();
     const term = this.searchTerm().toLowerCase().trim();
-    if (!term) return fondos;
-    return fondos.filter((f) =>
-      f.nombre.toLowerCase().includes(term)
-    );
+    let result = term ? fondos.filter((f) => f.nombre.toLowerCase().includes(term)) : fondos;
+    return result.map((f) => ({
+      ...f,
+      _fechaDisplay: formatFechaConPrecision(f.fechaDeCreacion, f.precision),
+    }));
   });
 
   protected effectiveView = computed<ViewMode>(() => {
@@ -319,6 +334,10 @@ export class FondoListComponent implements OnInit {
 
   onSearchChange(term: string) {
     this.searchTerm.set(term);
+  }
+
+  formatFechaConPrecision(fecha: string | null | undefined, precision: string | null | undefined): string {
+    return formatFechaConPrecision(fecha, precision);
   }
 
   onViewChange(mode: ViewMode) {
