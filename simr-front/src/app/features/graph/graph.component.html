@@ -1,180 +1,119 @@
-<div class="container-fluid graph-page">
-  <div class="row">
-    <div class="col-md-12">
-      <h2>Grafo de Base de Datos</h2>
-      <p class="text-muted">Visualización interactiva de las relaciones entre entidades del sistema SIMR</p>
-    </div>
-  </div>
+<div class="graph-page">
+  <header class="graph-header">
+    <p class="simr-eyebrow">Utilidades</p>
+    <h1>Grafo de Base de Datos</h1>
+    <p class="graph-subtitle">Visualización interactiva de las relaciones entre entidades del sistema SIMR</p>
+  </header>
 
-  <!-- Search bar -->
-  <div class="row mb-3">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="graph-search-bar">
-            <input
-              type="text"
-              class="form-control form-control-lg"
-              placeholder="Búsqueda opcional (ej: bachata OR salsa)"
-              [(ngModel)]="searchQuery"
-              (keyup.enter)="onGenerate()"
-            />
-            <button
-              type="button"
-              class="btn btn-primary btn-lg"
-              (click)="onGenerate()"
-              [disabled]="store.loading()"
-              style="white-space: nowrap;"
-            >
-              {{ store.loading() ? 'Cargando...' : 'Generar Grafo' }}
-            </button>
-          </div>
-        </div>
+  <!-- Toolbar -->
+  <div class="toolbar-card">
+    <div class="toolbar-row">
+      <input
+        type="text"
+        class="graph-input"
+        placeholder="Búsqueda opcional (ej: bachata OR salsa)"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onGenerate()"
+      />
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="onGenerate()"
+        [disabled]="store.loading()"
+      >
+        @if (store.loading()) {
+          <span class="loading-text">Cargando…</span>
+        } @else {
+          <span>Generar Grafo</span>
+        }
+      </button>
+    </div>
+    <div class="toolbar-actions">
+      <button type="button" class="action-link" (click)="store.clearGraph()">Limpiar</button>
+      <a class="action-link" data-bs-toggle="collapse" href="#helpPanel" role="button">Ayuda</a>
+    </div>
+    <div class="collapse" id="helpPanel">
+      <div class="help-content">
+        <h6>Instrucciones de uso:</h6>
+        <ul>
+          <li>Selecciona una o más entidades para visualizar</li>
+          <li>Opcionalmente, escribe una consulta de búsqueda con operadores booleanos (AND, OR, NOT)</li>
+          <li>Haz clic en "Generar Grafo"</li>
+          <li>Usa la rueda del mouse para hacer zoom</li>
+          <li>Arrastra los nodos para reorganizarlos</li>
+          <li>Pasa el cursor sobre un nodo para ver información</li>
+          <li>Haz clic en un nodo para ver sus detalles</li>
+        </ul>
+        <h6>Operadores de búsqueda:</h6>
+        <ul>
+          <li><code>AND</code> — Intersección de términos</li>
+          <li><code>OR</code> — Unión de términos</li>
+          <li><code>NOT</code> — Exclusión de términos</li>
+          <li><code>()</code> — Agrupación de expresiones</li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <!-- Filters -->
+  <!-- Entity filters -->
   @if (store.entities().length > 0) {
-    <div class="row mb-3">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-body" style="padding-bottom: 0;">
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <button type="button" class="btn btn-outline-primary btn-sm me-2" (click)="store.selectAllEntities()">
-                  Seleccionar todas
-                </button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="store.clearEntitySelection()">
-                  Limpiar selección
-                </button>
-              </div>
-            </div>
-            <div class="row">
-              @for (entity of store.entities(); track entity.key) {
-                <div class="col-md-3 mb-2">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [id]="'entity-' + entity.key"
-                      [checked]="entity.selected"
-                      (change)="store.toggleEntity(entity.key)"
-                    />
-                    <label class="form-check-label" [for]="'entity-' + entity.key">
-                      <span
-                        class="badge"
-                        [ngStyle]="{ 'background-color': entity.color }"
-                        style="margin-right: 5px;"
-                      >&nbsp;</span>
-                      {{ entityDisplayNames[entity.key] || entity.key }}
-                    </label>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-        </div>
+    <div class="filters-card">
+      <div class="filter-actions">
+        <button type="button" class="action-link" (click)="store.selectAllEntities()">Seleccionar todas</button>
+        <button type="button" class="action-link" (click)="store.clearEntitySelection()">Limpiar selección</button>
+      </div>
+      <div class="filter-grid">
+        @for (entity of store.entities(); track entity.key) {
+          <label class="filter-chip" [class.selected]="entity.selected">
+            <input
+              type="checkbox"
+              [checked]="entity.selected"
+              (change)="store.toggleEntity(entity.key)"
+            />
+            <span class="color-dot" [style.background]="entity.color"></span>
+            <span class="chip-label">{{ entityDisplayNames[entity.key] || entity.key }}</span>
+          </label>
+        }
       </div>
     </div>
   }
-
-  <!-- Help panel -->
-  <div class="row mb-3">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body" style="padding: 8px 16px;">
-          <a
-            class="btn btn-sm btn-link"
-            data-bs-toggle="collapse"
-            href="#helpPanel"
-            role="button"
-            aria-expanded="false"
-          >
-            Ayuda
-          </a>
-          <div class="collapse" id="helpPanel">
-            <div class="mt-2" style="text-align: left;">
-              <h6>Instrucciones de uso:</h6>
-              <ul>
-                <li>Selecciona una o más entidades para visualizar</li>
-                <li>Opcionalmente, escribe una consulta de búsqueda con operadores booleanos (AND, OR, NOT)</li>
-                <li>Haz clic en "Generar Grafo"</li>
-                <li>Usa la rueda del mouse para hacer zoom</li>
-                <li>Arrastra los nodos para reorganizarlos</li>
-                <li>Pasa el cursor sobre un nodo para ver información</li>
-                <li>Haz clic en un nodo para ver sus detalles</li>
-              </ul>
-              <h6>Operadores de búsqueda:</h6>
-              <ul>
-                <li><code>AND</code> - Intersección de términos</li>
-                <li><code>OR</code> - Unión de términos</li>
-                <li><code>NOT</code> - Exclusión de términos</li>
-                <li><code>()</code> - Agrupación de expresiones</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Error -->
   @if (store.error()) {
-    <div class="row">
-      <div class="col-md-12">
-        <div class="alert alert-danger" role="alert">
-          <strong>Error:</strong> {{ store.error() }}
-        </div>
-      </div>
+    <div class="alerta">
+      <span>{{ store.error() }}</span>
     </div>
   }
 
-  <!-- Graph info -->
+  <!-- Graph info bar -->
   @if (store.graphData()) {
-    <div class="row">
-      <div class="col-md-12">
-        <div class="alert alert-info">
-          <strong>Nodos:</strong> {{ store.graphData()?.metadata?.totalNodes }} |
-          <strong>Enlaces:</strong> {{ store.graphData()?.metadata?.totalLinks }}
-        </div>
-      </div>
+    <div class="info-bar">
+      <span><strong>Nodos:</strong> {{ store.graphData()?.metadata?.totalNodes }}</span>
+      <span class="info-sep">|</span>
+      <span><strong>Enlaces:</strong> {{ store.graphData()?.metadata?.totalLinks }}</span>
     </div>
   }
 
-  <!-- Graph container -->
+  <!-- Graph area -->
   @if (store.graphData() || store.loading()) {
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-body graph-card-body">
-            @if (store.loading()) {
-              <div class="text-center graph-loading">
-                <h3>Cargando datos del grafo...</h3>
-              </div>
-            }
-            @if (!store.loading()) {
-              <div #graphContainer id="graph-container" class="graph-container"></div>
-            }
-            <div id="graph-tooltip" class="graph-tooltip"></div>
-          </div>
+    <div class="graph-card">
+      @if (store.loading()) {
+        <div class="loading-state">
+          <span>Cargando datos del grafo…</span>
         </div>
-      </div>
+      }
+      @if (!store.loading()) {
+        <div #graphContainer class="graph-container"></div>
+      }
+      <div id="graph-tooltip" class="graph-tooltip"></div>
     </div>
   }
 
   <!-- Empty state -->
   @if (!store.graphData() && !store.loading() && !store.error()) {
-    <div class="row">
-      <div class="col-md-12">
-        <div class="well text-center graph-empty">
-          <h3>Grafo de Base de Datos</h3>
-          <p class="text-muted">
-            Selecciona las entidades que deseas visualizar en el panel de filtros y haz clic en "Generar Grafo"
-            para ver las relaciones entre ellas.
-          </p>
-        </div>
-      </div>
+    <div class="empty-state">
+      <h3>Grafo de Base de Datos</h3>
+      <p>Selecciona las entidades que deseas visualizar y haz clic en "Generar Grafo" para ver las relaciones entre ellas.</p>
     </div>
   }
 </div>

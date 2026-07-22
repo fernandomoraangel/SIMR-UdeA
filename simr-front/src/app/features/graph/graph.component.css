@@ -1,23 +1,215 @@
 .graph-page {
-  padding: 16px;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.graph-search-bar {
+.graph-header {
+  margin-bottom: 2rem;
+}
+
+.graph-header h1 {
+  margin: 0.2em 0 0;
+  font-family: var(--simr-display);
+  color: var(--simr-tinta);
+}
+
+.graph-subtitle {
+  color: var(--simr-tinta-2);
+  margin-top: 0.25rem;
+  font-family: var(--simr-body);
+}
+
+.toolbar-card {
+  background: var(--simr-hueso);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.toolbar-row {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem;
   align-items: center;
+  margin-bottom: 0.75rem;
 }
 
-.graph-card-body {
-  padding: 0;
+.graph-input {
+  flex: 1;
+  font-family: var(--simr-body);
+  font-size: 1rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 8px;
+  background: var(--simr-hueso);
+  color: var(--simr-tinta);
+  outline: none;
+  transition: outline 0.15s ease;
+}
+
+.graph-input:focus {
+  outline: 2px solid var(--simr-cobre);
+}
+
+.btn-primary {
+  font-family: var(--simr-body);
+  font-size: 0.9rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--simr-tinta);
+  color: var(--simr-hueso);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.85;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading-text {
+  opacity: 0.7;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-link {
+  font-family: var(--simr-body);
+  font-size: 0.85rem;
+  color: var(--simr-cobre);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.action-link:hover {
+  color: var(--simr-sello);
+}
+
+.help-content {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--mat-sys-outline);
+  text-align: left;
+  color: var(--simr-tinta-2);
+}
+
+.help-content h6 {
+  font-family: var(--simr-display);
+  color: var(--simr-tinta);
+  margin: 0.75rem 0 0.25rem;
+}
+
+.help-content code {
+  font-family: var(--simr-mono);
+  color: var(--simr-sello);
+}
+
+.filters-card {
+  background: var(--simr-hueso);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 14px;
+  padding: 1rem 1.25rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.filter-actions {
+  margin-bottom: 0.75rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--simr-body);
+  font-size: 0.85rem;
+  color: var(--simr-tinta);
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.filter-chip:hover {
+  background: var(--simr-papel);
+}
+
+.filter-chip input {
+  accent-color: var(--simr-musgo);
+}
+
+.color-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-label {
+  line-height: 1.2;
+}
+
+.alerta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fbeae6;
+  color: var(--simr-sello-osc);
+  border: 1px solid var(--simr-sello);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-family: var(--simr-body);
+}
+
+.info-bar {
+  background: var(--simr-hueso);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  font-family: var(--simr-body);
+  font-size: 0.9rem;
+  color: var(--simr-tinta);
+}
+
+.info-sep {
+  margin: 0 0.5rem;
+  color: var(--mat-sys-outline);
+}
+
+.graph-card {
+  background: var(--simr-hueso);
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 14px;
+  overflow: hidden;
   position: relative;
 }
 
 .graph-container {
   width: 100%;
   height: 600px;
-  border: 1px solid #ddd;
-  background-color: #fafafa;
+  background-color: var(--simr-hueso);
 }
 
 .graph-container svg {
@@ -42,12 +234,27 @@
   font-size: 12px;
   pointer-events: none;
   z-index: 1000;
+  font-family: var(--simr-body);
 }
 
-.graph-loading {
-  padding: 100px;
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--simr-tinta-2);
+  font-family: var(--simr-body);
 }
 
-.graph-empty {
-  padding: 50px;
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--simr-tinta-2);
+  font-family: var(--simr-body);
+}
+
+.empty-state h3 {
+  font-family: var(--simr-display);
+  color: var(--simr-tinta);
+  margin-bottom: 0.5rem;
 }

@@ -1,9 +1,12 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, filter } from 'rxjs';
-import { tapResponse } from '@ngrx/operators';
+import { pipe, switchMap, tap, filter, EMPTY, Observable } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+
+function tapResponse<T>(config: { next: (res: T) => void; error: (err: HttpErrorResponse) => void }) {
+  return tap<T>({ next: config.next as any, error: config.error as any });
+}
 import { GraphService } from './graph.service';
 import { EntityDisplay, GraphData } from './graph.interface';
 

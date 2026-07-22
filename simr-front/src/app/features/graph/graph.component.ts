@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, effect, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, effect, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,11 +13,11 @@ import { GraphNode, ENTITY_DISPLAY_NAMES, ENTITY_ROUTES } from './graph.interfac
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css'],
 })
-export class GraphComponent implements OnInit, AfterViewInit {
+export class GraphComponent implements OnInit {
   private router = inject(Router);
   store = inject(GraphStore);
 
-  @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('graphContainer') graphContainer?: ElementRef<HTMLDivElement>;
 
   private svg?: d3.Selection<SVGSVGElement, unknown, null, undefined>;
   private g?: d3.Selection<SVGGElement, unknown, null, undefined>;
@@ -48,10 +48,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.store.loadMetadata();
   }
 
-  ngAfterViewInit(): void {
-    this.updateDimensions();
-  }
-
   onGenerate(): void {
     const selected = this.store.entities().filter((e) => e.selected).map((e) => e.key);
     if (selected.length === 0) {
@@ -61,18 +57,15 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.store.loadGraph({ entities: selected, query: this.store.searchQuery() || null });
   }
 
-  private updateDimensions(): void {
-    const el = this.graphContainer.nativeElement;
+  private renderGraph(data: { nodes: GraphNode[]; links: { source: string | GraphNode; target: string | GraphNode; type: string }[] }): void {
+    const el = this.graphContainer?.nativeElement;
+    if (!data.nodes?.length || !el) return;
+
+    const container = d3.select(el);
+    container.selectAll('*').remove();
+
     this.width = el.clientWidth || 900;
     this.height = el.clientHeight || 600;
-  }
-
-  private renderGraph(data: { nodes: GraphNode[]; links: { source: string | GraphNode; target: string | GraphNode; type: string }[] }): void {
-    if (!data.nodes?.length) return;
-
-    const container = d3.select(this.graphContainer.nativeElement);
-    container.selectAll('*').remove();
-    this.updateDimensions();
 
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .on('zoom', (event) => {
@@ -99,8 +92,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.6)
       .attr('stroke-width', 2);
-
-    const nodeMap = new Map(data.nodes.map((n) => [n.id, n]));
 
     const nodes = nodeGroup
       .selectAll<SVGCircleElement, GraphNode>('circle')
@@ -134,7 +125,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           .attr('r', 15).attr('stroke-width', 3);
         this.showTooltip(event, d);
       })
-      .on('mouseout', (event: MouseEvent, d: GraphNode) => {
+      .on('mouseout', (event: MouseEvent) => {
         d3.select(event.currentTarget as SVGCircleElement)
           .transition().duration(200)
           .attr('r', 10).attr('stroke-width', 2);
@@ -171,7 +162,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           .attr('y2', (d: any) => (typeof d.target === 'object' ? d.target.y : 0));
 
         nodes.attr('cx', (d) => d.x!).attr('cy', (d) => d.y!);
-        labels.attr('x', (d) => d.x!).attr('y', (d) => d.y!);
+        labels.attr('x', (d: any) => d.x!).attr('y', (d: any) => d.y!);
       });
   }
 
