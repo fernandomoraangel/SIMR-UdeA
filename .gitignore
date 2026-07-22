@@ -163,3 +163,8 @@ Thumbs.db
 
 # Dumps/exports de base de datos (no versionar)
 Migración/simrDB/
+
+# Temporary debug files
+c.txt
+cookie.txt
+cookie2.txt
