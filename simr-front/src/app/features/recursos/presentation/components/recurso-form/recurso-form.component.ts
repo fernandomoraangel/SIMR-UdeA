@@ -29,7 +29,7 @@ import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/ar
 import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archivo.interface';
 import {
   ObraRelacionada, NumeroNormalizado, MencionResponsabilidad,
-  ContenedorAsociado, FuenteAsociada,
+  ContenedorAsociado,   FuenteAsociada, TipoDeRecurso,
   MateriaAsociada, IdiomaAsociado, DescripcionTecnica, ProyectoAsociado
 } from '../../../domain/recurso.interface';
 
@@ -232,14 +232,35 @@ import {
             }
 
             <p class="subtitulo">Tipos de recurso</p>
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Tipos de recurso</mat-label>
-              <mat-select [formControl]="tiposDeRecursoControl" multiple>
-                @for (t of listaTiposDeRecurso(); track t) {
-                  <mat-option [value]="t">{{ t }}</mat-option>
+            <div class="inline-editor">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Tipo</mat-label>
+                <mat-select [formControl]="tipoRecursoControl">
+                  @for (t of listaTiposDeRecurso(); track t) {
+                    <mat-option [value]="t">{{ t }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-stroked-button type="button" (click)="addTipoRecurso()"
+                [disabled]="!tipoRecursoControl.value">
+                <mat-icon>add</mat-icon>
+                Agregar
+              </button>
+            </div>
+            @if (tiposDeRecursoItems.length > 0) {
+              <div class="items-list">
+                @for (t of tiposDeRecursoItems; track $index) {
+                  <div class="rel-item">
+                    <span class="rel-nombre">{{ t.id }}</span>
+                    <button mat-icon-button (click)="removeTipoRecurso($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
                 }
-              </mat-select>
-            </mat-form-field>
+              </div>
+            } @else {
+              <p class="empty-hint">No hay tipos de recurso.</p>
+            }
 
             <p class="subtitulo">Materias</p>
             <app-autocomplete-create
@@ -423,7 +444,8 @@ export class RecursoFormComponent implements OnInit {
   protected mencionActorSelection: any[] = [];
   protected contenedoresItems: any[] = [];
   protected fuenteItems: FuenteAsociada[] = [];
-  protected tiposDeRecursoControl = this.fb.control<string[]>([]);
+  protected tipoRecursoControl = this.fb.control<string | null>(null);
+  protected tiposDeRecursoItems: any[] = [];
   protected anotacionesItems: AnotacionCartograficoTemporal[] = [];
   protected materiaItems: any[] = [];
   protected idiomaItems: any[] = [];
@@ -571,7 +593,7 @@ export class RecursoFormComponent implements OnInit {
       fecha: f.fecha ? toDisplayFecha(f.fecha) : '',
       precision: f.precision || '',
     }));
-    this.tiposDeRecursoControl.setValue((recurso.tiposDeRecurso || []).map((t: any) => t.id || t));
+    this.tiposDeRecursoItems = (recurso.tiposDeRecurso || []).map((t: any) => ({ id: t.id || t }));
     this.anotacionesItems = (recurso.anotacionCartograficoTemporal || []).map((a: any) => ({
       ...a,
       fechaInicio: a.fechaInicio ? toDisplayFecha(a.fechaInicio) : undefined,
@@ -672,6 +694,19 @@ export class RecursoFormComponent implements OnInit {
     this.fuenteItems = this.fuenteItems.filter((_, i) => i !== index);
   }
 
+  protected addTipoRecurso() {
+    const val = this.tipoRecursoControl.value;
+    if (!val) return;
+    if (!this.tiposDeRecursoItems.find((t) => t.id === val)) {
+      this.tiposDeRecursoItems = [...this.tiposDeRecursoItems, { id: val }];
+    }
+    this.tipoRecursoControl.reset();
+  }
+
+  protected removeTipoRecurso(index: number) {
+    this.tiposDeRecursoItems = this.tiposDeRecursoItems.filter((_, i) => i !== index);
+  }
+
   protected displayFuente(f: FuenteAsociada): string {
     const parts: string[] = [];
     if (f.nombre) parts.push(f.nombre);
@@ -745,7 +780,7 @@ export class RecursoFormComponent implements OnInit {
       mencionResponsabilidad: this.mencionItems,
       contenedores: this.contenedoresItems.map((c) => ({ id: c._id })),
       fuente: this.fuenteItems,
-      tiposDeRecurso: (this.tiposDeRecursoControl.value || []).map((t) => ({ id: t })),
+      tiposDeRecurso: this.tiposDeRecursoItems,
       anotacionCartograficoTemporal: this.anotacionesItems,
       materia: this.materiaItems.map((m) => ({ id: m._id })),
       idiomas: this.idiomaItems.map((i) => ({ id: i._id })),
