@@ -305,6 +305,8 @@ module.exports = function () {
   require("../app/routes/search.server.routes.js")(app);
   // Sistema de grafo de base de datos
   require("../app/routes/graph.server.routes.js")(app);
+  // Estadísticas del sistema
+  require("../app/routes/stats.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");

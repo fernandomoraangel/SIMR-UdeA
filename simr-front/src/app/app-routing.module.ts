@@ -107,6 +107,16 @@ const routes: Routes = [
       import('./features/proyectos/proyectos.routes').then((r) => r.PROYECTOS_ROUTES),
   },
   {
+    path: 'obras',
+    loadChildren: () =>
+      import('./features/obras/obras.routes').then((r) => r.OBRAS_ROUTES),
+  },
+  {
+    path: 'actores',
+    loadChildren: () =>
+      import('./features/actores/actores.routes').then((r) => r.ACTORES_ROUTES),
+  },
+  {
     path: 'recursos',
     loadChildren: () =>
       import('./features/recursos/recursos.routes').then((r) => r.RECURSOS_ROUTES),
@@ -120,6 +130,11 @@ const routes: Routes = [
     path: 'search',
     loadChildren: () =>
       import('./features/search/search.routes').then((r) => r.SEARCH_ROUTES),
+  },
+  {
+    path: 'estadisticas',
+    loadChildren: () =>
+      import('./features/estadisticas/estadisticas.routes').then((r) => r.ESTADISTICAS_ROUTES),
   },
   {
     path: 'admin',

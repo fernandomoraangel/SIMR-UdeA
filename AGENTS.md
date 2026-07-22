@@ -18,26 +18,17 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 - **Diccionarios** — migrado (tabla, campo, campoLargo, definición)
 - **Proyectos** — migrado con investigadores (ref Actor), fechas asociadas, estado, descriptores, enlaces, archivos
 - **Ejemplares** — migrado (recurso, numeroEjemplar, disponibilidad, fondo, colección, procedencia, estados editor inline, AutocompleteCreateComponent)
-- **Recursos** — migrado (17 secciones colapsables: obras, números normalizados, menciones, contenedores, fuente, tipos, anotaciones CT, materias, idiomas, descripción técnica, proyectos, descriptores, enlaces, archivos)
+- **Recursos** — migrado (15 secciones colapsables + planas: tipos con inline-editor, fechas con precisión, AutocompleteCreateComponent con displayField)
+- **Actores** — migrado (nombres, apellidos, nombreReunion, contenedores, anotaciones CT, descriptores etiqueta+contenido, vínculos, archivos)
+- **Obras** — migrado (completo: 15 secciones colapsables, AutocompleteCreateComponent, fechas, notas programa, etc.)
+- **Estadísticas** — nuevo módulo con Chart.js (bar chart + cards de resumen), endpoint `/api/stats` en backend
 - **AnotacionMapComponent** — migrado de Leaflet a **MapLibre GL JS** (Canvas/WebGL). Popup con tooltip en hover, reutilizable por cualquier módulo
 - **CollapsibleSectionComponent** — fix `overflow: visible` en estado abierto para que mapas y contenido extenso no se recorten
 - **ArchivoManagerComponent** — componente reutilizable de gestión de archivos MinIO
 - **ColumnSelectorComponent** — selector de campos visibles con persistencia vía preferencias de usuario
 
-### ❌ Pendientes (orden de migración)
-1. ~~**Sistemas**~~ ✅
-2. ~~**Instrumentos**~~ ✅ (con HS assistant)
-3. ~~**Géneros**~~ ✅
-4. ~~**Géneros no musicales**~~ ✅
-5. ~~**Fondos**~~ ✅
-6. ~~**Colecciones**~~ ✅
-7. ~~**Idiomas / Diccionarios**~~ ✅ (cerrados)
-8. ~~**Proyectos**~~ ✅
-9. ~~**Ejemplares**~~ ✅
-10. ~~**Recursos**~~ ✅
-11. **Actores** (pendiente cerrar gaps)
-12. **Obras** (último, más complejo)
-13. **Grafo** (visualización D3)
+### ❌ Pendientes
+1. **Grafo** (visualización D3) — último
 
 ## Componentes compartidos listos para reusar (sin cambios necesarios)
 

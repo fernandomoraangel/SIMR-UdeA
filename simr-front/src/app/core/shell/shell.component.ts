@@ -33,8 +33,8 @@ export class ShellComponent implements OnInit {
     {
       label: 'Obras',
       items: [
-        { label: 'Obras', ruta: '/no-implementado/obras' },
-        { label: 'Actores', ruta: '/no-implementado/actores' },
+        { label: 'Obras', ruta: '/obras' },
+        { label: 'Actores', ruta: '/actores' },
       ],
     },
     {
@@ -75,6 +75,7 @@ export class ShellComponent implements OnInit {
       label: 'Utilidades',
       items: [
         { label: 'Búsqueda General', ruta: '/search' },
+        { label: 'Estadísticas', ruta: '/estadisticas' },
         { label: 'Grafo de Base de Datos', ruta: '/no-implementado/graph' },
       ],
     },

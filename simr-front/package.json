@@ -46,6 +46,7 @@
     "@frxjs/ngx-timeline": "^20.0.8",
     "@ngrx/signals": "^20.0.0",
     "bootstrap": "^5.3.7",
+    "chart.js": "^4.5.1",
     "maplibre-gl": "^5.24.0",
     "rxjs": "~7.8.2",
     "sweetalert2": "^11.22.2",

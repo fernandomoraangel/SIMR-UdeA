@@ -1,49 +1,46 @@
-// SEPARAR INTERFACES EN ARCHIVOS DIFERENTES
-export interface RegistroOperacion {
-  tipoDeOperacion: string;
-  registroBorrado?: boolean;
-  campo?: any;
-  fecha?: Date; // default: Date.now,
-  usuario?: string; // Assuming 'usuario' is a reference to a User by ID
-}
-
 export interface ContenedorAsociado {
-  id: string; // Assuming 'id' is a reference to another Actor by ID
+  id: string;
 }
 
-export interface AnotacionCartograficoTemporal {
+export interface AnotacionCT {
   lugar?: any;
   coordenadas?: number[];
   evento?: string;
   coberturaAmplitud?: any;
-  fechaInicio?: Date;
-  fechaFin?: Date;
+  fechaInicio?: string;
+  fechaFin?: string;
   precisionInicio?: string;
   precisionFin?: string;
   evidencia?: any;
 }
 
-export interface VinculoRelacionado {
-  etiqueta?: any;
-  url?: any;
-}
-
-export interface DescriptorLibre {
+export interface DescriptorItem {
   etiqueta: string;
   contenido: string;
 }
 
+export interface VinculoItem {
+  etiqueta: string;
+  url: string;
+}
+
+export interface ArchivoAdjunto {
+  archivo: string;
+  descripcion: string;
+}
+
 export interface Actor {
-  _id?: string;
+  _id: string;
   nombres: string;
   apellidos: string;
+  fullName: string;
   nombreReunion?: string;
-  contenedor?: ContenedorAsociado[];
-  anotacionCartograficoTemporal?: AnotacionCartograficoTemporal[];
-  descriptores?: DescriptorLibre[];
-  vinculoRelacionado?: VinculoRelacionado[];
-  creador?: string; // Assuming 'creador' is a reference to a User by ID
-  creado?: Date;
-  registroOperacion?: RegistroOperacion[];
-  fullName?: string; // Virtual property
+  contenedor: ContenedorAsociado[];
+  anotacionCartograficoTemporal: AnotacionCT[];
+  descriptores: DescriptorItem[];
+  vinculoRelacionado: VinculoItem[];
+  archivosAdjuntos: ArchivoAdjunto[];
+  registroOperacion?: any[];
+  creador: { _id: string; firstName: string; lastName: string; fullName: string };
+  creado: string;
 }
