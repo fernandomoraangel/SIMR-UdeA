@@ -49,26 +49,26 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 3 | `admin` | Gestión roles/usuarios | No (forms propios) | No | ✅ **Migrado:** roles y usuarios CRUD + detalle, permisos por rol, reasignación de propiedad al borrar usuario. |
 | 4 | `auditoria` | Solo lectura | No (list) | No | ✅ **Migrado:** listado con filtros, paginación, vista de detalle de eventos. |
 | 5 | `listas` | Datos de referencia transversales | No (list) | No | ✅ **Migrado:** servicio transversal de listas, vista de administración (create/edit/delete). Consumido por todos los módulos CRUD. |
-| 6 | `diccionarios` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
-| 7 | `idiomas` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
+| 6 | `diccionarios` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** tabla, campo, campoLargo, definición. Help-popup con definiciones del Diccionario. |
+| 7 | `idiomas` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** diseño decolonial (glottocode, isoCode, endonym, exonymSpanish, linguisticFamily, transmissionMode, territorialContext, anotaciones, descriptores, enlaces, archivos). Botón Semillero, help-popup con definiciones. |
 | 8 | `materias` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-21):** gestión unificada (list/create/edit/detail) con Angular Material, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna persistidas. |
 | 9 | `medios` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** mismo patrón que Materias, Reactive Forms, CollapsibleSectionComponent, AnotacionMapComponent con MapLibre GL JS (no Leaflet). Incluye anotaciones cartográfico-temporales con timeline + mapa + formulario de coordenadas. |
 | 10 | `sistemas` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** mismo patrón que Medios con relaciones padre/hijo/relacionados. SignalStore, CollapsibleSection, anotaciones, archivos, column-selector. |
 | 11 | `instrumentos` | CRUD | ✅ | Sí | ✅ **Migrado con asistente HS (2026-07-22):** HsClassificationService con árbol de 643 nodos + 1761 instrumentos universales. HsWizardComponent modal. Auto-detect Hornbostel-Sachs al escribir nombre. Popup con desglose por niveles en español al hover. |
-| 12 | `generos` | CRUD | ✅ | Sí | ❌ Pendiente |
-| 13 | `generosnomusicales` | CRUD | ✅ | Sí | ❌ Pendiente |
-| 14 | `fondos` | CRUD | ✅ | No | ❌ Pendiente |
-| 15 | `colecciones` | CRUD | ✅ | No | ❌ Pendiente |
+| 12 | `generos` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** relaciones padre/hijo/relacionados, idiomas, sistemas sonoros, medios sonoros, proyectos, anotaciones, descriptores, enlaces, archivos. |
+| 13 | `generosnomusicales` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** similar a Géneros (sin sistemas/medios/proyectos). |
+| 14 | `fondos` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** nombre, tipo, propiedad/comodato, fecha, precisión. |
+| 15 | `colecciones` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** mismos campos que Fondos. |
 | 16 | `ejemplares` | CRUD | ✅ | No | ✅ **Migrado (2026-07-22):** gestión unificada con Reactive Forms, CollapsibleSectionComponent, AutocompleteCreateComponent para recurso/fondo/colección, editor inline de estados. |
 | 17 | `recursos` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** gestión unificada con 17 secciones colapsables, AutocompleteCreateComponent para obras/actores/recursos/materias/idiomas/proyectos, AnotacionesCartograficasComponent, ArchivoManagerComponent. |
-| 18 | `proyectos` | CRUD | ✅ | Sí | ❌ Pendiente |
+| 18 | `proyectos` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** investigadores (ref Actor), fechas asociadas, estado, descriptores, enlaces, archivos. |
 | 19 | `actores` | CRUD | ✅ | Sí | ❌ Ensayo no válido → rehacer |
 | 20 | `obras` | CRUD (el más complejo) | ✅ | Sí | ❌ Pendiente (última pieza CRUD) |
 | 21 | `archivos` | Directiva embebida MinIO | — | (es el proveedor) | ✅ **Migrado:** `ArchivoManagerComponent` reutilizable, servicio completo (upload/download/delete/batch), sin puente popup/postMessage. |
 | 22 | `search` | Buscador global | — | No | ✅ **Migrado:** buscador global con filtros fuzzy, resultados por tipo de entidad. |
 | 23 | `graph` | Visualización D3 | — | No | ❌ Pendiente (sin librería elegida en Angular) |
 
-**Total a migrar:** los 23 módulos del legacy. Hoy **14 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + sistemas + instrumentos + graph pendiente + ejemplares + recursos). Lo existente en `simr-front` para diccionarios/idiomas/actores se trata como ensayo descartable.
+**Total a migrar:** los 23 módulos del legacy. Hoy **20 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + sistemas + instrumentos + generos + generosnomusicales + fondos + colecciones + ejemplares + idiomas + diccionarios + recursos + proyectos). Pendientes: actores (revisar gaps), obras, graph.
 
 ### 2.2 Puntos de riesgo ya identificados
 

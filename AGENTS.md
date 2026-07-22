@@ -17,6 +17,8 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 - **Idiomas** — migrado con diseño decolonial (glottocode, isoCode, endonym, exonymSpanish, linguisticFamily, transmissionMode, territorialContext, anotaciones, descriptores, enlaces, archivos). Botón Semillero carga 334 lenguas desde `data/lenguas-america.json`. Help-popup con definiciones del Diccionario para cada campo.
 - **Diccionarios** — migrado (tabla, campo, campoLargo, definición)
 - **Proyectos** — migrado con investigadores (ref Actor), fechas asociadas, estado, descriptores, enlaces, archivos
+- **Ejemplares** — migrado (recurso, numeroEjemplar, disponibilidad, fondo, colección, procedencia, estados editor inline, AutocompleteCreateComponent)
+- **Recursos** — migrado (17 secciones colapsables: obras, números normalizados, menciones, contenedores, fuente, tipos, anotaciones CT, materias, idiomas, descripción técnica, proyectos, descriptores, enlaces, archivos)
 - **AnotacionMapComponent** — migrado de Leaflet a **MapLibre GL JS** (Canvas/WebGL). Popup con tooltip en hover, reutilizable por cualquier módulo
 - **CollapsibleSectionComponent** — fix `overflow: visible` en estado abierto para que mapas y contenido extenso no se recorten
 - **ArchivoManagerComponent** — componente reutilizable de gestión de archivos MinIO
@@ -31,8 +33,8 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 6. ~~**Colecciones**~~ ✅
 7. ~~**Idiomas / Diccionarios**~~ ✅ (cerrados)
 8. ~~**Proyectos**~~ ✅
-9. **Ejemplares**
-10. **Recursos**
+9. ~~**Ejemplares**~~ ✅
+10. ~~**Recursos**~~ ✅
 11. **Actores** (pendiente cerrar gaps)
 12. **Obras** (último, más complejo)
 13. **Grafo** (visualización D3)
