@@ -4,13 +4,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { IdiomasStore } from '../../../state/idiomas.store';
+import { ColeccionesStore } from '../../../state/colecciones.store';
+import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-idioma-detail',
+  selector: 'app-coleccion-detail',
   standalone: true,
   imports: [
     CommonModule,
@@ -18,23 +20,25 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatChipsModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    CollapsibleSectionComponent,
   ],
-  providers: [IdiomasStore],
+  providers: [ColeccionesStore],
   template: `
     <div class="detail-container">
       <header class="detail-header">
         <button mat-icon-button (click)="goBack()" aria-label="Volver" class="volver">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        @if (store.selectedIdioma(); as m) {
+        @if (store.selectedColeccion(); as c) {
           <div class="header-actions">
-            <button mat-stroked-button (click)="navigateToEdit(m._id)">
+            <button mat-stroked-button (click)="navigateToEdit(c._id)">
               <mat-icon>edit</mat-icon>
               Editar
             </button>
-            <button mat-stroked-button color="warn" (click)="confirmDelete(m._id)">
+            <button mat-stroked-button color="warn" (click)="confirmDelete(c._id)">
               <mat-icon>delete</mat-icon>
               Eliminar
             </button>
@@ -45,7 +49,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
       @if (store.isLoading()) {
         <div class="cargando">
           <mat-spinner diameter="36"></mat-spinner>
-          <span>Cargando detalles del idioma…</span>
+          <span>Cargando detalles de la colección…</span>
         </div>
       }
       @if (store.hasError()) {
@@ -55,26 +59,50 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
           <button mat-button (click)="store.clearError()">Cerrar</button>
         </div>
       }
-      @if (store.selectedIdioma(); as m) {
+      @if (store.selectedColeccion(); as c) {
         <mat-card class="ficha" appearance="outlined">
           <div class="ficha-cabecera">
             <div class="titulo">
-              <mat-icon>translate</mat-icon>
-              <h1>{{ m.idioma }}</h1>
+              <mat-icon>collections_bookmark</mat-icon>
+              <h1>{{ c.nombre }}</h1>
             </div>
-            <span class="simr-codigo">ID {{ m._id }}</span>
+            <span class="simr-codigo">ID {{ c._id }}</span>
           </div>
+
+          @if (c.tipo) {
+            <app-collapsible-section title="Tipo" icon="category">
+              <p class="valor">{{ c.tipo }}</p>
+            </app-collapsible-section>
+          }
+
+          @if (c.fechaDeCreacion) {
+            <app-collapsible-section title="Fecha de creación" icon="calendar_today">
+              <p class="valor">{{ c.fechaDeCreacion | date:'dd/MM/yyyy' }}</p>
+            </app-collapsible-section>
+          }
+
+          @if (c.precision) {
+            <app-collapsible-section title="Precisión" icon="straighten">
+              <p class="valor">{{ c.precision }}</p>
+            </app-collapsible-section>
+          }
+
+          @if (c.propiedadComodato) {
+            <app-collapsible-section title="Propiedad / Comodato" icon="description">
+              <p class="valor">{{ c.propiedadComodato }}</p>
+            </app-collapsible-section>
+          }
 
           <section class="seccion">
             <h3><mat-icon>person</mat-icon> Información del Creador</h3>
             <div class="info-grid">
               <div class="info-item">
                 <label>Nombre completo</label>
-                <span>{{ getCreatorName(m.creador) }}</span>
+                <span>{{ getCreatorName(c.creador) }}</span>
               </div>
               <div class="info-item">
                 <label>Fecha de creación</label>
-                <span>{{ m.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
+                <span>{{ c.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
               </div>
             </div>
           </section>
@@ -83,8 +111,8 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
         @if (!store.isLoading()) {
           <div class="empty-state">
             <mat-icon>info</mat-icon>
-            <p>Idioma no encontrado.</p>
-            <button mat-stroked-button routerLink="/idiomas">Volver al listado</button>
+            <p>Colección no encontrada.</p>
+            <button mat-stroked-button routerLink="/colecciones">Volver al listado</button>
           </div>
         }
       }
@@ -103,6 +131,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     .titulo mat-icon { font-size: 2rem; width: 2rem; height: 2rem; color: var(--simr-cobre); }
     .titulo h1 { margin: 0; font-family: var(--simr-display); font-weight: 600; font-size: 2rem; color: var(--simr-hueso); }
     .ficha-cabecera .simr-codigo { color: rgba(251, 249, 244, 0.7); }
+    .valor { font-size: 1rem; color: var(--simr-tinta); margin: 0; }
     .seccion { padding: 1.5rem 2rem; border-bottom: 1px solid var(--mat-sys-outline); }
     .seccion:last-child { border-bottom: none; }
     .seccion h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem; font-family: var(--simr-body); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--simr-sello); }
@@ -115,21 +144,23 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     .empty-state mat-icon { font-size: 3rem; width: 3rem; height: 3rem; }
   `],
 })
-export class IdiomaDetailComponent implements OnInit {
-  protected readonly store = inject(IdiomasStore);
+export class ColeccionDetailComponent implements OnInit {
+  protected readonly store = inject(ColeccionesStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
 
-  protected idiomaId: string | null = null;
+  protected coleccionId: string | null = null;
+
+  protected readonly coleccion = this.store.selectedColeccion;
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
-        this.idiomaId = id;
+        this.coleccionId = id;
         this.store.setInitialState();
-        this.store.loadIdiomaById(id);
+        this.store.loadColeccionById(id);
       }
     });
   }
@@ -142,14 +173,14 @@ export class IdiomaDetailComponent implements OnInit {
   }
 
   navigateToEdit(id: string) {
-    this.router.navigate(['/idiomas/edit', id]);
+    this.router.navigate(['/colecciones/edit', id]);
   }
 
   confirmDelete(id: string) {
-    const name = this.store.selectedIdioma()?.idioma || 'este idioma';
+    const name = this.store.selectedColeccion()?.nombre || 'esta colección';
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar idioma',
+        title: 'Eliminar colección',
         message: `¿Confirma eliminar "${name}"?`,
         confirmText: 'Eliminar',
         danger: true,
@@ -157,7 +188,7 @@ export class IdiomaDetailComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((ok) => {
       if (ok) {
-        this.store.deleteIdioma(id);
+        this.store.deleteColeccion(id);
         setTimeout(() => {
           if (!this.store.hasError()) {
             this.goBack();
@@ -168,6 +199,6 @@ export class IdiomaDetailComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/idiomas']);
+    this.router.navigate(['/colecciones']);
   }
 }

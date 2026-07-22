@@ -6,11 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { IdiomasStore } from '../../../state/idiomas.store';
+import { DiccionariosStore } from '../../../state/diccionarios.store';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-idioma-detail',
+  selector: 'app-diccionario-detail',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,20 +21,20 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     MatProgressSpinnerModule,
     MatDialogModule,
   ],
-  providers: [IdiomasStore],
+  providers: [DiccionariosStore],
   template: `
     <div class="detail-container">
       <header class="detail-header">
         <button mat-icon-button (click)="goBack()" aria-label="Volver" class="volver">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        @if (store.selectedIdioma(); as m) {
+        @if (store.selectedDiccionario(); as d) {
           <div class="header-actions">
-            <button mat-stroked-button (click)="navigateToEdit(m._id)">
+            <button mat-stroked-button (click)="navigateToEdit(d._id)">
               <mat-icon>edit</mat-icon>
               Editar
             </button>
-            <button mat-stroked-button color="warn" (click)="confirmDelete(m._id)">
+            <button mat-stroked-button color="warn" (click)="confirmDelete(d._id)">
               <mat-icon>delete</mat-icon>
               Eliminar
             </button>
@@ -45,7 +45,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
       @if (store.isLoading()) {
         <div class="cargando">
           <mat-spinner diameter="36"></mat-spinner>
-          <span>Cargando detalles del idioma…</span>
+          <span>Cargando detalles…</span>
         </div>
       }
       @if (store.hasError()) {
@@ -55,26 +55,48 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
           <button mat-button (click)="store.clearError()">Cerrar</button>
         </div>
       }
-      @if (store.selectedIdioma(); as m) {
+      @if (store.selectedDiccionario(); as d) {
         <mat-card class="ficha" appearance="outlined">
           <div class="ficha-cabecera">
             <div class="titulo">
-              <mat-icon>translate</mat-icon>
-              <h1>{{ m.idioma }}</h1>
+              <mat-icon>menu_book</mat-icon>
+              <h1>{{ d.tabla }} · {{ d.campo }}</h1>
             </div>
-            <span class="simr-codigo">ID {{ m._id }}</span>
+            <span class="simr-codigo">ID {{ d._id }}</span>
           </div>
+
+          <section class="seccion">
+            <h3><mat-icon>table_chart</mat-icon> Información del campo</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Tabla</label>
+                <span>{{ d.tabla }}</span>
+              </div>
+              <div class="info-item">
+                <label>Campo</label>
+                <span>{{ d.campo }}</span>
+              </div>
+              <div class="info-item">
+                <label>Nombre largo</label>
+                <span>{{ d.campoLargo || '—' }}</span>
+              </div>
+              <div class="info-item full-width">
+                <label>Definición</label>
+                <span>{{ d.definicion }}</span>
+              </div>
+            </div>
+          </section>
 
           <section class="seccion">
             <h3><mat-icon>person</mat-icon> Información del Creador</h3>
             <div class="info-grid">
               <div class="info-item">
                 <label>Nombre completo</label>
-                <span>{{ getCreatorName(m.creador) }}</span>
+                <span>{{ getCreatorName(d.creador) }}</span>
               </div>
               <div class="info-item">
                 <label>Fecha de creación</label>
-                <span>{{ m.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
+                <span>{{ d.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
               </div>
             </div>
           </section>
@@ -83,8 +105,8 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
         @if (!store.isLoading()) {
           <div class="empty-state">
             <mat-icon>info</mat-icon>
-            <p>Idioma no encontrado.</p>
-            <button mat-stroked-button routerLink="/idiomas">Volver al listado</button>
+            <p>Entrada no encontrada.</p>
+            <button mat-stroked-button routerLink="/diccionarios">Volver al listado</button>
           </div>
         }
       }
@@ -109,27 +131,25 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     .seccion h3 mat-icon { font-size: 20px; width: 20px; height: 20px; color: var(--simr-sello); }
     .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
     .info-item { background: var(--simr-papel); padding: 1rem 1.25rem; border-radius: 10px; border-left: 3px solid var(--simr-cobre); }
+    .info-item.full-width { grid-column: 1 / -1; }
     .info-item label { display: block; font-weight: 600; color: var(--simr-tinta-2); font-size: 0.8rem; margin-bottom: 0.25rem; }
     .info-item span { color: var(--simr-tinta); font-size: 1rem; }
     .empty-state { text-align: center; padding: 3rem; color: var(--simr-tinta-2); }
     .empty-state mat-icon { font-size: 3rem; width: 3rem; height: 3rem; }
   `],
 })
-export class IdiomaDetailComponent implements OnInit {
-  protected readonly store = inject(IdiomasStore);
+export class DiccionarioDetailComponent implements OnInit {
+  protected readonly store = inject(DiccionariosStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
-
-  protected idiomaId: string | null = null;
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
-        this.idiomaId = id;
         this.store.setInitialState();
-        this.store.loadIdiomaById(id);
+        this.store.loadDiccionarioById(id);
       }
     });
   }
@@ -142,14 +162,15 @@ export class IdiomaDetailComponent implements OnInit {
   }
 
   navigateToEdit(id: string) {
-    this.router.navigate(['/idiomas/edit', id]);
+    this.router.navigate(['/diccionarios/edit', id]);
   }
 
   confirmDelete(id: string) {
-    const name = this.store.selectedIdioma()?.idioma || 'este idioma';
+    const d = this.store.selectedDiccionario();
+    const name = d ? `${d.tabla} · ${d.campo}` : 'esta entrada';
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar idioma',
+        title: 'Eliminar entrada',
         message: `¿Confirma eliminar "${name}"?`,
         confirmText: 'Eliminar',
         danger: true,
@@ -157,7 +178,7 @@ export class IdiomaDetailComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((ok) => {
       if (ok) {
-        this.store.deleteIdioma(id);
+        this.store.deleteDiccionario(id);
         setTimeout(() => {
           if (!this.store.hasError()) {
             this.goBack();
@@ -168,6 +189,6 @@ export class IdiomaDetailComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/idiomas']);
+    this.router.navigate(['/diccionarios']);
   }
 }

@@ -9,52 +9,52 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { switchMap, pipe, catchError, of, tap, finalize } from 'rxjs';
 import {
-  Idioma,
-  CreateIdiomaRequest,
-  UpdateIdiomaRequest,
-} from '../domain/idioma.interface';
-import { IdiomasService } from '../data/idiomas.service';
+  Diccionario,
+  CreateDiccionarioRequest,
+  UpdateDiccionarioRequest,
+} from '../domain/diccionario.interface';
+import { DiccionariosService } from '../data/diccionarios.service';
 
-interface IdiomasState {
-  idiomas: Idioma[];
-  selectedIdioma: Idioma | null;
+interface DiccionariosState {
+  diccionarios: Diccionario[];
+  selectedDiccionario: Diccionario | null;
   loading: boolean;
   error: string | null;
   success: boolean;
 }
 
-const initialState: IdiomasState = {
-  idiomas: [],
-  selectedIdioma: null,
+const initialState: DiccionariosState = {
+  diccionarios: [],
+  selectedDiccionario: null,
   loading: false,
   error: null,
   success: false,
 };
 
 @Injectable()
-export class IdiomasStore extends signalStore(
+export class DiccionariosStore extends signalStore(
   withState(initialState),
   withComputed((store) => ({
-    idiomasCount: computed(() => store.idiomas().length),
-    hasIdiomas: computed(() => store.idiomas().length > 0),
+    diccionariosCount: computed(() => store.diccionarios().length),
+    hasDiccionarios: computed(() => store.diccionarios().length > 0),
     isLoading: computed(() => store.loading()),
     hasError: computed(() => !!store.error()),
   })),
-  withMethods((store, repository = inject(IdiomasService)) => ({
-    loadIdiomas: rxMethod<void>(
+  withMethods((store, repository = inject(DiccionariosService)) => ({
+    loadDiccionarios: rxMethod<void>(
       pipe(
         tap(() =>
           patchState(store, { loading: true, error: null, success: false })
         ),
         switchMap(() =>
           repository.getAll().pipe(
-            tap((idiomas) =>
-              patchState(store, { idiomas, loading: false, success: true })
+            tap((diccionarios) =>
+              patchState(store, { diccionarios, loading: false, success: true })
             ),
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al cargar idiomas',
+                error: error.error?.message || 'Error al cargar diccionarios',
                 success: false,
               });
               return of([]);
@@ -63,14 +63,14 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    loadIdiomaById: rxMethod<string>(
+    loadDiccionarioById: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((id) =>
           repository.getById(id).pipe(
-            tap((idioma) =>
+            tap((diccionario) =>
               patchState(store, {
-                selectedIdioma: idioma,
+                selectedDiccionario: diccionario,
                 loading: false,
                 success: true,
               })
@@ -78,7 +78,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al cargar idioma',
+                error: error.error?.message || 'Error al cargar diccionario',
                 success: false,
               });
               return of(null);
@@ -87,17 +87,17 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    createIdioma: rxMethod<CreateIdiomaRequest>(
+    createDiccionario: rxMethod<CreateDiccionarioRequest>(
       pipe(
         tap(() =>
           patchState(store, { loading: true, error: null, success: false })
         ),
         switchMap((data) =>
           repository.create(data).pipe(
-            tap((newIdioma) => {
-              const currentIdiomas = store.idiomas();
+            tap((newDiccionario) => {
+              const current = store.diccionarios();
               patchState(store, {
-                idiomas: [newIdioma, ...currentIdiomas],
+                diccionarios: [newDiccionario, ...current],
                 loading: false,
                 success: true,
               });
@@ -108,7 +108,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al crear idioma',
+                error: error.error?.message || 'Error al crear diccionario',
               });
               return of(null);
             })
@@ -116,21 +116,21 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    updateIdioma: rxMethod<{ id: string; data: UpdateIdiomaRequest }>(
+    updateDiccionario: rxMethod<{ id: string; data: UpdateDiccionarioRequest }>(
       pipe(
         tap(() =>
           patchState(store, { loading: true, error: null, success: false })
         ),
         switchMap(({ id, data }) =>
           repository.update(id, data).pipe(
-            tap((updatedIdioma) => {
-              const currentIdiomas = store.idiomas();
-              const updatedIdiomas = currentIdiomas.map((m) =>
-                m._id === id ? updatedIdioma : m
+            tap((updated) => {
+              const current = store.diccionarios();
+              const updatedList = current.map((m) =>
+                m._id === id ? updated : m
               );
               patchState(store, {
-                idiomas: updatedIdiomas,
-                selectedIdioma: updatedIdioma,
+                diccionarios: updatedList,
+                selectedDiccionario: updated,
                 loading: false,
                 success: true,
               });
@@ -141,7 +141,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al actualizar idioma',
+                error: error.error?.message || 'Error al actualizar diccionario',
                 success: false,
               });
               return of(null);
@@ -150,19 +150,17 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    deleteIdioma: rxMethod<string>(
+    deleteDiccionario: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((id) =>
           repository.delete(id).pipe(
             tap(() => {
-              const currentIdiomas = store.idiomas();
-              const filteredIdiomas = currentIdiomas.filter(
-                (m) => m._id !== id
-              );
+              const current = store.diccionarios();
+              const filtered = current.filter((m) => m._id !== id);
               patchState(store, {
-                idiomas: filteredIdiomas,
-                selectedIdioma: null,
+                diccionarios: filtered,
+                selectedDiccionario: null,
                 loading: false,
                 success: true,
               });
@@ -170,7 +168,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al eliminar idioma',
+                error: error.error?.message || 'Error al eliminar diccionario',
                 success: false,
               });
               return of(null);
@@ -181,7 +179,7 @@ export class IdiomasStore extends signalStore(
     ),
     clearError: () => patchState(store, { error: null }),
     setError: (message: string) => patchState(store, { error: message, loading: false }),
-    clearSelection: () => patchState(store, { selectedIdioma: null }),
+    clearSelection: () => patchState(store, { selectedDiccionario: null }),
     clearSuccess: () => patchState(store, { success: false }),
     setInitialState: () => {
       patchState(store, { ...initialState });

@@ -6,35 +6,33 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { IdiomasStore } from '../../../state/idiomas.store';
+import { FondosStore } from '../../../state/fondos.store';
+import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-idioma-detail',
+  selector: 'app-fondo-detail',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
+    CommonModule, RouterModule,
+    MatButtonModule, MatIconModule, MatCardModule,
+    MatProgressSpinnerModule, MatDialogModule,
+    CollapsibleSectionComponent,
   ],
-  providers: [IdiomasStore],
+  providers: [FondosStore],
   template: `
     <div class="detail-container">
       <header class="detail-header">
         <button mat-icon-button (click)="goBack()" aria-label="Volver" class="volver">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        @if (store.selectedIdioma(); as m) {
+        @if (store.selectedFondo(); as f) {
           <div class="header-actions">
-            <button mat-stroked-button (click)="navigateToEdit(m._id)">
+            <button mat-stroked-button (click)="navigateToEdit(f._id)">
               <mat-icon>edit</mat-icon>
               Editar
             </button>
-            <button mat-stroked-button color="warn" (click)="confirmDelete(m._id)">
+            <button mat-stroked-button color="warn" (click)="confirmDelete(f._id)">
               <mat-icon>delete</mat-icon>
               Eliminar
             </button>
@@ -45,7 +43,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
       @if (store.isLoading()) {
         <div class="cargando">
           <mat-spinner diameter="36"></mat-spinner>
-          <span>Cargando detalles del idioma…</span>
+          <span>Cargando detalles del fondo documental…</span>
         </div>
       }
       @if (store.hasError()) {
@@ -55,26 +53,50 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
           <button mat-button (click)="store.clearError()">Cerrar</button>
         </div>
       }
-      @if (store.selectedIdioma(); as m) {
+      @if (store.selectedFondo(); as f) {
         <mat-card class="ficha" appearance="outlined">
           <div class="ficha-cabecera">
             <div class="titulo">
-              <mat-icon>translate</mat-icon>
-              <h1>{{ m.idioma }}</h1>
+              <mat-icon>folder</mat-icon>
+              <h1>{{ f.nombre }}</h1>
             </div>
-            <span class="simr-codigo">ID {{ m._id }}</span>
+            <span class="simr-codigo">ID {{ f._id }}</span>
           </div>
+
+          @if (f.tipo) {
+            <app-collapsible-section title="Tipo" icon="category">
+              <p class="desc-text">{{ f.tipo }}</p>
+            </app-collapsible-section>
+          }
+
+          @if (f.propiedadComodato) {
+            <app-collapsible-section title="Propiedad/Comodato" icon="description">
+              <p class="desc-text">{{ f.propiedadComodato }}</p>
+            </app-collapsible-section>
+          }
+
+          @if (f.fechaDeCreacion) {
+            <app-collapsible-section title="Fecha de creación" icon="calendar_month">
+              <p class="desc-text">{{ f.fechaDeCreacion | date:'dd/MM/yyyy' }}</p>
+            </app-collapsible-section>
+          }
+
+          @if (f.precision) {
+            <app-collapsible-section title="Precisión" icon="tune">
+              <p class="desc-text">{{ f.precision }}</p>
+            </app-collapsible-section>
+          }
 
           <section class="seccion">
             <h3><mat-icon>person</mat-icon> Información del Creador</h3>
             <div class="info-grid">
               <div class="info-item">
                 <label>Nombre completo</label>
-                <span>{{ getCreatorName(m.creador) }}</span>
+                <span>{{ getCreatorName(f.creador) }}</span>
               </div>
               <div class="info-item">
                 <label>Fecha de creación</label>
-                <span>{{ m.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
+                <span>{{ f.creado | date: 'dd/MM/yyyy HH:mm' }}</span>
               </div>
             </div>
           </section>
@@ -83,8 +105,8 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
         @if (!store.isLoading()) {
           <div class="empty-state">
             <mat-icon>info</mat-icon>
-            <p>Idioma no encontrado.</p>
-            <button mat-stroked-button routerLink="/idiomas">Volver al listado</button>
+            <p>Fondo documental no encontrado.</p>
+            <button mat-stroked-button routerLink="/fondos">Volver al listado</button>
           </div>
         }
       }
@@ -103,6 +125,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     .titulo mat-icon { font-size: 2rem; width: 2rem; height: 2rem; color: var(--simr-cobre); }
     .titulo h1 { margin: 0; font-family: var(--simr-display); font-weight: 600; font-size: 2rem; color: var(--simr-hueso); }
     .ficha-cabecera .simr-codigo { color: rgba(251, 249, 244, 0.7); }
+    .desc-text { padding: 0.5rem 0; line-height: 1.6; color: var(--simr-tinta-2); }
     .seccion { padding: 1.5rem 2rem; border-bottom: 1px solid var(--mat-sys-outline); }
     .seccion:last-child { border-bottom: none; }
     .seccion h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem; font-family: var(--simr-body); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--simr-sello); }
@@ -115,21 +138,22 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
     .empty-state mat-icon { font-size: 3rem; width: 3rem; height: 3rem; }
   `],
 })
-export class IdiomaDetailComponent implements OnInit {
-  protected readonly store = inject(IdiomasStore);
+export class FondoDetailComponent implements OnInit {
+  protected readonly store = inject(FondosStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
 
-  protected idiomaId: string | null = null;
+  protected fondoId: string | null = null;
+  protected readonly fondo = this.store.selectedFondo;
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
-        this.idiomaId = id;
+        this.fondoId = id;
         this.store.setInitialState();
-        this.store.loadIdiomaById(id);
+        this.store.loadById(id);
       }
     });
   }
@@ -142,22 +166,17 @@ export class IdiomaDetailComponent implements OnInit {
   }
 
   navigateToEdit(id: string) {
-    this.router.navigate(['/idiomas/edit', id]);
+    this.router.navigate(['/fondos/edit', id]);
   }
 
   confirmDelete(id: string) {
-    const name = this.store.selectedIdioma()?.idioma || 'este idioma';
+    const name = this.store.selectedFondo()?.nombre || 'este fondo';
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Eliminar idioma',
-        message: `¿Confirma eliminar "${name}"?`,
-        confirmText: 'Eliminar',
-        danger: true,
-      },
+      data: { title: 'Eliminar fondo documental', message: `¿Confirma eliminar "${name}"?`, confirmText: 'Eliminar', danger: true },
     });
     dialogRef.afterClosed().subscribe((ok) => {
       if (ok) {
-        this.store.deleteIdioma(id);
+        this.store.delete(id);
         setTimeout(() => {
           if (!this.store.hasError()) {
             this.goBack();
@@ -168,6 +187,6 @@ export class IdiomaDetailComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/idiomas']);
+    this.router.navigate(['/fondos']);
   }
 }

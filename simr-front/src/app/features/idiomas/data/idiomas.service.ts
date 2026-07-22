@@ -11,7 +11,7 @@ import { environment } from '@env/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class IdiomaService {
+export class IdiomasService {
   private readonly http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/idiomas`;
 
@@ -33,5 +33,9 @@ export class IdiomaService {
 
   delete(id: string): Observable<Idioma> {
     return this.http.delete<Idioma>(`${this.API_URL}/${id}`);
+  }
+
+  search(term: string): Observable<Idioma[]> {
+    return this.http.get<Idioma[]>(`${this.API_URL}?idioma=${encodeURIComponent(term)}`);
   }
 }

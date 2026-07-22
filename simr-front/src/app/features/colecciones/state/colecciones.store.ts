@@ -9,52 +9,52 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { switchMap, pipe, catchError, of, tap, finalize } from 'rxjs';
 import {
-  Idioma,
-  CreateIdiomaRequest,
-  UpdateIdiomaRequest,
-} from '../domain/idioma.interface';
-import { IdiomasService } from '../data/idiomas.service';
+  Coleccion,
+  CreateColeccionRequest,
+  UpdateColeccionRequest,
+} from '../domain/coleccion.interface';
+import { ColeccionesService } from '../data/colecciones.service';
 
-interface IdiomasState {
-  idiomas: Idioma[];
-  selectedIdioma: Idioma | null;
+interface ColeccionesState {
+  colecciones: Coleccion[];
+  selectedColeccion: Coleccion | null;
   loading: boolean;
   error: string | null;
   success: boolean;
 }
 
-const initialState: IdiomasState = {
-  idiomas: [],
-  selectedIdioma: null,
+const initialState: ColeccionesState = {
+  colecciones: [],
+  selectedColeccion: null,
   loading: false,
   error: null,
   success: false,
 };
 
 @Injectable()
-export class IdiomasStore extends signalStore(
+export class ColeccionesStore extends signalStore(
   withState(initialState),
   withComputed((store) => ({
-    idiomasCount: computed(() => store.idiomas().length),
-    hasIdiomas: computed(() => store.idiomas().length > 0),
+    coleccionesCount: computed(() => store.colecciones().length),
+    hasColecciones: computed(() => store.colecciones().length > 0),
     isLoading: computed(() => store.loading()),
     hasError: computed(() => !!store.error()),
   })),
-  withMethods((store, repository = inject(IdiomasService)) => ({
-    loadIdiomas: rxMethod<void>(
+  withMethods((store, repository = inject(ColeccionesService)) => ({
+    loadColecciones: rxMethod<void>(
       pipe(
         tap(() =>
           patchState(store, { loading: true, error: null, success: false })
         ),
         switchMap(() =>
           repository.getAll().pipe(
-            tap((idiomas) =>
-              patchState(store, { idiomas, loading: false, success: true })
+            tap((colecciones) =>
+              patchState(store, { colecciones, loading: false, success: true })
             ),
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al cargar idiomas',
+                error: error.error?.message || 'Error al cargar colecciones',
                 success: false,
               });
               return of([]);
@@ -63,14 +63,14 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    loadIdiomaById: rxMethod<string>(
+    loadColeccionById: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((id) =>
           repository.getById(id).pipe(
-            tap((idioma) =>
+            tap((coleccion) =>
               patchState(store, {
-                selectedIdioma: idioma,
+                selectedColeccion: coleccion,
                 loading: false,
                 success: true,
               })
@@ -78,7 +78,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al cargar idioma',
+                error: error.error?.message || 'Error al cargar colección',
                 success: false,
               });
               return of(null);
@@ -87,17 +87,17 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    createIdioma: rxMethod<CreateIdiomaRequest>(
+    createColeccion: rxMethod<CreateColeccionRequest>(
       pipe(
         tap(() =>
           patchState(store, { loading: true, error: null, success: false })
         ),
         switchMap((data) =>
           repository.create(data).pipe(
-            tap((newIdioma) => {
-              const currentIdiomas = store.idiomas();
+            tap((newColeccion) => {
+              const currentColecciones = store.colecciones();
               patchState(store, {
-                idiomas: [newIdioma, ...currentIdiomas],
+                colecciones: [newColeccion, ...currentColecciones],
                 loading: false,
                 success: true,
               });
@@ -108,7 +108,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al crear idioma',
+                error: error.error?.message || 'Error al crear colección',
               });
               return of(null);
             })
@@ -116,21 +116,21 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    updateIdioma: rxMethod<{ id: string; data: UpdateIdiomaRequest }>(
+    updateColeccion: rxMethod<{ id: string; data: UpdateColeccionRequest }>(
       pipe(
         tap(() =>
           patchState(store, { loading: true, error: null, success: false })
         ),
         switchMap(({ id, data }) =>
           repository.update(id, data).pipe(
-            tap((updatedIdioma) => {
-              const currentIdiomas = store.idiomas();
-              const updatedIdiomas = currentIdiomas.map((m) =>
-                m._id === id ? updatedIdioma : m
+            tap((updatedColeccion) => {
+              const currentColecciones = store.colecciones();
+              const updatedColecciones = currentColecciones.map((c) =>
+                c._id === id ? updatedColeccion : c
               );
               patchState(store, {
-                idiomas: updatedIdiomas,
-                selectedIdioma: updatedIdioma,
+                colecciones: updatedColecciones,
+                selectedColeccion: updatedColeccion,
                 loading: false,
                 success: true,
               });
@@ -141,7 +141,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al actualizar idioma',
+                error: error.error?.message || 'Error al actualizar colección',
                 success: false,
               });
               return of(null);
@@ -150,19 +150,19 @@ export class IdiomasStore extends signalStore(
         )
       )
     ),
-    deleteIdioma: rxMethod<string>(
+    deleteColeccion: rxMethod<string>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((id) =>
           repository.delete(id).pipe(
             tap(() => {
-              const currentIdiomas = store.idiomas();
-              const filteredIdiomas = currentIdiomas.filter(
-                (m) => m._id !== id
+              const currentColecciones = store.colecciones();
+              const filteredColecciones = currentColecciones.filter(
+                (c) => c._id !== id
               );
               patchState(store, {
-                idiomas: filteredIdiomas,
-                selectedIdioma: null,
+                colecciones: filteredColecciones,
+                selectedColeccion: null,
                 loading: false,
                 success: true,
               });
@@ -170,7 +170,7 @@ export class IdiomasStore extends signalStore(
             catchError((error) => {
               patchState(store, {
                 loading: false,
-                error: error.error?.message || 'Error al eliminar idioma',
+                error: error.error?.message || 'Error al eliminar colección',
                 success: false,
               });
               return of(null);
@@ -181,7 +181,7 @@ export class IdiomasStore extends signalStore(
     ),
     clearError: () => patchState(store, { error: null }),
     setError: (message: string) => patchState(store, { error: message, loading: false }),
-    clearSelection: () => patchState(store, { selectedIdioma: null }),
+    clearSelection: () => patchState(store, { selectedColeccion: null }),
     clearSuccess: () => patchState(store, { success: false }),
     setInitialState: () => {
       patchState(store, { ...initialState });

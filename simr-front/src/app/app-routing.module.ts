@@ -67,14 +67,34 @@ const routes: Routes = [
       import('./features/sistemas/sistemas.routes').then((r) => r.SISTEMAS_ROUTES),
   },
   {
+    path: 'fondos',
+    loadChildren: () =>
+      import('./features/fondos/fondos.routes').then((r) => r.FONDOS_ROUTES),
+  },
+  {
     path: 'instrumentos',
     loadChildren: () =>
       import('./features/instrumentos/instrumentos.routes').then((r) => r.INSTRUMENTOS_ROUTES),
   },
   {
+    path: 'colecciones',
+    loadChildren: () =>
+      import('./features/colecciones/colecciones.routes').then((r) => r.COLECCIONES_ROUTES),
+  },
+  {
+    path: 'generos-no-musicales',
+    loadChildren: () =>
+      import('./features/generos-no-musicales/generos-no-musicales.routes').then((r) => r.GENEROS_NO_MUSICALES_ROUTES),
+  },
+  {
     path: 'idiomas',
     loadChildren: () =>
       import('./features/idiomas/idiomas.routes').then((r) => r.IDIOMAS_ROUTES),
+  },
+  {
+    path: 'proyectos',
+    loadChildren: () =>
+      import('./features/proyectos/proyectos.routes').then((r) => r.PROYECTOS_ROUTES),
   },
   {
     path: 'listas',

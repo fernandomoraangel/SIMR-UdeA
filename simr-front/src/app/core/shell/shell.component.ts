@@ -47,14 +47,14 @@ export class ShellComponent implements OnInit {
     {
       label: 'Proyectos',
       items: [
-        { label: 'Proyectos', ruta: '/no-implementado/proyectos' },
+        { label: 'Proyectos', ruta: '/proyectos' },
       ],
     },
     {
       label: 'Fondos',
       items: [
-        { label: 'Fondos documentales', ruta: '/no-implementado/fondos' },
-        { label: 'Colecciones', ruta: '/no-implementado/colecciones' },
+        { label: 'Fondos documentales', ruta: '/fondos' },
+        { label: 'Colecciones', ruta: '/colecciones' },
       ],
     },
     {
@@ -64,8 +64,8 @@ export class ShellComponent implements OnInit {
         { label: 'Medios sonoros', ruta: '/medios' },
         { label: 'Sistemas sonoros', ruta: '/sistemas' },
         { label: 'Instrumentos', ruta: '/instrumentos' },
-        { label: 'Géneros o Formas', ruta: '/no-implementado/generos' },
-        { label: 'Géneros no musicales', ruta: '/no-implementado/generosnomusicales' },
+        { label: 'Géneros o Formas', ruta: '/generos' },
+        { label: 'Géneros no musicales', ruta: '/generos-no-musicales' },
         { label: 'Idiomas', ruta: '/idiomas' },
         { label: 'Diccionario', ruta: '/diccionarios' },
         { label: 'Listas', ruta: '/listas' },
