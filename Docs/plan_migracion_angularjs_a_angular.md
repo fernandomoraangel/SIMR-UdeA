@@ -44,11 +44,11 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 
 | # | Módulo | Tipo | CRUD completo | Usa `<archivo-manager>` (MinIO) | Estado en `simr-front` |
 |---|---|---|---|---|---|
-| 1 | `authentication` | Auth | — | No | 🟡 Reutilizable (login/registro), ajustar apariencia al legacy |
+| 1 | `authentication` | Auth | — | No | ✅ **Migrado:** login/registro con Angular Material, `AuthDialogComponent`, cookies httpOnly, integrado con shell. |
 | 2 | `core` | Shell/menú/guard | — | No | ✅ **Migrado (Material):** `ShellComponent` con `mat-toolbar` + `mat-menu` + `mat-icon`, login/registro como popup (`AuthDialogComponent`), marca de agua en `/`, bienvenida sin formularios. Módulos no migrados → `/no-implementado/:modulo`; idiomas/diccionarios → rutas reales. `AuthorizationService` + `AuthDialogService` + `SweetAlertService`. Cero Bootstrap/FA/jQuery. Smoke 3/3 en verde. |
-| 3 | `admin` | Gestión roles/usuarios | No (forms propios) | No | ❌ Pendiente |
-| 4 | `auditoria` | Solo lectura | No (list) | No | ❌ Pendiente |
-| 5 | `listas` | Datos de referencia transversales | No (list) | No | ❌ Pendiente (bloqueante para el resto) |
+| 3 | `admin` | Gestión roles/usuarios | No (forms propios) | No | ✅ **Migrado:** roles y usuarios CRUD + detalle, permisos por rol, reasignación de propiedad al borrar usuario. |
+| 4 | `auditoria` | Solo lectura | No (list) | No | ✅ **Migrado:** listado con filtros, paginación, vista de detalle de eventos. |
+| 5 | `listas` | Datos de referencia transversales | No (list) | No | ✅ **Migrado:** servicio transversal de listas, vista de administración (create/edit/delete). Consumido por todos los módulos CRUD. |
 | 6 | `diccionarios` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
 | 7 | `idiomas` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
 | 8 | `materias` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-21):** gestión unificada (list/create/edit/detail) con Angular Material, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna persistidas. |
@@ -64,11 +64,11 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 18 | `proyectos` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 19 | `actores` | CRUD | ✅ | Sí | ❌ Ensayo no válido → rehacer |
 | 20 | `obras` | CRUD (el más complejo) | ✅ | Sí | ❌ Pendiente (última pieza CRUD) |
-| 21 | `archivos` | Directiva embebida MinIO | — | (es el proveedor) | 🟢 Conservar (gestión MinIO ya válida en `features/archivos`) |
-| 22 | `search` | Buscador global | — | No | ❌ Pendiente |
+| 21 | `archivos` | Directiva embebida MinIO | — | (es el proveedor) | ✅ **Migrado:** `ArchivoManagerComponent` reutilizable, servicio completo (upload/download/delete/batch), sin puente popup/postMessage. |
+| 22 | `search` | Buscador global | — | No | ✅ **Migrado:** buscador global con filtros fuzzy, resultados por tipo de entidad. |
 | 23 | `graph` | Visualización D3 | — | No | ❌ Pendiente (sin librería elegida en Angular) |
 
-**Total a migrar:** los 23 módulos del legacy, todos desde cero replicando fielmente el legacy. Lo existente en `simr-front` se descarta como base.
+**Total a migrar:** los 23 módulos del legacy. Hoy **10 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + graph pendiente). Lo existente en `simr-front` para diccionarios/idiomas/actores se trata como ensayo descartable.
 
 ### 2.2 Puntos de riesgo ya identificados
 
