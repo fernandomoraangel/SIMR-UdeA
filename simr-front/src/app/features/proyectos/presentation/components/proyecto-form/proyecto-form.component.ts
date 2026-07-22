@@ -95,7 +95,7 @@ const PRECISION_DATE_OPTIONS = ['Año', 'Mes', 'Día'];
                   <input matInput [matAutocomplete]="autoActor" [formControl]="actorControl" placeholder="Escriba el nombre..." />
                   <mat-autocomplete #autoActor="matAutocomplete" (optionSelected)="onActorSelect($event)" [displayWith]="displayActorFn">
                     @for (a of filteredActores(); track a._id) {
-                      <mat-option [value]="a">{{ a.nombre }}</mat-option>
+                      <mat-option [value]="a">{{ a.fullName || (a.nombres + ' ' + a.apellidos) }}</mat-option>
                     }
                     @if (filteredActores().length === 0 && actorControl.value && typeof actorControl.value === 'string') {
                       <mat-option disabled>Sin resultados</mat-option>
@@ -145,7 +145,7 @@ const PRECISION_DATE_OPTIONS = ['Año', 'Mes', 'Día'];
                 <div class="items-list">
                   @for (inv of investigadoresItems; track $index) {
                     <div class="rel-item">
-                      <span class="rel-nombre">{{ inv.nombre || getActorNombre(inv.id) }}</span>
+                      <span class="rel-nombre">{{ inv.fullName || inv.nombre || getActorNombre(inv.id) }}</span>
                       <span class="rel-detalle">{{ inv.rol }}</span>
                       @if (inv.activoDesde) {
                         <span class="rel-detalle">{{ inv.activoDesde | date:'dd/MM/yyyy' }}{{ inv.precisionActivoDesde ? ' (' + inv.precisionActivoDesde + ')' : '' }}</span>
@@ -345,7 +345,8 @@ export class ProyectoFormComponent implements OnInit {
         const term = val.toLowerCase().trim();
         this.filteredActores.set(
           this.actores().filter((a: any) =>
-            a.nombre.toLowerCase().includes(term) && !this.investigadoresItems.find((i) => i.id === a._id)
+            (a.fullName || (a.nombres + ' ' + a.apellidos)).toLowerCase().includes(term)
+            && !this.investigadoresItems.find((i) => i.id === a._id)
           )
         );
       }
@@ -381,7 +382,7 @@ export class ProyectoFormComponent implements OnInit {
 
   private loadReferenceData() {
     const apiUrl = environment.apiUrl;
-    this.http.get(`${apiUrl}/actores?select=nombre`).subscribe({
+    this.http.get(`${apiUrl}/actores`).subscribe({
       next: (data: any) => {
         const items = Array.isArray(data) ? data : data?.data || [];
         this.actores.set(items);
@@ -418,7 +419,7 @@ export class ProyectoFormComponent implements OnInit {
   }
 
   protected displayActorFn(actor: any): string {
-    return actor?.nombre || '';
+    return actor?.fullName || (actor?.nombres ? actor.nombres + ' ' + (actor.apellidos || '') : '');
   }
 
   protected onActorSelect(event: MatAutocompleteSelectedEvent) {
@@ -429,7 +430,7 @@ export class ProyectoFormComponent implements OnInit {
   protected getActorNombre(id: string): string {
     if (!id) return '';
     const found = this.actores().find((a: any) => a._id === id);
-    return found?.nombre || '(cargando…)';
+    return found?.fullName || (found?.nombres ? found.nombres + ' ' + (found.apellidos || '') : '') || '(cargando…)';
   }
 
   protected addInvestigador() {
@@ -437,7 +438,8 @@ export class ProyectoFormComponent implements OnInit {
     if (!actor || typeof actor === 'string') return;
     const inv: Investigador = {
       id: actor._id,
-      nombre: actor.nombre,
+      nombre: actor.fullName || (actor.nombres + ' ' + (actor.apellidos || '')),
+      fullName: actor.fullName || (actor.nombres + ' ' + (actor.apellidos || '')),
       rol: this.rolControl.value || '',
       activoDesde: this.activoDesdeControl.value || undefined,
       precisionActivoDesde: this.precisionActivoDesdeControl.value || undefined,

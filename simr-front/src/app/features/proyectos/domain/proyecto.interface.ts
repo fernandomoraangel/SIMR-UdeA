@@ -1,6 +1,7 @@
 export interface Investigador {
   id: string;
   nombre?: string;
+  fullName?: string;
   rol: string;
   activoDesde?: Date | string;
   precisionActivoDesde?: string;
