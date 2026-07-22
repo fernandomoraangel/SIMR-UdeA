@@ -157,7 +157,7 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => `${ctx.parsed.y} registro(s)`,
+              label: (ctx: any) => `${ctx.parsed.y} registro(s)`,
             },
           },
         },

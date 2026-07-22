@@ -27,8 +27,8 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 - **ArchivoManagerComponent** — componente reutilizable de gestión de archivos MinIO
 - **ColumnSelectorComponent** — selector de campos visibles con persistencia vía preferencias de usuario
 
-### ❌ Pendientes
-1. **Grafo** (visualización D3) — último
+### ✅ Migración completa
+- **Grafo** — migrado con D3.js v7 force-directed graph. Componente standalone con SVG, zoom/pan, drag, tooltip hover, navegación a detalle al click. SignalStore + SignalStore Service. API `/api/graph/*` endpoints existentes en backend. Ruta `/graph` lazy.
 
 ## Componentes compartidos listos para reusar (sin cambios necesarios)
 

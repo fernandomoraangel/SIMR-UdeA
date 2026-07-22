@@ -137,6 +137,11 @@ const routes: Routes = [
       import('./features/estadisticas/estadisticas.routes').then((r) => r.ESTADISTICAS_ROUTES),
   },
   {
+    path: 'graph',
+    loadChildren: () =>
+      import('./features/graph/graph.routes').then((r) => r.GRAPH_ROUTES),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then((r) => r.ADMIN_ROUTES),

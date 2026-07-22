@@ -76,7 +76,7 @@ export class ShellComponent implements OnInit {
       items: [
         { label: 'Búsqueda General', ruta: '/search' },
         { label: 'Estadísticas', ruta: '/estadisticas' },
-        { label: 'Grafo de Base de Datos', ruta: '/no-implementado/graph' },
+        { label: 'Grafo de Base de Datos', ruta: '/graph' },
       ],
     },
   ];
