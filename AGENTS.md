@@ -9,7 +9,14 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 - **Materias** — migrado con gestión unificada, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna
 - **Medios** — migrado (Reactive Forms, CollapsibleSectionComponent, AnotacionMapComponent con MapLibre GL JS, estilo visual idéntico)
 - **Sistemas** — migrado con el mismo patrón que Medios + relaciones entre sistemas (padres/hijos/relacionados)
-- **Instrumentos** — migrado con asistente **Hornbostel-Sachs** (HsWizardComponent + HsClassificationService), auto-detect universal al escribir nombre, árbol jerárquico con 643 nodos desde MIMO, ~1761 instrumentos universales precargados. JSONs estáticos en `src/assets/data/`
+- **Instrumentos** — migrado con asistente **Hornbostel-Sachs** (HsWizardComponent + HsClassificationService), auto-detect universal al escribir nombre, árbol jerárquico con 643 nodos desde MIMO, ~1761 instrumentos universales precargados. Popup con desglose por niveles en español al hover.
+- **Géneros** — migrado con relaciones padre/hijo/relacionados, idiomas, sistemas sonoros, medios sonoros, proyectos, anotaciones, descriptores, enlaces, archivos
+- **Géneros no musicales** — migrado similar a Géneros (sin sistemas/medios/proyectos)
+- **Fondos** — migrado (nombre, tipo, propiedad/comodato, fecha, precisión)
+- **Colecciones** — migrado (mismos campos que Fondos)
+- **Idiomas** — migrado (módulo simple de 3 campos)
+- **Diccionarios** — migrado (tabla, campo, campoLargo, definición)
+- **Proyectos** — migrado con investigadores (ref Actor), fechas asociadas, estado, descriptores, enlaces, archivos
 - **AnotacionMapComponent** — migrado de Leaflet a **MapLibre GL JS** (Canvas/WebGL). Popup con tooltip en hover, reutilizable por cualquier módulo
 - **CollapsibleSectionComponent** — fix `overflow: visible` en estado abierto para que mapas y contenido extenso no se recorten
 - **ArchivoManagerComponent** — componente reutilizable de gestión de archivos MinIO
@@ -18,16 +25,20 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 ### ❌ Pendientes (orden de migración)
 1. ~~**Sistemas**~~ ✅
 2. ~~**Instrumentos**~~ ✅ (con HS assistant)
-3. Géneros
-4. Géneros no musicales
-5. Fondos
-6. Colecciones
-7. Ejemplares
-8. Idiomas / Diccionarios (cerrar specs)
-9. Recursos
-10. Proyectos
-11. Actores (cerrar gaps)
-12. Obras (último, más complejo)
+3. ~~**Géneros**~~ ✅
+4. ~~**Géneros no musicales**~~ ✅
+5. ~~**Fondos**~~ ✅
+6. ~~**Colecciones**~~ ✅
+7. ~~**Ejemplares**~~
+8. ~~**Idiomas / Diccionarios**~~ ✅ (cerrados)
+9. ~~**Recursos**~~
+10. ~~**Proyectos**~~ ✅
+11. ~~**Actores**~~ (pendiente cerrar gaps)
+12. **Obras** (último, más complejo)
+13. **Ejemplares**
+14. **Recursos**
+15. **Actores** (cerrar gaps)
+16. **Grafo** (visualización D3)
 
 ## Componentes compartidos listos para reusar (sin cambios necesarios)
 
