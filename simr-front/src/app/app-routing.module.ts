@@ -62,6 +62,16 @@ const routes: Routes = [
       import('./features/medios/medios.routes').then((r) => r.MEDIOS_ROUTES),
   },
   {
+    path: 'sistemas',
+    loadChildren: () =>
+      import('./features/sistemas/sistemas.routes').then((r) => r.SISTEMAS_ROUTES),
+  },
+  {
+    path: 'instrumentos',
+    loadChildren: () =>
+      import('./features/instrumentos/instrumentos.routes').then((r) => r.INSTRUMENTOS_ROUTES),
+  },
+  {
     path: 'idiomas',
     loadChildren: () =>
       import('./features/idiomas/idiomas.routes').then((r) => r.IDIOMAS_ROUTES),

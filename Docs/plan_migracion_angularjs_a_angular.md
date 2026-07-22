@@ -53,8 +53,8 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 7 | `idiomas` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
 | 8 | `materias` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-21):** gestión unificada (list/create/edit/detail) con Angular Material, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna persistidas. |
 | 9 | `medios` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** mismo patrón que Materias, Reactive Forms, CollapsibleSectionComponent, AnotacionMapComponent con MapLibre GL JS (no Leaflet). Incluye anotaciones cartográfico-temporales con timeline + mapa + formulario de coordenadas. |
-| 10 | `sistemas` | CRUD | ✅ | Sí | ❌ Pendiente |
-| 11 | `instrumentos` | CRUD | ✅ | Sí | ❌ Pendiente |
+| 10 | `sistemas` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-22):** mismo patrón que Medios con relaciones padre/hijo/relacionados. SignalStore, CollapsibleSection, anotaciones, archivos, column-selector. |
+| 11 | `instrumentos` | CRUD | ✅ | Sí | ✅ **Migrado con asistente HS (2026-07-22):** HsClassificationService con árbol de 643 nodos + 1761 instrumentos universales. HsWizardComponent modal. Auto-detect Hornbostel-Sachs al escribir nombre. Popup con desglose por niveles en español al hover. |
 | 12 | `generos` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 13 | `generosnomusicales` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 14 | `fondos` | CRUD | ✅ | No | ❌ Pendiente |
@@ -68,7 +68,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 22 | `search` | Buscador global | — | No | ✅ **Migrado:** buscador global con filtros fuzzy, resultados por tipo de entidad. |
 | 23 | `graph` | Visualización D3 | — | No | ❌ Pendiente (sin librería elegida en Angular) |
 
-**Total a migrar:** los 23 módulos del legacy. Hoy **10 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + graph pendiente). Lo existente en `simr-front` para diccionarios/idiomas/actores se trata como ensayo descartable.
+**Total a migrar:** los 23 módulos del legacy. Hoy **12 migrados** (core + authentication + admin + auditoria + listas + archivos + search + materias + medios + sistemas + instrumentos + graph pendiente). Lo existente en `simr-front` para diccionarios/idiomas/actores se trata como ensayo descartable.
 
 ### 2.2 Puntos de riesgo ya identificados
 
@@ -172,8 +172,8 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 1. ✅ `materias` — **completado (2026-07-21):** gestión unificada con Angular Material + `ArchivoManagerComponent` + `ColumnSelectorComponent` + preferencias de columna.
 2. ✅ `medios` — **completado (2026-07-22):** mismo patrón que Materias, Reactive Forms, CollapsibleSectionComponent, anotaciones cartográfico-temporales con MapLibre GL JS (timeline + mapa + formulario de coordenadas).
-3. `sistemas` ← **siguiente**
-4. `instrumentos`
+3. ~~`sistemas`~~ ✅
+4. ~~`instrumentos`~~ ✅ (con HS assistant)
 5. `generos`
 6. `generosnomusicales`
 7. `fondos`

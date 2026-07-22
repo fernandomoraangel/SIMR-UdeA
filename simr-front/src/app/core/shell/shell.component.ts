@@ -62,8 +62,8 @@ export class ShellComponent implements OnInit {
       items: [
         { label: 'Materias', ruta: '/materias' },
         { label: 'Medios sonoros', ruta: '/medios' },
-        { label: 'Sistemas sonoros', ruta: '/no-implementado/sistemas' },
-        { label: 'Instrumentos', ruta: '/no-implementado/instrumentos' },
+        { label: 'Sistemas sonoros', ruta: '/sistemas' },
+        { label: 'Instrumentos', ruta: '/instrumentos' },
         { label: 'Géneros o Formas', ruta: '/no-implementado/generos' },
         { label: 'Géneros no musicales', ruta: '/no-implementado/generosnomusicales' },
         { label: 'Idiomas', ruta: '/idiomas' },
