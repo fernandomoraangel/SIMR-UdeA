@@ -77,6 +77,11 @@ const routes: Routes = [
       import('./features/instrumentos/instrumentos.routes').then((r) => r.INSTRUMENTOS_ROUTES),
   },
   {
+    path: 'generos',
+    loadChildren: () =>
+      import('./features/generos/generos.routes').then((r) => r.GENEROS_ROUTES),
+  },
+  {
     path: 'colecciones',
     loadChildren: () =>
       import('./features/colecciones/colecciones.routes').then((r) => r.COLECCIONES_ROUTES),
