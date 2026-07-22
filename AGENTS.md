@@ -45,15 +45,16 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 
 ## Principios de migración (orden de ejecución)
 
-1. **Clonar visualmente el módulo anterior.** Cada módulo nuevo debe usar la misma estructura de componentes, mismos shared components, mismo layout de formulario (CollapsibleSectionComponent), mismo estilo de tabla/tarjetas, mismo mapa y timeline. El usuario debe sentir que "Sistemas" es "Medios" pero con otros campos.
-2. **Usar Reactive Forms siempre** (no mezclar con ngModel).
-3. **Servicio con SignalStore** (patrón `@ngrx/signals`) como en Medios/Materias.
-4. **Ruta lazy** con `loadComponent` y guards de permisos.
-5. **Popups con MapLibre GL JS** (no Leaflet) para anotaciones cartográficas.
-6. **Gestion unificada:** un único item en el menú ("Sistemas") que lleva al listado, desde donde se crea, edita y ve detalle.
-7. **Override `overflow: visible`** en collapsible-body.open (fix aplicado global).
-8. **Coordenadas como `number[]`** del API, convertir con `Number()` donde se acceda.
-9. **Container restart** ocasional para limpiar cache de Angular (`docker restart simr-front_dev`).
+1. **Actualizar el menú primero.** Antes de crear cualquier componente, cambia la entrada del menú en `shell.component.ts` de `ruta: '/no-implementado/Sistemas'` a `ruta: '/sistemas'`. Esto asegura que la navegación apunte al módulo nuevo desde el inicio.
+2. **Clonar visualmente el módulo anterior.** Cada módulo nuevo debe usar la misma estructura de componentes, mismos shared components, mismo layout de formulario (CollapsibleSectionComponent), mismo estilo de tabla/tarjetas, mismo mapa y timeline. El usuario debe sentir que "Sistemas" es "Medios" pero con otros campos.
+3. **Usar Reactive Forms siempre** (no mezclar con ngModel).
+4. **Servicio con SignalStore** (patrón `@ngrx/signals`) como en Medios/Materias.
+5. **Ruta lazy** con `loadComponent` y guards de permisos.
+6. **Popups con MapLibre GL JS** (no Leaflet) para anotaciones cartográficas.
+7. **Gestion unificada:** un único item en el menú ("Sistemas") que lleva al listado, desde donde se crea, edita y ve detalle.
+8. **Override `overflow: visible`** en collapsible-body.open (fix aplicado global).
+9. **Coordenadas como `number[]`** del API, convertir con `Number()` donde se acceda.
+10. **Container restart** ocasional para limpiar cache de Angular (`docker restart simr-front_dev`).
 
 ## Plan Sistemas
 

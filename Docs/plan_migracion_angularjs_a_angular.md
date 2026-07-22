@@ -193,6 +193,7 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 #### 3.A Plantilla reutilizable por módulo (repetir para cada uno de la lista anterior)
 
+- [ ] **3.X.0. Actualizar el menú primero.** Cambiar en `shell.component.ts` la entrada del módulo de `ruta: '/no-implementado/<Modulo>'` a `ruta: '/<modulo>'`. Esto asegura que la navegación apunte al módulo nuevo desde el inicio, incluso antes de tener los componentes creados.
 - [ ] **3.X.1. Análisis del módulo legacy.**
   - [ ] Leer `public/<modulo>/controllers/<modulo>.client.controller.js`, `services/<modulo>.client.service.js`, `config/<modulo>.client.routes.js` y las 4 vistas.
   - [ ] Documentar campos del formulario, validaciones, relaciones con otras entidades (`Listas`, otros módulos), y si usa `<archivo-manager>`.
@@ -353,6 +354,7 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 ```
 ### Módulo: <nombre>
+- [ ] Actualizar menú (shell.component.ts: `ruta: '/no-implementado/X'` → `ruta: '/<modulo>'`)
 - [ ] Análisis legacy (controller/service/routes/vistas)
 - [ ] Modelo TS
 - [ ] Servicio Angular (list/getById/create/update/delete)
