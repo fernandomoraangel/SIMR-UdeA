@@ -3,6 +3,8 @@
    Hojas de estilo globales. SIN Bootstrap. Identidad propia en Angular Material.
    ========================================================================= */
 
+@import 'leaflet/dist/leaflet.css';
+
 :root {
   /* Paleta SIMR */
   --simr-tinta: #1f2a24; /* verde tinta profundo (casi negro) */

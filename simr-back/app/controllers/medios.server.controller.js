@@ -44,7 +44,7 @@ exports.list = async (req, res) => {
   try {
     const medios = await Medio.find()
       .sort("-created")
-      .populate("creador", "firstName lastName fullName")
+      .populate("creador", "firstName lastName")
       .populate("proyectosAsociados.proyecto", "nombre")
       .populate("instrumentos.instrumento", "nombre")
       .exec();
@@ -101,7 +101,7 @@ exports.delete = async (req, res) => {
 exports.medioByID = async (req, res, next, id) => {
   try {
     const medio = await Medio.findById(id)
-      .populate("creador", "firstName lastName fullName")
+      .populate("creador", "firstName lastName")
       .populate("proyectosAsociados.proyecto", "nombre")
       .populate("instrumentos.instrumento", "nombre")
       .exec();

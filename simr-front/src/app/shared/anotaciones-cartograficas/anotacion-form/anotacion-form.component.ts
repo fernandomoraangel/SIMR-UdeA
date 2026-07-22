@@ -93,12 +93,14 @@ import { AnotacionCartograficoTemporal, precisionFecha, toDisplayFecha } from '.
             <mat-label>Longitud</mat-label>
             <input matInput type="number" formControlName="longitud" placeholder="Ej: -75.5658" />
           </mat-form-field>
-          @if (form.controls.coordenadas.controls.latitud.value && form.controls.coordenadas.controls.longitud.value) {
-            <button mat-stroked-button (click)="abrirMapa()" title="Ver en mapa" type="button">
-              <mat-icon>open_in_new</mat-icon>
-              Mapa
-            </button>
-          }
+          <button mat-stroked-button (click)="abrirMapa()" title="Abrir en Google Maps" type="button">
+            <mat-icon>map</mat-icon>
+            Maps
+          </button>
+          <button mat-stroked-button (click)="pegarCoordenadas()" title="Pegar coordenadas del portapapeles" type="button">
+            <mat-icon>content_paste</mat-icon>
+            Pegar coords
+          </button>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -212,8 +214,48 @@ export class AnotacionFormComponent {
     const lat = this.form.controls.coordenadas.controls.latitud.value;
     const lng = this.form.controls.coordenadas.controls.longitud.value;
     if (lat != null && lng != null) {
-      window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}`, '_blank');
+      window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+    } else {
+      window.open('https://www.google.com/maps', '_blank');
     }
+  }
+
+  async pegarCoordenadas() {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+      const parsed = this.parseCoordinates(text);
+      if (parsed) {
+        this.form.controls.coordenadas.patchValue({
+          latitud: parsed.lat,
+          longitud: parsed.lng,
+        });
+      }
+    } catch {
+      // clipboard access denied or empty
+    }
+  }
+
+  private parseCoordinates(text: string): { lat: number; lng: number } | null {
+    const clean = text.trim();
+    // Google Maps URL: ...@lat,lng,z ... or ...?q=lat,lng
+    const urlMatch = clean.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/) ||
+      clean.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    if (urlMatch) {
+      const lat = parseFloat(urlMatch[1]);
+      const lng = parseFloat(urlMatch[2]);
+      if (!isNaN(lat) && !isNaN(lng)) return { lat, lng };
+    }
+    // Plain: "lat, lng" or "lat lng" or "lat,lng"
+    const parts = clean.split(/[,\s]+/).filter(Boolean);
+    if (parts.length >= 2) {
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+      if (!isNaN(lat) && !isNaN(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+        return { lat, lng };
+      }
+    }
+    return null;
   }
 
   save() {

@@ -160,7 +160,7 @@ import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaci
             <div class="info-grid">
               <div class="info-item">
                 <label>Nombre completo</label>
-                <span>{{ m.creador?.fullName || '—' }}</span>
+                <span>{{ getCreatorName(m.creador) }}</span>
               </div>
               <div class="info-item">
                 <label>Fecha de creación</label>
@@ -243,6 +243,13 @@ export class MedioDetailComponent implements OnInit {
         this.store.loadMedioById(id);
       }
     });
+  }
+
+  protected getCreatorName(creador: any): string {
+    if (!creador) return '—';
+    if (creador.fullName) return creador.fullName;
+    const parts = [creador.firstName, creador.lastName].filter(Boolean);
+    return parts.length ? parts.join(' ') : '—';
   }
 
   protected getInstNombre(ref: any): string {

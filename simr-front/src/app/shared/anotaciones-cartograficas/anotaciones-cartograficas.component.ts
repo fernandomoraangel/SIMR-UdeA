@@ -73,7 +73,10 @@ export type AnotacionesViewMode = 'edit' | 'timeline' | 'map';
           />
         }
         @case ('timeline') {
-          <app-anotacion-timeline [anotaciones]="anotaciones()" />
+          <app-anotacion-timeline
+            [anotaciones]="anotaciones()"
+            (edit)="onEditFromTimeline($event)"
+          />
         }
         @case ('map') {
           <app-anotacion-map [anotaciones]="anotaciones()" />
@@ -128,6 +131,11 @@ export class AnotacionesCartograficasComponent {
 
   onCancelEdit() {
     this.resetForm();
+  }
+
+  onEditFromTimeline(index: number) {
+    this.viewMode.set('edit');
+    this.onEdit(index);
   }
 
   private emitChange(list: AnotacionCartograficoTemporal[]) {
