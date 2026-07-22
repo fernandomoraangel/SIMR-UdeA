@@ -8,8 +8,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -18,10 +16,9 @@ import { environment } from '@env/environment';
 import { RecursosStore } from '../../../state/recursos.store';
 import { RecursosService } from '../../../data/recursos.service';
 import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
-import { ListEditorComponent } from '../../../../../shared/list-editor/list-editor.component';
 import { AutocompleteCreateComponent } from '../../../../../shared/autocomplete-create/autocomplete-create.component';
 import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaciones-cartograficas/anotaciones-cartograficas.component';
-import { AnotacionCartograficoTemporal, toDisplayFecha } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
+import { AnotacionCartograficoTemporal, toDisplayFecha, precisionFecha, formatDate } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
 import {
   VinculoRelacionadoEditorComponent, VinculoRelacionado
 } from '../../../../../shared/vinculo-relacionado-editor/vinculo-relacionado-editor.component';
@@ -32,7 +29,7 @@ import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/ar
 import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archivo.interface';
 import {
   ObraRelacionada, NumeroNormalizado, MencionResponsabilidad,
-  ContenedorAsociado, FuenteAsociada, TipoDeRecurso,
+  ContenedorAsociado, FuenteAsociada,
   MateriaAsociada, IdiomaAsociado, DescripcionTecnica, ProyectoAsociado
 } from '../../../domain/recurso.interface';
 
@@ -43,10 +40,8 @@ import {
     CommonModule, ReactiveFormsModule,
     MatButtonModule, MatIconModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatDatepickerModule, MatNativeDateModule,
     MatProgressSpinnerModule, MatProgressBarModule, MatTooltipModule,
     CollapsibleSectionComponent,
-    ListEditorComponent,
     AutocompleteCreateComponent,
     AnotacionesCartograficasComponent,
     VinculoRelacionadoEditorComponent,
@@ -89,226 +84,198 @@ import {
               <mat-label>Descripción</mat-label>
               <textarea matInput formControlName="descripcion" rows="3" placeholder="Descripción del recurso..."></textarea>
             </mat-form-field>
-          </div>
 
-          <app-collapsible-section title="Obras relacionadas" icon="library_music" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="obras"
-                placeholder="Buscar obra..."
-                displayField="nombre"
-                [selected]="obrasRelacionadasItems"
-                (selectedChange)="onObrasChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
+            <p class="subtitulo">Obras relacionadas</p>
+            <app-autocomplete-create
+              apiEndpoint="obras"
+              placeholder="Buscar obra..."
+              displayField="titulo"
+              [selected]="obrasRelacionadasItems"
+              (selectedChange)="onObrasChange($event)"
+            />
 
-          <app-collapsible-section title="Números normalizados" icon="tag" [collapsed]="true">
-            <div class="section-content">
-              <div class="inline-editor">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Nombre</mat-label>
-                  <mat-select [formControl]="numNormalizadoNombreControl">
-                    @for (n of listaNumeroNormalizado(); track n) {
-                      <mat-option [value]="n">{{ n }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
-                  <mat-label>Número</mat-label>
-                  <input matInput [formControl]="numNormalizadoNumeroControl" placeholder="Ej: 978-84-1234-567-8" />
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addNumeroNormalizado()"
-                  [disabled]="!numNormalizadoNombreControl.value || !numNormalizadoNumeroControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
-              </div>
-              @if (numeroNormalizadoItems.length > 0) {
-                <div class="items-list">
-                  @for (item of numeroNormalizadoItems; track $index) {
-                    <div class="rel-item">
-                      <span class="rel-nombre">{{ item.nombre }}</span>
-                      <span class="rel-detalle">{{ item.numero }}</span>
-                      <button mat-icon-button (click)="removeNumeroNormalizado($index)" color="warn" matTooltip="Eliminar" type="button">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </div>
+            <p class="subtitulo">Números normalizados</p>
+            <div class="inline-editor">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Nombre</mat-label>
+                <mat-select [formControl]="numNormalizadoNombreControl">
+                  @for (n of listaNumeroNormalizado(); track n) {
+                    <mat-option [value]="n">{{ n }}</mat-option>
                   }
-                </div>
-              } @else {
-                <p class="empty-hint">No hay números normalizados.</p>
-              }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
+                <mat-label>Número</mat-label>
+                <input matInput [formControl]="numNormalizadoNumeroControl" placeholder="Ej: 978-84-1234-567-8" />
+              </mat-form-field>
+              <button mat-stroked-button type="button" (click)="addNumeroNormalizado()"
+                [disabled]="!numNormalizadoNombreControl.value || !numNormalizadoNumeroControl.value">
+                <mat-icon>add</mat-icon>
+                Agregar
+              </button>
             </div>
-          </app-collapsible-section>
+            @if (numeroNormalizadoItems.length > 0) {
+              <div class="items-list">
+                @for (item of numeroNormalizadoItems; track $index) {
+                  <div class="rel-item">
+                    <span class="rel-nombre">{{ item.nombre }}</span>
+                    <span class="rel-detalle">{{ item.numero }}</span>
+                    <button mat-icon-button (click)="removeNumeroNormalizado($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-hint">No hay números normalizados.</p>
+            }
 
-          <app-collapsible-section title="Faceta" icon="face" [collapsed]="true">
-            <div class="section-content">
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Faceta</mat-label>
-                <input matInput formControlName="faceta" placeholder="Ej: faceta del recurso..." />
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Faceta</mat-label>
+              <input matInput formControlName="faceta" placeholder="Ej: faceta del recurso..." />
+            </mat-form-field>
+
+            <p class="subtitulo">Menciones de responsabilidad</p>
+            <div class="inline-editor">
+              <app-autocomplete-create
+                apiEndpoint="actores"
+                placeholder="Buscar actor..."
+                displayField="fullName"
+                [selected]="mencionActorSelection"
+                (selectedChange)="onMencionActorChange($event)"
+                class="campo-largo"
+              />
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Tipo de mención</mat-label>
+                <mat-select [formControl]="mencionTipoControl">
+                  @for (r of listaRoles(); track r) {
+                    <mat-option [value]="r">{{ r }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-stroked-button type="button" (click)="addMencion()"
+                [disabled]="!mencionActorSelection.length || !mencionTipoControl.value">
+                <mat-icon>add</mat-icon>
+                Agregar
+              </button>
+            </div>
+            @if (mencionItems.length > 0) {
+              <div class="items-list">
+                @for (m of mencionItems; track $index) {
+                  <div class="rel-item">
+                    <span class="rel-nombre">{{ getActorNombre(m.actor) }}</span>
+                    <span class="rel-detalle">{{ m.tipoDeMencion }}</span>
+                    <button mat-icon-button (click)="removeMencion($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-hint">No hay menciones de responsabilidad.</p>
+            }
+
+            <p class="subtitulo">Contenedores (recursos)</p>
+            <app-autocomplete-create
+              apiEndpoint="recursos"
+              placeholder="Buscar recurso contenedor..."
+              displayField="titulo"
+              [selected]="contenedoresItems"
+              (selectedChange)="onContenedoresChange($event)"
+            />
+
+            <p class="subtitulo">Fuente</p>
+            <div class="inline-editor">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Tipo de fuente</mat-label>
+                <mat-select [formControl]="fuenteTipoControl">
+                  @for (t of listaTipoFuente(); track t) {
+                    <mat-option [value]="t">{{ t }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Lugar</mat-label>
+                <input matInput [formControl]="fuenteLugarControl" placeholder="Ej: Bogotá" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
+                <mat-label>Nombre</mat-label>
+                <input matInput [formControl]="fuenteNombreControl" placeholder="Ej: Editorial XYZ" />
               </mat-form-field>
             </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Menciones de responsabilidad" icon="people" [collapsed]="true">
-            <div class="section-content">
-              <div class="inline-editor">
-                <app-autocomplete-create
-                  apiEndpoint="actores"
-                  placeholder="Buscar actor..."
-                  displayField="nombre"
-                  [selected]="mencionActorSelection"
-                  (selectedChange)="onMencionActorChange($event)"
-                  class="campo-largo"
-                />
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Tipo de mención</mat-label>
-                  <mat-select [formControl]="mencionTipoControl">
-                    @for (r of listaRoles(); track r) {
-                      <mat-option [value]="r">{{ r }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addMencion()"
-                  [disabled]="!mencionActorSelection.length || !mencionTipoControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
+            <div class="inline-editor">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Fecha (AAAA/MM/DD)</mat-label>
+                <input matInput [formControl]="fuenteFechaControl" placeholder="Ej: 1990/0/0 — Use 0 si no se conoce" />
+                <mat-hint>Escriba 0 en mes o día si no se conoce</mat-hint>
+              </mat-form-field>
+              <button mat-stroked-button type="button" (click)="addFuente()"
+                [disabled]="!fuenteTipoControl.value">
+                <mat-icon>add</mat-icon>
+                Agregar
+              </button>
+            </div>
+            @if (fuenteItems.length > 0) {
+              <div class="items-list">
+                @for (f of fuenteItems; track $index) {
+                  <div class="rel-item">
+                    <span class="rel-nombre">{{ f.tipoFuente }}</span>
+                    <span class="rel-detalle">{{ displayFuente(f) }}</span>
+                    <button mat-icon-button (click)="removeFuente($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
               </div>
-              @if (mencionItems.length > 0) {
-                <div class="items-list">
-                  @for (m of mencionItems; track $index) {
-                    <div class="rel-item">
-                      <span class="rel-nombre">{{ getActorNombre(m.actor) }}</span>
-                      <span class="rel-detalle">{{ m.tipoDeMencion }}</span>
-                      <button mat-icon-button (click)="removeMencion($index)" color="warn" matTooltip="Eliminar" type="button">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="empty-hint">No hay menciones de responsabilidad.</p>
-              }
-            </div>
-          </app-collapsible-section>
+            } @else {
+              <p class="empty-hint">No hay fuentes registradas.</p>
+            }
 
-          <app-collapsible-section title="Contenedores (recursos)" icon="folder_open" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="recursos"
-                placeholder="Buscar recurso contenedor..."
-                displayField="titulo"
-                [selected]="contenedoresItems"
-                (selectedChange)="onContenedoresChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
+            <p class="subtitulo">Tipos de recurso</p>
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Tipos de recurso</mat-label>
+              <mat-select [formControl]="tiposDeRecursoControl" multiple>
+                @for (t of listaTiposDeRecurso(); track t) {
+                  <mat-option [value]="t">{{ t }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          <app-collapsible-section title="Fuente" icon="source" [collapsed]="true">
-            <div class="section-content">
-              <div class="inline-editor">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Tipo de fuente</mat-label>
-                  <mat-select [formControl]="fuenteTipoControl">
-                    @for (t of listaTipoFuente(); track t) {
-                      <mat-option [value]="t">{{ t }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Lugar</mat-label>
-                  <input matInput [formControl]="fuenteLugarControl" placeholder="Ej: Bogotá" />
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
-                  <mat-label>Nombre</mat-label>
-                  <input matInput [formControl]="fuenteNombreControl" placeholder="Ej: Editorial XYZ" />
-                </mat-form-field>
-              </div>
-              <div class="inline-editor">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Fecha</mat-label>
-                  <input matInput [matDatepicker]="pickerFuente" [formControl]="fuenteFechaControl" />
-                  <mat-datepicker-toggle matSuffix [for]="pickerFuente"></mat-datepicker-toggle>
-                  <mat-datepicker #pickerFuente></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Precisión</mat-label>
-                  <mat-select [formControl]="fuentePrecisionControl">
-                    @for (p of precisiones(); track p) {
-                      <mat-option [value]="p">{{ p }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addFuente()"
-                  [disabled]="!fuenteTipoControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
-              </div>
-              @if (fuenteItems.length > 0) {
-                <div class="items-list">
-                  @for (f of fuenteItems; track $index) {
-                    <div class="rel-item">
-                      <span class="rel-nombre">{{ f.tipoFuente }}</span>
-                      <span class="rel-detalle">{{ f.nombre }}{{ f.lugar ? ' — ' + f.lugar : '' }}</span>
-                      <button mat-icon-button (click)="removeFuente($index)" color="warn" matTooltip="Eliminar" type="button">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="empty-hint">No hay fuentes registradas.</p>
-              }
-            </div>
-          </app-collapsible-section>
+            <p class="subtitulo">Materias</p>
+            <app-autocomplete-create
+              apiEndpoint="materias"
+              placeholder="Buscar materia..."
+              [selected]="materiaItems"
+              (selectedChange)="onMateriaChange($event)"
+            />
 
-          <app-collapsible-section title="Tipos de recurso" icon="category" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="listas/tiposDeRecurso"
-                placeholder="Buscar tipo de recurso..."
-                [selected]="tiposDeRecursoItems"
-                (selectedChange)="onTiposDeRecursoChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
+            <p class="subtitulo">Idiomas</p>
+            <app-autocomplete-create
+              apiEndpoint="idiomas"
+              placeholder="Buscar idioma..."
+              displayField="idioma"
+              [selected]="idiomaItems"
+              (selectedChange)="onIdiomasChange($event)"
+            />
 
-          <app-collapsible-section title="Anotaciones cartográfico temporales" icon="map" [collapsed]="true">
-            <div class="section-content">
-              <app-anotaciones-cartograficas
-                [anotaciones]="anotacionesItems"
-                [lugares]="lugares()"
-                [coberturas]="coberturas()"
-                (anotacionesChange)="anotacionesItems = $event"
-              />
-            </div>
-          </app-collapsible-section>
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Material acompañante</mat-label>
+              <input matInput formControlName="materialAcompanante" placeholder="Ej: CD-ROM adjunto" />
+            </mat-form-field>
 
-          <app-collapsible-section title="Materias" icon="book" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="materias"
-                placeholder="Buscar materia..."
-                [selected]="materiaItems"
-                (selectedChange)="onMateriaChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Mención de serie</mat-label>
+              <input matInput formControlName="mencionDeSerie" placeholder="Ej: Colección Músicas Regionales No. 5" />
+            </mat-form-field>
 
-          <app-collapsible-section title="Idiomas" icon="language" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="idiomas"
-                placeholder="Buscar idioma..."
-                displayField="idioma"
-                [selected]="idiomaItems"
-                (selectedChange)="onIdiomasChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
+            <p class="subtitulo">Proyectos asociados</p>
+            <app-autocomplete-create
+              apiEndpoint="proyectos"
+              placeholder="Buscar proyecto..."
+              [selected]="proyectosItems"
+              (selectedChange)="onProyectosChange($event)"
+            />
+          </div>
 
           <app-collapsible-section title="Descripción técnica" icon="settings" [collapsed]="true">
             <div class="section-content">
@@ -349,31 +316,13 @@ import {
             </div>
           </app-collapsible-section>
 
-          <app-collapsible-section title="Material acompañante" icon="inventory_2" [collapsed]="true">
+          <app-collapsible-section title="Anotaciones cartográfico temporales" icon="map" [collapsed]="true">
             <div class="section-content">
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Material acompañante</mat-label>
-                <input matInput formControlName="materialAcompanante" placeholder="Ej: CD-ROM adjunto" />
-              </mat-form-field>
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Mención de serie" icon="collections_bookmark" [collapsed]="true">
-            <div class="section-content">
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Mención de serie</mat-label>
-                <input matInput formControlName="mencionDeSerie" placeholder="Ej: Colección Músicas Regionales No. 5" />
-              </mat-form-field>
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Proyectos asociados" icon="assignment" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="proyectos"
-                placeholder="Buscar proyecto..."
-                [selected]="proyectosItems"
-                (selectedChange)="onProyectosChange($event)"
+              <app-anotaciones-cartograficas
+                [anotaciones]="anotacionesItems"
+                [lugares]="lugares()"
+                [coberturas]="coberturas()"
+                (anotacionesChange)="anotacionesItems = $event"
               />
             </div>
           </app-collapsible-section>
@@ -446,8 +395,7 @@ import {
       padding: 0.75rem; background: var(--simr-hueso); border-radius: 8px;
       border: 1px dashed var(--mat-sys-outline); margin: 0.5rem 0;
     }
-    .archivos-section { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--mat-sys-outline); }
-    .subtitulo { margin: 0 0 0.75rem; font-size: 0.88rem; color: var(--simr-tinta); font-weight: 600; }
+    .subtitulo { margin: 0.5rem 0 0.25rem; font-size: 0.88rem; color: var(--simr-tinta); font-weight: 600; }
     .form-actions { display: flex; gap: 1rem; justify-content: flex-end; padding: 1.5rem 2rem; border-top: 1px solid var(--mat-sys-outline); }
     @media (max-width: 600px) {
       .form-container { padding: 0 1rem; }
@@ -475,7 +423,7 @@ export class RecursoFormComponent implements OnInit {
   protected mencionActorSelection: any[] = [];
   protected contenedoresItems: any[] = [];
   protected fuenteItems: FuenteAsociada[] = [];
-  protected tiposDeRecursoItems: any[] = [];
+  protected tiposDeRecursoControl = this.fb.control<string[]>([]);
   protected anotacionesItems: AnotacionCartograficoTemporal[] = [];
   protected materiaItems: any[] = [];
   protected idiomaItems: any[] = [];
@@ -492,8 +440,8 @@ export class RecursoFormComponent implements OnInit {
   protected listaNumeroNormalizado = signal<string[]>([]);
   protected listaRoles = signal<string[]>([]);
   protected listaTipoFuente = signal<string[]>([]);
+  protected listaTiposDeRecurso = signal<string[]>([]);
   protected listaCriterio = signal<string[]>([]);
-  protected precisiones = signal<string[]>([]);
   protected documentId = signal<string>('');
 
   protected numNormalizadoNombreControl = this.fb.control<string | null>(null);
@@ -502,8 +450,7 @@ export class RecursoFormComponent implements OnInit {
   protected fuenteTipoControl = this.fb.control<string | null>(null);
   protected fuenteLugarControl = this.fb.control<string | null>(null);
   protected fuenteNombreControl = this.fb.control<string | null>(null);
-  protected fuenteFechaControl = this.fb.control<Date | null>(null);
-  protected fuentePrecisionControl = this.fb.control<string | null>(null);
+  protected fuenteFechaControl = this.fb.control<string | null>(null);
   protected descTecnicaCriterioControl = this.fb.control<string | null>(null);
   protected descTecnicaValorControl = this.fb.control<string | null>(null);
 
@@ -546,17 +493,6 @@ export class RecursoFormComponent implements OnInit {
 
   private loadReferenceData() {
     const apiUrl = environment.apiUrl;
-    this.http.get(`${apiUrl}/recursos`).subscribe({
-      next: (data: any) => this.allRecursos.set(Array.isArray(data) ? data : data?.data || []),
-      error: () => this.allRecursos.set([]),
-    });
-    this.http.get(`${apiUrl}/actores`).subscribe({
-      next: (data: any) => {
-        const list = Array.isArray(data) ? data : data?.data || [];
-        this.allActores.set(list);
-      },
-      error: () => this.allActores.set([]),
-    });
     this.http.get(`${apiUrl}/listas/lugares`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
@@ -592,6 +528,13 @@ export class RecursoFormComponent implements OnInit {
       },
       error: () => this.listaTipoFuente.set([]),
     });
+    this.http.get(`${apiUrl}/listas/tiposDeRecurso`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.listaTiposDeRecurso.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.listaTiposDeRecurso.set([]),
+    });
     this.http.get(`${apiUrl}/listas/criterio`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
@@ -599,7 +542,6 @@ export class RecursoFormComponent implements OnInit {
       },
       error: () => this.listaCriterio.set([]),
     });
-    this.precisiones.set(['Década', 'Año', 'Mes', 'Día', 'Hora']);
   }
 
   private loadRecursoData(recurso: any) {
@@ -612,7 +554,7 @@ export class RecursoFormComponent implements OnInit {
     });
     this.obrasRelacionadasItems = (recurso.obrasRelacionadas || []).map((o: any) => ({
       _id: o.id || o,
-      nombre: '(cargando...)',
+      titulo: '(cargando...)',
     }));
     this.numeroNormalizadoItems = recurso.numeroNormalizado || [];
     this.mencionItems = recurso.mencionResponsabilidad || [];
@@ -622,11 +564,14 @@ export class RecursoFormComponent implements OnInit {
       if (typeof id === 'object') return { _id: id._id, titulo: id.titulo };
       return { _id: id, titulo: '(cargando...)' };
     });
-    this.fuenteItems = recurso.fuente || [];
-    this.tiposDeRecursoItems = (recurso.tiposDeRecurso || []).map((t: any) => ({
-      _id: t.id || t,
-      nombre: '(cargando...)',
+    this.fuenteItems = (recurso.fuente || []).map((f: any) => ({
+      tipoFuente: f.tipoFuente || '',
+      lugar: f.lugar || '',
+      nombre: f.nombre || '',
+      fecha: f.fecha ? toDisplayFecha(f.fecha) : '',
+      precision: f.precision || '',
     }));
+    this.tiposDeRecursoControl.setValue((recurso.tiposDeRecurso || []).map((t: any) => t.id || t));
     this.anotacionesItems = (recurso.anotacionCartograficoTemporal || []).map((a: any) => ({
       ...a,
       fechaInicio: a.fechaInicio ? toDisplayFecha(a.fechaInicio) : undefined,
@@ -677,7 +622,7 @@ export class RecursoFormComponent implements OnInit {
     const actor = this.mencionActorSelection[0];
     const tipoDeMencion = this.mencionTipoControl.value;
     if (!actor || !tipoDeMencion) return;
-    this.mencionItems = [...this.mencionItems, { actor: { _id: actor._id, nombre: actor.nombre }, tipoDeMencion }];
+    this.mencionItems = [...this.mencionItems, { actor: { _id: actor._id, nombre: actor.fullName || actor.nombre }, tipoDeMencion }];
     this.mencionActorSelection = [];
     this.mencionTipoControl.reset();
   }
@@ -690,8 +635,7 @@ export class RecursoFormComponent implements OnInit {
     if (!actor) return '';
     if (typeof actor === 'object' && actor.nombre) return actor.nombre;
     if (typeof actor === 'object' && actor._id) {
-      const found = this.allActores().find((a) => a._id === actor._id);
-      return found?.nombre || '(cargando…)';
+      return '(seleccionado)';
     }
     return typeof actor === 'string' ? actor : '';
   }
@@ -699,23 +643,45 @@ export class RecursoFormComponent implements OnInit {
   protected addFuente() {
     const tipoFuente = this.fuenteTipoControl.value;
     if (!tipoFuente) return;
-    const item: FuenteAsociada = {
+    const rawFecha = this.fuenteFechaControl.value || '';
+    let fecha = '';
+    let precision = '';
+    if (rawFecha) {
+      const n = precisionFecha(rawFecha);
+      const parts = n.fecha.split('/');
+      const y = parseInt(parts[0], 10) || 2000;
+      const m = parseInt(parts[1], 10) || 1;
+      const d = parseInt(parts[2], 10) || 1;
+      fecha = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      precision = n.precision;
+    }
+    this.fuenteItems = [...this.fuenteItems, {
       tipoFuente,
       lugar: this.fuenteLugarControl.value || '',
       nombre: this.fuenteNombreControl.value || '',
-      fecha: this.fuenteFechaControl.value || new Date(),
-      precision: this.fuentePrecisionControl.value || '',
-    };
-    this.fuenteItems = [...this.fuenteItems, item];
+      fecha,
+      precision,
+    }];
     this.fuenteTipoControl.reset();
     this.fuenteLugarControl.reset();
     this.fuenteNombreControl.reset();
     this.fuenteFechaControl.reset();
-    this.fuentePrecisionControl.reset();
   }
 
   protected removeFuente(index: number) {
     this.fuenteItems = this.fuenteItems.filter((_, i) => i !== index);
+  }
+
+  protected displayFuente(f: FuenteAsociada): string {
+    const parts: string[] = [];
+    if (f.nombre) parts.push(f.nombre);
+    if (f.lugar) parts.push(f.lugar);
+    if (f.fecha) {
+      const d = toDisplayFecha(f.fecha as string);
+      const [y, m, day] = d.split('/');
+      parts.push(formatDate(y, m, day, f.precision));
+    }
+    return parts.join(' — ');
   }
 
   protected addDescripcionTecnica() {
@@ -741,10 +707,6 @@ export class RecursoFormComponent implements OnInit {
 
   protected onContenedoresChange(items: any[]) {
     this.contenedoresItems = items;
-  }
-
-  protected onTiposDeRecursoChange(items: any[]) {
-    this.tiposDeRecursoItems = items;
   }
 
   protected onMateriaChange(items: any[]) {
@@ -783,7 +745,7 @@ export class RecursoFormComponent implements OnInit {
       mencionResponsabilidad: this.mencionItems,
       contenedores: this.contenedoresItems.map((c) => ({ id: c._id })),
       fuente: this.fuenteItems,
-      tiposDeRecurso: this.tiposDeRecursoItems.map((t) => ({ id: t._id })),
+      tiposDeRecurso: (this.tiposDeRecursoControl.value || []).map((t) => ({ id: t })),
       anotacionCartograficoTemporal: this.anotacionesItems,
       materia: this.materiaItems.map((m) => ({ id: m._id })),
       idiomas: this.idiomaItems.map((i) => ({ id: i._id })),
