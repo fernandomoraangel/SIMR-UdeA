@@ -98,7 +98,9 @@ const PRECISION_DATE_OPTIONS = ['Año', 'Mes', 'Día'];
                       <mat-option [value]="a">{{ a.fullName || (a.nombres + ' ' + a.apellidos) }}</mat-option>
                     }
                     @if (filteredActores().length === 0 && actorControl.value && typeof actorControl.value === 'string') {
-                      <mat-option disabled>Sin resultados</mat-option>
+                      <mat-option [value]="'__create__'" class="create-option">
+                        <mat-icon>add_circle</mat-icon> Crear "{{ actorControl.value }}"
+                      </mat-option>
                     }
                   </mat-autocomplete>
                 </mat-form-field>
@@ -424,6 +426,10 @@ export class ProyectoFormComponent implements OnInit {
 
   protected onActorSelect(event: MatAutocompleteSelectedEvent) {
     const actor = event.option.value;
+    if (actor === '__create__') {
+      this.createActorFromSearch();
+      return;
+    }
     this.actorControl.setValue(actor);
   }
 
@@ -526,5 +532,28 @@ export class ProyectoFormComponent implements OnInit {
 
   protected goBack() {
     this.router.navigate(['/proyectos']);
+  }
+
+  private createActorFromSearch() {
+    const term = (this.actorControl.value || '').trim();
+    if (!term) return;
+    const parts = term.split(/\s+/);
+    const nombres = parts[0] || term;
+    const apellidos = parts.slice(1).join(' ');
+    this.http.post(`${environment.apiUrl}/actores`, { nombres, apellidos }).subscribe({
+      next: (actor: any) => {
+        this.actores.set([...this.actores(), actor]);
+        this.filteredActores.set(this.actores());
+        const inv: Investigador = {
+          id: actor._id,
+          nombre: actor.fullName || (actor.nombres + ' ' + (actor.apellidos || '')),
+          fullName: actor.fullName || (actor.nombres + ' ' + (actor.apellidos || '')),
+          rol: '',
+        };
+        this.investigadoresItems = [...this.investigadoresItems, inv];
+        this.actorControl.reset();
+      },
+      error: () => console.error('[ProyectoForm] Error al crear actor'),
+    });
   }
 }

@@ -21,7 +21,6 @@ const ALL_FIELDS = [
   { key: 'tipo', label: 'Tipo' },
   { key: 'propiedadComodato', label: 'Propiedad/Comodato' },
   { key: 'fechaDeCreacion', label: 'Fecha de creación' },
-  { key: 'precision', label: 'Precisión' },
   { key: 'creador', label: 'Creador' },
   { key: 'creado', label: 'Creado' },
 ];
@@ -34,7 +33,6 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
   tipo: { key: 'tipo', label: 'Tipo', sortable: true },
   propiedadComodato: { key: 'propiedadComodato', label: 'Propiedad/Comodato', sortable: true },
   fechaDeCreacion: { key: 'fechaDeCreacion', label: 'Fecha de creación', type: 'date', sortable: true },
-  precision: { key: 'precision', label: 'Precisión', sortable: true },
   creador: { key: 'creador', label: 'Creador', sortable: true },
   creado: { key: 'creado', label: 'Creado', type: 'date', sortable: true },
 };
@@ -124,12 +122,6 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
                       <div class="meta-row">
                         <mat-icon>calendar_month</mat-icon>
                         <span>{{ f.fechaDeCreacion | date:'dd/MM/yyyy' }}</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('precision') && f.precision) {
-                      <div class="meta-row">
-                        <mat-icon>tune</mat-icon>
-                        <span>{{ f.precision }}</span>
                       </div>
                     }
                     @if (cardFieldVisible('creador') && f.creador) {

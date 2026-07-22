@@ -20,7 +20,6 @@ const ALL_FIELDS = [
   { key: 'nombre', label: 'Nombre', required: true },
   { key: 'tipo', label: 'Tipo' },
   { key: 'fechaDeCreacion', label: 'Fecha de creación' },
-  { key: 'precision', label: 'Precisión' },
   { key: 'propiedadComodato', label: 'Propiedad/Comodato' },
   { key: 'creador', label: 'Creador' },
   { key: 'creado', label: 'Creado' },
@@ -33,7 +32,6 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
   nombre: { key: 'nombre', label: 'Nombre', sortable: true, truncateTo: 30 },
   tipo: { key: 'tipo', label: 'Tipo', sortable: true },
   fechaDeCreacion: { key: 'fechaDeCreacion', label: 'Fecha de creación', type: 'date', sortable: true },
-  precision: { key: 'precision', label: 'Precisión', sortable: true },
   propiedadComodato: { key: 'propiedadComodato', label: 'Propiedad/Comodato', sortable: true },
   creador: { key: 'creador', label: 'Creador', sortable: true },
   creado: { key: 'creado', label: 'Creado', type: 'date', sortable: true },
@@ -118,12 +116,6 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
                       <div class="meta-row">
                         <mat-icon>calendar_today</mat-icon>
                         <span>{{ coleccion.fechaDeCreacion | date:'yyyy' }}</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('precision') && coleccion.precision) {
-                      <div class="meta-row">
-                        <mat-icon>straighten</mat-icon>
-                        <span>{{ coleccion.precision }}</span>
                       </div>
                     }
                     @if (cardFieldVisible('propiedadComodato') && coleccion.propiedadComodato) {
