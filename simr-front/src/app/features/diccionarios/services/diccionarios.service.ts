@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, of, switchMap } from 'rxjs';
 import {
   Diccionario,
   CreateDiccionarioDto,
@@ -64,23 +64,43 @@ export class DiccionariosService {
     );
   }
 
-  // Obtener ayuda contextual para campos específicos
+  private matchDiccionario(
+    entries: Diccionario[],
+    tabla: string,
+    campo: string
+  ): Diccionario | undefined {
+    return entries.find(
+      (d) =>
+        d.tabla?.toLowerCase() === tabla.toLowerCase() &&
+        d.campo?.toLowerCase() === campo.toLowerCase()
+    );
+  }
+
   getFieldHelp(tabla: string, campo: string): Observable<Diccionario | null> {
     const currentCache = this.diccionariosCache$.value;
-    const found = currentCache.find(
-      (d) => d.tabla === tabla && d.campo === campo
-    );
-
+    const found = this.matchDiccionario(currentCache, tabla, campo);
     if (found) {
-      return new BehaviorSubject(found).asObservable();
+      return of(found);
     }
-
-    return new BehaviorSubject<Diccionario | null>(null).asObservable();
-
-    // Si no está en cache, buscar en el servidor
-    // return this.http
-    //   .get<Diccionario[]>(`${this.API_URL}?tabla=${tabla}&campo=${campo}`)
-    //   .pipe(tap((results) => (results.length > 0 ? results[0] : null)));
+    if (currentCache.length === 0) {
+      return this.findAll().pipe(
+        switchMap(() => {
+          const refetched = this.matchDiccionario(
+            this.diccionariosCache$.value,
+            tabla,
+            campo
+          );
+          return of(refetched || null);
+        })
+      );
+    }
+    return this.http
+      .get<Diccionario[]>(`${this.API_URL}?tabla=${tabla}&campo=${campo}`)
+      .pipe(
+        switchMap((results) =>
+          results.length > 0 ? of(results[0]) : of(null)
+        )
+      );
   }
 
   private refreshCache(): void {

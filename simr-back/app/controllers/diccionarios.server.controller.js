@@ -50,10 +50,12 @@ exports.create = async (req, res) => {
 // Método que recupera una lista de diccionarios
 exports.list = async (req, res) => {
   try {
-    // Usa el método model 'find' para obtener una lista de diccionarios
-    const diccionarios = await Diccionario.find()
+    const filter = {};
+    if (req.query.tabla) filter.tabla = req.query.tabla;
+    if (req.query.campo) filter.campo = req.query.campo;
+    const diccionarios = await Diccionario.find(filter)
       .sort("campo")
-      .populate("creador", "campo")
+      .populate("creador", "firstName lastName fullName")
       .exec();
     res.json(diccionarios);
   } catch (err) {

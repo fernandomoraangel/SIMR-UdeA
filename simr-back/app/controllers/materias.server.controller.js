@@ -54,7 +54,10 @@ exports.list = async (req, res) => {
     // Usa el método model 'find' para obtener una lista de recursos
     const materias = await Materia.find()
       .sort("-created")
-      .populate("creador", "nombre")
+      .populate("creador", "firstName lastName fullName")
+      .populate("materiasRelacionadas.id", "nombre")
+      .populate("padres.id", "nombre")
+      .populate("hijos.id", "nombre")
       .exec();
     res.json(materias);
   } catch (err) {
@@ -117,6 +120,9 @@ exports.materiaByID = async (req, res, next, id) => {
   try {
     const materia = await Materia.findById(id)
       .populate("creador", "firstName lastName fullName")
+      .populate("materiasRelacionadas.id", "nombre")
+      .populate("padres.id", "nombre")
+      .populate("hijos.id", "nombre")
       .exec();
     if (!materia) return next(new Error("Fallo al cargar la materia" + id));
     // Si la materia es encontrada, usar el objeto 'request' para pasarla al sgte middleware

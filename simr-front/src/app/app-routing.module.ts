@@ -52,6 +52,16 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'materias',
+    loadChildren: () =>
+      import('./features/materias/materias.routes').then((r) => r.MATERIAS_ROUTES),
+  },
+  {
+    path: 'medios',
+    loadChildren: () =>
+      import('./features/medios/medios.routes').then((r) => r.MEDIOS_ROUTES),
+  },
+  {
     path: 'idiomas',
     loadChildren: () =>
       import('./features/idiomas/idiomas.routes').then((r) => r.IDIOMAS_ROUTES),

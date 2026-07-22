@@ -150,16 +150,19 @@ router.get("/document-files", async (req, res) => {
           const limit = 100; // Ajusta este límite según tus necesidades
 
           for (let i = 0; i < Math.min(propertyValues.length, limit); i++) {
-            const fileId = propertyValues[i];
-            console.log("fileId (filesProperty values):", fileId);
+            const fileRef = propertyValues[i];
+            console.log("fileRef (filesProperty values):", fileRef);
 
             try {
-              // const myFile = await archivosCollection.findOne({ _id: fileId._id });
-              const myFile = await Archivo.findOne({ _id: fileId._id });
-              console.log("myFile:", myFile);
+              const archivoId = fileRef.archivoId || fileRef._id || fileRef.id;
+              if (!archivoId) continue;
+
+              const myFile = await Archivo.findOne({ _id: archivoId });
+              if (!myFile) continue;
 
               const myFileProcessed = {
-                name: myFile.minioObjectName,
+                name: myFile.originalName || myFile.minioObjectName,
+                storageName: myFile.minioObjectName,
                 size: myFile.size,
                 lastModified: myFile.uploadDate,
                 id: myFile._id,
@@ -167,8 +170,7 @@ router.get("/document-files", async (req, res) => {
 
               documentFiles.push(myFileProcessed);
             } catch (error) {
-              console.error(`Error processing file with id ${fileId}:`, error);
-              // Decide si quieres continuar con el siguiente archivo o lanzar el error
+              console.error(`Error processing file:`, error);
             }
           }
 
@@ -283,9 +285,11 @@ router.get("/download/:filename", async (req, res) => {
 
   try {
     const fileStream = await minioClient.getObject(myBucketName, objectName);
+    const file = await Archivo.findOne({ minioObjectName: objectName });
+    const downloadName = file?.originalName || objectName;
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${objectName}"`
+      `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`
     );
     fileStream.pipe(res);
   } catch (err) {

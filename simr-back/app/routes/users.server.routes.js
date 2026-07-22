@@ -49,6 +49,11 @@ module.exports = function (app) {
   app.route('/login')
     .get(users.renderLogin);
 
+  // Preferencias de usuario
+  app.route('/api/users/preferences')
+    .get(users.requiresLogin, users.getPreferences)
+    .put(users.requiresLogin, users.updatePreferences);
+
   // Rutas para usuarios (protegidas con JWT)
   app.route('/api/users')
     // .get(requireAuth, users.list)

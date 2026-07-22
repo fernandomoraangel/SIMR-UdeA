@@ -71,13 +71,13 @@ export class ArchivosService {
     });
   }
 
-  downloadFile(filename: string): void {
-    const url = `${this.API_URL}/download/${filename}`;
+  downloadFile(storageName: string, displayName = storageName): void {
+    const url = `${this.API_URL}/download/${encodeURIComponent(storageName)}`;
 
     // Crear un elemento <a> temporal
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename; // Sugerir un nombre de archivo para la descarga
+    link.download = displayName;
     link.style.display = 'none';
 
     // Añadir el enlace al DOM
@@ -144,7 +144,7 @@ export class ArchivosService {
 
   // Previsualization of files
   getFileUrl(filename: string): string {
-    return `${this.API_URL}/view/${filename}`;
+    return `${this.API_URL}/view/${encodeURIComponent(filename)}`;
   }
 
   getFileType(filename: string): string {

@@ -53,6 +53,8 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
   @Input() collection = '';
   @Input() documentId = '';
   @Input() documentName = '';
+  @Input() readonly = false;
+  @Input() initialFiles: FileBasicInfo[] = [];
 
   @Output() fileUploaded = new EventEmitter<FileBasicInfo>();
   @Output() fileDeleted = new EventEmitter<FileDeleteInfo>();
@@ -81,17 +83,30 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
 
   loadDocumentFiles(): void {
     if (!this.collection || !this.documentId) {
-      this.files = [];
+      if (this.initialFiles.length > 0) {
+        this.files = [...this.initialFiles];
+      } else {
+        this.files = [];
+      }
       return;
     }
     this.loading = true;
     this.archivosService.getDocumentFiles(this.collection, this.documentId).subscribe({
       next: (data) => {
-        this.files = data || [];
+        if (data && data.length > 0) {
+          this.files = data;
+        } else if (this.initialFiles.length > 0) {
+          this.files = [...this.initialFiles];
+        } else {
+          this.files = [];
+        }
         this.loading = false;
       },
       error: (error) => {
         console.error('Error al obtener los archivos:', error);
+        if (this.initialFiles.length > 0) {
+          this.files = [...this.initialFiles];
+        }
         this.loading = false;
       },
     });
@@ -153,14 +168,15 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
           if (body.fileData) {
             const uploaded: FileBasicInfo = {
               id: body.documentId,
-              name: body.fileData.minioObjectName,
+              name: body.fileData.originalName || body.fileData.minioObjectName,
+              storageName: body.fileData.minioObjectName,
               size: body.fileData.size,
               lastModified: body.fileData.uploadDate,
             };
             this.fileUploaded.emit(uploaded);
+            this.files = [...this.files, uploaded];
           }
           this.selectedFile = null;
-          this.loadDocumentFiles();
           Swal.fire({
             title: '¡Éxito!',
             text: 'Archivo subido exitosamente',
@@ -184,16 +200,19 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
     });
   }
 
-  viewFile(filename: string): void {
+  viewFile(file: FileBasicInfo): void {
     this.dialog.open(ArchivoVistaComponent, {
       width: '90%',
       height: '90%',
-      data: { filename },
+      data: {
+        filename: file.name,
+        storageName: file.storageName || file.name,
+      },
     });
   }
 
-  downloadFile(filename: string): void {
-    this.archivosService.downloadFile(filename);
+  downloadFile(file: FileBasicInfo): void {
+    this.archivosService.downloadFile(file.storageName || file.name, file.name);
   }
 
   formatBytes(bytes: number, decimals = 2): string {
@@ -211,7 +230,10 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
     if (this.allSelected) {
       this.selectedFiles = [];
     } else {
-      this.selectedFiles = this.files.map((file) => ({ id: file.id, name: file.name }));
+      this.selectedFiles = this.files.map((file) => ({
+        id: file.id,
+        name: file.storageName || file.name,
+      }));
     }
     this.allSelected = !this.allSelected;
   }
@@ -225,7 +247,7 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
     if (existing) {
       this.selectedFiles = this.selectedFiles.filter((item) => item.id !== file.id);
     } else {
-      this.selectedFiles.push({ id: file.id, name: file.name });
+      this.selectedFiles.push({ id: file.id, name: file.storageName || file.name });
     }
     this.allSelected = this.isAllSelected();
   }
@@ -245,14 +267,14 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
     }).then((result) => {
       if (result.isConfirmed) {
         const fileToDelete: FileDeleteInfo = {
-          fileName: file.name,
+          fileName: file.storageName || file.name,
           id: file.id,
           documentId: this.documentId,
         };
         this.archivosService.deleteFile(fileToDelete).subscribe({
           next: () => {
             this.fileDeleted.emit(fileToDelete);
-            this.loadDocumentFiles();
+            this.files = this.files.filter((f) => f.id !== fileToDelete.id);
             Swal.fire({
               title: '¡Eliminado!',
               text: 'Archivo eliminado exitosamente',
@@ -302,7 +324,8 @@ export class ArchivoManagerComponent implements OnInit, OnChanges {
           next: () => {
             this.fileDeleted.emit(filesToDelete[0]);
             this.selectedFiles = [];
-            this.loadDocumentFiles();
+            const idsToRemove = new Set(filesToDelete.map((f) => f.id));
+            this.files = this.files.filter((f) => !idsToRemove.has(f.id));
             Swal.fire({
               title: '¡Éxito!',
               text: 'Eliminación exitosa',

@@ -27,31 +27,7 @@ var registroOperacion = new Schema({
   },
 });
 
-var anotacionCartograficoTemporal = new Schema({
-  lugar: {},
-  coordenadas: {
-    type: [Number],
-    index: "2dsphere",
-  },
-  evento: {
-    type: String,
-  },
-  coberturaAmplitud: {},
-  fechaInicio: {
-    type: Date,
-  },
-  fechaFin: {
-    type: Date,
-  },
-  precisionInicio: {
-    type: String,
-  },
-  precisionFin: {
-    type: String,
-  },
-  //fuente de los datos
-  evidencia: {},
-});
+const anotacionCartograficoTemporal = require('../schemas/anotacion-cartografica-temporal.server.schema');
 
 var proyectoAsociado = new Schema({
   proyecto: {

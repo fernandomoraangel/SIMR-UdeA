@@ -27,64 +27,48 @@ export class ShellComponent implements OnInit {
   isAuthenticated = false;
   currentUser: { fullName?: string } | null = null;
 
-  // Módulos ya migrados a Angular (rutas reales). El resto va a /no-implementado.
-  // Todas las rutas "no implementado" usan UN solo segmento para que la ruta
-  // `no-implementado/:modulo` las capture sin 404.
+  // Menú definitivo: nombre corto de la entidad.
+  // Migrados → ruta real; no migrados → /no-implementado/:modulo.
   grupos: MenuGroup[] = [
     {
       label: 'Obras',
       items: [
-        { label: 'Crear obra', ruta: '/no-implementado/obras-crear' },
-        { label: 'Listar obras', ruta: '/no-implementado/obras' },
-        { label: 'Crear actor', ruta: '/no-implementado/actores-crear' },
-        { label: 'Listar actores', ruta: '/no-implementado/actores' },
+        { label: 'Obras', ruta: '/no-implementado/obras' },
+        { label: 'Actores', ruta: '/no-implementado/actores' },
       ],
     },
     {
       label: 'Recursos',
       items: [
-        { label: 'Crear Recurso', ruta: '/no-implementado/recursos-crear' },
-        { label: 'Listar Recursos', ruta: '/no-implementado/recursos' },
-        { label: 'Crear Ejemplar', ruta: '/no-implementado/ejemplares-crear' },
-        { label: 'Listar Ejemplares', ruta: '/no-implementado/ejemplares' },
+        { label: 'Recursos', ruta: '/no-implementado/recursos' },
+        { label: 'Ejemplares', ruta: '/no-implementado/ejemplares' },
       ],
     },
     {
       label: 'Proyectos',
       items: [
-        { label: 'Crear Proyecto', ruta: '/no-implementado/proyectos-crear' },
-        { label: 'Listar Proyectos', ruta: '/no-implementado/proyectos' },
+        { label: 'Proyectos', ruta: '/no-implementado/proyectos' },
       ],
     },
     {
       label: 'Fondos',
       items: [
-        { label: 'Crear Fondo documental', ruta: '/no-implementado/fondos-crear' },
-        { label: 'Listar Fondos documentales', ruta: '/no-implementado/fondos' },
-        { label: 'Crear Colección', ruta: '/no-implementado/colecciones-crear' },
-        { label: 'Listar Colecciones', ruta: '/no-implementado/colecciones' },
+        { label: 'Fondos documentales', ruta: '/no-implementado/fondos' },
+        { label: 'Colecciones', ruta: '/no-implementado/colecciones' },
       ],
     },
     {
       label: 'Términos',
       items: [
-        { label: 'Crear Instrumento', ruta: '/no-implementado/instrumentos-crear' },
-        { label: 'Listar Instrumentos', ruta: '/no-implementado/instrumentos' },
-        { label: 'Crear Medio sonoro', ruta: '/no-implementado/medios-crear' },
-        { label: 'Listar Medios sonoros', ruta: '/no-implementado/medios' },
-        { label: 'Crear Sistema sonoro', ruta: '/no-implementado/sistemas-crear' },
-        { label: 'Listar Sistemas sonoros', ruta: '/no-implementado/sistemas' },
-        { label: 'Crear Materia', ruta: '/no-implementado/materias-crear' },
-        { label: 'Listar Materias', ruta: '/no-implementado/materias' },
-        { label: 'Crear Género o Forma', ruta: '/no-implementado/generos-crear' },
-        { label: 'Listar Géneros o Formas', ruta: '/no-implementado/generos' },
-        { label: 'Crear Género o Forma no musical', ruta: '/no-implementado/generosnomusicales-crear' },
-        { label: 'Listar Géneros o Formas no musicales', ruta: '/no-implementado/generosnomusicales' },
-        { label: 'Crear idioma', ruta: '/idiomas/create' },
-        { label: 'Listar idiomas', ruta: '/idiomas' },
-        { label: 'Crear campo en diccionario', ruta: '/diccionarios/create' },
-        { label: 'Listar Diccionario de datos', ruta: '/diccionarios' },
-        { label: 'Gestión de Listas', ruta: '/listas' },
+        { label: 'Materias', ruta: '/materias' },
+        { label: 'Medios sonoros', ruta: '/medios' },
+        { label: 'Sistemas sonoros', ruta: '/no-implementado/sistemas' },
+        { label: 'Instrumentos', ruta: '/no-implementado/instrumentos' },
+        { label: 'Géneros o Formas', ruta: '/no-implementado/generos' },
+        { label: 'Géneros no musicales', ruta: '/no-implementado/generosnomusicales' },
+        { label: 'Idiomas', ruta: '/idiomas' },
+        { label: 'Diccionario', ruta: '/diccionarios' },
+        { label: 'Listas', ruta: '/listas' },
       ],
     },
     {

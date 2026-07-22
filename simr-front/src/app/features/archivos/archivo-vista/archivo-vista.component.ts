@@ -20,13 +20,13 @@ export class ArchivoVistaComponent implements OnInit {
     private archivosService: ArchivosService,
     private sanitizer: DomSanitizer,
     public dialogRef: MatDialogRef<ArchivoVistaComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { filename: string }
+    @Inject(MAT_DIALOG_DATA) public data: { filename: string; storageName: string }
   ) {}
 
   ngOnInit(): void {
     if (this.data.filename) {
       this.filename = this.data.filename;
-      this.fileUrl = this.archivosService.getFileUrl(this.filename);
+      this.fileUrl = this.archivosService.getFileUrl(this.data.storageName);
       this.fileType = this.archivosService.getFileType(this.filename);
       this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
         this.fileUrl
@@ -39,7 +39,7 @@ export class ArchivoVistaComponent implements OnInit {
   }
 
   downloadFile(filename: string): void {
-    this.archivosService.downloadFile(filename);
+    this.archivosService.downloadFile(this.data.storageName, filename);
   }
 
   closeDialog(): void {

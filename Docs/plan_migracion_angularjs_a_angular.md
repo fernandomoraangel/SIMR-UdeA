@@ -1,9 +1,9 @@
 # Plan de Migración de AngularJS a Angular (SIMR-UdeA)
 
 > **Estado:** En ejecución (rama `migracion`).
-> **Última actualización:** 2026-07-20 (Pivot de enfoque definitivo: **Angular Material + identidad SIMR propia, diseño COMPLETAMENTE NUEVO, CERO Bootstrap, CERO Font Awesome, CERO jQuery**). Se conserva la paridad **funcional** con el legacy (mismas acciones, campos, validaciones, permisos, endpoints), pero la apariencia es nueva con Material. Esto reemplaza el principio original de "replicación fiel 1:1 con Bootstrap 3".)
+> **Última actualización:** 2026-07-21 (Pivot de enfoque definitivo: **Angular Material + identidad SIMR propia, diseño COMPLETAMENTE NUEVO, CERO Bootstrap, CERO Font Awesome, CERO jQuery**). Se conserva la paridad **funcional** con el legacy (mismas acciones, campos, validaciones, permisos, endpoints), pero la apariencia es nueva con Material. Esto reemplaza el principio original de "replicación fiel 1:1 con Bootstrap 3".)
 >
-> **Avance (2026-07-20):** Fase 1 completa (shell, listas, search, admin, auditoria + validación automatizada; ver `cbce08c`..`f8c933a`). Iniciada **Fase 2 — Consolidación de gestión de archivos (MinIO)**. Backlog vivo en sección 4.B.
+> **Avance (2026-07-21):** Fase 1 completa. Fase 2 completada (ArchivoManagerComponent consolidado + column selector reutilizable + preferencias de usuario). Iniciado **Módulo `materias` (Fase 3.1)** con enfoque de **gestión unificada**. Backlog vivo en sección 4.B.
 
 ## 1. Resumen del proyecto
 
@@ -23,6 +23,10 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 **Regla de progreso:** ningún módulo se marca como "migrado/aprobado" sin (a) paridad visual **lado a lado** contra el legacy, (b) paridad funcional verificada manualmente y (c) suite de pruebas automatizadas en verde. No se inicia el siguiente módulo sin cerrar el anterior.
 
 **Decisión clave (2026-07-19):** el contenido preexistente en `simr-front` (actores/diccionarios/idiomas/archivos/auth) se trata como **borrador descartable**. La migración consiste en **re-crear** cada vista en Angular copiando fielmente el HTML y la lógica del legacy, no en adaptar esos ensayos.
+
+**Decisión "Gestión unificada" (2026-07-21):** cada módulo migrado aparece en el menú como una **única entrada** "Gestión de X" (ej. "Gestión de Materias") en lugar de las dos entradas separadas "Crear X" / "Listar X" del legacy. Esto simplifica el menú, reduce la carga cognitiva y refleja que la vista de listado es el hub desde donde se crea, edita, ve detalle y elimina. Para módulos no migrados se mantiene el formato legacy (Crear / Listar). La entrada única enruta a la vista de listado, que incluye un botón destacado "Nuevo".
+
+**Decisión "Preferencias de columna" (2026-07-21):** cada listado de módulo migrado incluye un selector de columnas (botón "Campos") que permite al usuario elegir qué columnas mostrar en la tabla y qué campos ver en las tarjetas. La selección persiste por usuario vía `GET/PUT /api/users/preferences` (campo `preferences` en el modelo User) con respaldo en `localStorage`. El `ColumnSelectorComponent` se crea como componente reutilizable en `shared/column-selector/`.
 
 ---
 
@@ -47,7 +51,7 @@ Objetivo del plan: migrar **todas** las vistas y módulos de AngularJS a Angular
 | 5 | `listas` | Datos de referencia transversales | No (list) | No | ❌ Pendiente (bloqueante para el resto) |
 | 6 | `diccionarios` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
 | 7 | `idiomas` | CRUD | ✅ | No | ❌ Ensayo no válido → rehacer |
-| 8 | `materias` | CRUD | ✅ | Sí | ❌ Pendiente |
+| 8 | `materias` | CRUD | ✅ | Sí | ✅ **Migrado (2026-07-21):** gestión unificada (list/create/edit/detail) con Angular Material, `ArchivoManagerComponent`, `ColumnSelectorComponent`, preferencias de columna persistidas. Pendiente: specs unitarias y revisión visual. |
 | 9 | `medios` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 10 | `sistemas` | CRUD | ✅ | Sí | ❌ Pendiente |
 | 11 | `instrumentos` | CRUD | ✅ | Sí | ❌ Pendiente |
@@ -166,7 +170,7 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 **Orden de migración** (de menor a mayor complejidad relacional, aprovechando aprendizaje incremental):
 
-1. `materias`
+1. ✅ `materias` — **completado (2026-07-21):** gestión unificada con Angular Material + `ArchivoManagerComponent` + `ColumnSelectorComponent` + preferencias de columna. Pendiente: specs unitarias y validación visual.
 2. `medios`
 3. `sistemas`
 4. `instrumentos`
@@ -182,6 +186,8 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 14. `obras` (último, el más complejo)
 
 > Nota: los módulos 10 y 13 ya tienen implementación funcional; en este plan se tratan como "cerrar deuda de pruebas + reconectar gestión de archivos consolidada", no como migración desde cero.
+
+**Novedad del patrón de migración (2026-07-21):** cada módulo migrado desde este punto usará **gestión unificada** (única entrada en menú "Gestión de X", vista de listado como hub). Se aplicará retroactivamente a `idiomas` y `diccionarios` cuando se revise su menú.
 
 #### 3.A Plantilla reutilizable por módulo (repetir para cada uno de la lista anterior)
 
@@ -349,9 +355,11 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 - [ ] Modelo TS
 - [ ] Servicio Angular (list/getById/create/update/delete)
 - [ ] Componentes list/create/edit/detail
-- [ ] Rutas + guards
+- [ ] Rutas + guards (única ruta `/<modulo>` para gestión unificada, con sub-rutas `create`, `:id`, `edit/:id`)
 - [ ] Integración de listas de referencia
 - [ ] Integración de ArchivoManagerComponent (si aplica)
+- [ ] Integración de ColumnSelectorComponent + UserPreferencesService (selector de campos con persistencia)
+- [ ] Menú: reemplazar entradas "Crear X" / "Listar X" por una sola "Gestión de X"
 - [ ] Specs de servicio
 - [ ] Specs de componentes
 - [ ] E2E de flujo completo

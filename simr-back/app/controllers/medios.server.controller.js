@@ -45,6 +45,8 @@ exports.list = async (req, res) => {
     const medios = await Medio.find()
       .sort("-created")
       .populate("creador", "firstName lastName fullName")
+      .populate("proyectosAsociados.proyecto", "nombre")
+      .populate("instrumentos.instrumento", "nombre")
       .exec();
     res.json(medios);
   } catch (err) {
@@ -100,6 +102,8 @@ exports.medioByID = async (req, res, next, id) => {
   try {
     const medio = await Medio.findById(id)
       .populate("creador", "firstName lastName fullName")
+      .populate("proyectosAsociados.proyecto", "nombre")
+      .populate("instrumentos.instrumento", "nombre")
       .exec();
     if (!medio) {
       return next(new Error("Fallo al cargar el medio " + id));

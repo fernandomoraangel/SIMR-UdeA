@@ -644,6 +644,36 @@ exports.requiresLogin = (req, res, next) => {
   })(req, res, next);
 };
 
+//* GET PREFERENCES - Obtener preferencias del usuario autenticado
+exports.getPreferences = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("preferences");
+    if (!user) return errorResponse(res, "Usuario no encontrado", 404);
+    successResponse(res, "Preferencias obtenidas", 200, user.preferences || {});
+  } catch (err) {
+    console.error("Error al obtener preferencias:", err);
+    errorResponse(res, "Error interno", 500);
+  }
+};
+
+//* UPDATE PREFERENCES - Actualizar preferencias del usuario (fusión parcial)
+exports.updatePreferences = async (req, res) => {
+  try {
+    const updates = req.body;
+    if (typeof updates !== "object" || Array.isArray(updates)) {
+      return errorResponse(res, "El cuerpo debe ser un objeto", 400);
+    }
+    const user = await User.findById(req.user._id);
+    if (!user) return errorResponse(res, "Usuario no encontrado", 404);
+    user.preferences = { ...(user.preferences || {}), ...updates };
+    await user.save();
+    successResponse(res, "Preferencias actualizadas", 200, user.preferences);
+  } catch (err) {
+    console.error("Error al actualizar preferencias:", err);
+    errorResponse(res, "Error interno", 500);
+  }
+};
+
 //* HAS AUTHORIZATION - Controller middleware para autorizar una operación
 // TODO: Remover este método de los demás controllers
 exports.hasAuthorization = (req, res, next) => {

@@ -77,6 +77,10 @@ const UserSchema = new mongoose.Schema({
       scope: { type: String, enum: ["any", "own"], default: "own" },
     },
   ],
+  preferences: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
 });
 
 // Configurar la propiedad virtual 'fullname'

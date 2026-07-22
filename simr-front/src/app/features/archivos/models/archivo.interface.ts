@@ -1,6 +1,7 @@
 export interface FileBasicInfo {
   id: string;
   name: string;
+  storageName?: string;
   size: number;
   lastModified: Date;
 }
