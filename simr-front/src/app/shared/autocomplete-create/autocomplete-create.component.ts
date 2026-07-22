@@ -48,7 +48,7 @@ export interface AutocompleteItem {
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event)" [displayWith]="displayFn">
           @for (item of filteredItems$ | async; track item._id) {
             <mat-option [value]="item">
-              {{ item.nombre }}
+              {{ item[displayField] }}
             </mat-option>
           }
               @if ((filteredItems$ | async)?.length === 0 && searchTerm.trim()) {
@@ -75,7 +75,7 @@ export interface AutocompleteItem {
         <div class="chips-list">
           @for (item of selected; track item._id) {
             <mat-chip-row (removed)="remove(item)" class="item-chip">
-              {{ item.nombre }}
+              {{ item[displayField] }}
               <button matChipRemove aria-label="Eliminar">
                 <mat-icon>close</mat-icon>
               </button>
@@ -105,6 +105,7 @@ export class AutocompleteCreateComponent implements OnInit {
   @Input({ required: true }) apiEndpoint = '';
   @Input() placeholder = 'Buscar…';
   @Input() selected: AutocompleteItem[] = [];
+  @Input() displayField = 'nombre';
 
   @Output() selectedChange = new EventEmitter<AutocompleteItem[]>();
 
@@ -126,7 +127,7 @@ export class AutocompleteCreateComponent implements OnInit {
       switchMap((term) => {
         const t = term.toLowerCase();
         const filtered = this.allItems.filter(
-          (i) => i.nombre.toLowerCase().includes(t) && !this.selected.find((s) => s._id === i._id)
+          (i) => (i[this.displayField]?.toLowerCase() || '').includes(t) && !this.selected.find((s) => s._id === i._id)
         );
         return of(filtered);
       }),
@@ -135,11 +136,11 @@ export class AutocompleteCreateComponent implements OnInit {
   }
 
   displayFn(item: AutocompleteItem): string {
-    return item?.nombre || '';
+    return item?.[this.displayField] || '';
   }
 
   private loadItems() {
-    const url = `${environment.apiUrl}/${this.apiEndpoint}?select=nombre`;
+    const url = `${environment.apiUrl}/${this.apiEndpoint}`;
     this.http.get<AutocompleteItem[]>(url).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (items) => {
         this.allItems = items || [];
@@ -169,7 +170,7 @@ export class AutocompleteCreateComponent implements OnInit {
   isExisting(): boolean {
     if (!this.searchTerm?.trim()) return false;
     const term = this.searchTerm.toLowerCase();
-    return this.allItems.some((i) => i.nombre.toLowerCase() === term);
+    return this.allItems.some((i) => (i[this.displayField]?.toLowerCase() || '') === term);
   }
 
   remove(item: AutocompleteItem) {
@@ -185,7 +186,7 @@ export class AutocompleteCreateComponent implements OnInit {
     // For now just create via API and add to the list
     this.http
       .post<AutocompleteItem>(`${environment.apiUrl}/${this.apiEndpoint}`, {
-        nombre: term,
+        [this.displayField]: term,
       })
       .subscribe({
         next: (created) => {

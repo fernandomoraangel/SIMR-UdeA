@@ -204,6 +204,7 @@ import { CreateGeneroNoMusicalRequest, GeneroNoMusicalRelacion } from '../../../
               <app-autocomplete-create
                 apiEndpoint="idiomas"
                 placeholder="Buscar idioma..."
+                displayField="idioma"
                 [selected]="idiomasItems"
                 (selectedChange)="idiomasItems = $event"
               />
@@ -470,7 +471,7 @@ export class GeneroNoMusicalFormComponent implements OnInit {
       generosRelacionados: this.generosRelacionadosItems,
       padres: this.padresItems,
       hijos: this.hijosItems,
-      idioma: this.idiomasItems.map((i) => ({ _id: i._id })),
+      idioma: this.idiomasItems.map((i) => ({ id: i._id })),
       anotacionCartograficoTemporal: this.anotacionesItems,
       descriptorLibre: this.descriptorItems,
       vinculoRelacionado: this.vinculoItems,

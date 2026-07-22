@@ -204,6 +204,7 @@ import { CreateGeneroRequest, UpdateGeneroRequest, GeneroRelacion } from '../../
               <app-autocomplete-create
                 apiEndpoint="idiomas"
                 placeholder="Buscar idioma..."
+                displayField="idioma"
                 [selected]="idiomaItems"
                 (selectedChange)="idiomaItems = $event"
               />
@@ -428,8 +429,8 @@ export class GeneroFormComponent implements OnInit {
     this.padresItems = genero.padres || [];
     this.hijosItems = genero.hijos || [];
     this.idiomaItems = (genero.idioma || []).map((i: any) => {
-      if (typeof i === 'object') return { _id: i._id, nombre: i.nombre };
-      return { _id: i, nombre: '(cargando...)' };
+      if (typeof i === 'object') return { _id: i.idioma?._id || i.idioma, idioma: i.idioma?.idioma || i.nombre };
+      return { _id: i, idioma: '(cargando...)' };
     });
     this.sistemasSonorosItems = (genero.sistemasSonoros || []).map((s: any) => {
       if (typeof s === 'object') return { _id: s._id, nombre: s.nombre };
@@ -520,7 +521,7 @@ export class GeneroFormComponent implements OnInit {
       generoRelacionado: this.generoRelacionadoItems,
       padres: this.padresItems,
       hijos: this.hijosItems,
-      idioma: this.idiomaItems.map((i) => ({ _id: i._id, nombre: i.nombre })),
+      idioma: this.idiomaItems.map((i) => ({ idioma: i._id, nombre: i.idioma })),
       sistemasSonoros: this.sistemasSonorosItems.map((s) => ({ _id: s._id, nombre: s.nombre })),
       mediosSonoros: this.mediosSonorosItems.map((m) => ({ _id: m._id, nombre: m.nombre })),
       proyectosAsociados: this.proyectosItems.map((p) => ({ proyecto: p._id })),
