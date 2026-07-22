@@ -7,7 +7,7 @@ import { environment } from '@env/environment';
 @Injectable({ providedIn: 'root' })
 export class GenerosNoMusicalesService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/generos-no-musicales`;
+  private readonly API_URL = `${environment.apiUrl}/generosNoMusicales`;
 
   getAll(): Observable<GeneroNoMusical[]> {
     return this.http.get<GeneroNoMusical[]>(this.API_URL);
