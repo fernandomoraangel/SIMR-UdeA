@@ -550,7 +550,7 @@ export class RecursoFormComponent implements OnInit {
       },
       error: () => this.listaTipoFuente.set([]),
     });
-    this.http.get(`${apiUrl}/listas/tiposDeRecurso`).subscribe({
+    this.http.get(`${apiUrl}/listas/tipos`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
         this.listaTiposDeRecurso.set(Array.isArray(list) ? list : []);
