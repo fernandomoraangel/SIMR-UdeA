@@ -1,0 +1,2340 @@
+[
+  {
+    "endonym": "Wayuunaiki",
+    "exonymSpanish": "Wayúu",
+    "glottocode": "wayu1243",
+    "isoCode": "guc",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Achagua",
+    "exonymSpanish": "Achagua",
+    "glottocode": "acha1250",
+    "isoCode": "aca",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Yukuna",
+    "exonymSpanish": "Yucuna",
+    "glottocode": "yucu1253",
+    "isoCode": "ycn",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Piapoco",
+    "exonymSpanish": "Piapoco",
+    "glottocode": "piap1246",
+    "isoCode": "pio",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Kurripako",
+    "exonymSpanish": "Curripaco",
+    "glottocode": "curr1243",
+    "isoCode": "kpc",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Baníwa",
+    "exonymSpanish": "Baniva",
+    "glottocode": "bani1255",
+    "isoCode": "bvv",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Warekena",
+    "exonymSpanish": "Warekena",
+    "glottocode": "ware1255",
+    "isoCode": "gae",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Bare",
+    "exonymSpanish": "Baré",
+    "glottocode": "bare1276",
+    "isoCode": "bae",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Guahibo",
+    "exonymSpanish": "Guahibo",
+    "glottocode": "guah1255",
+    "isoCode": "guh",
+    "linguisticFamily": "Guahibana"
+  },
+  {
+    "endonym": "Hiwi",
+    "exonymSpanish": "Cuiba",
+    "glottocode": "cuib1242",
+    "isoCode": "cui",
+    "linguisticFamily": "Guahibana"
+  },
+  {
+    "endonym": "Sikuani",
+    "exonymSpanish": "Sikuani",
+    "glottocode": "siku1244",
+    "isoCode": "sic",
+    "linguisticFamily": "Guahibana"
+  },
+  {
+    "endonym": "Chimila",
+    "exonymSpanish": "Chimila",
+    "glottocode": "chim1309",
+    "isoCode": "cbg",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Bari",
+    "exonymSpanish": "Barí",
+    "glottocode": "bari1298",
+    "isoCode": "mot",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Tunebo",
+    "exonymSpanish": "Tunebo",
+    "glottocode": "tune1260",
+    "isoCode": "tnd",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Ngäbere",
+    "exonymSpanish": "Ngäbe (Guaymí)",
+    "glottocode": "ngab1239",
+    "isoCode": "gym",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Buglere",
+    "exonymSpanish": "Buglé",
+    "glottocode": "bugl1243",
+    "isoCode": "sab",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Kuna",
+    "exonymSpanish": "Guna (Cuna)",
+    "glottocode": "cuna1260",
+    "isoCode": "cuk",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Térraba",
+    "exonymSpanish": "Térraba",
+    "glottocode": "terr1254",
+    "isoCode": "tfr",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Bribri",
+    "exonymSpanish": "Bribri",
+    "glottocode": "brib1242",
+    "isoCode": "bzd",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Cabécar",
+    "exonymSpanish": "Cabécar",
+    "glottocode": "cabe1245",
+    "isoCode": "cjp",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Muisca",
+    "exonymSpanish": "Muisca (†)",
+    "glottocode": "muis1253",
+    "isoCode": "",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Emberá Chamí",
+    "exonymSpanish": "Emberá Chamí",
+    "glottocode": "cham1314",
+    "isoCode": "cmi",
+    "linguisticFamily": "Chocó (Emberá)"
+  },
+  {
+    "endonym": "Emberá Katío",
+    "exonymSpanish": "Emberá Katío",
+    "glottocode": "kati1247",
+    "isoCode": "cto",
+    "linguisticFamily": "Chocó (Emberá)"
+  },
+  {
+    "endonym": "Emberá Darién",
+    "exonymSpanish": "Emberá Darién (Wounaan)",
+    "glottocode": "woun1238",
+    "isoCode": "noa",
+    "linguisticFamily": "Chocó (Emberá)"
+  },
+  {
+    "endonym": "Eperã Siepeara",
+    "exonymSpanish": "Eperã (Saija)",
+    "glottocode": "eper1234",
+    "isoCode": "sja",
+    "linguisticFamily": "Chocó (Emberá)"
+  },
+  {
+    "endonym": "Awá",
+    "exonymSpanish": "Awá (Cuaiquer)",
+    "glottocode": "awac1239",
+    "isoCode": "kwi",
+    "linguisticFamily": "Barbacoana"
+  },
+  {
+    "endonym": "Guambiano",
+    "exonymSpanish": "Guambiano (Nam Trik)",
+    "glottocode": "guam1247",
+    "isoCode": "gum",
+    "linguisticFamily": "Barbacoana"
+  },
+  {
+    "endonym": "Totoró",
+    "exonymSpanish": "Totoró",
+    "glottocode": "toto1305",
+    "isoCode": "ttk",
+    "linguisticFamily": "Barbacoana"
+  },
+  {
+    "endonym": "Kokonuko",
+    "exonymSpanish": "Coconuco",
+    "glottocode": "coco1262",
+    "isoCode": "con",
+    "linguisticFamily": "Barbacoana"
+  },
+  {
+    "endonym": "Páez",
+    "exonymSpanish": "Nasa Yuwe (Páez)",
+    "glottocode": "paez1247",
+    "isoCode": "pbb",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Moguex",
+    "exonymSpanish": "Guane (†)",
+    "glottocode": "guan1270",
+    "isoCode": "",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Yukpa",
+    "exonymSpanish": "Yukpa",
+    "glottocode": "yukp1241",
+    "isoCode": "yup",
+    "linguisticFamily": "Caribe"
+  },
+  {
+    "endonym": "Yuco",
+    "exonymSpanish": "Yuco (Motilón)",
+    "glottocode": "moti1248",
+    "isoCode": "mot",
+    "linguisticFamily": "Caribe"
+  },
+  {
+    "endonym": "Carijona",
+    "exonymSpanish": "Carijona (†)",
+    "glottocode": "cari1279",
+    "isoCode": "cbd",
+    "linguisticFamily": "Caribe"
+  },
+  {
+    "endonym": "Ticuna",
+    "exonymSpanish": "Ticuna",
+    "glottocode": "ticu1244",
+    "isoCode": "tca",
+    "linguisticFamily": "Ticuna-Yuri"
+  },
+  {
+    "endonym": "Yuri",
+    "exonymSpanish": "Yuri (†)",
+    "glottocode": "yuri1258",
+    "isoCode": "",
+    "linguisticFamily": "Ticuna-Yuri"
+  },
+  {
+    "endonym": "Cocama",
+    "exonymSpanish": "Cocama",
+    "glottocode": "coca1259",
+    "isoCode": "cod",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Omagua",
+    "exonymSpanish": "Omagua",
+    "glottocode": "omag1247",
+    "isoCode": "omg",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Wayampi",
+    "exonymSpanish": "Wayampi",
+    "glottocode": "waya1270",
+    "isoCode": "oym",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Guaraní",
+    "exonymSpanish": "Guaraní (Avañe'ẽ)",
+    "glottocode": "para1311",
+    "isoCode": "grn",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Tupinambá",
+    "exonymSpanish": "Tupinambá (†)",
+    "glottocode": "tupi1273",
+    "isoCode": "tpn",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Sirionó",
+    "exonymSpanish": "Sirionó",
+    "glottocode": "siri1279",
+    "isoCode": "srq",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Miraña",
+    "exonymSpanish": "Miraña",
+    "glottocode": "mira1252",
+    "isoCode": "",
+    "linguisticFamily": "Bora-Witoto"
+  },
+  {
+    "endonym": "Bora",
+    "exonymSpanish": "Bora",
+    "glottocode": "bora1262",
+    "isoCode": "boa",
+    "linguisticFamily": "Bora-Witoto"
+  },
+  {
+    "endonym": "Muinane",
+    "exonymSpanish": "Muinane",
+    "glottocode": "muin1242",
+    "isoCode": "bmr",
+    "linguisticFamily": "Bora-Witoto"
+  },
+  {
+    "endonym": "Witoto",
+    "exonymSpanish": "Uitoto",
+    "glottocode": "uito1234",
+    "isoCode": "hto",
+    "linguisticFamily": "Bora-Witoto"
+  },
+  {
+    "endonym": "Nonuya",
+    "exonymSpanish": "Nonuya",
+    "glottocode": "nonu1241",
+    "isoCode": "",
+    "linguisticFamily": "Bora-Witoto"
+  },
+  {
+    "endonym": "Ocaina",
+    "exonymSpanish": "Ocaina",
+    "glottocode": "ocai1244",
+    "isoCode": "oca",
+    "linguisticFamily": "Bora-Witoto"
+  },
+  {
+    "endonym": "Andoque",
+    "exonymSpanish": "Andoque",
+    "glottocode": "ando1256",
+    "isoCode": "ano",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Koreguaje",
+    "exonymSpanish": "Coreguaje",
+    "glottocode": "core1254",
+    "isoCode": "coe",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Siona",
+    "exonymSpanish": "Siona",
+    "glottocode": "sion1247",
+    "isoCode": "snn",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Macuna",
+    "exonymSpanish": "Macuna",
+    "glottocode": "macu1259",
+    "isoCode": "mtb",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Cubeo",
+    "exonymSpanish": "Cubeo",
+    "glottocode": "cube1242",
+    "isoCode": "cub",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Desano",
+    "exonymSpanish": "Desano",
+    "glottocode": "desa1247",
+    "isoCode": "des",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Tuyuca",
+    "exonymSpanish": "Tuyuca",
+    "glottocode": "tuyu1245",
+    "isoCode": "tue",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Barasana",
+    "exonymSpanish": "Barasana (Eduria)",
+    "glottocode": "bara1379",
+    "isoCode": "bsn",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Tatuyo",
+    "exonymSpanish": "Tatuyo",
+    "glottocode": "tatu1246",
+    "isoCode": "tav",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Carapana",
+    "exonymSpanish": "Carapana",
+    "glottocode": "cara1262",
+    "isoCode": "cbc",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Siriano",
+    "exonymSpanish": "Siriano",
+    "glottocode": "siri1273",
+    "isoCode": "sri",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Yurutí",
+    "exonymSpanish": "Yurutí",
+    "glottocode": "yuru1244",
+    "isoCode": "yui",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Piratapuyo",
+    "exonymSpanish": "Piratapuyo",
+    "glottocode": "pira1245",
+    "isoCode": "pir",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Wanano",
+    "exonymSpanish": "Wanano (Kotiria)",
+    "glottocode": "wana1272",
+    "isoCode": "gvc",
+    "linguisticFamily": "Tucana"
+  },
+  {
+    "endonym": "Nukak",
+    "exonymSpanish": "Nukak",
+    "glottocode": "nuka1242",
+    "isoCode": "mbr",
+    "linguisticFamily": "Wakú (Kakwa-Nukak)"
+  },
+  {
+    "endonym": "Kakwa",
+    "exonymSpanish": "Cacua",
+    "glottocode": "cacu1241",
+    "isoCode": "cbv",
+    "linguisticFamily": "Wakú (Kakwa-Nukak)"
+  },
+  {
+    "endonym": "Yanomami",
+    "exonymSpanish": "Yanomami",
+    "glottocode": "yano1261",
+    "isoCode": "guu",
+    "linguisticFamily": "Yanomami"
+  },
+  {
+    "endonym": "Yanomam",
+    "exonymSpanish": "Yanomam",
+    "glottocode": "yano1262",
+    "isoCode": "yce",
+    "linguisticFamily": "Yanomami"
+  },
+  {
+    "endonym": "Sanemá",
+    "exonymSpanish": "Sanemá (Tsanuma)",
+    "glottocode": "sanu1240",
+    "isoCode": "xsu",
+    "linguisticFamily": "Yanomami"
+  },
+  {
+    "endonym": "Puinave",
+    "exonymSpanish": "Puinave (Wänsöhöt)",
+    "glottocode": "puin1248",
+    "isoCode": "pui",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Yagua",
+    "exonymSpanish": "Yagua",
+    "glottocode": "yagu1244",
+    "isoCode": "yad",
+    "linguisticFamily": "Peba-Yagua"
+  },
+  {
+    "endonym": "Hup",
+    "exonymSpanish": "Hup (Hupda)",
+    "glottocode": "hupd1244",
+    "isoCode": "jup",
+    "linguisticFamily": "Maku (Nadahup)"
+  },
+  {
+    "endonym": "Dâw",
+    "exonymSpanish": "Dâw",
+    "glottocode": "daww1242",
+    "isoCode": "kwa",
+    "linguisticFamily": "Maku (Nadahup)"
+  },
+  {
+    "endonym": "Nadëb",
+    "exonymSpanish": "Nadëb",
+    "glottocode": "nade1238",
+    "isoCode": "mbj",
+    "linguisticFamily": "Maku (Nadahup)"
+  },
+  {
+    "endonym": "Yuhup",
+    "exonymSpanish": "Yuhup",
+    "glottocode": "yuhu1243",
+    "isoCode": "yab",
+    "linguisticFamily": "Maku (Nadahup)"
+  },
+  {
+    "endonym": "Máku",
+    "exonymSpanish": "Máku (†)",
+    "glottocode": "maku1246",
+    "isoCode": "xak",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Sáliba",
+    "exonymSpanish": "Sáliba",
+    "glottocode": "sali1297",
+    "isoCode": "slc",
+    "linguisticFamily": "Saliba-Piaroa"
+  },
+  {
+    "endonym": "Piaroa",
+    "exonymSpanish": "Piaroa (Wötʰïha)",
+    "glottocode": "piar1243",
+    "isoCode": "pid",
+    "linguisticFamily": "Saliba-Piaroa"
+  },
+  {
+    "endonym": "Huaorani",
+    "exonymSpanish": "Huaorani (Waotededo)",
+    "glottocode": "waor1240",
+    "isoCode": "auc",
+    "linguisticFamily": "Huaorani (Sabela)"
+  },
+  {
+    "endonym": "Secoya",
+    "exonymSpanish": "Secoya (Pai Coca)",
+    "glottocode": "seco1240",
+    "isoCode": "sey",
+    "linguisticFamily": "Zaparoana"
+  },
+  {
+    "endonym": "Zápara",
+    "exonymSpanish": "Zápara",
+    "glottocode": "zapa1251",
+    "isoCode": "zro",
+    "linguisticFamily": "Zaparoana"
+  },
+  {
+    "endonym": "Andoa",
+    "exonymSpanish": "Andoa (†)",
+    "glottocode": "ando1254",
+    "isoCode": "",
+    "linguisticFamily": "Zaparoana"
+  },
+  {
+    "endonym": "Arabela",
+    "exonymSpanish": "Arabela",
+    "glottocode": "arab1268",
+    "isoCode": "arl",
+    "linguisticFamily": "Zaparoana"
+  },
+  {
+    "endonym": "Iquito",
+    "exonymSpanish": "Iquito",
+    "glottocode": "iqui1243",
+    "isoCode": "iqu",
+    "linguisticFamily": "Zaparoana"
+  },
+  {
+    "endonym": "Candoshi",
+    "exonymSpanish": "Candoshi (Chapara)",
+    "glottocode": "cand1248",
+    "isoCode": "cbu",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Achuar",
+    "exonymSpanish": "Achuar",
+    "glottocode": "achu1248",
+    "isoCode": "acu",
+    "linguisticFamily": "Jívaro (Chicham)"
+  },
+  {
+    "endonym": "Shuar",
+    "exonymSpanish": "Shuar",
+    "glottocode": "shua1257",
+    "isoCode": "jiv",
+    "linguisticFamily": "Jívaro (Chicham)"
+  },
+  {
+    "endonym": "Awajún",
+    "exonymSpanish": "Aguaruna",
+    "glottocode": "aguá1253",
+    "isoCode": "agr",
+    "linguisticFamily": "Jívaro (Chicham)"
+  },
+  {
+    "endonym": "Wampís",
+    "exonymSpanish": "Huambisa",
+    "glottocode": "huam1247",
+    "isoCode": "hub",
+    "linguisticFamily": "Jívaro (Chicham)"
+  },
+  {
+    "endonym": "Shiviar",
+    "exonymSpanish": "Shiviar",
+    "glottocode": "shiw1234",
+    "isoCode": "",
+    "linguisticFamily": "Jívaro (Chicham)"
+  },
+  {
+    "endonym": "Runa Simi",
+    "exonymSpanish": "Quechua (Norte)",
+    "glottocode": "quin1245",
+    "isoCode": "qvi",
+    "linguisticFamily": "Quechua (Runasimi)"
+  },
+  {
+    "endonym": "Runashimi",
+    "exonymSpanish": "Quechua (Sur)",
+    "glottocode": "quec1386",
+    "isoCode": "qus",
+    "linguisticFamily": "Quechua (Runasimi)"
+  },
+  {
+    "endonym": "Ayacucho Runa",
+    "exonymSpanish": "Quechua ayacuchano",
+    "glottocode": "ayac1239",
+    "isoCode": "quy",
+    "linguisticFamily": "Quechua (Runasimi)"
+  },
+  {
+    "endonym": "Ancash Runa",
+    "exonymSpanish": "Quechua ancashino",
+    "glottocode": "anca1259",
+    "isoCode": "qwa",
+    "linguisticFamily": "Quechua (Runasimi)"
+  },
+  {
+    "endonym": "Jaqaru",
+    "exonymSpanish": "Jaqaru",
+    "glottocode": "jaqa1244",
+    "isoCode": "jqr",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Aymara",
+    "exonymSpanish": "Aymara",
+    "glottocode": "ayma1253",
+    "isoCode": "ayr",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Mapuzungun",
+    "exonymSpanish": "Mapuche (Mapudungun)",
+    "glottocode": "mapu1245",
+    "isoCode": "arn",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Kunza",
+    "exonymSpanish": "Atacameño (†)",
+    "glottocode": "atac1235",
+    "isoCode": "",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Chipaya",
+    "exonymSpanish": "Chipaya",
+    "glottocode": "chip1261",
+    "isoCode": "cap",
+    "linguisticFamily": "Uru-Chipaya"
+  },
+  {
+    "endonym": "Uru",
+    "exonymSpanish": "Uru (†)",
+    "glottocode": "uruu1244",
+    "isoCode": "ure",
+    "linguisticFamily": "Uru-Chipaya"
+  },
+  {
+    "endonym": "Tsimane'",
+    "exonymSpanish": "Tsimane (Chimané)",
+    "glottocode": "chin1286",
+    "isoCode": "cas",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Chiquitano",
+    "exonymSpanish": "Chiquitano",
+    "glottocode": "chiq1248",
+    "isoCode": "cax",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Leco",
+    "exonymSpanish": "Leco",
+    "glottocode": "leco1242",
+    "isoCode": "lec",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Guarayu",
+    "exonymSpanish": "Guarayo",
+    "glottocode": "guar1293",
+    "isoCode": "gyr",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Moxo",
+    "exonymSpanish": "Mojeño (Trinitario)",
+    "glottocode": "trin1274",
+    "isoCode": "trn",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Baure",
+    "exonymSpanish": "Baure",
+    "glottocode": "baur1252",
+    "isoCode": "brg",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Paunaka",
+    "exonymSpanish": "Paunaka",
+    "glottocode": "paun1242",
+    "isoCode": "pnk",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Yuki",
+    "exonymSpanish": "Yuki",
+    "glottocode": "yuki1242",
+    "isoCode": "",
+    "linguisticFamily": "Yuki (Yukpa)"
+  },
+  {
+    "endonym": "Wichí",
+    "exonymSpanish": "Wichí (Mataco)",
+    "glottocode": "wich1261",
+    "isoCode": "wlv",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Nivaclé",
+    "exonymSpanish": "Nivaclé (Chulupí)",
+    "glottocode": "niva1238",
+    "isoCode": "cag",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Qom",
+    "exonymSpanish": "Qom (Toba)",
+    "glottocode": "toba1269",
+    "isoCode": "tob",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Mocoví",
+    "exonymSpanish": "Mocoví",
+    "glottocode": "moco1246",
+    "isoCode": "moc",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Pilagá",
+    "exonymSpanish": "Pilagá",
+    "glottocode": "pila1245",
+    "isoCode": "plg",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Tapiete",
+    "exonymSpanish": "Tapiete",
+    "glottocode": "tapi1261",
+    "isoCode": "tpj",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Chorote",
+    "exonymSpanish": "Chorote",
+    "glottocode": "chor1272",
+    "isoCode": "crq",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Maka",
+    "exonymSpanish": "Maká",
+    "glottocode": "maca1265",
+    "isoCode": "mca",
+    "linguisticFamily": "Mataco-Guaicurú"
+  },
+  {
+    "endonym": "Karajá",
+    "exonymSpanish": "Karajá",
+    "glottocode": "kara1500",
+    "isoCode": "kpj",
+    "linguisticFamily": "Macro-Jê"
+  },
+  {
+    "endonym": "Xerente",
+    "exonymSpanish": "Xerente",
+    "glottocode": "xere1244",
+    "isoCode": "xer",
+    "linguisticFamily": "Jé (Gê)"
+  },
+  {
+    "endonym": "Xavante",
+    "exonymSpanish": "Xavante",
+    "glottocode": "xava1240",
+    "isoCode": "xav",
+    "linguisticFamily": "Jé (Gê)"
+  },
+  {
+    "endonym": "Kaingang",
+    "exonymSpanish": "Kaingang",
+    "glottocode": "kain1271",
+    "isoCode": "kgp",
+    "linguisticFamily": "Jé (Gê)"
+  },
+  {
+    "endonym": "Timbira",
+    "exonymSpanish": "Timbira",
+    "glottocode": "time1245",
+    "isoCode": "",
+    "linguisticFamily": "Jé (Gê)"
+  },
+  {
+    "endonym": "Kayapó",
+    "exonymSpanish": "Kayapó (Mebengokre)",
+    "glottocode": "kaya1330",
+    "isoCode": "txu",
+    "linguisticFamily": "Jé (Gê)"
+  },
+  {
+    "endonym": "Guajajára",
+    "exonymSpanish": "Guajajára (Tenetehara)",
+    "glottocode": "guaj1255",
+    "isoCode": "gub",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Araweté",
+    "exonymSpanish": "Araweté",
+    "glottocode": "araw1271",
+    "isoCode": "awt",
+    "linguisticFamily": "Tupí-Guaraní"
+  },
+  {
+    "endonym": "Ashaninka",
+    "exonymSpanish": "Ashaninka (Campa)",
+    "glottocode": "asha1243",
+    "isoCode": "cni",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Asheninka",
+    "exonymSpanish": "Asheninka",
+    "glottocode": "ashe1271",
+    "isoCode": "prq",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Matsigenka",
+    "exonymSpanish": "Matsigenka (Machiguenga)",
+    "glottocode": "mach1267",
+    "isoCode": "mcb",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Nomatsigenga",
+    "exonymSpanish": "Nomatsigenga",
+    "glottocode": "noma1263",
+    "isoCode": "not",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Yine",
+    "exonymSpanish": "Yine (Piro)",
+    "glottocode": "yine1238",
+    "isoCode": "pib",
+    "linguisticFamily": "Arawak (Maipureana)"
+  },
+  {
+    "endonym": "Shipibo",
+    "exonymSpanish": "Shipibo-Konibo",
+    "glottocode": "ship1253",
+    "isoCode": "shp",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Kashibo",
+    "exonymSpanish": "Kashibo-Kakataibo",
+    "glottocode": "kash1275",
+    "isoCode": "cbr",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Matsés",
+    "exonymSpanish": "Matsés (Mayoruna)",
+    "glottocode": "mayo1261",
+    "isoCode": "myr",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Yaminawa",
+    "exonymSpanish": "Yaminawa",
+    "glottocode": "yami1255",
+    "isoCode": "yaa",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Sharanawa",
+    "exonymSpanish": "Sharanawa",
+    "glottocode": "shan1281",
+    "isoCode": "",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Chácobo",
+    "exonymSpanish": "Chácobo",
+    "glottocode": "chac1251",
+    "isoCode": "cao",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Cavineño",
+    "exonymSpanish": "Cavineño",
+    "glottocode": "cavi1250",
+    "isoCode": "cav",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Tacana",
+    "exonymSpanish": "Tacana",
+    "glottocode": "taca1256",
+    "isoCode": "tna",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Ese Ejja",
+    "exonymSpanish": "Ese Ejja (Chama)",
+    "glottocode": "esee1248",
+    "isoCode": "ese",
+    "linguisticFamily": "Pano-Tacana"
+  },
+  {
+    "endonym": "Huasteco",
+    "exonymSpanish": "Huasteco (Tének)",
+    "glottocode": "huas1242",
+    "isoCode": "hus",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Yucateco",
+    "exonymSpanish": "Maya yucateco (Maaya t'aan)",
+    "glottocode": "yuca1254",
+    "isoCode": "yua",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Tsotsil",
+    "exonymSpanish": "Tzotzil (Bats'il K'op)",
+    "glottocode": "tzot1259",
+    "isoCode": "tzo",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Tseltal",
+    "exonymSpanish": "Tzeltal (K'op o winik)",
+    "glottocode": "tzel1254",
+    "isoCode": "tzh",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Q'eqchi'",
+    "exonymSpanish": "Q'eqchi' (Kekchí)",
+    "glottocode": "kekc1242",
+    "isoCode": "kek",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "K'iche'",
+    "exonymSpanish": "K'iche' (Quiché)",
+    "glottocode": "quic1242",
+    "isoCode": "quc",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Kaqchikel",
+    "exonymSpanish": "Kaqchikel (Cakchiquel)",
+    "glottocode": "cakc1242",
+    "isoCode": "cak",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Mam",
+    "exonymSpanish": "Mam",
+    "glottocode": "mamm1241",
+    "isoCode": "mam",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Chol",
+    "exonymSpanish": "Chol (Ch'ol)",
+    "glottocode": "chol1283",
+    "isoCode": "ctd",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Chorti'",
+    "exonymSpanish": "Chortí",
+    "glottocode": "chor1270",
+    "isoCode": "caa",
+    "linguisticFamily": "Maya"
+  },
+  {
+    "endonym": "Huichol",
+    "exonymSpanish": "Wixárika (Huichol)",
+    "glottocode": "wich1265",
+    "isoCode": "hch",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Náhuatl",
+    "exonymSpanish": "Náhuatl (Mexitlahtolli)",
+    "glottocode": "azte1234",
+    "isoCode": "nah",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Pipil",
+    "exonymSpanish": "Nawat (Pipil)",
+    "glottocode": "pipi1249",
+    "isoCode": "ppl",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Cora",
+    "exonymSpanish": "Cora (Náayeri)",
+    "glottocode": "cora1260",
+    "isoCode": "crn",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Tepehuán",
+    "exonymSpanish": "Tepehuano (O'dam)",
+    "glottocode": "tepe1277",
+    "isoCode": "ntp",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Tarahumara",
+    "exonymSpanish": "Rarámuri (Tarahumara)",
+    "glottocode": "tara1320",
+    "isoCode": "tar",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Yaqui",
+    "exonymSpanish": "Yaqui (Yoem Noki)",
+    "glottocode": "yaqu1251",
+    "isoCode": "yaq",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Mayo",
+    "exonymSpanish": "Mayo (Yorem Nokki)",
+    "glottocode": "mayo1264",
+    "isoCode": "mfy",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Seri",
+    "exonymSpanish": "Seri (Cmiique Iitom)",
+    "glottocode": "seri1257",
+    "isoCode": "sei",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Mixe",
+    "exonymSpanish": "Mixe (Ayüük)",
+    "glottocode": "mixe1284",
+    "isoCode": "mco",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Zapoteco",
+    "exonymSpanish": "Zapoteco (Diidxazá)",
+    "glottocode": "zapo1436",
+    "isoCode": "zap",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Mixteco",
+    "exonymSpanish": "Mixteco (Tu'un Sávi)",
+    "glottocode": "mixt1427",
+    "isoCode": "mxt",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Otomí",
+    "exonymSpanish": "Hñähñu (Otomí)",
+    "glottocode": "otom1299",
+    "isoCode": "ote",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Mazahua",
+    "exonymSpanish": "Mazahua (Jñatrjo)",
+    "glottocode": "maza1293",
+    "isoCode": "mmc",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Mazateco",
+    "exonymSpanish": "Mazateco (En Ngixo)",
+    "glottocode": "maza1295",
+    "isoCode": "mau",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Triqui",
+    "exonymSpanish": "Triqui (Dre' nanj)",
+    "glottocode": "trio1239",
+    "isoCode": "trs",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Amuzgo",
+    "exonymSpanish": "Amuzgo (Tzañcue)",
+    "glottocode": "amuz1253",
+    "isoCode": "amu",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Chatino",
+    "exonymSpanish": "Chatino",
+    "glottocode": "chat1271",
+    "isoCode": "ctp",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Cuicateco",
+    "exonymSpanish": "Cuicateco",
+    "glottocode": "cuic1234",
+    "isoCode": "cux",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Chinateco",
+    "exonymSpanish": "Chinateco",
+    "glottocode": "chin1283",
+    "isoCode": "",
+    "linguisticFamily": "Mixteco-Zapoteca (Otomangue)"
+  },
+  {
+    "endonym": "Miskitu",
+    "exonymSpanish": "Miskito",
+    "glottocode": "misk1235",
+    "isoCode": "miq",
+    "linguisticFamily": "Misumalpa"
+  },
+  {
+    "endonym": "Mayangna",
+    "exonymSpanish": "Mayangna (Sumo)",
+    "glottocode": "sumu1234",
+    "isoCode": "",
+    "linguisticFamily": "Misumalpa"
+  },
+  {
+    "endonym": "Rama",
+    "exonymSpanish": "Rama",
+    "glottocode": "rama1270",
+    "isoCode": "rma",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Paya",
+    "exonymSpanish": "Pech (Paya)",
+    "glottocode": "pech1241",
+    "isoCode": "pay",
+    "linguisticFamily": "Chibcha"
+  },
+  {
+    "endonym": "Lenca",
+    "exonymSpanish": "Lenca",
+    "glottocode": "lenc1242",
+    "isoCode": "",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Xinca",
+    "exonymSpanish": "Xinca",
+    "glottocode": "xinc1241",
+    "isoCode": "",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Cueva",
+    "exonymSpanish": "Cueva (†)",
+    "glottocode": "cuev1239",
+    "isoCode": "",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Tol",
+    "exonymSpanish": "Tol (Jicaque)",
+    "glottocode": "jica1245",
+    "isoCode": "",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Kiliwa",
+    "exonymSpanish": "Kiliwa (Ko'lew)",
+    "glottocode": "kili1268",
+    "isoCode": "klb",
+    "linguisticFamily": "Yumana (Cochimí-Yuma)"
+  },
+  {
+    "endonym": "Paipai",
+    "exonymSpanish": "Paipai (Akwa'ala)",
+    "glottocode": "paip1240",
+    "isoCode": "ppi",
+    "linguisticFamily": "Yumana (Cochimí-Yuma)"
+  },
+  {
+    "endonym": "Cocopa",
+    "exonymSpanish": "Cucapá (Es Pei)",
+    "glottocode": "coco1261",
+    "isoCode": "coc",
+    "linguisticFamily": "Yumana (Cochimí-Yuma)"
+  },
+  {
+    "endonym": "Kumiai",
+    "exonymSpanish": "Kumiai (K'miai)",
+    "glottocode": "kumi1248",
+    "isoCode": "dih",
+    "linguisticFamily": "Yumana (Cochimí-Yuma)"
+  },
+  {
+    "endonym": "Iipay",
+    "exonymSpanish": "Ipai (Diegueño Norte)",
+    "glottocode": "ipai1240",
+    "isoCode": "",
+    "linguisticFamily": "Yumana (Cochimí-Yuma)"
+  },
+  {
+    "endonym": "Tiipay",
+    "exonymSpanish": "Tipai (Diegueño Sur)",
+    "glottocode": "tipa1244",
+    "isoCode": "",
+    "linguisticFamily": "Yumana (Cochimí-Yuma)"
+  },
+  {
+    "endonym": "Hopi",
+    "exonymSpanish": "Hopi",
+    "glottocode": "hopi1249",
+    "isoCode": "hop",
+    "linguisticFamily": "Uto-Azteca"
+  },
+  {
+    "endonym": "Navajo",
+    "exonymSpanish": "Navajo (Diné Bizaad)",
+    "glottocode": "nava1243",
+    "isoCode": "nav",
+    "linguisticFamily": "Na-Dené (Atabascana)"
+  },
+  {
+    "endonym": "Lakota",
+    "exonymSpanish": "Lakota",
+    "glottocode": "lako1245",
+    "isoCode": "lkt",
+    "linguisticFamily": "Siux (Siouan)"
+  },
+  {
+    "endonym": "Inuktitut",
+    "exonymSpanish": "Inuktitut",
+    "glottocode": "inuk1242",
+    "isoCode": "iku",
+    "linguisticFamily": "Esquimo-Aleutiana (Inuit)"
+  },
+  {
+    "endonym": "Cherokee",
+    "exonymSpanish": "Cherokee (Tsalagi)",
+    "glottocode": "cher1273",
+    "isoCode": "chr",
+    "linguisticFamily": "Iroquesa"
+  },
+  {
+    "endonym": "Rapa Nui",
+    "exonymSpanish": "Rapa Nui",
+    "glottocode": "rapa1244",
+    "isoCode": "rap",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Māori",
+    "exonymSpanish": "Maorí",
+    "glottocode": "maor1246",
+    "isoCode": "mri",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Hawaiian",
+    "exonymSpanish": "Hawaiano (ʻŌlelo Hawaiʻi)",
+    "glottocode": "hawa1245",
+    "isoCode": "haw",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Sámi",
+    "exonymSpanish": "Sami septentrional",
+    "glottocode": "nort2671",
+    "isoCode": "sme",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Suomi",
+    "exonymSpanish": "Finlandés",
+    "glottocode": "finn1318",
+    "isoCode": "fin",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Magyar",
+    "exonymSpanish": "Húngaro",
+    "glottocode": "hung1274",
+    "isoCode": "hun",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Eesti",
+    "exonymSpanish": "Estonio",
+    "glottocode": "esto1258",
+    "isoCode": "est",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Erzya",
+    "exonymSpanish": "Erzya (Mordvino)",
+    "glottocode": "erzy1239",
+    "isoCode": "myv",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "English",
+    "exonymSpanish": "Inglés",
+    "glottocode": "stan1293",
+    "isoCode": "eng",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Deutsch",
+    "exonymSpanish": "Alemán",
+    "glottocode": "high1286",
+    "isoCode": "deu",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Nederlands",
+    "exonymSpanish": "Neerlandés (Holandés)",
+    "glottocode": "dutc1259",
+    "isoCode": "nld",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Dansk",
+    "exonymSpanish": "Danés",
+    "glottocode": "dani1286",
+    "isoCode": "dan",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Svenska",
+    "exonymSpanish": "Sueco",
+    "glottocode": "swed1254",
+    "isoCode": "swe",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Norsk",
+    "exonymSpanish": "Noruego",
+    "glottocode": "norw1258",
+    "isoCode": "nor",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Íslenska",
+    "exonymSpanish": "Islandés",
+    "glottocode": "icel1247",
+    "isoCode": "isl",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Frysk",
+    "exonymSpanish": "Frisón",
+    "glottocode": "fris1239",
+    "isoCode": "fry",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Español",
+    "exonymSpanish": "Español (Castellano)",
+    "glottocode": "stan1288",
+    "isoCode": "spa",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Français",
+    "exonymSpanish": "Francés",
+    "glottocode": "stan1290",
+    "isoCode": "fra",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Italiano",
+    "exonymSpanish": "Italiano",
+    "glottocode": "ital1282",
+    "isoCode": "ita",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Português",
+    "exonymSpanish": "Portugués",
+    "glottocode": "port1283",
+    "isoCode": "por",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Română",
+    "exonymSpanish": "Rumano",
+    "glottocode": "roma1327",
+    "isoCode": "ron",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Català",
+    "exonymSpanish": "Catalán",
+    "glottocode": "cata1284",
+    "isoCode": "cat",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Galego",
+    "exonymSpanish": "Gallego",
+    "glottocode": "gali1258",
+    "isoCode": "glg",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Pусский",
+    "exonymSpanish": "Ruso",
+    "glottocode": "russ1263",
+    "isoCode": "rus",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Polski",
+    "exonymSpanish": "Polaco",
+    "glottocode": "poli1260",
+    "isoCode": "pol",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Čeština",
+    "exonymSpanish": "Checo",
+    "glottocode": "czec1258",
+    "isoCode": "ces",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Slovenčina",
+    "exonymSpanish": "Eslovaco",
+    "glottocode": "slov1269",
+    "isoCode": "slk",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Slovenščina",
+    "exonymSpanish": "Esloveno",
+    "glottocode": "slov1268",
+    "isoCode": "slv",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Hrvatski",
+    "exonymSpanish": "Croata",
+    "glottocode": "croa1245",
+    "isoCode": "hrv",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Српски",
+    "exonymSpanish": "Serbio",
+    "glottocode": "serb1264",
+    "isoCode": "srp",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Български",
+    "exonymSpanish": "Búlgaro",
+    "glottocode": "bulg1262",
+    "isoCode": "bul",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Українська",
+    "exonymSpanish": "Ucraniano",
+    "glottocode": "ukra1253",
+    "isoCode": "ukr",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Беларуская",
+    "exonymSpanish": "Bielorruso",
+    "glottocode": "bela1254",
+    "isoCode": "bel",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Македонски",
+    "exonymSpanish": "Macedonio",
+    "glottocode": "mace1250",
+    "isoCode": "mkd",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Bosanski",
+    "exonymSpanish": "Bosnio",
+    "glottocode": "bosn1245",
+    "isoCode": "bos",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Lietuvių",
+    "exonymSpanish": "Lituano",
+    "glottocode": "lith1251",
+    "isoCode": "lit",
+    "linguisticFamily": "Indoeuropea (Báltica)"
+  },
+  {
+    "endonym": "Latviešu",
+    "exonymSpanish": "Letón",
+    "glottocode": "latv1249",
+    "isoCode": "lav",
+    "linguisticFamily": "Indoeuropea (Báltica)"
+  },
+  {
+    "endonym": "Ελληνικά",
+    "exonymSpanish": "Griego",
+    "glottocode": "gree1276",
+    "isoCode": "ell",
+    "linguisticFamily": "Indoeuropea (Helénica)"
+  },
+  {
+    "endonym": "Shqip",
+    "exonymSpanish": "Albanés",
+    "glottocode": "alan1250",
+    "isoCode": "sqi",
+    "linguisticFamily": "Indoeuropea (Albanesa)"
+  },
+  {
+    "endonym": "Հայերեն",
+    "exonymSpanish": "Armenio",
+    "glottocode": "arar1286",
+    "isoCode": "hye",
+    "linguisticFamily": "Indoeuropea (Armenia)"
+  },
+  {
+    "endonym": "Gaeilge",
+    "exonymSpanish": "Gaélico irlandés",
+    "glottocode": "iris1253",
+    "isoCode": "gle",
+    "linguisticFamily": "Indoeuropea (Céltica)"
+  },
+  {
+    "endonym": "Cymraeg",
+    "exonymSpanish": "Galés",
+    "glottocode": "wels1247",
+    "isoCode": "cym",
+    "linguisticFamily": "Indoeuropea (Céltica)"
+  },
+  {
+    "endonym": "Romany",
+    "exonymSpanish": "Romaní (Caló)",
+    "glottocode": "roma1329",
+    "isoCode": "rom",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "Føroyskt",
+    "exonymSpanish": "Feroés",
+    "glottocode": "faroe1244",
+    "isoCode": "fao",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Afrikaans",
+    "exonymSpanish": "Afrikáans",
+    "glottocode": "afri1274",
+    "isoCode": "afr",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Yiddish",
+    "exonymSpanish": "Yidis (Judeoalemán)",
+    "glottocode": "yidd1255",
+    "isoCode": "yid",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Luxembourgish",
+    "exonymSpanish": "Luxemburgués",
+    "glottocode": "luxe1241",
+    "isoCode": "ltz",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Plattdüütsch",
+    "exonymSpanish": "Bajo alemán",
+    "glottocode": "nort2627",
+    "isoCode": "nds",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Occitan",
+    "exonymSpanish": "Occitano",
+    "glottocode": "occi1239",
+    "isoCode": "oci",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Sardu",
+    "exonymSpanish": "Sardo",
+    "glottocode": "sard1257",
+    "isoCode": "srd",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Furlan",
+    "exonymSpanish": "Friulano",
+    "glottocode": "friu1239",
+    "isoCode": "fur",
+    "linguisticFamily": "Indoeuropea (Romance)"
+  },
+  {
+    "endonym": "Русский (поморский)",
+    "exonymSpanish": "Pomoro (†)",
+    "glottocode": "pomo1274",
+    "isoCode": "",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Kurmanji",
+    "exonymSpanish": "Kurdo (Kurmanji)",
+    "glottocode": "nort2641",
+    "isoCode": "kmr",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "Sorani",
+    "exonymSpanish": "Kurdo (Soraní)",
+    "glottocode": "sora1254",
+    "isoCode": "ckb",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "Zazaki",
+    "exonymSpanish": "Zazaki (Dimili)",
+    "glottocode": "zaza1246",
+    "isoCode": "zza",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "فارسی",
+    "exonymSpanish": "Persa (Farsi)",
+    "glottocode": "fars1254",
+    "isoCode": "fas",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "پښتو",
+    "exonymSpanish": "Pastún",
+    "glottocode": "pash1269",
+    "isoCode": "pus",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "हिन्दी",
+    "exonymSpanish": "Hindi",
+    "glottocode": "hind1269",
+    "isoCode": "hin",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "اردو",
+    "exonymSpanish": "Urdu",
+    "glottocode": "urdu1245",
+    "isoCode": "urd",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "বাংলা",
+    "exonymSpanish": "Bengalí",
+    "glottocode": "beng1280",
+    "isoCode": "ben",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "ਪੰਜਾਬੀ",
+    "exonymSpanish": "Panyabí",
+    "glottocode": "panc1254",
+    "isoCode": "pan",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "मराठी",
+    "exonymSpanish": "Maratí",
+    "glottocode": "mara1378",
+    "isoCode": "mar",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "ગુજરાતી",
+    "exonymSpanish": "Guyaratí",
+    "glottocode": "guja1252",
+    "isoCode": "guj",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "ଓଡ଼ିଆ",
+    "exonymSpanish": "Oriya",
+    "glottocode": "oriy1255",
+    "isoCode": "ory",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "অসমীয়া",
+    "exonymSpanish": "Asamés",
+    "glottocode": "assa1263",
+    "isoCode": "asm",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "कॉशुर",
+    "exonymSpanish": "Cachemir",
+    "glottocode": "kash1277",
+    "isoCode": "kas",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "नेपाली",
+    "exonymSpanish": "Nepalí",
+    "glottocode": "nepa1252",
+    "isoCode": "nep",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "سنڌي",
+    "exonymSpanish": "Sindhi",
+    "glottocode": "sind1272",
+    "isoCode": "snd",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "සිංහල",
+    "exonymSpanish": "Cingalés",
+    "glottocode": "sinh1246",
+    "isoCode": "sin",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "中文",
+    "exonymSpanish": "Chino mandarín",
+    "glottocode": "mand1415",
+    "isoCode": "cmn",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "粵語",
+    "exonymSpanish": "Cantonés",
+    "glottocode": "cant1236",
+    "isoCode": "yue",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "閩南語",
+    "exonymSpanish": "Hokkien (Min sur)",
+    "glottocode": "hokk1242",
+    "isoCode": "nan",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "客語",
+    "exonymSpanish": "Hakka",
+    "glottocode": "hakk1236",
+    "isoCode": "hak",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "Wu (吳語)",
+    "exonymSpanish": "Wu (Shanghainés)",
+    "glottocode": "wuch1236",
+    "isoCode": "wuu",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "湘語",
+    "exonymSpanish": "Xiang",
+    "glottocode": "xian1251",
+    "isoCode": "hsn",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "贛語",
+    "exonymSpanish": "Gan",
+    "glottocode": "ganc1239",
+    "isoCode": "gan",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "日本語",
+    "exonymSpanish": "Japonés",
+    "glottocode": "nucl1643",
+    "isoCode": "jpn",
+    "linguisticFamily": "Japónica"
+  },
+  {
+    "endonym": "한국어",
+    "exonymSpanish": "Coreano",
+    "glottocode": "kore1280",
+    "isoCode": "kor",
+    "linguisticFamily": "Coreánica"
+  },
+  {
+    "endonym": "монгол",
+    "exonymSpanish": "Mongol",
+    "glottocode": "mong1331",
+    "isoCode": "mon",
+    "linguisticFamily": "Mongólica"
+  },
+  {
+    "endonym": "Türkçe",
+    "exonymSpanish": "Turco",
+    "glottocode": "nucl1301",
+    "isoCode": "tur",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Oʻzbek",
+    "exonymSpanish": "Uzbeko",
+    "glottocode": "uzbe1247",
+    "isoCode": "uzb",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Qazaqşa",
+    "exonymSpanish": "Kazajo",
+    "glottocode": "kaza1248",
+    "isoCode": "kaz",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Azərbaycan",
+    "exonymSpanish": "Azerí (Azerbaiyano)",
+    "glottocode": "nort2697",
+    "isoCode": "aze",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Кыргызча",
+    "exonymSpanish": "Kirguís",
+    "glottocode": "kirg1245",
+    "isoCode": "kir",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Türkmen",
+    "exonymSpanish": "Turcomano",
+    "glottocode": "turk1304",
+    "isoCode": "tuk",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Уйғур",
+    "exonymSpanish": "Uigur",
+    "glottocode": "uigh1240",
+    "isoCode": "uig",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "татар",
+    "exonymSpanish": "Tártaro",
+    "glottocode": "tata1255",
+    "isoCode": "tat",
+    "linguisticFamily": "Túrquica"
+  },
+  {
+    "endonym": "Bahasa Indonesia",
+    "exonymSpanish": "Indonesio",
+    "glottocode": "indo1316",
+    "isoCode": "ind",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Bahasa Melayu",
+    "exonymSpanish": "Malayo",
+    "glottocode": "mala1479",
+    "isoCode": "msa",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Tagalog",
+    "exonymSpanish": "Tagalo (Filipino)",
+    "glottocode": "taga1269",
+    "isoCode": "tgl",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Jawa",
+    "exonymSpanish": "Javanés",
+    "glottocode": "java1253",
+    "isoCode": "jav",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Cebuano",
+    "exonymSpanish": "Cebuano",
+    "glottocode": "cebu1242",
+    "isoCode": "ceb",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Ilokano",
+    "exonymSpanish": "Ilocano",
+    "glottocode": "ilok1237",
+    "isoCode": "ilo",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Fijian",
+    "exonymSpanish": "Fiyiano",
+    "glottocode": "fiji1243",
+    "isoCode": "fij",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "Tiếng Việt",
+    "exonymSpanish": "Vietnamita",
+    "glottocode": "viet1252",
+    "isoCode": "vie",
+    "linguisticFamily": "Austroasiática"
+  },
+  {
+    "endonym": "ភាសាខ្មែរ",
+    "exonymSpanish": "Camboyano (Jemer)",
+    "glottocode": "cent1989",
+    "isoCode": "khm",
+    "linguisticFamily": "Austroasiática"
+  },
+  {
+    "endonym": "ไทย",
+    "exonymSpanish": "Tailandés",
+    "glottocode": "thai1261",
+    "isoCode": "tha",
+    "linguisticFamily": "Tai-Kadai"
+  },
+  {
+    "endonym": "ລາວ",
+    "exonymSpanish": "Lao (Laosiano)",
+    "glottocode": "laoo1243",
+    "isoCode": "lao",
+    "linguisticFamily": "Tai-Kadai"
+  },
+  {
+    "endonym": "မြန်မာဘာသာ",
+    "exonymSpanish": "Birmano",
+    "glottocode": "nort3159",
+    "isoCode": "mya",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "བོད་སྐད",
+    "exonymSpanish": "Tibetano",
+    "glottocode": "tibe1272",
+    "isoCode": "bod",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "ကချင်",
+    "exonymSpanish": "Jingpo (Kachin)",
+    "glottocode": "jing1259",
+    "isoCode": "kac",
+    "linguisticFamily": "Sino-Tibetana"
+  },
+  {
+    "endonym": "Bokmål",
+    "exonymSpanish": "Noruego (Bokmål)",
+    "glottocode": "norw1259",
+    "isoCode": "nob",
+    "linguisticFamily": "Indoeuropea (Germánica)"
+  },
+  {
+    "endonym": "Hausa",
+    "exonymSpanish": "Hausa",
+    "glottocode": "haus1257",
+    "isoCode": "hau",
+    "linguisticFamily": "Afroasiática (Semítica)"
+  },
+  {
+    "endonym": "العربية",
+    "exonymSpanish": "Árabe",
+    "glottocode": "arab1395",
+    "isoCode": "ara",
+    "linguisticFamily": "Afroasiática (Semítica)"
+  },
+  {
+    "endonym": "עברית",
+    "exonymSpanish": "Hebreo",
+    "glottocode": "hebr1245",
+    "isoCode": "heb",
+    "linguisticFamily": "Afroasiática (Semítica)"
+  },
+  {
+    "endonym": "አማርኛ",
+    "exonymSpanish": "Amárico",
+    "glottocode": "amha1245",
+    "isoCode": "amh",
+    "linguisticFamily": "Afroasiática (Semítica)"
+  },
+  {
+    "endonym": "Tigrinya",
+    "exonymSpanish": "Tigriña",
+    "glottocode": "tigr1271",
+    "isoCode": "tir",
+    "linguisticFamily": "Afroasiática (Semítica)"
+  },
+  {
+    "endonym": "Oromo",
+    "exonymSpanish": "Oromo",
+    "glottocode": "orom1242",
+    "isoCode": "orm",
+    "linguisticFamily": "Afroasiática (Cusita)"
+  },
+  {
+    "endonym": "Somali",
+    "exonymSpanish": "Somalí",
+    "glottocode": "soma1255",
+    "isoCode": "som",
+    "linguisticFamily": "Afroasiática (Cusita)"
+  },
+  {
+    "endonym": "Wolof",
+    "exonymSpanish": "Wólof",
+    "glottocode": "wolo1247",
+    "isoCode": "wol",
+    "linguisticFamily": "Niger-Congo (Atlántica)"
+  },
+  {
+    "endonym": "Yoruba",
+    "exonymSpanish": "Yoruba",
+    "glottocode": "yoru1245",
+    "isoCode": "yor",
+    "linguisticFamily": "Niger-Congo (Benue-Congo)"
+  },
+  {
+    "endonym": "Igbo",
+    "exonymSpanish": "Igbo",
+    "glottocode": "igbo1258",
+    "isoCode": "ibo",
+    "linguisticFamily": "Niger-Congo (Benue-Congo)"
+  },
+  {
+    "endonym": "Kiswahili",
+    "exonymSpanish": "Suajili",
+    "glottocode": "swah1253",
+    "isoCode": "swa",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "isiZulu",
+    "exonymSpanish": "Zulú",
+    "glottocode": "zulu1248",
+    "isoCode": "zul",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "isiXhosa",
+    "exonymSpanish": "Xhosa",
+    "glottocode": "xhos1239",
+    "isoCode": "xho",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "Setswana",
+    "exonymSpanish": "Setsuana",
+    "glottocode": "tswa1254",
+    "isoCode": "tsn",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "Sesotho",
+    "exonymSpanish": "Sesoto",
+    "glottocode": "sout2806",
+    "isoCode": "sot",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "Chichewa",
+    "exonymSpanish": "Chichewa",
+    "glottocode": "nyan1308",
+    "isoCode": "nya",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "Shona",
+    "exonymSpanish": "Shona",
+    "glottocode": "shon1250",
+    "isoCode": "sna",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "Kinyarwanda",
+    "exonymSpanish": "Ruandés",
+    "glottocode": "kiny1244",
+    "isoCode": "kin",
+    "linguisticFamily": "Niger-Congo (Bantú)"
+  },
+  {
+    "endonym": "Fulfulde",
+    "exonymSpanish": "Fula (Pular)",
+    "glottocode": "fula1264",
+    "isoCode": "ful",
+    "linguisticFamily": "Niger-Congo (Atlántica)"
+  },
+  {
+    "endonym": "Bambara",
+    "exonymSpanish": "Bambara (Bamanankan)",
+    "glottocode": "bamb1269",
+    "isoCode": "bam",
+    "linguisticFamily": "Niger-Congo (Mande)"
+  },
+  {
+    "endonym": "Malagasy",
+    "exonymSpanish": "Malgache",
+    "glottocode": "plat1254",
+    "isoCode": "mlg",
+    "linguisticFamily": "Austronesia"
+  },
+  {
+    "endonym": "ኦጋዴን",
+    "exonymSpanish": "Afar",
+    "glottocode": "afar1241",
+    "isoCode": "aar",
+    "linguisticFamily": "Afroasiática (Cusita)"
+  },
+  {
+    "endonym": "Twi",
+    "exonymSpanish": "Twi (Akan)",
+    "glottocode": "twi1239",
+    "isoCode": "twi",
+    "linguisticFamily": "Niger-Congo (Kwa)"
+  },
+  {
+    "endonym": "հայերեն",
+    "exonymSpanish": "Armenio",
+    "glottocode": "hye1248",
+    "isoCode": "hye",
+    "linguisticFamily": "Indoeuropea (Armenia)"
+  },
+  {
+    "endonym": "Gàidhlig",
+    "exonymSpanish": "Gaélico escocés",
+    "glottocode": "scot1245",
+    "isoCode": "gla",
+    "linguisticFamily": "Indoeuropea (Céltica)"
+  },
+  {
+    "endonym": "brezhoneg",
+    "exonymSpanish": "Bretón",
+    "glottocode": "bret1243",
+    "isoCode": "bre",
+    "linguisticFamily": "Indoeuropea (Céltica)"
+  },
+  {
+    "endonym": "euskara",
+    "exonymSpanish": "Euskera (Vasco)",
+    "glottocode": "basq1248",
+    "isoCode": "eus",
+    "linguisticFamily": "Aislada / Independiente"
+  },
+  {
+    "endonym": "Kernewek",
+    "exonymSpanish": "Córnico (†)",
+    "glottocode": "corn1251",
+    "isoCode": "cor",
+    "linguisticFamily": "Indoeuropea (Céltica)"
+  },
+  {
+    "endonym": "Malti",
+    "exonymSpanish": "Maltés",
+    "glottocode": "malt1254",
+    "isoCode": "mlt",
+    "linguisticFamily": "Afroasiática (Semítica)"
+  },
+  {
+    "endonym": "Crnogorski",
+    "exonymSpanish": "Montenegrino",
+    "glottocode": "mont1282",
+    "isoCode": "cnr",
+    "linguisticFamily": "Indoeuropea (Eslava)"
+  },
+  {
+    "endonym": "Komi",
+    "exonymSpanish": "Komi (Ziriano)",
+    "glottocode": "komi1268",
+    "isoCode": "kom",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Удмурт",
+    "exonymSpanish": "Udmurto",
+    "glottocode": "udmu1245",
+    "isoCode": "udm",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Марий",
+    "exonymSpanish": "Mari",
+    "glottocode": "mari1278",
+    "isoCode": "chm",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Мокшень",
+    "exonymSpanish": "Moksha",
+    "glottocode": "moks1248",
+    "isoCode": "mdf",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Саам",
+    "exonymSpanish": "Sami (kildin)",
+    "glottocode": "kild1236",
+    "isoCode": "sjd",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "Nenets",
+    "exonymSpanish": "Nenets (Yurak)",
+    "glottocode": "nene1249",
+    "isoCode": "yrk",
+    "linguisticFamily": "Urálica"
+  },
+  {
+    "endonym": "إيران",
+    "exonymSpanish": "Persa (Dari)",
+    "glottocode": "dari1249",
+    "isoCode": "prs",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "тоҷики",
+    "exonymSpanish": "Tayiko",
+    "glottocode": "taji1245",
+    "isoCode": "tgk",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "پنجابی",
+    "exonymSpanish": "Panyabí occidental (Lahnda)",
+    "glottocode": "west2351",
+    "isoCode": "pnb",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "سرائیکی",
+    "exonymSpanish": "Saraiki",
+    "glottocode": "sera1259",
+    "isoCode": "skr",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "தமிழ்",
+    "exonymSpanish": "Tamil",
+    "glottocode": "tami1289",
+    "isoCode": "tam",
+    "linguisticFamily": "Dravídica"
+  },
+  {
+    "endonym": "తెలుగు",
+    "exonymSpanish": "Télugu",
+    "glottocode": "telu1262",
+    "isoCode": "tel",
+    "linguisticFamily": "Dravídica"
+  },
+  {
+    "endonym": "മലയാളം",
+    "exonymSpanish": "Malayalam",
+    "glottocode": "mala1464",
+    "isoCode": "mal",
+    "linguisticFamily": "Dravídica"
+  },
+  {
+    "endonym": "ಕನ್ನಡ",
+    "exonymSpanish": "Canarés (Kannada)",
+    "glottocode": "nucl1305",
+    "isoCode": "kan",
+    "linguisticFamily": "Dravídica"
+  },
+  {
+    "endonym": "मैथिली",
+    "exonymSpanish": "Maithili",
+    "glottocode": "mait1250",
+    "isoCode": "mai",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "संस्कृतम्",
+    "exonymSpanish": "Sánscrito (clásico)",
+    "glottocode": "sans1269",
+    "isoCode": "san",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  },
+  {
+    "endonym": "Pāli",
+    "exonymSpanish": "Pali (litúrgico)",
+    "glottocode": "pali1273",
+    "isoCode": "pli",
+    "linguisticFamily": "Indoeuropea (Indo-Irania)"
+  }
+]

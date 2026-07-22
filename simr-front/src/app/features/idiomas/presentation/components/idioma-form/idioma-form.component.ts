@@ -1,37 +1,43 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { environment } from '@env/environment';
 import { IdiomasStore } from '../../../state/idiomas.store';
 import { IdiomasService } from '../../../data/idiomas.service';
+import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
+import { HelpPopupComponent } from '../../../../../shared/help-popup/help-popup.component';
+import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaciones-cartograficas/anotaciones-cartograficas.component';
+import { AnotacionCartograficoTemporal } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
+import { DescriptorLibreEditorComponent, DescriptorLibre } from '../../../../../shared/descriptor-libre-editor/descriptor-libre-editor.component';
+import { VinculoRelacionadoEditorComponent, VinculoRelacionado } from '../../../../../shared/vinculo-relacionado-editor/vinculo-relacionado-editor.component';
+import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
+import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archivo.interface';
 
 @Component({
   selector: 'app-idioma-form',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatTooltipModule,
+    CommonModule, ReactiveFormsModule, FormsModule,
+    MatButtonModule, MatIconModule, MatCardModule,
+    MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatProgressBarModule, MatChipsModule, MatTooltipModule,
+    CollapsibleSectionComponent,
+    HelpPopupComponent,
+    AnotacionesCartograficasComponent,
+    DescriptorLibreEditorComponent,
+    VinculoRelacionadoEditorComponent,
+    ArchivoManagerComponent,
   ],
   providers: [IdiomasStore],
   template: `
@@ -57,17 +63,128 @@ import { IdiomasService } from '../../../data/idiomas.service';
 
       <mat-card class="idioma-form" appearance="outlined">
         <form [formGroup]="idiomaForm" (ngSubmit)="onSubmit()">
-          <div class="form-section">
-            <div class="field-with-help">
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Idioma *</mat-label>
-                <input matInput formControlName="idioma" placeholder="Ej: Español, Inglés, Francés…" />
-                @if (isFieldInvalid('idioma')) {
-                  <mat-error>El idioma es obligatorio</mat-error>
-                }
-              </mat-form-field>
+
+          <app-collapsible-section title="Identificación" icon="badge">
+            <div class="section-content">
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Idioma (exónimo español) *</mat-label>
+                  <input matInput formControlName="idioma" placeholder="Ej: Wayúu, Quechua, Guaraní" />
+                  @if (isFieldInvalid('idioma')) {
+                    <mat-error>El idioma es obligatorio</mat-error>
+                  }
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="exonymSpanish" />
+              </div>
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Endónimo (autodenominación)</mat-label>
+                  <input matInput formControlName="endonym" placeholder="Ej: Wayuunaiki, Runa Simi" />
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="endonym" />
+              </div>
             </div>
-          </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Clasificación lingüística" icon="category">
+            <div class="section-content">
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Familia lingüística</mat-label>
+                  <mat-select formControlName="linguisticFamily">
+                    <mat-option value="">— Seleccionar —</mat-option>
+                    @for (f of familias(); track f) {
+                      <mat-option [value]="f">{{ f }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="linguisticFamily" />
+              </div>
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Modo de transmisión</mat-label>
+                  <mat-select formControlName="transmissionMode">
+                    <mat-option value="">— Seleccionar —</mat-option>
+                    @for (m of modos(); track m) {
+                      <mat-option [value]="m">{{ m }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="transmissionMode" />
+              </div>
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Códigos y estándares" icon="code">
+            <div class="section-content">
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Glottocode</mat-label>
+                  <input matInput formControlName="glottocode" placeholder="Ej: wayu1243" />
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="glottocode" />
+              </div>
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Código ISO 639-3</mat-label>
+                  <input matInput formControlName="isoCode" placeholder="Ej: guc" />
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="isoCode" />
+              </div>
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Contexto territorial" icon="map">
+            <div class="section-content">
+              <div class="field-with-help">
+                <mat-form-field appearance="outline" class="campo">
+                  <mat-label>Contexto territorial</mat-label>
+                  <textarea matInput formControlName="territorialContext" rows="2" placeholder="Ej: Sierra Nevada de Santa Marta, Cuenca del Amazonas, Gran Chaco"></textarea>
+                </mat-form-field>
+                <app-help-popup tabla="idiomas" campo="territorialContext" />
+              </div>
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Anotaciones cartográfico-temporales" icon="map" [collapsed]="true">
+            <div class="section-content">
+              <app-anotaciones-cartograficas
+                [anotaciones]="anotacionesItems"
+                [lugares]="lugares()"
+                [coberturas]="coberturas()"
+                (anotacionesChange)="anotacionesItems = $event"
+              />
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Descriptores libres" icon="label" [collapsed]="true">
+            <div class="section-content">
+              <app-descriptor-libre-editor
+                [descriptores]="descriptorItems"
+                (descriptoresChange)="descriptorItems = $event"
+              />
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Enlaces" icon="link" [collapsed]="true">
+            <div class="section-content">
+              <app-vinculo-relacionado-editor
+                [vinculos]="vinculoItems"
+                (vinculosChange)="vinculoItems = $event"
+              />
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Archivos adjuntos" icon="attach_file" [collapsed]="true">
+            <div class="section-content">
+              <app-archivo-manager
+                [documentId]="documentId()"
+                collection="idiomas"
+                (fileUploaded)="onFileUploaded($event)"
+                (fileDeleted)="onFileDeleted($event)"
+              />
+            </div>
+          </app-collapsible-section>
 
           <div class="form-actions">
             <button mat-stroked-button type="button" (click)="goBack()">Cancelar</button>
@@ -87,7 +204,7 @@ import { IdiomasService } from '../../../data/idiomas.service';
     .volver { color: var(--simr-musgo); }
     .loading-bar { margin-bottom: 1rem; }
     .idioma-form { padding: 0; border-radius: 14px !important; border-color: var(--mat-sys-outline) !important; overflow: hidden; }
-    .form-section { padding: 2rem 2rem 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .section-content { padding: 0.5rem 0; display: flex; flex-direction: column; gap: 0.75rem; }
     .field-with-help { display: flex; align-items: flex-start; gap: 0.25rem; }
     .field-with-help .campo { flex: 1; }
     .campo { min-width: 0; }
@@ -95,7 +212,6 @@ import { IdiomasService } from '../../../data/idiomas.service';
     .form-actions { display: flex; gap: 1rem; justify-content: flex-end; padding: 1.5rem 2rem; border-top: 1px solid var(--mat-sys-outline); }
     @media (max-width: 600px) {
       .form-container { padding: 0 1rem; }
-      .form-section { padding: 1.5rem 1rem 0; }
       .form-actions { padding: 1.5rem 1rem; }
     }
   `],
@@ -106,24 +222,109 @@ export class IdiomaFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
 
   protected isEditMode = false;
   protected idiomaId: string | null = null;
 
+  protected familias = signal<string[]>([]);
+  protected modos = signal<string[]>([]);
+  protected lugares = signal<string[]>([]);
+  protected coberturas = signal<string[]>([]);
+  protected documentId = signal<string>('');
+
+  protected anotacionesItems: AnotacionCartograficoTemporal[] = [];
+  protected descriptorItems: DescriptorLibre[] = [];
+  protected vinculoItems: VinculoRelacionado[] = [];
+  protected archivosAdjuntosItems: { archivoId: string }[] = [];
+
   idiomaForm: FormGroup = this.fb.group({
     idioma: ['', Validators.required],
+    glottocode: [''],
+    isoCode: [''],
+    endonym: [''],
+    exonymSpanish: [''],
+    linguisticFamily: [''],
+    transmissionMode: [''],
+    territorialContext: [''],
   });
 
+  constructor() {
+    effect(() => {
+      const idioma = this.store.selectedIdioma();
+      if (idioma && this.isEditMode) {
+        this.loadIdiomaData(idioma);
+      }
+    });
+  }
+
   ngOnInit() {
+    this.loadReferenceData();
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.isEditMode = true;
         this.idiomaId = id;
+        this.documentId.set(id);
         this.store.setInitialState();
         this.store.loadIdiomaById(id);
+        this.http.get(`${environment.apiUrl}/idiomas/${id}`).subscribe({
+          next: (idioma: any) => this.loadIdiomaData(idioma),
+          error: (err) => console.error('[IdiomaForm] error al cargar', err),
+        });
       }
     });
+  }
+
+  private loadReferenceData() {
+    const apiUrl = environment.apiUrl;
+    this.http.get(`${apiUrl}/listas/familiasLinguisticas`).subscribe({
+      next: (data: any) => {
+        const arr = Array.isArray(data) ? data : data?.elementos || data?.data?.elementos || [];
+        this.familias.set(arr);
+      },
+      error: () => this.familias.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/modosDeTransmision`).subscribe({
+      next: (data: any) => {
+        const arr = Array.isArray(data) ? data : data?.elementos || data?.data?.elementos || [];
+        this.modos.set(arr);
+      },
+      error: () => this.modos.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/lugares`).subscribe({
+      next: (data: any) => {
+        const arr = Array.isArray(data) ? data : data?.elementos || data?.data?.elementos || [];
+        this.lugares.set(arr);
+      },
+      error: () => this.lugares.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/coberturas`).subscribe({
+      next: (data: any) => {
+        const arr = Array.isArray(data) ? data : data?.elementos || data?.data?.elementos || [];
+        this.coberturas.set(arr);
+      },
+      error: () => this.coberturas.set([]),
+    });
+  }
+
+  private loadIdiomaData(idioma: any) {
+    this.idiomaForm.patchValue({
+      idioma: idioma.idioma || '',
+      glottocode: idioma.glottocode || '',
+      isoCode: idioma.isoCode || '',
+      endonym: idioma.endonym || '',
+      exonymSpanish: idioma.exonymSpanish || '',
+      linguisticFamily: idioma.linguisticFamily || '',
+      transmissionMode: idioma.transmissionMode || '',
+      territorialContext: idioma.territorialContext || '',
+    });
+    this.anotacionesItems = idioma.anotacionCartograficoTemporal || [];
+    this.descriptorItems = idioma.descriptorLibre || [];
+    this.vinculoItems = idioma.vinculoRelacionado || [];
+    this.archivosAdjuntosItems = (idioma.archivosAdjuntos || []).map((a: any) => ({
+      archivoId: a.archivoId || a.id || a._id,
+    }));
   }
 
   protected isFieldInvalid(field: string): boolean {
@@ -131,10 +332,33 @@ export class IdiomaFormComponent implements OnInit {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
+  protected onFileUploaded(file: FileBasicInfo) {
+    if (!this.archivosAdjuntosItems.find((f) => f.archivoId === file.id)) {
+      this.archivosAdjuntosItems = [...this.archivosAdjuntosItems, { archivoId: file.id }];
+    }
+  }
+
+  protected onFileDeleted(file: FileDeleteInfo) {
+    this.archivosAdjuntosItems = this.archivosAdjuntosItems.filter((f) => f.archivoId !== file.id);
+  }
+
   protected onSubmit() {
     if (this.idiomaForm.invalid) return;
 
-    const payload = { idioma: this.idiomaForm.value.idioma };
+    const payload: any = {
+      idioma: this.idiomaForm.value.idioma,
+      glottocode: this.idiomaForm.value.glottocode || '',
+      isoCode: this.idiomaForm.value.isoCode || '',
+      endonym: this.idiomaForm.value.endonym || '',
+      exonymSpanish: this.idiomaForm.value.exonymSpanish || '',
+      linguisticFamily: this.idiomaForm.value.linguisticFamily || '',
+      transmissionMode: this.idiomaForm.value.transmissionMode || '',
+      territorialContext: this.idiomaForm.value.territorialContext || '',
+      anotacionCartograficoTemporal: this.anotacionesItems,
+      descriptorLibre: this.descriptorItems,
+      vinculoRelacionado: this.vinculoItems,
+      archivosAdjuntos: this.archivosAdjuntosItems,
+    };
 
     if (this.isEditMode && this.idiomaId) {
       this.idiomasService.update(this.idiomaId, payload).subscribe({

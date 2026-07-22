@@ -38,4 +38,11 @@ export class IdiomasService {
   search(term: string): Observable<Idioma[]> {
     return this.http.get<Idioma[]>(`${this.API_URL}?idioma=${encodeURIComponent(term)}`);
   }
+
+  seed(): Observable<{ message: string; creadas: number; existentes: number; errores: number }> {
+    return this.http.post<{ message: string; creadas: number; existentes: number; errores: number }>(
+      `${this.API_URL}/seed`,
+      {}
+    );
+  }
 }

@@ -170,6 +170,60 @@ const readListasFile = () => {
         "Textos creativos",
         "Visual",
       ],
+      familiasLinguisticas: [
+        "Aislada / Independiente",
+        "Arawak (Maipureana)",
+        "Barbacoana",
+        "Bora-Witoto",
+        "Cahuapana",
+        "Caribe",
+        "Chibcha",
+        "Chocó (Emberá)",
+        "Guahibana",
+        "Harákmbut-Katukina",
+        "Huaorani (Sabela)",
+        "Jé (Gê)",
+        "Jívaro (Chicham)",
+        "Macro-Jê",
+        "Maku (Nadahup)",
+        "Mataco-Guaicurú",
+        "Maya",
+        "Misumalpa",
+        "Mixteco-Zapoteca (Otomangue)",
+        "Murano",
+        "Nambikwara",
+        "Pano-Tacana",
+        "Peba-Yagua",
+        "Quechua (Runasimi)",
+        "Saliba-Piaroa",
+        "Ticuna-Yuri",
+        "Timote-Cuica",
+        "Tucana",
+        "Tupí-Guaraní",
+        "Uru-Chipaya",
+        "Uto-Azteca",
+        "Wakú (Kakwa-Nukak)",
+        "Yanomami",
+        "Yuki (Yukpa)",
+        "Zaparoana",
+        "Indoeuropea (Romance / Germánica)",
+        "Niger-Congo (Bantú)",
+        "Afroasiática (Semítica)",
+        "Sino-Tibetana",
+        "Japónica",
+        "Austronesia",
+        "Tai-Kadai",
+        "Dravídica",
+        "Tungús",
+      ],
+      modosDeTransmision: [
+        "Oral",
+        "Escrita",
+        "Mixta",
+        "Ritual / Esotérica",
+        "Señas (Lengua de señas)",
+        "Cantada / Performática",
+      ],
       lugares: [
         "Amazonía",
         "América",
@@ -264,6 +318,10 @@ const readListasFile = () => {
 require("../app/models/lista.server.model");
 const Lista = mongoose.model("Lista");
 
+// Modelo de Diccionario para seed de definiciones
+require("../app/models/diccionario.server.model");
+const Diccionario = mongoose.model("Diccionario");
+
 // Función para migrar listas simples (arrays de strings)
 const migrateSimpleList = async (nombreLista, elementos) => {
   try {
@@ -320,6 +378,69 @@ const migrateComplexList = async (nombreLista, elementos) => {
   }
 };
 
+// Diccionario de definiciones para el módulo Idiomas
+const DEFINICIONES_IDIOMAS = [
+  {
+    tabla: 'idiomas',
+    campo: 'glottocode',
+    campoLargo: 'Código Glottolog',
+    definicion: 'Código único de 8 caracteres asignado por Glottolog (Instituto Max Planck) para identificar lenguas, dialectos y variedades lingüísticas a nivel mundial. Es el estándar más robusto para lenguas indígenas, amenazadas y poco documentadas. Ej: yucu1253 para el Yukpa.',
+  },
+  {
+    tabla: 'idiomas',
+    campo: 'isoCode',
+    campoLargo: 'Código ISO 639-3',
+    definicion: 'Código de tres letras del estándar ISO 639-3 para identificación de lenguas. Útil para interoperabilidad con sistemas informáticos globales. Opcional para lenguas o variedades no catalogadas. Ej: yup para el Yukpa.',
+  },
+  {
+    tabla: 'idiomas',
+    campo: 'endonym',
+    campoLargo: 'Endónimo (autodenominación)',
+    definicion: 'Nombre con el que el pueblo denomina su propia lengua en su grafía originaria o transcripción fonética. Para lenguas predominantemente orales, se usa una transcripción aproximada. Ej: Wayuunaiki (wayúu), Runa Simi (quechua).',
+  },
+  {
+    tabla: 'idiomas',
+    campo: 'exonymSpanish',
+    campoLargo: 'Exónimo (español)',
+    definicion: 'Nombre histórico, colonial o de uso común en español para referirse a la lengua. Facilita la búsqueda y referencia cruzada desde la bibliografía occidental. Ej: Guajiro (para Wayuunaiki), Quechua (para Runa Simi).',
+  },
+  {
+    tabla: 'idiomas',
+    campo: 'linguisticFamily',
+    campoLargo: 'Familia lingüística',
+    definicion: 'Clasificación genealógica de la lengua según su origen y parentesco con otras lenguas. Se usa la taxonomía de Glottolog como referencia. Ej: Arawak, Chibcha, Quechua, Tupí-Guaraní.',
+  },
+  {
+    tabla: 'idiomas',
+    campo: 'transmissionMode',
+    campoLargo: 'Modo de transmisión',
+    definicion: 'Naturaleza predominante de la transmisión de la lengua. Las lenguas indígenas y tradicionales suelen ser predominantemente orales o performativas. Valores: Oral, Escrita, Mixta, Ritual/Esotérica, Señas, Cantada/Performática.',
+  },
+  {
+    tabla: 'idiomas',
+    campo: 'territorialContext',
+    campoLargo: 'Contexto territorial',
+    definicion: 'Región biocultural, cuenca, territorio ancestral o área geográfica de referencia donde se habla o habló la lengua. Evita la reducción exclusiva a fronteras de Estado-Nación. Ej: Sierra Nevada de Santa Marta, Cuenca del Amazonas, Gran Chaco.',
+  },
+];
+
+// Función para migrar definiciones del Diccionario
+const migrateDiccionarios = async (definiciones) => {
+  for (const def of definiciones) {
+    try {
+      const existing = await Diccionario.findOne({ tabla: def.tabla, campo: def.campo });
+      if (existing) {
+        console.log(`⚠️  Diccionario '${def.tabla}.${def.campo}' ya existe, omitiendo...`);
+        continue;
+      }
+      await new Diccionario(def).save();
+      console.log(`✅ Diccionario '${def.tabla}.${def.campo}' — ${def.campoLargo}`);
+    } catch (err) {
+      console.error(`❌ Error en diccionario '${def.tabla}.${def.campo}':`, err);
+    }
+  }
+};
+
 // Función principal de migración
 const migrateLists = async () => {
   try {
@@ -343,9 +464,14 @@ const migrateLists = async () => {
     await migrateSimpleList("coberturas", listas.coberturas);
     await migrateSimpleList("roles", listas.roles);
     await migrateSimpleList("rolesMedios", listas.rolesMedios);
+    await migrateSimpleList("familiasLinguisticas", listas.familiasLinguisticas);
+    await migrateSimpleList("modosDeTransmision", listas.modosDeTransmision);
 
     // Migrar lista compleja
     await migrateComplexList("nNormalizados", listas.nNormalizados);
+
+    // Migrar definiciones del Diccionario para el módulo Idiomas
+    await migrateDiccionarios(DEFINICIONES_IDIOMAS);
 
     console.log("\n✅ Migración completada exitosamente!");
     console.log("📋 Listas migradas:");
@@ -362,6 +488,8 @@ const migrateLists = async () => {
     console.log("   - roles");
     console.log("   - rolesMedios");
     console.log("   - nNormalizados (compleja)");
+    console.log("   - familiasLinguisticas");
+    console.log("   - modosDeTransmision");
   } catch (error) {
     console.error("❌ Error durante la migración:", error);
     process.exit(1);

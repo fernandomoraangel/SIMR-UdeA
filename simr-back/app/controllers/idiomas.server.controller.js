@@ -1,138 +1,163 @@
-"use strict";
+'use strict';
 
-// Cargar dependencias
-const mongoose = require("mongoose");
-const Idioma = mongoose.model("Idioma");
+const mongoose = require('mongoose');
+const Idioma = mongoose.model('Idioma');
+const fs = require('fs');
+const path = require('path');
 
-// Método para el manejo de errores
 const getErrorMessage = (err) => {
-  // Definir variable de error message
-  let message = "";
-  // Si ocurre un error interno de MongoDB
+  let message = '';
   if (err.code) {
     switch (err.code) {
       case 11000:
       case 11001:
-        message = "El registro ya existe";
+        message = 'El registro ya existe';
         break;
-      // si un error general ocurre
       default:
-        message = "Se ha producido un error";
+        message = 'Se ha producido un error';
     }
   } else {
-    // Grabar el error en una lista de posibles errores
     for (let errName in err.errors) {
       if (err.errors[errName].message) message = err.errors[errName].message;
     }
   }
-  // Devolver el mensaje de error
   return message;
 };
 
-// Método para crear los diccionarios
 exports.create = async (req, res) => {
   try {
     const idioma = new Idioma(req.body);
-    // Configurar la propiedad 'creador'
     idioma.creador = req.user;
-    // Intentar salvar
     await idioma.save();
-    // Enviar una representación JSON de la ejemplar
     res.json(idioma);
   } catch (err) {
-    // Si ocurre algún error enviar el mensaje
-    return res.status(400).send({
-      message: getErrorMessage(err),
-    });
+    return res.status(400).send({ message: getErrorMessage(err) });
   }
 };
 
-// Método que recupera una lista de idiomas
 exports.list = async (req, res) => {
   try {
-    // Usa el método model 'find' para obtener una lista de idiomas
-    const idioma = await Idioma.find()
-      // .sort("-creado")
-      .sort("-created")
-      .populate("creador", "idioma")
+    const filter = {};
+    if (req.query.glottocode) filter.glottocode = req.query.glottocode;
+    if (req.query.idioma) filter.idioma = { $regex: req.query.idioma, $options: 'i' };
+    const idiomas = await Idioma.find(filter)
+      .sort('-creado')
+      .populate('creador', 'firstName lastName fullName')
       .exec();
-    res.json(idioma);
+    res.json(idiomas);
   } catch (err) {
-    return res.status(400).send({
-      message: getErrorMessage(err),
-    });
+    return res.status(400).send({ message: getErrorMessage(err) });
   }
 };
 
-// Método que devuelve una idioma existente
 exports.read = (req, res) => {
   res.json(req.idioma);
 };
 
-// Método para actualizar un idioma existente
 exports.update = async (req, res) => {
   try {
-    // var idioma = await Idioma.findByIdAndUpdate(req.idioma.id, req.body, { new: true });
-
-    // Obtiene la ejemplar usando el objeto 'request'
     const idioma = req.idioma;
-
-    // Actualiza los campos
     idioma.idioma = req.body.idioma;
-
-    // Intenta salvar
+    idioma.glottocode = req.body.glottocode;
+    idioma.isoCode = req.body.isoCode;
+    idioma.endonym = req.body.endonym;
+    idioma.exonymSpanish = req.body.exonymSpanish;
+    idioma.linguisticFamily = req.body.linguisticFamily;
+    idioma.transmissionMode = req.body.transmissionMode;
+    idioma.territorialContext = req.body.territorialContext;
+    idioma.anotacionCartograficoTemporal = req.body.anotacionCartograficoTemporal;
+    idioma.descriptorLibre = req.body.descriptorLibre;
+    idioma.vinculoRelacionado = req.body.vinculoRelacionado;
+    idioma.archivosAdjuntos = req.body.archivosAdjuntos;
     await idioma.save();
     res.json(idioma);
   } catch (err) {
-    return res.status(400).send({
-      message: getErrorMessage(err),
-    });
+    return res.status(400).send({ message: getErrorMessage(err) });
   }
 };
 
-// Método para borrar
 exports.delete = async (req, res) => {
   try {
-    // Obtener la ejemplar usando el objeto 'request'
     const idioma = req.idioma;
-    // Usar el método model 'deleteOne' para borrar
     await idioma.deleteOne();
     res.json(idioma);
   } catch (err) {
-    return res.status(400).send({
-      message: getErrorMessage(err),
-    });
+    return res.status(400).send({ message: getErrorMessage(err) });
   }
 };
 
-// Controller middleware para recuperar un idioma existente
 exports.idiomaByID = async (req, res, next, id) => {
   try {
     const idioma = await Idioma.findById(id)
-      .populate("creador", "firstName lastName fullName")
+      .populate('creador', 'firstName lastName fullName')
       .exec();
-
     if (!idioma) {
-      return next(new Error("Fallo al cargar el idioma: " + id));
+      return next(new Error('Fallo al cargar el idioma: ' + id));
     }
-
-    // Si el idioma es encontrado, usar el objeto 'request' para pasarla al siguiente middleware
     req.idioma = idioma;
-    // Llamar al siguiente middleware
     next();
   } catch (err) {
     return next(err);
   }
 };
 
-// Controller middleware para autorizar una operación sobre idioma
 exports.hasAuthorization = (req, res, next) => {
-  // Si el usuario actual, no es el creador, enviar el mensaje de error
   if (req.idioma.creador.id !== req.user.id) {
-    return res.status(403).send({
-      message: "Usuario no autorizado",
-    });
+    return res.status(403).send({ message: 'Usuario no autorizado' });
   }
-  // Llamar sgte middleware
   next();
+};
+
+exports.seed = async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '../../data/lenguas-america.json');
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send({ message: 'Archivo de semilla no encontrado' });
+    }
+    const raw = fs.readFileSync(filePath, 'utf8');
+    const lenguas = JSON.parse(raw);
+    let creadas = 0;
+    let existentes = 0;
+    let errores = 0;
+
+    for (const lengua of lenguas) {
+      try {
+        const existing = await Idioma.findOne({
+          $or: [
+            { glottocode: lengua.glottocode },
+            { idioma: lengua.exonymSpanish || lengua.endonym }
+          ]
+        });
+        if (existing) {
+          existentes++;
+          continue;
+        }
+        const nuevo = new Idioma({
+          idioma: lengua.exonymSpanish || lengua.endonym,
+          glottocode: lengua.glottocode,
+          isoCode: lengua.isoCode || '',
+          endonym: lengua.endonym,
+          exonymSpanish: lengua.exonymSpanish || '',
+          linguisticFamily: lengua.linguisticFamily,
+          territorialContext: '',
+        });
+        nuevo.creador = req.user;
+        await nuevo.save();
+        creadas++;
+      } catch (err) {
+        errores++;
+        console.error(`Error creando ${lengua.endonym}:`, err.message);
+      }
+    }
+
+    res.json({
+      message: `Seed completado. Creadas: ${creadas}, Existentes: ${existentes}, Errores: ${errores}`,
+      total: lenguas.length,
+      creadas,
+      existentes,
+      errores,
+    });
+  } catch (err) {
+    return res.status(400).send({ message: getErrorMessage(err) });
+  }
 };

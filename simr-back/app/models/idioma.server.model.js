@@ -1,24 +1,65 @@
-var mongoose = require("mongoose"),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var IdiomasSchema = mongoose.Schema({
-  idioma:{
-    type:String,
+const archivoAdjunto = require('../schemas/archivo-adjunto.server.schema');
+const anotacionCartograficoTemporal = require('../schemas/anotacion-cartografica-temporal.server.schema');
+
+var vinculoRelacionado = new Schema({
+  etiqueta: {},
+  url: {},
+});
+
+var descriptorLibre = new Schema({
+  etiqueta: { type: String, trim: true, require: true },
+  contenido: { type: String, require: true },
+});
+
+var IdiomasSchema = new Schema({
+  idioma: {
+    type: String,
     unique: true,
-		require:true
+    require: true,
   },
-  creador:{
-    type:Schema.ObjectId,
-    ref:'User'
+  glottocode: {
+    type: String,
+    unique: true,
+    sparse: true,
   },
-  creado:{
-    type:Date,
-    default:Date.now
+  isoCode: {
+    type: String,
+  },
+  endonym: {
+    type: String,
+  },
+  exonymSpanish: {
+    type: String,
+  },
+  linguisticFamily: {
+    type: String,
+  },
+  transmissionMode: {
+    type: String,
+  },
+  territorialContext: {
+    type: String,
+  },
+  anotacionCartograficoTemporal: [anotacionCartograficoTemporal],
+  descriptorLibre: [descriptorLibre],
+  vinculoRelacionado: [vinculoRelacionado],
+  archivosAdjuntos: [archivoAdjunto],
+  creador: {
+    type: Schema.ObjectId,
+    ref: 'User',
+  },
+  creado: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-IdiomasSchema.set("toJSON", {
+IdiomasSchema.set('toJSON', {
   getters: true,
   virtuals: true,
 });
-mongoose.model("Idioma", IdiomasSchema);
+
+module.exports = mongoose.model('Idioma', IdiomasSchema);
