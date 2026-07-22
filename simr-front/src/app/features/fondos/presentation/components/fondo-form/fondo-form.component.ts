@@ -18,8 +18,7 @@ import { environment } from '@env/environment';
 import { FondosStore } from '../../../state/fondos.store';
 import { FondosService } from '../../../data/fondos.service';
 import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
-
-const PRECISION_OPTIONS = ['Año', 'Mes', 'Día', 'Hora'];
+import { precisionFecha, toDisplayFecha } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
 
 @Component({
   selector: 'app-fondo-form',
@@ -27,8 +26,7 @@ const PRECISION_OPTIONS = ['Año', 'Mes', 'Día', 'Hora'];
   imports: [
     CommonModule, ReactiveFormsModule,
     MatButtonModule, MatIconModule, MatCardModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatDatepickerModule, MatNativeDateModule,
+    MatFormFieldModule, MatInputModule,
     MatProgressSpinnerModule, MatProgressBarModule, MatTooltipModule,
     CollapsibleSectionComponent,
   ],
@@ -77,18 +75,8 @@ const PRECISION_OPTIONS = ['Año', 'Mes', 'Día', 'Hora'];
 
             <mat-form-field appearance="outline" class="campo">
               <mat-label>Fecha de creación</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="fechaDeCreacion" />
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Precisión</mat-label>
-              <mat-select formControlName="precision">
-                @for (opt of precisionOptions; track opt) {
-                  <mat-option [value]="opt">{{ opt }}</mat-option>
-                }
-              </mat-select>
+              <input matInput formControlName="fechaDeCreacion" placeholder="AAAA/MM/DD — Use 0 para indicar precisión (ej: 1990/0/0)" />
+              <mat-hint>Escriba 0 en mes o día si no se conoce</mat-hint>
             </mat-form-field>
           </div>
 
@@ -131,14 +119,12 @@ export class FondoFormComponent implements OnInit {
 
   protected isEditMode = false;
   protected fondoId: string | null = null;
-  protected precisionOptions = PRECISION_OPTIONS;
 
   fondoForm: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     tipo: [''],
     propiedadComodato: [''],
     fechaDeCreacion: [''],
-    precision: [''],
   });
 
   constructor() {
@@ -173,8 +159,7 @@ export class FondoFormComponent implements OnInit {
       nombre: fondo.nombre || '',
       tipo: fondo.tipo || '',
       propiedadComodato: fondo.propiedadComodato || '',
-      fechaDeCreacion: fondo.fechaDeCreacion ? new Date(fondo.fechaDeCreacion) : '',
-      precision: fondo.precision || '',
+      fechaDeCreacion: fondo.fechaDeCreacion ? toDisplayFecha(fondo.fechaDeCreacion) : '',
     });
   }
 
@@ -187,14 +172,22 @@ export class FondoFormComponent implements OnInit {
     if (this.fondoForm.invalid) return;
 
     const raw = this.fondoForm.value;
+    const normalized = raw.fechaDeCreacion ? precisionFecha(raw.fechaDeCreacion) : null;
+    const toISO = (v: string | null): string | undefined => {
+      if (!v) return undefined;
+      const n = precisionFecha(v);
+      const parts = n.fecha.split('/');
+      const y = parseInt(parts[0], 10) || 2000;
+      const m = parseInt(parts[1], 10) || 1;
+      const d = parseInt(parts[2], 10) || 1;
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    };
     const payload: any = {
       nombre: raw.nombre,
       tipo: raw.tipo || '',
       propiedadComodato: raw.propiedadComodato || '',
-      fechaDeCreacion: raw.fechaDeCreacion instanceof Date
-        ? raw.fechaDeCreacion.toISOString()
-        : raw.fechaDeCreacion || '',
-      precision: raw.precision || '',
+      fechaDeCreacion: raw.fechaDeCreacion ? toISO(raw.fechaDeCreacion) : '',
+      precision: normalized?.precision || '',
     };
 
     if (this.isEditMode && this.fondoId) {

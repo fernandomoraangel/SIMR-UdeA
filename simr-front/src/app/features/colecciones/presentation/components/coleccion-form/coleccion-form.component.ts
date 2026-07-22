@@ -13,14 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { environment } from '@env/environment';
 import { ColeccionesStore } from '../../../state/colecciones.store';
 import { ColeccionesService } from '../../../data/colecciones.service';
-import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
+import { precisionFecha, toDisplayFecha } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
 import {
   CreateColeccionRequest,
   UpdateColeccionRequest,
@@ -37,11 +35,8 @@ import {
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatProgressBarModule,
     MatTooltipModule,
-    CollapsibleSectionComponent,
   ],
   providers: [ColeccionesStore],
   template: `
@@ -75,33 +70,23 @@ import {
                 <mat-error>El nombre es obligatorio</mat-error>
               }
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Tipo</mat-label>
+              <input matInput formControlName="tipo" placeholder="Ej: Documental, Sonora, Audiovisual" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Fecha de creación</mat-label>
+              <input matInput formControlName="fechaDeCreacion" placeholder="AAAA/MM/DD — Use 0 para indicar precisión (ej: 1990/0/0)" />
+              <mat-hint>Escriba 0 en mes o día si no se conoce</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Propiedad / Comodato</mat-label>
+              <textarea matInput formControlName="propiedadComodato" rows="3" placeholder="Detalles de propiedad o comodato"></textarea>
+            </mat-form-field>
           </div>
-
-          <app-collapsible-section title="Información adicional" icon="info" [collapsed]="true">
-            <div class="section-content">
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Tipo</mat-label>
-                <input matInput formControlName="tipo" placeholder="Ej: Documental, Sonora, Audiovisual" />
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Fecha de creación</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="fechaDeCreacion" />
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Precisión</mat-label>
-                <input matInput formControlName="precision" placeholder="Ej: Aproximada, Exacta" />
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="campo">
-                <mat-label>Propiedad / Comodato</mat-label>
-                <textarea matInput formControlName="propiedadComodato" rows="3" placeholder="Detalles de propiedad o comodato"></textarea>
-              </mat-form-field>
-            </div>
-          </app-collapsible-section>
 
           <div class="form-actions">
             <button mat-stroked-button type="button" (click)="goBack()">Cancelar</button>
@@ -147,8 +132,7 @@ export class ColeccionFormComponent implements OnInit {
   coleccionForm: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     tipo: [''],
-    fechaDeCreacion: [null],
-    precision: [''],
+    fechaDeCreacion: [''],
     propiedadComodato: [''],
   });
 
@@ -181,8 +165,7 @@ export class ColeccionFormComponent implements OnInit {
     this.coleccionForm.patchValue({
       nombre: coleccion.nombre || '',
       tipo: coleccion.tipo || '',
-      fechaDeCreacion: coleccion.fechaDeCreacion ? new Date(coleccion.fechaDeCreacion) : null,
-      precision: coleccion.precision || '',
+      fechaDeCreacion: coleccion.fechaDeCreacion ? toDisplayFecha(coleccion.fechaDeCreacion) : '',
       propiedadComodato: coleccion.propiedadComodato || '',
     });
   }
@@ -195,12 +178,23 @@ export class ColeccionFormComponent implements OnInit {
   protected onSubmit() {
     if (this.coleccionForm.invalid) return;
 
+    const raw = this.coleccionForm.value;
+    const toISO = (v: string | null): string | undefined => {
+      if (!v) return undefined;
+      const n = precisionFecha(v);
+      const parts = n.fecha.split('/');
+      const y = parseInt(parts[0], 10) || 2000;
+      const m = parseInt(parts[1], 10) || 1;
+      const d = parseInt(parts[2], 10) || 1;
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    };
+    const normalized = raw.fechaDeCreacion ? precisionFecha(raw.fechaDeCreacion) : null;
     const payload: any = {
-      nombre: this.coleccionForm.value.nombre,
-      tipo: this.coleccionForm.value.tipo || undefined,
-      fechaDeCreacion: this.coleccionForm.value.fechaDeCreacion || undefined,
-      precision: this.coleccionForm.value.precision || undefined,
-      propiedadComodato: this.coleccionForm.value.propiedadComodato || undefined,
+      nombre: raw.nombre,
+      tipo: raw.tipo || undefined,
+      fechaDeCreacion: raw.fechaDeCreacion ? toISO(raw.fechaDeCreacion) : undefined,
+      precision: normalized?.precision || undefined,
+      propiedadComodato: raw.propiedadComodato || undefined,
     };
 
     if (this.isEditMode && this.coleccionId) {

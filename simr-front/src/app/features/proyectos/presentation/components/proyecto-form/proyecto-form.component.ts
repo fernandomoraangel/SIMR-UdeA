@@ -389,7 +389,7 @@ export class ProyectoFormComponent implements OnInit {
       },
       error: () => this.actores.set([]),
     });
-    this.http.get(`${apiUrl}/listas/estadosProyectos`).subscribe({
+    this.http.get(`${apiUrl}/listas/estadosProyecto`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
         const arr = Array.isArray(list) ? list : [];
