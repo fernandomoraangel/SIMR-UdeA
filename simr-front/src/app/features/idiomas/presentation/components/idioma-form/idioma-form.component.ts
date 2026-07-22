@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -31,6 +32,7 @@ import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archi
     CommonModule, ReactiveFormsModule, FormsModule,
     MatButtonModule, MatIconModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatAutocompleteModule,
     MatProgressBarModule, MatChipsModule, MatTooltipModule,
     CollapsibleSectionComponent,
     HelpPopupComponent,
@@ -91,24 +93,30 @@ import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archi
               <div class="field-with-help">
                 <mat-form-field appearance="outline" class="campo">
                   <mat-label>Familia lingüística</mat-label>
-                  <mat-select formControlName="linguisticFamily">
-                    <mat-option value="">— Seleccionar —</mat-option>
-                    @for (f of familias(); track f) {
+                  <input matInput formControlName="linguisticFamily" [matAutocomplete]="familiaAuto" placeholder="Buscar familia…" />
+                  <mat-autocomplete #familiaAuto="matAutocomplete">
+                    @for (f of filteredFamilias(); track f) {
                       <mat-option [value]="f">{{ f }}</mat-option>
                     }
-                  </mat-select>
+                    @if (filteredFamilias().length === 0 && idiomaForm.get('linguisticFamily')?.value?.trim()) {
+                      <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                    }
+                  </mat-autocomplete>
                 </mat-form-field>
                 <app-help-popup tabla="idiomas" campo="linguisticFamily" />
               </div>
               <div class="field-with-help">
                 <mat-form-field appearance="outline" class="campo">
                   <mat-label>Modo de transmisión</mat-label>
-                  <mat-select formControlName="transmissionMode">
-                    <mat-option value="">— Seleccionar —</mat-option>
-                    @for (m of modos(); track m) {
+                  <input matInput formControlName="transmissionMode" [matAutocomplete]="modoAuto" placeholder="Buscar modo…" />
+                  <mat-autocomplete #modoAuto="matAutocomplete">
+                    @for (m of filteredModos(); track m) {
                       <mat-option [value]="m">{{ m }}</mat-option>
                     }
-                  </mat-select>
+                    @if (filteredModos().length === 0 && idiomaForm.get('transmissionMode')?.value?.trim()) {
+                      <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                    }
+                  </mat-autocomplete>
                 </mat-form-field>
                 <app-help-popup tabla="idiomas" campo="transmissionMode" />
               </div>
@@ -208,6 +216,7 @@ import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archi
     .field-with-help { display: flex; align-items: flex-start; gap: 0.25rem; }
     .field-with-help .campo { flex: 1; }
     .campo { min-width: 0; }
+    .no-result { font-size: 0.82rem; color: var(--simr-tinta-2); cursor: default; pointer-events: none; }
     .alerta { display: flex; align-items: center; gap: 0.75rem; background: #fbeae6; color: var(--simr-sello-osc); border: 1px solid var(--simr-sello); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; }
     .form-actions { display: flex; gap: 1rem; justify-content: flex-end; padding: 1.5rem 2rem; border-top: 1px solid var(--mat-sys-outline); }
     @media (max-width: 600px) {
@@ -229,6 +238,8 @@ export class IdiomaFormComponent implements OnInit {
 
   protected familias = signal<string[]>([]);
   protected modos = signal<string[]>([]);
+  protected filteredFamilias = signal<string[]>([]);
+  protected filteredModos = signal<string[]>([]);
   protected lugares = signal<string[]>([]);
   protected coberturas = signal<string[]>([]);
   protected documentId = signal<string>('');
@@ -256,6 +267,20 @@ export class IdiomaFormComponent implements OnInit {
         this.loadIdiomaData(idioma);
       }
     });
+
+    this.idiomaForm.get('linguisticFamily')?.valueChanges.subscribe((val) => {
+      const term = (val || '').toLowerCase().trim();
+      this.filteredFamilias.set(
+        this.familias().filter((f) => f.toLowerCase().includes(term))
+      );
+    });
+
+    this.idiomaForm.get('transmissionMode')?.valueChanges.subscribe((val) => {
+      const term = (val || '').toLowerCase().trim();
+      this.filteredModos.set(
+        this.modos().filter((m) => m.toLowerCase().includes(term))
+      );
+    });
   }
 
   ngOnInit() {
@@ -282,6 +307,7 @@ export class IdiomaFormComponent implements OnInit {
       next: (data: any) => {
         const arr = Array.isArray(data) ? data : data?.elementos || data?.data?.elementos || [];
         this.familias.set(arr);
+        this.filteredFamilias.set(arr);
       },
       error: () => this.familias.set([]),
     });
@@ -289,6 +315,7 @@ export class IdiomaFormComponent implements OnInit {
       next: (data: any) => {
         const arr = Array.isArray(data) ? data : data?.elementos || data?.data?.elementos || [];
         this.modos.set(arr);
+        this.filteredModos.set(arr);
       },
       error: () => this.modos.set([]),
     });
