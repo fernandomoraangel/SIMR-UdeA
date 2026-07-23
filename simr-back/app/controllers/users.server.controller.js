@@ -684,3 +684,157 @@ exports.hasAuthorization = (req, res, next) => {
   // Llamar sgte middleware
   next();
 };
+
+//* FORGOT PASSWORD - Enviar correo con token de reseteo
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return errorResponse(res, "El correo electrónico es requerido", 400);
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      // No revelar si el usuario existe
+      return successResponse(
+        res,
+        "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña",
+        200
+      );
+    }
+
+    // Generar token criptográficamente seguro
+    const crypto = require("crypto");
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.passwordResetToken = resetTokenHash;
+    user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+    await user.save();
+
+    // Construir enlace de reseteo
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:4200";
+    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+
+    // En desarrollo, loguear a consola
+    if (process.env.NODE_ENV !== "production") {
+      console.log("\n========================================");
+      console.log("🔑 RESET PASSWORD LINK (dev)");
+      console.log(resetUrl);
+      console.log("========================================\n");
+    }
+
+    // Intentar enviar correo
+    try {
+      const { sendMail } = require("../../config/mailer");
+      await sendMail({
+        to: email,
+        subject: "Restablecimiento de contraseña - SIMR",
+        html: `
+          <h2>Restablecimiento de contraseña</h2>
+          <p>Has solicitado restablecer tu contraseña en el Sistema de Información de Músicas Regionales.</p>
+          <p>Haz clic en el siguiente enlace para continuar:</p>
+          <p><a href="${resetUrl}">${resetUrl}</a></p>
+          <p>Este enlace expirará en 1 hora.</p>
+          <p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
+          <hr />
+          <small>SIMR - Universidad de Antioquia</small>
+        `,
+      });
+    } catch (mailErr) {
+      console.warn("[forgotPassword] No se pudo enviar el correo:", mailErr.message);
+    }
+
+    successResponse(
+      res,
+      "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña",
+      200
+    );
+  } catch (err) {
+    console.error("[forgotPassword] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500);
+  }
+};
+
+//* RESET PASSWORD - Restablecer contraseña con token
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return errorResponse(res, "Token y nueva contraseña son requeridos", 400);
+    }
+
+    if (password.length < 6) {
+      return errorResponse(res, "La contraseña debe tener al menos 6 caracteres", 400);
+    }
+
+    const crypto = require("crypto");
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: resetTokenHash,
+      passwordResetExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return errorResponse(res, "Token inválido o expirado", 400);
+    }
+
+    // Actualizar contraseña
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user._skipHashing = false;
+    await user.save();
+
+    console.log("[resetPassword] Contraseña restablecida para:", user.username);
+
+    successResponse(res, "Contraseña restablecida exitosamente", 200);
+  } catch (err) {
+    console.error("[resetPassword] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500);
+  }
+};
+
+//* CHANGE PASSWORD - Cambiar contraseña (usuario autenticado)
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return errorResponse(res, "Contraseña actual y nueva son requeridas", 400);
+    }
+
+    if (newPassword.length < 6) {
+      return errorResponse(res, "La nueva contraseña debe tener al menos 6 caracteres", 400);
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return errorResponse(res, "Usuario no encontrado", 404);
+    }
+
+    // Verificar contraseña actual
+    const isMatch = await user.verifyPassword(currentPassword);
+    if (!isMatch) {
+      return errorResponse(res, "La contraseña actual es incorrecta", 401);
+    }
+
+    // Actualizar contraseña
+    user.password = newPassword;
+    user._skipHashing = false;
+    await user.save();
+
+    console.log("[changePassword] Contraseña cambiada para:", user.username);
+
+    successResponse(res, "Contraseña cambiada exitosamente", 200);
+  } catch (err) {
+    console.error("[changePassword] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500);
+  }
+};

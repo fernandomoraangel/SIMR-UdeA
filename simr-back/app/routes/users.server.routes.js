@@ -24,8 +24,14 @@ module.exports = function (app) {
   app.route('/api/auth/verify')
     .get(users.verifyToken);
 
-  // app.route('/api/auth/me')
-  //   .get(users.currentUser);
+  app.route('/api/auth/forgot-password')
+    .post(users.forgotPassword);
+
+  app.route('/api/auth/reset-password')
+    .post(users.resetPassword);
+
+  app.route('/api/auth/change-password')
+    .post(users.requiresLogin, users.changePassword);
 
   // Configurar rutas Google OAuth
   app.get('/api/auth/google', passport.authenticate('google', {

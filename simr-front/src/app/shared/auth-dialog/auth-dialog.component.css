@@ -87,3 +87,18 @@
 ::ng-deep .auth-tabs .mat-mdc-tab-header {
   --mdc-tab-indicator-active-color: var(--simr-sello);
 }
+
+.auth-extra-links {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.auth-extra-links a {
+  font-size: 0.82rem;
+  color: var(--simr-sello);
+  text-decoration: none;
+}
+
+.auth-extra-links a:hover {
+  text-decoration: underline;
+}

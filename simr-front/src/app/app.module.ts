@@ -30,6 +30,9 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 import { LoginComponent } from './features/auth/login/login.component';
 import { SignupComponent } from './features/auth/signup/signup.component';
 import { AuthRouteComponent } from './features/auth/auth-route.component';
+import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
+import { ChangePasswordComponent } from './features/auth/change-password/change-password.component';
 import { ShellComponent } from './core/shell/shell.component';
 import { NoImplementadoComponent } from './shared/no-implementado/no-implementado.component';
 import { SoundWaveComponent } from './shared/sound-wave/sound-wave.component';
@@ -47,6 +50,9 @@ import { AuthInterceptor } from './core/auth/auth.interceptor';
     LoginComponent,
     SignupComponent,
     AuthRouteComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+    ChangePasswordComponent,
     ShellComponent,
     NoImplementadoComponent,
   ],

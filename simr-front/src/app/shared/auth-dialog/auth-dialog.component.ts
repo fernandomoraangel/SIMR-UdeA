@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { SignupCredentials } from '@core/auth/auth.interface';
 import { SoundWaveComponent } from '@shared/sound-wave/sound-wave.component';
@@ -28,6 +28,7 @@ export interface AuthDialogData {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -80,7 +81,6 @@ export class AuthDialogComponent {
     this.authService.login(username, password).subscribe({
       next: () => this.onSuccess(),
       error: (err) => this.onError(err),
-      complete: () => (this.isLoading = false),
     });
   }
 
@@ -95,16 +95,17 @@ export class AuthDialogComponent {
     this.authService.signup(payload).subscribe({
       next: () => this.onSuccess(),
       error: (err) => this.onError(err),
-      complete: () => (this.isLoading = false),
     });
   }
 
   private onSuccess(): void {
+    this.isLoading = false;
     this.dialogRef.close('success');
     this.router.navigate(['/']);
   }
 
   private onError(err: string): void {
+    this.isLoading = false;
     this.errorMessage = err || 'Ocurrió un error. Inténtalo de nuevo.';
   }
 }

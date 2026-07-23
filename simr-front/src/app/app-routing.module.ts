@@ -8,6 +8,9 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 import { LoginComponent } from './features/auth/login/login.component';
 import { SignupComponent } from './features/auth/signup/signup.component';
 import { AuthRouteComponent } from './features/auth/auth-route.component';
+import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
+import { ChangePasswordComponent } from './features/auth/change-password/change-password.component';
 import { RoleGuard } from './core/guards/role.guard';
 import { AuthGuard } from './core/auth/auth.guard';
 import { ListaTareasComponent } from '@features/__pruebas__/lista-tareas.component';
@@ -20,6 +23,9 @@ const routes: Routes = [
   { path: '', component: BienvenidaComponent },
   { path: 'login', component: AuthRouteComponent },
   { path: 'signup', component: AuthRouteComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'change-password', component: ChangePasswordComponent },
   { path: 'listado-tareas', component: ListaTareasComponent },
   // Página temporal para módulos aún no migrados desde AngularJS
   { path: 'no-implementado/:modulo', component: NoImplementadoComponent },

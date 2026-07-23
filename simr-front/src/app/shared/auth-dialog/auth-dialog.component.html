@@ -32,6 +32,10 @@
           <span *ngIf="!isLoading">Identificarse</span>
           <span *ngIf="isLoading">Validando…</span>
         </button>
+
+        <div class="auth-extra-links">
+          <a routerLink="/forgot-password" (click)="dialogRef.close()">¿Olvidaste tu contraseña?</a>
+        </div>
       </form>
     </mat-tab>
 

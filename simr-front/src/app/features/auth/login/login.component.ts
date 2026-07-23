@@ -85,24 +85,19 @@ export class LoginComponent implements OnInit {
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
         this.goToDestination();
-
         this.showTest = true;
       },
       error: (error) => {
-        // Manejo específico de error en el componente
-        this.errorMessage =
+        const message =
+          (error as any)._authMessage ||
           error.message ||
           'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
+        this.errorMessage = message;
         this.isLoading = false;
 
-        // Acciones adicionales basadas en el tipo de error
         if (error.status === 401) {
           this.loginForm.get('password')?.reset();
-          // Podrías también centrar el cursor en el campo de contraseña
         }
-      },
-      complete: () => {
-        this.isLoading = false;
       },
     });
   }

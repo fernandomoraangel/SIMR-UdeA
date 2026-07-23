@@ -81,6 +81,8 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {},
   },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 // Configurar la propiedad virtual 'fullname'
