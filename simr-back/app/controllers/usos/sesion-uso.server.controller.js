@@ -5,25 +5,29 @@ const SesionUso = mongoose.model("SesionUso");
 
 exports.crearSesion = async (req, res) => {
   try {
-    const { usuario, ip, modulo, ruta } = req.body;
-    
-    if (!usuario || !ip || !modulo) {
+    const { ip, modulo, ruta } = req.body;
+    const user = req.user;
+
+    if (!user || !modulo) {
       return res.status(400).json({
         success: false,
-        message: "Faltan campos requeridos: usuario, ip, modulo",
+        message: "Faltan campos requeridos: usuario, modulo",
       });
     }
 
+    await user.populate("roles", "name");
+
     const sesion = new SesionUso({
       usuario: {
-        _id: usuario._id,
-        username: usuario.username,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        email: usuario.email,
-        roles: usuario.roles,
+        _id: user._id,
+        username: user.username,
+        nombre: user.firstName,
+        apellidos: user.lastName,
+        email: user.email,
+        roles: user.roles.map((r) => r._id),
+        roleNames: user.roles.map((r) => r.name),
       },
-      ip,
+      ip: ip || req.ip,
       modulo,
       ruta,
       fechaInicio: new Date(),
@@ -32,79 +36,47 @@ exports.crearSesion = async (req, res) => {
 
     await sesion.save();
 
-    res.status(201).json({
-      success: true,
-      data: sesion,
-    });
+    res.status(201).json({ success: true, data: sesion });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 exports.cerrarSesion = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const sesion = await SesionUso.findById(id);
+    const sesion = await SesionUso.findById(req.params.id);
     if (!sesion) {
-      return res.status(404).json({
-        success: false,
-        message: "Sesión no encontrada",
-      });
+      return res.status(404).json({ success: false, message: "Sesión no encontrada" });
     }
-
     if (!sesion.activo) {
-      return res.status(400).json({
-        success: false,
-        message: "La sesión ya está cerrada",
-      });
+      return res.status(400).json({ success: false, message: "La sesión ya está cerrada" });
     }
 
     const ahora = new Date();
-    const duracionMilisegundos = ahora - sesion.fechaInicio;
-    const duracionSegundos = Math.floor(duracionMilisegundos / 1000);
-
     sesion.fechaFin = ahora;
-    sesion.duracionSegundos = duracionSegundos;
+    sesion.duracionSegundos = Math.floor((ahora - sesion.fechaInicio) / 1000);
     sesion.activo = false;
 
     await sesion.save();
 
-    res.json({
-      success: true,
-      data: sesion,
-    });
+    res.json({ success: true, data: sesion });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 exports.obtenerEstadisticas = async (req, res) => {
   try {
-    const estadisticas = await SesionUso.getEstadisticas();
-    res.json({
-      success: true,
-      data: estadisticas,
-    });
+    const estadisticas = await SesionUso.getTodasLasEstadisticas();
+    res.json({ success: true, data: estadisticas });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 exports.obtenerSesiones = async (req, res) => {
   try {
     const { pagina = 1, limite = 50, activo, modulo } = req.query;
-    const skip = (pagina - 1) * limite;
-
     const filtro = {};
     if (activo !== undefined) filtro.activo = activo === "true";
     if (modulo) filtro.modulo = modulo;
@@ -112,7 +84,7 @@ exports.obtenerSesiones = async (req, res) => {
     const [sesiones, total] = await Promise.all([
       SesionUso.find(filtro)
         .sort({ createdAt: -1 })
-        .skip(skip)
+        .skip((pagina - 1) * limite)
         .limit(parseInt(limite))
         .exec(),
       SesionUso.countDocuments(filtro),
@@ -126,58 +98,52 @@ exports.obtenerSesiones = async (req, res) => {
       limite: parseInt(limite),
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 exports.obtenerSesion = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const sesion = await SesionUso.findById(id);
+    const sesion = await SesionUso.findById(req.params.id);
     if (!sesion) {
-      return res.status(404).json({
+      return res.status(404).json({ success: false, message: "Sesión no encontrada" });
+    }
+    res.json({ success: true, data: sesion });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.registrarAccion = async (req, res) => {
+  try {
+    const { sesionId, entidad, tipoAccion, entidadId } = req.body;
+    if (!sesionId || !entidad || !tipoAccion) {
+      return res.status(400).json({
         success: false,
-        message: "Sesión no encontrada",
+        message: "Faltan campos: sesionId, entidad, tipoAccion",
       });
     }
 
-    res.json({
-      success: true,
-      data: sesion,
-    });
+    const sesion = await SesionUso.registrarAccion(sesionId, entidad, tipoAccion, entidadId);
+    if (!sesion) {
+      return res.status(404).json({ success: false, message: "Sesión no encontrada" });
+    }
+
+    res.json({ success: true, data: sesion });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 exports.eliminarSesion = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const sesion = await SesionUso.findByIdAndDelete(id);
+    const sesion = await SesionUso.findByIdAndDelete(req.params.id);
     if (!sesion) {
-      return res.status(404).json({
-        success: false,
-        message: "Sesión no encontrada",
-      });
+      return res.status(404).json({ success: false, message: "Sesión no encontrada" });
     }
-
-    res.json({
-      success: true,
-      message: "Sesión eliminada correctamente",
-    });
+    res.json({ success: true, message: "Sesión eliminada correctamente" });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -185,16 +151,12 @@ exports.limpiarSesiones = async (req, res) => {
   try {
     const { dias = 30 } = req.query;
     const resultado = await SesionUso.limpiarSesionesCerradas(parseInt(dias));
-
     res.json({
       success: true,
       message: `Se eliminaron ${resultado.deletedCount} sesiones`,
       eliminadas: resultado.deletedCount,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

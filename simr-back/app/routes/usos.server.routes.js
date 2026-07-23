@@ -1,29 +1,31 @@
 "use strict";
 
+const passport = require("passport");
 const sesionUsoController = require("../controllers/usos/sesion-uso.server.controller");
-const requireAuth = require("../middleware/requireAuth");
+const requireAuth = passport.authenticate("jwt", { session: false });
 
 module.exports = function (app) {
-  app
-    .route("/api/usos")
-    .get(requireAuth, sesionUsoController.obtenerSesiones);
-
+  // Rutas específicas (deben ir ANTES de /:id)
   app
     .route("/api/usos/estadisticas")
     .get(requireAuth, sesionUsoController.obtenerEstadisticas);
 
-  // Alias para estadísticas de uso (formato esperado por el frontend)
   app
     .route("/api/stats/usage")
     .get(requireAuth, sesionUsoController.obtenerEstadisticas);
 
   app
-    .route("/api/usos")
-    .post(requireAuth, sesionUsoController.crearSesion);
+    .route("/api/usos/accion")
+    .post(requireAuth, sesionUsoController.registrarAccion);
 
   app
-    .route("/api/usos/:id")
-    .get(requireAuth, sesionUsoController.obtenerSesion);
+    .route("/api/usos/limpiar")
+    .delete(requireAuth, sesionUsoController.limpiarSesiones);
+
+  app
+    .route("/api/usos")
+    .get(requireAuth, sesionUsoController.obtenerSesiones)
+    .post(requireAuth, sesionUsoController.crearSesion);
 
   app
     .route("/api/usos/:id/cerrar")
@@ -31,9 +33,6 @@ module.exports = function (app) {
 
   app
     .route("/api/usos/:id")
+    .get(requireAuth, sesionUsoController.obtenerSesion)
     .delete(requireAuth, sesionUsoController.eliminarSesion);
-
-  app
-    .route("/api/usos/limpiar")
-    .delete(requireAuth, sesionUsoController.limpiarSesiones);
 };

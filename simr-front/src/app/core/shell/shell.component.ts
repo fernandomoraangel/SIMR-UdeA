@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { SweetAlertService } from '@core/services/sweet-alert.service';
 import { AuthDialogService } from '@core/services/auth-dialog.service';
 import { SoundWaveComponent } from '@shared/sound-wave/sound-wave.component';
+import { SesionTrackerService } from '@features/estadisticas-uso/data/sesion-tracker.service';
 
 interface MenuItem {
   label: string;
@@ -26,6 +27,7 @@ interface MenuGroup {
 export class ShellComponent implements OnInit {
   isAuthenticated = false;
   currentUser: { fullName?: string } | null = null;
+  private readonly sesionTracker = inject(SesionTrackerService);
 
   // Menú definitivo: organizado por categorías funcionales.
   // Migrados → ruta real; no migrados → /no-implementado/:modulo.
