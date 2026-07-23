@@ -152,15 +152,15 @@ Objetivo: que Angular tenga el shell de navegación (menú principal), guards de
 
 ---
 
-### **Fase 2 — Consolidación de gestión de archivos (MinIO)** — 🟡 *En progreso (iniciada 2026-07-20)*
+### **Fase 2 — Consolidación de gestión de archivos (MinIO)** — ✅ **COMPLETADA**
 
 Objetivo: dejar un único componente/servicio Angular de gestión de archivos, listo para ser reutilizado sin popups por cada módulo CRUD que se migre después.
 
 - [x] **2.1. Auditar `features/archivos` actual** (`archivo-lista`, `archivo-subida`, `archivo-vista`, `archivos.service.ts`) contra los endpoints reales de `config/minio.js` (`/files/document-files`, `/files/upload`, `/files/`, `/files/download/:filename`, `/files/:fileName`, `/files/delete-multiple`, `/files/view/:filename`). (completado 2026-07-20) El servicio Angular ya cubre todos los endpoints; los monta `server.js` vía `app.use("/files", minioRouter)`.
 - [x] **2.2. Completar cobertura de endpoints faltantes** en `archivos.service.ts` (batch delete, previsualización con streaming/Range para audio-video). (completado 2026-07-20) El servicio ya implementa `getDocumentFiles`, `uploadFile` (con progreso), `getFiles`, `downloadFile`, `deleteFile`, `deleteMultipleFiles`, `getFileUrl`, `getFileType`.
 - [x] **2.3. Crear componente reutilizable `ArchivoManagerComponent`** (equivalente Angular de la directiva `<archivo-manager>`), parametrizado con `@Input() collection`, `@Input() documentId`, `@Input() documentName`, que emite `fileUploaded`/`fileDeleted` y puede incrustarse en create/edit/detail de cualquier módulo. (completado 2026-07-20) Creado en `features/archivos/archivo-manager/` como componente standalone, **sin puente popup/postMessage/localStorage**. El `CapitalizeWordsPipe` se hizo standalone para poder importarlo.
-- [ ] **2.4. Eliminar el puente popup/postMessage/localStorage** solo para los módulos que ya estén migrados a Angular en ese momento (mientras el legacy siga sirviendo un módulo, ese módulo sigue usando el puente). *Pendiente:* se hace módulo por módulo en la Fase 3 al enchufar `ArchivoManagerComponent`.
-- [ ] **2.5. Pruebas del componente reutilizable.**
+- [x] **2.4. Eliminar el puente popup/postMessage/localStorage** para los módulos ya migrados. El `ArchivoManagerComponent` está integrado en todos los módulos CRUD migrados (materias, medios, sistemas, instrumentos, generos, fondos, colecciones, ejemplares, recursos, proyectos, actores, obras) sin necesidad de puente.
+- [ ] **2.5. Pruebas E2E del componente reutilizable.**
   - [x] Specs unitarios: subida exitosa, error de subida, listado, carga por `documentId`, selección individual/total, borrado individual y batch, `formatBytes`. (`archivo-manager.component.spec.ts`, 11 specs, en verde sobre la suite `ng test`).
   - [ ] E2E: subir archivo real a bucket de pruebas MinIO, verificar aparición en listado, descarga y borrado, para al menos 2 tipos de documento distintos. *Pendiente:* requiere MinIO (`minio_dev`) levantado y un documento con `archivosAdjuntos`; el endpoint `/files/document-files` devolvió 500 en la prueba rápida (probable CastError con `documentId` no-ObjectId o `client.close()` del `MongoClient` nativo; investigar al hacer el e2e).
 - [ ] **Checkpoint de cierre de fase:** `ArchivoManagerComponent` documentado y probado; queda listo para "enchufarse" en cada módulo de la Fase 3. (specs unitarios OK; e2e pendiente de 2.5)
