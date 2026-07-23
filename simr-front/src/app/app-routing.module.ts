@@ -162,6 +162,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'nube-archivos',
+    loadChildren: () =>
+      import('./features/nube-archivos/nube-archivos.routes').then(
+        (r) => r.NUBE_ARCHIVOS_ROUTES
+      ),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then((r) => r.ADMIN_ROUTES),

@@ -1,0 +1,58 @@
+<div class="upload-dialog">
+  <h2 mat-dialog-title>Subir archivo</h2>
+
+  <div class="upload-body">
+    <div
+      class="drop-zone"
+      [class.drag-over]="dragOver"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+    >
+      @if (selectedFile) {
+        <div class="file-preview">
+          <mat-icon>insert_drive_file</mat-icon>
+          <div class="file-preview-info">
+            <strong>{{ selectedFile.name }}</strong>
+            <span>{{ formatSize(selectedFile.size) }}</span>
+          </div>
+          <button mat-icon-button (click)="removeFile(); $event.stopPropagation()" matTooltip="Quitar">
+            <mat-icon color="warn">close</mat-icon>
+          </button>
+        </div>
+      } @else {
+        <mat-icon>cloud_upload</mat-icon>
+        <p>Arrastra un archivo aquí o haz clic para seleccionar</p>
+        <span class="hint">Tamaño máximo: 200 MB</span>
+      }
+      <input
+        #fileInput
+        type="file"
+        (change)="onFileSelected($event)"
+        style="display: none"
+      />
+    </div>
+
+    <mat-form-field appearance="outline" class="tags-field">
+      <mat-label>Etiquetas (separadas por coma)</mat-label>
+      <input matInput [(ngModel)]="tags" placeholder="ej: informe, investigación, 2026" />
+      <mat-hint>Las etiquetas permiten buscar y filtrar archivos</mat-hint>
+    </mat-form-field>
+
+    @if (errorMessage) {
+      <div class="upload-error">{{ errorMessage }}</div>
+    }
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button [disabled]="isLoading" (click)="dialogRef.close()">Cancelar</button>
+    <button mat-flat-button color="primary" [disabled]="!selectedFile || isLoading" (click)="submit()">
+      @if (isLoading) {
+        Subiendo…
+      } @else {
+        Subir
+      }
+    </button>
+  </div>
+</div>

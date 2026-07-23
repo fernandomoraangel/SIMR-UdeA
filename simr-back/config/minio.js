@@ -37,6 +37,7 @@ const minioClient = new minio.Client({
 });
 
 const myBucketName = process.env.MINIO_BUCKET_NAME;
+const nubeBucketName = process.env.NUBE_BUCKET_NAME || 'simr-nube-archivos';
 
 // Configurar multer para manejar la carga de archivos
 const upload = multer({ storage: multer.memoryStorage() });
@@ -76,6 +77,15 @@ const initializeBucket = async () => {
       console.log("✅ Bucket " + myBucketName + ' created in "us-east-1"');
     } else {
       console.log("✅ Bucket " + myBucketName + " already exists");
+    }
+
+    // Inicializar bucket para nube de archivos
+    const nubeExists = await minioClient.bucketExists(nubeBucketName);
+    if (!nubeExists) {
+      await minioClient.makeBucket(nubeBucketName, "us-east-1");
+      console.log("✅ Nube bucket " + nubeBucketName + ' created in "us-east-1"');
+    } else {
+      console.log("✅ Nube bucket " + nubeBucketName + " already exists");
     }
   } catch (error) {
     console.error("❌ Error initializing MinIO bucket:", error);
@@ -551,4 +561,6 @@ router.get("/view/:filename", async (req, res) => {
 module.exports = {
   router,
   initializeBucket,
+  minioClient,
+  nubeBucketName,
 };

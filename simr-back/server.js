@@ -20,7 +20,7 @@ const app = express();
 
 // Inicializar MinIO solo si está disponible
 try {
-  const { router: minioRouter, initializeBucket } = require("./config/minio");
+  const { router: minioRouter, initializeBucket, minioClient, nubeBucketName } = require("./config/minio");
 
   // Inicializar el bucket de MinIO
   initializeBucket()
@@ -28,6 +28,9 @@ try {
       console.log("✅ MinIO inicializado correctamente");
       // Usar las rutas de MinIO DESPUÉS de configurar express
       app.use("/files", minioRouter);
+      // Inyectar cliente MinIO al controlador de nube de archivos
+      const nubeCtrl = require("./app/controllers/nube-archivo.server.controller");
+      nubeCtrl.setMinio(minioClient, nubeBucketName);
     })
     .catch((error) => {
       console.warn("⚠️ MinIO no disponible:", error.message);

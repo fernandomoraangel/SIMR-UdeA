@@ -1,0 +1,144 @@
+<div class="nube-container">
+  <header class="nube-header">
+    <h1>Nube de archivos</h1>
+    <p class="nube-subtitle">Almacenamiento compartido para investigadores, bibliotecólogos y administradores</p>
+  </header>
+
+  <div class="nube-toolbar">
+    <div class="nube-search">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Buscar por nombre o etiqueta…"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+      />
+      <button mat-icon-button (click)="onSearch()" matTooltip="Buscar">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+
+    <div class="nube-actions">
+      <button mat-stroked-button (click)="showTagFilter = !showTagFilter" [class.active]="selectedTags.length > 0">
+        <mat-icon>label</mat-icon>
+        Filtros
+        @if (selectedTags.length) {
+          <span class="badge">{{ selectedTags.length }}</span>
+        }
+      </button>
+      <button mat-flat-button color="primary" (click)="openUpload()">
+        <mat-icon>cloud_upload</mat-icon>
+        Subir archivo
+      </button>
+    </div>
+  </div>
+
+  @if (showTagFilter && availableTags.length) {
+    <div class="nube-tag-filter">
+      @for (t of availableTags; track t.tag) {
+        <button
+          mat-chip
+          [selected]="selectedTags.includes(t.tag)"
+          (click)="toggleTag(t.tag)"
+        >
+          {{ t.tag }}
+          @if (t.count > 1) {
+            <span class="tag-count">({{ t.count }})</span>
+          }
+        </button>
+      }
+      @if (selectedTags.length) {
+        <button mat-button color="warn" (click)="clearFilters()">Limpiar</button>
+      }
+    </div>
+  }
+
+  @if (selectedTags.length || searchTerm) {
+    <div class="nube-active-filters">
+      <span>Filtros activos:</span>
+      @for (tag of selectedTags; track tag) {
+        <span class="filter-chip">{{ tag }} <button (click)="toggleTag(tag)">&times;</button></span>
+      }
+      @if (searchTerm) {
+        <span class="filter-chip">"{{ searchTerm }}" <button (click)="searchTerm = ''; onSearch()">&times;</button></span>
+      }
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="nube-loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (files.length === 0) {
+    <div class="nube-empty">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No hay archivos aún</p>
+      <button mat-stroked-button color="primary" (click)="openUpload()">Subir el primero</button>
+    </div>
+  } @else {
+    <div class="nube-grid">
+      @for (file of files; track file._id) {
+        <div class="nube-card">
+          <div class="nube-card-icon">
+            <mat-icon>{{ getFileIcon(file.mimetype) }}</mat-icon>
+          </div>
+
+          <div class="nube-card-info">
+            <div class="nube-card-name" [title]="file.originalName">{{ file.originalName }}</div>
+            <div class="nube-card-meta">
+              {{ formatSize(file.size) }}
+              @if (file.uploadedBy) {
+                · {{ file.uploadedBy.username }}
+              }
+              · {{ file.createdAt | date:'shortDate' }}
+            </div>
+
+            @if (editingTagsId === file._id) {
+              <div class="nube-tags-edit">
+                <input
+                  type="text"
+                  [(ngModel)]="editingTagsValue"
+                  (keyup.enter)="saveTags(file)"
+                  placeholder="tag1, tag2, tag3"
+                  (keyup.escape)="cancelEditTags()"
+                />
+                <button mat-icon-button (click)="saveTags(file)" matTooltip="Guardar"><mat-icon>check</mat-icon></button>
+                <button mat-icon-button (click)="cancelEditTags()" matTooltip="Cancelar"><mat-icon>close</mat-icon></button>
+              </div>
+            } @else {
+              <div class="nube-tags" (click)="startEditTags(file)" title="Editar etiquetas">
+                @if (file.tags.length) {
+                  @for (tag of file.tags.slice(0, 3); track tag) {
+                    <span class="tag">{{ tag }}</span>
+                  }
+                  @if (file.tags.length > 3) {
+                    <span class="tag-more">+{{ file.tags.length - 3 }}</span>
+                  }
+                } @else {
+                  <span class="tag-placeholder">Añadir etiquetas…</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="nube-card-actions">
+            <button mat-icon-button (click)="downloadFile(file)" matTooltip="Descargar">
+              <mat-icon>download</mat-icon>
+            </button>
+            <button mat-icon-button (click)="confirmDelete(file)" matTooltip="Eliminar">
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="nube-pagination">
+        <button mat-button [disabled]="page <= 1" (click)="changePage(-1)">Anterior</button>
+        <span>Página {{ page }} de {{ totalPages() }} ({{ total }} archivos)</span>
+        <button mat-button [disabled]="page >= totalPages()" (click)="changePage(1)">Siguiente</button>
+      </div>
+    }
+  }
+</div>

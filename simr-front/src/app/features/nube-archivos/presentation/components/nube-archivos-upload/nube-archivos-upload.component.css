@@ -1,0 +1,81 @@
+.upload-dialog {
+  min-width: 420px;
+}
+
+.upload-body {
+  padding: 0 24px 16px;
+}
+
+.drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #faf8f5;
+  margin-bottom: 16px;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--simr-sello, #b5432a);
+  background: #fdf0ea;
+}
+
+.drop-zone mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--simr-sello, #b5432a);
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+
+.drop-zone p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: var(--simr-tinta);
+}
+
+.drop-zone .hint {
+  font-size: 0.8rem;
+  color: var(--simr-tinta);
+  opacity: 0.5;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.file-preview mat-icon {
+  margin-bottom: 0;
+}
+
+.file-preview-info {
+  flex: 1;
+}
+
+.file-preview-info strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.file-preview-info span {
+  font-size: 0.8rem;
+  color: var(--simr-tinta);
+  opacity: 0.6;
+}
+
+.tags-field {
+  width: 100%;
+}
+
+.upload-error {
+  color: var(--simr-sello, #b5432a);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}

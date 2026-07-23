@@ -301,6 +301,8 @@ module.exports = function () {
   require("../app/routes/stats.server.routes.js")(app);
   // Estadísticas de uso de la aplicación
   require("../app/routes/usos.server.routes.js")(app);
+  // Nube de archivos (cloud storage)
+  require("../app/routes/nube-archivo.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");

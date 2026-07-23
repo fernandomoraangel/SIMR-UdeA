@@ -70,6 +70,7 @@ export class ShellComponent implements OnInit {
       label: 'Utilidades',
       items: [
         { label: 'Búsqueda general', ruta: '/search' },
+        { label: 'Nube de archivos', ruta: '/nube-archivos' },
         { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
       ],
     },
