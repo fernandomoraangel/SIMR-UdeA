@@ -142,6 +142,13 @@ const routes: Routes = [
       import('./features/graph/graph.routes').then((r) => r.GRAPH_ROUTES),
   },
   {
+    path: 'mapa-visualizador',
+    loadChildren: () =>
+      import('./features/mapa-visualizador/mapa-visualizador.routes').then(
+        (r) => r.MAPA_VISUALIZADOR_ROUTES
+      ),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then((r) => r.ADMIN_ROUTES),

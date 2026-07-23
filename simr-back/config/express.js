@@ -1,18 +1,14 @@
 const config = require("./config");
 const express = require("express");
-// const session = require('express-session');
-// const MongoStore = require('connect-mongo');
+const path = require("path");
 const morgan = require("morgan");
 const compress = require("compression");
-// const bodyParser = require('body-parser');
 const methodOverride = require("method-override");
-// const flash = require('connect-flash');
 const passport = require("passport");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const crypto = require("crypto");
-const legacyShellGuard = require("../app/middleware/legacyShellGuard");
 
 // Función para inicializar la aplicación express
 module.exports = function () {
@@ -75,12 +71,8 @@ module.exports = function () {
     cors({
       origin:
         process.env.NODE_ENV === "production"
-          ? [process.env.FRONTEND_URL, process.env.ANGULARJS_URL]
-          : [
-              "http://localhost:4200",
-              "http://localhost:3000",
-              "http://localhost",
-            ],
+          ? process.env.FRONTEND_URL
+          : "http://localhost:4200",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -312,13 +304,14 @@ module.exports = function () {
   const { handleAuthError } = require("../app/middleware/authErrorHandler");
   app.use(handleAuthError);
 
-  // Midleware para servir archivos estáticos, su argumeno ubica el directorio para los archivos estáticos
-  // Auth-gating: se protege TODO /public (incluye angular.js v1.8.2 EOL,
-  // jquery, bootstrap, y los *.client.*.js/*.client.view.html del legacy)
-  // detrás de la misma verificación de sesión que el shell ('/'). Ver
-  // app/middleware/legacyShellGuard.js. Las rutas /api/* NO se ven
-  // afectadas (login/signup/verify siguen siendo anónimas).
-  app.use(legacyShellGuard, express.static("./public"));
+  // Servir archivos estáticos de la build de Angular (simr-front/dist)
+  const angularDistPath = path.join(__dirname, "../../simr-front/dist/simr-front");
+  app.use(express.static(angularDistPath));
+
+  // Fallback para SPA: servir index.html para rutas no API
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(angularDistPath, "index.html"));
+  });
 
   // Devuelve la instancia de la aplicación
   return app;
