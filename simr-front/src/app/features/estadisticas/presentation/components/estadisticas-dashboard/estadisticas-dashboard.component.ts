@@ -8,6 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Chart, registerables } from 'chart.js';
+import { firstValueFrom } from 'rxjs';
 
 Chart.register(...registerables);
 
@@ -44,11 +45,45 @@ interface StatsResponse {
   searchStats?: Record<string, SearchEntityStats>;
 }
 
+interface SearchHit {
+  _id: string;
+  _entityType: string;
+  _searchScore?: number;
+  [key: string]: unknown;
+}
+
+interface SearchResponse {
+  success: boolean;
+  query: string;
+  results: SearchHit[];
+  total: number;
+  entities: string[];
+  suggestion: { term: string; for: string } | null;
+}
+
 interface EntityOption {
   key: string;
   label: string;
   selected: boolean;
 }
+
+const ENTITY_MODEL_MAP: Record<string, string> = {
+  obra: 'Obra', actor: 'Actor', recurso: 'Recurso', genero: 'Genero',
+  generonomusical: 'GeneroNoMusical', materia: 'Materia', instrumento: 'Instrumento',
+  proyecto: 'Proyecto', medio: 'Medio', sistema: 'Sistema', fondo: 'Fondo',
+  coleccion: 'Coleccion', ejemplar: 'Ejemplar', idioma: 'Idioma',
+  diccionario: 'Diccionario',
+};
+
+const ENTITY_DISPLAY_FIELD: Record<string, string> = {
+  Obra: 'titulo', Actor: 'nombres', Recurso: 'titulo', Genero: 'nombre',
+  GeneroNoMusical: 'nombre', Materia: 'nombre', Instrumento: 'nombre',
+  Proyecto: 'nombre', Medio: 'nombre', Sistema: 'nombre', Fondo: 'nombre',
+  Coleccion: 'nombre', Ejemplar: 'numeroEjemplar', Idioma: 'idioma',
+  Diccionario: 'definicion', User: 'username',
+};
+
+function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 @Component({
   selector: 'app-estadisticas-dashboard',
@@ -185,7 +220,7 @@ interface EntityOption {
                   </div>
                   @for (f of currentFieldStats | keyvalue; track f.key) {
                     <div class="field-row">
-                      <span class="field-name">{{ fieldLabel(f.key) }}</span>
+                      <span class="field-name" title="{{ fieldLabel(f.key) }}">{{ fieldLabel(f.key) }}</span>
                       <span class="field-count">{{ f.value.filled }}</span>
                       <span class="field-null">{{ f.value.null }}</span>
                       <span class="field-bar">
@@ -227,7 +262,7 @@ interface EntityOption {
                   (click)="activeSearchTab = key"
                 >
                   {{ searchResults[key].label }}
-                  <span class="tab-badge">{{ searchResults[key].matches }}</span>
+                  <span class="tab-badge search-tab-badge" (click)="loadRecords(key); $event.stopPropagation()">{{ searchResults[key].matches }}</span>
                 </button>
               }
             </div>
@@ -239,7 +274,7 @@ interface EntityOption {
                   <span class="summary-label">Total docs</span>
                 </div>
                 <div class="summary-stat">
-                  <span class="summary-num">{{ currentSearchResult.matches }}</span>
+                  <span class="summary-num records-link" (click)="loadRecords(activeSearchTab)">{{ currentSearchResult.matches }}</span>
                   <span class="summary-label">Coincidencias</span>
                 </div>
                 <div class="summary-stat">
@@ -258,8 +293,8 @@ interface EntityOption {
                 @for (f of currentSearchResult.fields | keyvalue; track f.key) {
                   @let pct = currentSearchResult.total > 0 ? (f.value / currentSearchResult.total * 100) : 0;
                   <div class="field-row">
-                    <span class="field-name">{{ fieldLabel(f.key) }}</span>
-                    <span class="field-count">{{ f.value }}</span>
+                    <span class="field-name" title="{{ fieldLabel(f.key) }}">{{ fieldLabel(f.key) }}</span>
+                    <span class="field-count records-link" (click)="loadRecords(activeSearchTab, f.key)">{{ f.value }}</span>
                     <span class="field-bar">
                       <div class="progress-track">
                         <div
@@ -270,6 +305,41 @@ interface EntityOption {
                     </span>
                     <span class="field-pct">{{ pct.toFixed(1) }}%</span>
                   </div>
+                }
+              </div>
+            }
+
+            @if (loadingRecords) {
+              <div class="loading">
+                <mat-spinner diameter="24"></mat-spinner>
+                <span>Cargando registros…</span>
+              </div>
+            }
+
+            @if (records.length > 0) {
+              <div class="records-panel">
+                <div class="records-header">
+                  <span class="records-title">
+                    Registros en «{{ searchResults[recordEntityKey]?.label ?? recordEntityKey }}»
+                    @if (recordFieldKey) { / {{ fieldLabel(recordFieldKey) }} }
+                  </span>
+                  <span class="records-count">{{ recordTotal }} resultados</span>
+                  <button class="btn-link" (click)="records = []">Cerrar</button>
+                </div>
+                <div class="records-list">
+                  @for (rec of records; track rec._id) {
+                    <div class="record-item">
+                      <span class="record-index">#{{ $index + 1 }}</span>
+                      <span class="record-field">{{ recordDisplayValue(rec) }}</span>
+                      <span class="record-id">{{ rec._id.slice(-6) }}</span>
+                      <a class="record-link" [href]="recordUrl(rec)" target="_blank">
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+                    </div>
+                  }
+                </div>
+                @if (recordTotal > records.length) {
+                  <div class="records-more">+ {{ recordTotal - records.length }} más</div>
                 }
               </div>
             }
@@ -327,27 +397,45 @@ interface EntityOption {
     .field-tabs, .search-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
     .field-tab, .search-tab { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.8rem; border-radius: 20px; border: 1px solid var(--mat-sys-outline); background: transparent; cursor: pointer; font-size: 0.82rem; transition: all 0.15s; }
     .field-tab.active, .search-tab.active { background: var(--simr-musgo); color: white; border-color: var(--simr-musgo); }
-    .tab-badge { background: var(--mat-sys-surface-container-high); padding: 0.05rem 0.4rem; border-radius: 10px; font-size: 0.72rem; }
+    .tab-badge { background: var(--mat-sys-surface-container-high); padding: 0.1rem 0.45rem; border-radius: 10px; font-size: 0.72rem; cursor: pointer; transition: background 0.15s; }
+    .tab-badge:hover { background: var(--mat-sys-outline); }
     .active .tab-badge { background: rgba(255,255,255,0.2); color: white; }
+    .active .tab-badge:hover { background: rgba(255,255,255,0.35); }
     .field-table { display: flex; flex-direction: column; }
-    .field-row { display: grid; grid-template-columns: 1.5fr 80px 80px 1fr 60px; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--mat-sys-outline-variant); }
-    .header-row { font-size: 0.75rem; font-weight: 600; color: var(--simr-tinta-2); text-transform: uppercase; letter-spacing: 0.5px; padding: 0.4rem 0; }
-    .field-name { font-size: 0.85rem; color: var(--simr-tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .field-count, .field-null { font-size: 0.85rem; text-align: right; color: var(--simr-tinta-2); }
+    .field-row { display: grid; grid-template-columns: 1.2fr 70px 70px 1fr 55px; align-items: center; gap: 0.5rem; padding: 0.45rem 0; border-bottom: 1px solid var(--mat-sys-outline-variant); }
+    .field-row:last-child { border-bottom: none; }
+    .header-row { font-size: 0.72rem; font-weight: 600; color: var(--simr-tinta-2); text-transform: uppercase; letter-spacing: 0.5px; padding: 0.35rem 0; }
+    .field-name { font-size: 0.82rem; color: var(--simr-tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .field-count, .field-null { font-size: 0.82rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--simr-tinta-2); }
     .field-bar { padding: 0 0.25rem; }
-    .progress-track { height: 8px; background: var(--mat-sys-surface-container-high); border-radius: 4px; overflow: hidden; }
+    .progress-track { height: 7px; background: var(--mat-sys-surface-container-high); border-radius: 4px; overflow: hidden; }
     .progress-fill { height: 100%; border-radius: 4px; background: var(--simr-musgo); transition: width 0.5s ease; }
     .progress-fill.low { background: var(--simr-sello); }
     .progress-fill.mid { background: #c7952b; }
     .progress-fill.high { background: var(--simr-musgo); }
     .progress-fill.search-fill { background: var(--simr-musgo); }
-    .field-pct { font-size: 0.85rem; font-weight: 600; text-align: right; color: var(--simr-tinta); }
+    .field-pct { font-size: 0.8rem; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; color: var(--simr-tinta); }
     .field-pct.low { color: var(--simr-sello); }
     .field-pct.high { color: var(--simr-musgo); }
     .search-summary-row { display: flex; gap: 2rem; margin-bottom: 1rem; padding: 1rem; background: var(--mat-sys-surface-container-low); border-radius: 10px; }
     .summary-stat { display: flex; flex-direction: column; align-items: center; }
     .summary-num { font-size: 1.5rem; font-weight: 700; color: var(--simr-musgo); }
     .summary-label { font-size: 0.75rem; color: var(--simr-tinta-2); text-transform: uppercase; }
+    .records-link { cursor: pointer; text-decoration: underline dotted; transition: color 0.15s; }
+    .records-link:hover { color: var(--simr-sello); }
+    .records-panel { margin-top: 1rem; border: 1px solid var(--mat-sys-outline); border-radius: 10px; overflow: hidden; }
+    .records-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1rem; background: var(--mat-sys-surface-container-low); font-size: 0.85rem; }
+    .records-title { flex: 1; font-weight: 600; color: var(--simr-tinta); }
+    .records-count { font-size: 0.78rem; color: var(--simr-tinta-2); }
+    .records-list { max-height: 300px; overflow-y: auto; }
+    .record-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 1rem; border-bottom: 1px solid var(--mat-sys-outline-variant); font-size: 0.82rem; }
+    .record-item:last-child { border-bottom: none; }
+    .record-index { color: var(--simr-tinta-2); font-size: 0.75rem; width: 2rem; text-align: right; }
+    .record-field { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--simr-tinta); }
+    .record-id { font-size: 0.72rem; color: var(--simr-tinta-2); font-family: monospace; }
+    .record-link { display: flex; align-items: center; color: var(--simr-musgo); text-decoration: none; }
+    .record-link mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+    .records-more { text-align: center; padding: 0.5rem; font-size: 0.78rem; color: var(--simr-tinta-2); background: var(--mat-sys-surface-container-low); }
   `],
 })
 export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
@@ -387,6 +475,12 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
   protected searchActive = false;
   protected activeFieldTab = '';
   protected activeSearchTab = '';
+
+  protected records: SearchHit[] = [];
+  protected recordTotal = 0;
+  protected recordEntityKey = '';
+  protected recordFieldKey = '';
+  protected loadingRecords = false;
 
   private barChartInstance: Chart | null = null;
   private pieChartInstance: Chart | null = null;
@@ -509,6 +603,7 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
   doSearch() {
     const term = this.searchTerm.trim();
     if (!term) return;
+    this.records = [];
     this.searchActive = true;
     this.searching = true;
     const entities = this.selectedEntities;
@@ -535,6 +630,66 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
     this.searchTerm = '';
     this.searchActive = false;
     this.searchResults = {};
+    this.records = [];
+  }
+
+  async loadRecords(entityKey: string, fieldKey?: string) {
+    const modelName = ENTITY_MODEL_MAP[entityKey];
+    if (!modelName) {
+      this.records = [];
+      this.recordTotal = 0;
+      return;
+    }
+
+    this.recordEntityKey = entityKey;
+    this.recordFieldKey = fieldKey ?? '';
+    this.loadingRecords = true;
+
+    try {
+      let url = `${environment.apiUrl}/search?q=${encodeURIComponent(this.searchTerm)}&entities=${modelName}&limit=50`;
+      if (fieldKey) url += `&fields=${fieldKey}`;
+
+      const res = await firstValueFrom(this.http.get<SearchResponse>(url));
+      this.records = res.results ?? [];
+      this.recordTotal = res.total ?? this.records.length;
+    } catch {
+      this.records = [];
+      this.recordTotal = 0;
+    } finally {
+      this.loadingRecords = false;
+    }
+  }
+
+  recordDisplayValue(rec: SearchHit): string {
+    const model = rec._entityType;
+    const field = ENTITY_DISPLAY_FIELD[model] || 'titulo';
+    const val = rec[field];
+    if (typeof val === 'string') return val;
+    if (Array.isArray(val) && val.length > 0) {
+      const first = val[0];
+      if (typeof first === 'string') return first;
+      if (typeof first === 'object' && first !== null) {
+        return first.nombre || first.denominacionRegional || first.contenido || JSON.stringify(first);
+      }
+    }
+    if (typeof val === 'object' && val !== null) {
+      return val.nombre || val.denominacionRegional || JSON.stringify(val);
+    }
+    return rec._id;
+  }
+
+  recordUrl(rec: SearchHit): string {
+    const model = rec._entityType;
+    const routeMap: Record<string, string> = {
+      Obra: '/obras', Actor: '/actores', Recurso: '/recursos',
+      Genero: '/generos', GeneroNoMusical: '/generos-no-musicales',
+      Materia: '/materias', Instrumento: '/instrumentos',
+      Proyecto: '/proyectos', Medio: '/medios', Sistema: '/sistemas',
+      Fondo: '/fondos', Coleccion: '/colecciones', Ejemplar: '/ejemplares',
+      Idioma: '/idiomas', Diccionario: '/diccionarios', User: '/admin/usuarios',
+    };
+    const base = routeMap[model] || '';
+    return base ? `${base}/${rec._id}` : '';
   }
 
   fieldLabel(key: string): string {
