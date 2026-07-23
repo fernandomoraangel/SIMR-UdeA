@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '@env/environment';
 import { Chart, registerables } from 'chart.js';
 import { firstValueFrom } from 'rxjs';
@@ -75,15 +76,32 @@ const ENTITY_MODEL_MAP: Record<string, string> = {
   diccionario: 'Diccionario',
 };
 
-const ENTITY_DISPLAY_FIELD: Record<string, string> = {
-  Obra: 'titulo', Actor: 'nombres', Recurso: 'titulo', Genero: 'nombre',
-  GeneroNoMusical: 'nombre', Materia: 'nombre', Instrumento: 'nombre',
-  Proyecto: 'nombre', Medio: 'nombre', Sistema: 'nombre', Fondo: 'nombre',
-  Coleccion: 'nombre', Ejemplar: 'numeroEjemplar', Idioma: 'idioma',
-  Diccionario: 'definicion', User: 'username',
+const ENTITY_ROUTE: Record<string, string> = {
+  Obra: 'obras', Actor: 'actores', Recurso: 'recursos',
+  Genero: 'generos', GeneroNoMusical: 'generos-no-musicales',
+  Materia: 'materias', Instrumento: 'instrumentos',
+  Proyecto: 'proyectos', Medio: 'medios', Sistema: 'sistemas',
+  Fondo: 'fondos', Coleccion: 'colecciones', Ejemplar: 'ejemplares',
+  Idioma: 'idiomas', Diccionario: 'diccionarios',
 };
 
-function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
+const RELEVANT_FIELDS: Record<string, string[]> = {
+  Obra: ['titulo', 'tipo', 'descripcion'],
+  Actor: ['nombres', 'apellidos', 'nombreReunion'],
+  Recurso: ['titulo', 'faceta', 'descripcion'],
+  Genero: ['nombre', 'descripcion', 'idioma'],
+  GeneroNoMusical: ['nombre', 'descripcion', 'idioma'],
+  Materia: ['nombre', 'descripcion', 'alias'],
+  Instrumento: ['nombre', 'clasificacion', 'alias'],
+  Proyecto: ['nombre', 'estado', 'investigadores'],
+  Medio: ['nombre', 'alias', 'instrumentos'],
+  Sistema: ['nombre', 'descripcion', 'alias'],
+  Fondo: ['nombre', 'tipo', 'propiedadComodato'],
+  Coleccion: ['nombre', 'tipo', 'propiedadComodato'],
+  Ejemplar: ['numeroEjemplar', 'disponibilidad', 'procedencia'],
+  Idioma: ['idioma', 'glottocode', 'isoCode'],
+  Diccionario: ['definicion', 'tabla', 'campo'],
+};
 
 @Component({
   selector: 'app-estadisticas-dashboard',
@@ -129,6 +147,7 @@ function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); 
             placeholder="Buscar término en todos los campos…"
             [(ngModel)]="searchTerm"
             (keyup.enter)="doSearch()"
+            (input)="onSearchInput()"
           />
           @if (searchTerm) {
             <button class="btn-clear" (click)="clearSearch()">
@@ -153,19 +172,19 @@ function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); 
         </div>
       }
 
-      @if (!loading && !error) {
+      @if (!loading && !error && !searchActive) {
 
-        @if (selectedEntities.length === 0 && !searchActive) {
+        @if (selectedEntities.length === 0) {
           <div class="empty-state">
             <mat-icon>bar_chart</mat-icon>
             <p>Selecciona una o más entidades para ver sus estadísticas</p>
           </div>
         }
 
-        @if (selectedEntities.length > 0 && !searchActive) {
+        @if (selectedEntities.length > 0 && !detailView) {
           <div class="cards-grid">
             @for (item of visibleCounts; track item.key) {
-              <mat-card class="stat-card" appearance="outlined" (click)="focusEntity(item.key)">
+              <mat-card class="stat-card" appearance="outlined" (click)="drillDown(item.key)">
                 <div class="stat-count">{{ item.count }}</div>
                 <div class="stat-label">{{ item.label }}</div>
               </mat-card>
@@ -191,167 +210,176 @@ function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); 
               </div>
             </mat-card>
           </div>
-
-          @if (fieldStatsKeys.length > 0) {
-            <mat-card class="field-stats-card" appearance="outlined">
-              <div class="card-header">
-                <h2>Completitud de campos</h2>
-              </div>
-              <div class="field-tabs">
-                @for (key of fieldStatsKeys; track key) {
-                  <button
-                    class="field-tab"
-                    [class.active]="activeFieldTab === key"
-                    (click)="activeFieldTab = key"
-                  >
-                    {{ fieldStatsData[key].label }}
-                    <span class="tab-badge">{{ fieldStatsData[key].total }}</span>
-                  </button>
-                }
-              </div>
-              @if (currentFieldStats) {
-                <div class="field-table">
-                  <div class="field-row header-row">
-                    <span class="field-name">Campo</span>
-                    <span class="field-count">Llenos</span>
-                    <span class="field-null">Vacíos</span>
-                    <span class="field-bar">% Completitud</span>
-                    <span class="field-pct">%</span>
-                  </div>
-                  @for (f of currentFieldStats | keyvalue; track f.key) {
-                    <div class="field-row">
-                      <span class="field-name" title="{{ fieldLabel(f.key) }}">{{ fieldLabel(f.key) }}</span>
-                      <span class="field-count">{{ f.value.filled }}</span>
-                      <span class="field-null">{{ f.value.null }}</span>
-                      <span class="field-bar">
-                        <div class="progress-track">
-                          <div
-                            class="progress-fill"
-                            [style.width.%]="f.value.pct"
-                            [class.low]="f.value.pct < 30"
-                            [class.mid]="f.value.pct >= 30 && f.value.pct < 70"
-                            [class.high]="f.value.pct >= 70"
-                          ></div>
-                        </div>
-                      </span>
-                      <span class="field-pct" [class.low]="f.value.pct < 30" [class.high]="f.value.pct >= 70">
-                        {{ f.value.pct }}%
-                      </span>
-                    </div>
-                  }
-                </div>
-              }
-            </mat-card>
-          }
         }
 
-        @if (searchActive && searchKeys.length > 0) {
-          <mat-card class="search-results-card" appearance="outlined">
-            <div class="card-header">
-              <h2>Resultados de búsqueda: «{{ searchTerm }}»</h2>
-              <span class="result-summary">
-                {{ totalSearchMatches }} coincidencias en {{ searchKeys.length }} entidades
-              </span>
-            </div>
+        @if (detailView) {
+          <div class="detail-header">
+            <button class="btn-back" (click)="detailView = null; rebuildCharts()">
+              <mat-icon>arrow_back</mat-icon> Volver
+            </button>
+            <h2>{{ detailView.label }} <span class="detail-total">{{ detailView.total }} registros</span></h2>
+          </div>
 
-            <div class="search-tabs">
-              @for (key of searchKeys; track key) {
-                <button
-                  class="search-tab"
-                  [class.active]="activeSearchTab === key"
-                  (click)="activeSearchTab = key"
-                >
-                  {{ searchResults[key].label }}
-                  <span class="tab-badge search-tab-badge" (click)="loadRecords(key); $event.stopPropagation()">{{ searchResults[key].matches }}</span>
-                </button>
+          <div class="charts-grid">
+            <mat-card class="chart-card" appearance="outlined">
+              <div class="chart-header">
+                <h2>Completitud por campo</h2>
+              </div>
+              <div class="chart-wrapper">
+                <canvas #statsChart></canvas>
+              </div>
+            </mat-card>
+
+            <mat-card class="chart-card" appearance="outlined">
+              <div class="chart-header">
+                <h2>Llenos vs Vacíos</h2>
+              </div>
+              <div class="chart-wrapper">
+                <canvas #pieChart></canvas>
+              </div>
+            </mat-card>
+          </div>
+
+          <mat-card class="field-stats-card" appearance="outlined">
+            <div class="card-header">
+              <h2>Campos de {{ detailView.label }}</h2>
+            </div>
+            <div class="field-table">
+              <div class="field-row header-row">
+                <span class="field-name">Campo</span>
+                <span class="field-count">Llenos</span>
+                <span class="field-null">Vacíos</span>
+                <span class="field-bar">% Completitud</span>
+                <span class="field-pct">%</span>
+              </div>
+              @for (f of detailView.fields | keyvalue; track f.key) {
+                <div class="field-row">
+                  <span class="field-name" title="{{ fieldLabel(f.key) }}">{{ fieldLabel(f.key) }}</span>
+                  <span class="field-count">{{ f.value.filled }}</span>
+                  <span class="field-null">{{ f.value.null }}</span>
+                  <span class="field-bar">
+                    <div class="progress-track">
+                      <div
+                        class="progress-fill"
+                        [style.width.%]="f.value.pct"
+                        [class.low]="f.value.pct < 30"
+                        [class.mid]="f.value.pct >= 30 && f.value.pct < 70"
+                        [class.high]="f.value.pct >= 70"
+                      ></div>
+                    </div>
+                  </span>
+                  <span class="field-pct" [class.low]="f.value.pct < 30" [class.high]="f.value.pct >= 70">
+                    {{ f.value.pct }}%
+                  </span>
+                </div>
               }
             </div>
-
-            @if (currentSearchResult) {
-              <div class="search-summary-row">
-                <div class="summary-stat">
-                  <span class="summary-num">{{ currentSearchResult.total }}</span>
-                  <span class="summary-label">Total docs</span>
-                </div>
-                <div class="summary-stat">
-                  <span class="summary-num records-link" (click)="loadRecords(activeSearchTab)">{{ currentSearchResult.matches }}</span>
-                  <span class="summary-label">Coincidencias</span>
-                </div>
-                <div class="summary-stat">
-                  <span class="summary-num">{{ currentSearchResult.pct }}%</span>
-                  <span class="summary-label">Cobertura</span>
-                </div>
-              </div>
-
-              <div class="field-table">
-                <div class="field-row header-row">
-                  <span class="field-name">Campo</span>
-                  <span class="field-count">Coincidencias</span>
-                  <span class="field-bar">% del total</span>
-                  <span class="field-pct">%</span>
-                </div>
-                @for (f of currentSearchResult.fields | keyvalue; track f.key) {
-                  @let pct = currentSearchResult.total > 0 ? (f.value / currentSearchResult.total * 100) : 0;
-                  <div class="field-row">
-                    <span class="field-name" title="{{ fieldLabel(f.key) }}">{{ fieldLabel(f.key) }}</span>
-                    <span class="field-count records-link" (click)="loadRecords(activeSearchTab, f.key)">{{ f.value }}</span>
-                    <span class="field-bar">
-                      <div class="progress-track">
-                        <div
-                          class="progress-fill search-fill"
-                          [style.width.%]="pct"
-                        ></div>
-                      </div>
-                    </span>
-                    <span class="field-pct">{{ pct.toFixed(1) }}%</span>
-                  </div>
-                }
-              </div>
-            }
-
-            @if (loadingRecords) {
-              <div class="loading">
-                <mat-spinner diameter="24"></mat-spinner>
-                <span>Cargando registros…</span>
-              </div>
-            }
-
-            @if (records.length > 0) {
-              <div class="records-panel">
-                <div class="records-header">
-                  <span class="records-title">
-                    Registros en «{{ searchResults[recordEntityKey]?.label ?? recordEntityKey }}»
-                    @if (recordFieldKey) { / {{ fieldLabel(recordFieldKey) }} }
-                  </span>
-                  <span class="records-count">{{ recordTotal }} resultados</span>
-                  <button class="btn-link" (click)="records = []">Cerrar</button>
-                </div>
-                <div class="records-list">
-                  @for (rec of records; track rec._id) {
-                    <div class="record-item">
-                      <span class="record-index">#{{ $index + 1 }}</span>
-                      <span class="record-field">{{ recordDisplayValue(rec) }}</span>
-                      <span class="record-id">{{ rec._id.slice(-6) }}</span>
-                      <a class="record-link" [href]="recordUrl(rec)" target="_blank">
-                        <mat-icon>open_in_new</mat-icon>
-                      </a>
-                    </div>
-                  }
-                </div>
-                @if (recordTotal > records.length) {
-                  <div class="records-more">+ {{ recordTotal - records.length }} más</div>
-                }
-              </div>
-            }
           </mat-card>
         }
+      }
 
-        @if (searchActive && searchKeys.length === 0 && !searching) {
-          <div class="empty-state">
-            <mat-icon>search_off</mat-icon>
-            <p>Sin resultados para «{{ searchTerm }}»</p>
+      @if (!loading && !error && searchActive && searchKeys.length > 0) {
+        <mat-card class="search-results-card" appearance="outlined">
+          <div class="card-header">
+            <h2>Resultados de búsqueda: «{{ searchTerm }}»</h2>
+            <span class="result-summary">
+              {{ totalSearchMatches }} coincidencias en {{ searchKeys.length }} entidades
+            </span>
           </div>
-        }
+
+          <div class="search-tabs">
+            @for (key of searchKeys; track key) {
+              <button
+                class="search-tab"
+                [class.active]="activeSearchTab === key"
+                (click)="activeSearchTab = key; records = []"
+              >
+                {{ searchResults[key].label }}
+                <span class="tab-badge search-tab-badge" (click)="loadRecords(key); $event.stopPropagation()">{{ searchResults[key].matches }}</span>
+              </button>
+            }
+          </div>
+
+          @if (currentSearchResult) {
+            <div class="search-summary-row">
+              <div class="summary-stat">
+                <span class="summary-num">{{ currentSearchResult.total }}</span>
+                <span class="summary-label">Total docs</span>
+              </div>
+              <div class="summary-stat">
+                <span class="summary-num records-link" (click)="loadRecords(activeSearchTab)">{{ currentSearchResult.matches }}</span>
+                <span class="summary-label">Coincidencias</span>
+              </div>
+              <div class="summary-stat">
+                <span class="summary-num">{{ currentSearchResult.pct }}%</span>
+                <span class="summary-label">Cobertura</span>
+              </div>
+            </div>
+
+            <div class="search-field-table">
+              <div class="search-field-row header-row">
+                <span class="sf-name">Campo</span>
+                <span class="sf-count">Coincidencias</span>
+                <span class="sf-bar">% del total</span>
+              </div>
+              @for (f of currentSearchResult.fields | keyvalue; track f.key) {
+                @let pct = currentSearchResult.total > 0 ? (f.value / currentSearchResult.total * 100) : 0;
+                <div class="search-field-row">
+                  <span class="sf-name" title="{{ fieldLabel(f.key) }}">{{ fieldLabel(f.key) }}</span>
+                  <span class="sf-count records-link" (click)="loadRecords(activeSearchTab, f.key)">{{ f.value }}</span>
+                  <span class="sf-bar">
+                    <div class="progress-track">
+                      <div class="progress-fill search-fill" [style.width.%]="pct"></div>
+                    </div>
+                  </span>
+                </div>
+              }
+            </div>
+          }
+
+          @if (loadingRecords) {
+            <div class="loading">
+              <mat-spinner diameter="24"></mat-spinner>
+              <span>Cargando registros…</span>
+            </div>
+          }
+
+          @if (records.length > 0) {
+            <div class="records-panel">
+              <div class="records-header">
+                <span class="records-title">
+                  Registros en «{{ searchResults[recordEntityKey]?.label ?? recordEntityKey }}»
+                  @if (recordFieldKey) { / {{ fieldLabel(recordFieldKey) }} }
+                </span>
+                <span class="records-count">{{ recordTotal }} resultados</span>
+                <button class="btn-link" (click)="records = []">Cerrar</button>
+              </div>
+              <div class="records-list">
+                @for (rec of records; track rec._id) {
+                  <div class="record-item" (click)="navigateToRecord(rec)">
+                    <span class="record-index">#{{ $index + 1 }}</span>
+                    @for (rf of recordFields(rec); track rf) {
+                      <span class="record-field">{{ rf }}</span>
+                    }
+                    <span class="record-link-icon">
+                      <mat-icon>open_in_new</mat-icon>
+                    </span>
+                  </div>
+                }
+              </div>
+              @if (recordTotal > records.length) {
+                <div class="records-more">+ {{ recordTotal - records.length }} más</div>
+              }
+            </div>
+          }
+        </mat-card>
+      }
+
+      @if (!loading && !error && searchActive && searchKeys.length === 0 && !searching) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>Sin resultados para «{{ searchTerm }}»</p>
+        </div>
       }
     </div>
   `,
@@ -386,6 +414,12 @@ function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); 
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .stat-count { font-size: 2.25rem; font-weight: 700; color: var(--simr-musgo); }
     .stat-label { font-size: 0.82rem; color: var(--simr-tinta-2); margin-top: 0.25rem; text-transform: uppercase; }
+    .detail-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .detail-header h2 { margin: 0; font-size: 1.3rem; }
+    .detail-total { font-size: 0.85rem; font-weight: 400; color: var(--simr-tinta-2); margin-left: 0.5rem; }
+    .btn-back { display: flex; align-items: center; gap: 0.3rem; background: none; border: 1px solid var(--mat-sys-outline); border-radius: 8px; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.85rem; color: var(--simr-tinta); }
+    .btn-back:hover { background: var(--mat-sys-surface-container-high); }
+    .btn-back mat-icon { font-size: 1.1rem; }
     .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
     .chart-card { border-radius: 14px !important; border-color: var(--mat-sys-outline) !important; padding: 1.5rem; }
     .chart-header h2 { margin: 0 0 1rem; font-size: 1.25rem; color: var(--simr-tinta); }
@@ -423,24 +457,33 @@ function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); 
     .summary-label { font-size: 0.75rem; color: var(--simr-tinta-2); text-transform: uppercase; }
     .records-link { cursor: pointer; text-decoration: underline dotted; transition: color 0.15s; }
     .records-link:hover { color: var(--simr-sello); }
+    .search-field-table { display: flex; flex-direction: column; }
+    .search-field-row { display: grid; grid-template-columns: 1.3fr 100px 1fr; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-bottom: 1px solid var(--mat-sys-outline-variant); }
+    .search-field-row:last-child { border-bottom: none; }
+    .sf-name { font-size: 0.82rem; color: var(--simr-tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sf-count { font-size: 0.82rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--simr-tinta-2); }
+    .sf-bar { padding: 0 0.25rem; }
     .records-panel { margin-top: 1rem; border: 1px solid var(--mat-sys-outline); border-radius: 10px; overflow: hidden; }
     .records-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1rem; background: var(--mat-sys-surface-container-low); font-size: 0.85rem; }
     .records-title { flex: 1; font-weight: 600; color: var(--simr-tinta); }
     .records-count { font-size: 0.78rem; color: var(--simr-tinta-2); }
-    .records-list { max-height: 300px; overflow-y: auto; }
-    .record-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 1rem; border-bottom: 1px solid var(--mat-sys-outline-variant); font-size: 0.82rem; }
+    .records-list { max-height: 360px; overflow-y: auto; }
+    .record-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-bottom: 1px solid var(--mat-sys-outline-variant); font-size: 0.82rem; cursor: pointer; transition: background 0.12s; }
+    .record-item:hover { background: var(--mat-sys-surface-container-high); }
     .record-item:last-child { border-bottom: none; }
-    .record-index { color: var(--simr-tinta-2); font-size: 0.75rem; width: 2rem; text-align: right; }
-    .record-field { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--simr-tinta); }
-    .record-id { font-size: 0.72rem; color: var(--simr-tinta-2); font-family: monospace; }
-    .record-link { display: flex; align-items: center; color: var(--simr-musgo); text-decoration: none; }
-    .record-link mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+    .record-index { color: var(--simr-tinta-2); font-size: 0.75rem; width: 2rem; text-align: right; flex-shrink: 0; }
+    .record-field { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--simr-tinta); min-width: 0; }
+    .record-field + .record-field { margin-left: 0; }
+    .record-field:not(:first-of-type)::before { content: "·"; margin: 0 0.3rem; color: var(--simr-tinta-2); }
+    .record-link-icon { flex-shrink: 0; display: flex; align-items: center; color: var(--simr-musgo); margin-left: auto; }
+    .record-link-icon mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
     .records-more { text-align: center; padding: 0.5rem; font-size: 0.78rem; color: var(--simr-tinta-2); background: var(--mat-sys-surface-container-low); }
   `],
 })
 export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
   private readonly http = inject(HttpClient);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
 
   @ViewChild('statsChart', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('pieChart', { static: false }) pieCanvasRef!: ElementRef<HTMLCanvasElement>;
@@ -475,6 +518,7 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
   protected searchActive = false;
   protected activeFieldTab = '';
   protected activeSearchTab = '';
+  protected detailView: EntityFieldStats | null = null;
 
   protected records: SearchHit[] = [];
   protected recordTotal = 0;
@@ -548,7 +592,7 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private rebuildCharts() {
+  rebuildCharts() {
     this.createBarChart();
     this.createPieChart();
   }
@@ -560,26 +604,33 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
     if (!e.selected && this.activeFieldTab === key) {
       this.activeFieldTab = '';
     }
+    this.detailView = null;
     this.loadFieldStats();
-    this.createBarChart();
-    this.createPieChart();
+    this.rebuildCharts();
   }
 
   toggleAll(selected: boolean) {
     for (const e of this.entities) e.selected = selected;
     this.activeFieldTab = selected && this.entities.length > 0 ? this.entities[0].key : '';
+    this.detailView = null;
     this.loadFieldStats();
     this.rebuildCharts();
   }
 
-  focusEntity(key: string) {
-    const e = this.entities.find(x => x.key === key);
-    if (e) {
-      e.selected = true;
-      this.activeFieldTab = key;
-      this.loadFieldStats();
-      this.rebuildCharts();
-    }
+  drillDown(key: string) {
+    const modelName = ENTITY_MODEL_MAP[key];
+    if (!modelName) return;
+    this.detailView = null;
+    const params = `entities=${key}&fields=true`;
+    this.http.get<StatsResponse>(`${environment.apiUrl}/stats?${params}`).subscribe({
+      next: (data) => {
+        if (data.fieldStats && data.fieldStats[key]) {
+          this.detailView = data.fieldStats[key];
+          this.cdr.detectChanges();
+          this.rebuildCharts();
+        }
+      },
+    });
   }
 
   private loadFieldStats() {
@@ -598,6 +649,14 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
         }
       },
     });
+  }
+
+  onSearchInput() {
+    if (!this.searchTerm.trim()) {
+      this.searchActive = false;
+      this.searchResults = {};
+      this.records = [];
+    }
   }
 
   doSearch() {
@@ -660,38 +719,41 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  recordDisplayValue(rec: SearchHit): string {
+  recordFields(rec: SearchHit): string[] {
     const model = rec._entityType;
-    const field = ENTITY_DISPLAY_FIELD[model] || 'titulo';
-    const val = rec[field];
-    if (typeof val === 'string') return val;
-    if (Array.isArray(val) && val.length > 0) {
-      const first = val[0];
-      if (typeof first === 'string') return first;
-      if (typeof first === 'object' && first !== null) {
-        const o: any = first;
-        return o.nombre || o.denominacionRegional || o.contenido || JSON.stringify(first);
-      }
+    const fields = RELEVANT_FIELDS[model] || ['_id'];
+    const values: string[] = [];
+    for (const f of fields) {
+      const v = this.extractFieldValue(rec, f);
+      if (v && !values.includes(v)) values.push(v);
+      if (values.length >= 3) break;
     }
-    if (typeof val === 'object' && val !== null) {
-      const o: any = val;
-      return o.nombre || o.denominacionRegional || JSON.stringify(val);
-    }
-    return rec._id;
+    if (values.length === 0) values.push(rec._id.slice(-8));
+    return values;
   }
 
-  recordUrl(rec: SearchHit): string {
-    const model = rec._entityType;
-    const routeMap: Record<string, string> = {
-      Obra: '/obras', Actor: '/actores', Recurso: '/recursos',
-      Genero: '/generos', GeneroNoMusical: '/generos-no-musicales',
-      Materia: '/materias', Instrumento: '/instrumentos',
-      Proyecto: '/proyectos', Medio: '/medios', Sistema: '/sistemas',
-      Fondo: '/fondos', Coleccion: '/colecciones', Ejemplar: '/ejemplares',
-      Idioma: '/idiomas', Diccionario: '/diccionarios', User: '/admin/usuarios',
-    };
-    const base = routeMap[model] || '';
-    return base ? `${base}/${rec._id}` : '';
+  private extractFieldValue(rec: SearchHit, field: string): string {
+    const val = rec[field];
+    if (!val) return '';
+    if (typeof val === 'string') return val;
+    if (Array.isArray(val)) {
+      const items = val.slice(0, 2);
+      const parts = items.map((item: any) => {
+        if (typeof item === 'string') return item;
+        if (typeof item === 'object') return item.nombre || item.denominacionRegional || item.contenido || '';
+        return '';
+      }).filter(Boolean);
+      return parts.join(', ');
+    }
+    if (typeof val === 'object') return val.nombre || val.denominacionRegional || '';
+    return String(val);
+  }
+
+  navigateToRecord(rec: SearchHit) {
+    const route = ENTITY_ROUTE[rec._entityType];
+    if (route) {
+      this.router.navigate([`/${route}/${rec._id}`]);
+    }
   }
 
   fieldLabel(key: string): string {
@@ -737,6 +799,43 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
     this.barChartInstance = null;
     const ctx = this.canvasRef?.nativeElement?.getContext('2d');
     if (!ctx) return;
+
+    if (this.detailView) {
+      const fields = Object.entries(this.detailView.fields);
+      if (fields.length === 0) return;
+
+      this.barChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: fields.map(([k]) => this.fieldLabel(k)),
+          datasets: [
+            {
+              label: 'Llenos',
+              data: fields.map(([, v]) => v.filled),
+              backgroundColor: 'rgba(140, 151, 91, 0.8)',
+              borderRadius: 3,
+            },
+            {
+              label: 'Vacíos',
+              data: fields.map(([, v]) => v.null),
+              backgroundColor: 'rgba(163, 38, 56, 0.5)',
+              borderRadius: 3,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
+          scales: {
+            y: { beginAtZero: true, stacked: true, ticks: { precision: 0 } },
+            x: { stacked: true, ticks: { maxRotation: 45, font: { size: 10 } } },
+          },
+        },
+      });
+      return;
+    }
+
     const data = this.visibleCounts;
     if (data.length === 0) return;
 
@@ -768,6 +867,34 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
     this.pieChartInstance = null;
     const ctx = this.pieCanvasRef?.nativeElement?.getContext('2d');
     if (!ctx) return;
+
+    if (this.detailView) {
+      const fields = Object.entries(this.detailView.fields);
+      if (fields.length === 0) return;
+      const total = this.detailView.total;
+      const filledTotal = fields.reduce((s, [, v]) => s + v.filled, 0);
+      const nullTotal = fields.reduce((s, [, v]) => s + v.null, 0);
+
+      this.pieChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Llenos', 'Vacíos'],
+          datasets: [{
+            data: [filledTotal, nullTotal],
+            backgroundColor: ['rgba(140, 151, 91, 0.8)', 'rgba(163, 38, 56, 0.5)'],
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } },
+          },
+        },
+      });
+      return;
+    }
+
     const data = this.visibleCounts;
     if (data.length === 0) return;
 
