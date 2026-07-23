@@ -149,6 +149,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'estadisticas-uso',
+    loadChildren: () =>
+      import('./features/estadisticas-uso/estadisticas-uso.routes').then(
+        (r) => r.ESTADISTICAS_USO_ROUTES
+      ),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then((r) => r.ADMIN_ROUTES),

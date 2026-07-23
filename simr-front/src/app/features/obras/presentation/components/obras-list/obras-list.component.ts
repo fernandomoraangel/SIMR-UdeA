@@ -18,27 +18,17 @@ import { UserPreferencesService } from '../../../../../core/services/user-prefer
 
 const ALL_FIELDS = [
   { key: 'titulo', label: 'Título', required: true },
-  { key: 'tipoDeObra', label: 'Tipo' },
-  { key: 'estado', label: 'Estado' },
-  { key: 'anyoEstreno', label: 'Año estreno' },
-  { key: 'tituloOriginal', label: 'Título original' },
-  { key: 'lugarDeEjecucion', label: 'Lugar ejecución' },
-  { key: 'duracion', label: 'Duración' },
-  { key: 'ambitoGeografico', label: 'Ámbito geográfico' },
-  { key: 'descripcion', label: 'Descripción' },
-  { key: 'contextos', label: 'Contextos' },
-  { key: 'obrasVinculadas', label: 'Obras vinculadas' },
-  { key: 'recursosVinculados', label: 'Recursos vinculados' },
+  { key: 'tipo', label: 'Tipo' },
+  { key: 'denominacionRegional', label: 'Denominación Regional' },
   { key: 'actores', label: 'Actores' },
+  { key: 'generosFormas', label: 'Géneros musicales' },
+  { key: 'GenerosFormasNoMusicales', label: 'Gén. no musicales' },
+  { key: 'idiomas', label: 'Idiomas' },
+  { key: 'descripcion', label: 'Descripción' },
+  { key: 'materias', label: 'Materias' },
+  { key: 'mediosSonoros', label: 'Medios sonoros' },
+  { key: 'sistemasSonoros', label: 'Sistemas sonoros' },
   { key: 'proyectos', label: 'Proyectos' },
-  { key: 'generos', label: 'Géneros' },
-  { key: 'instrumentos', label: 'Instrumentos' },
-  { key: 'notasPrograma', label: 'Notas programa' },
-  { key: 'fechasAsociadas', label: 'Fechas asociadas' },
-  { key: 'anotaciones', label: 'Anotaciones' },
-  { key: 'descriptores', label: 'Descriptores' },
-  { key: 'enlaces', label: 'Enlaces' },
-  { key: 'archivosAdjuntos', label: 'Archivos' },
   { key: 'creador', label: 'Creador' },
   { key: 'creado', label: 'Creado' },
 ];
@@ -48,27 +38,17 @@ const PREFS_KEY_CARD = 'obraCardFields';
 
 const TABLE_COL_MAP: Record<string, TableColumn> = {
   titulo: { key: 'titulo', label: 'Título', sortable: true, truncateTo: 40 },
-  tipoDeObra: { key: 'tipoDeObra', label: 'Tipo', sortable: true, truncateTo: 25 },
-  estado: { key: 'estado', label: 'Estado', sortable: true, truncateTo: 20 },
-  anyoEstreno: { key: 'anyoEstreno', label: 'Año estreno', sortable: true },
-  tituloOriginal: { key: 'tituloOriginal', label: 'Título original', sortable: true, truncateTo: 30 },
-  lugarDeEjecucion: { key: 'lugarDeEjecucion', label: 'Lugar ejecución', sortable: true, truncateTo: 25 },
-  duracion: { key: 'duracion', label: 'Duración', sortable: true },
-  ambitoGeografico: { key: 'ambitoGeografico', label: 'Ámbito geográfico', type: 'number', sortable: true },
-  descripcion: { key: 'descripcion', label: 'Descripción', sortable: true, truncateTo: 40 },
-  contextos: { key: 'contextos', label: 'Contextos', type: 'number', sortable: true },
-  obrasVinculadas: { key: 'obrasVinculadas', label: 'Obras vinculadas', type: 'number', sortable: true },
-  recursosVinculados: { key: 'recursosVinculados', label: 'Recursos vinculados', type: 'number', sortable: true },
+  tipo: { key: 'tipo', label: 'Tipo', sortable: true, truncateTo: 20 },
+  denominacionRegional: { key: 'denominacionRegional', label: 'Denominación Regional', type: 'number', sortable: true },
   actores: { key: 'actores', label: 'Actores', type: 'number', sortable: true },
+  generosFormas: { key: 'generosFormas', label: 'Géneros musicales', type: 'number', sortable: true },
+  GenerosFormasNoMusicales: { key: 'GenerosFormasNoMusicales', label: 'Gén. no musicales', type: 'number', sortable: true },
+  idiomas: { key: 'idiomas', label: 'Idiomas', type: 'number', sortable: true },
+  descripcion: { key: 'descripcion', label: 'Descripción', sortable: true, truncateTo: 40 },
+  materias: { key: 'materias', label: 'Materias', type: 'number', sortable: true },
+  mediosSonoros: { key: 'mediosSonoros', label: 'Medios sonoros', type: 'number', sortable: true },
+  sistemasSonoros: { key: 'sistemasSonoros', label: 'Sistemas sonoros', type: 'number', sortable: true },
   proyectos: { key: 'proyectos', label: 'Proyectos', type: 'number', sortable: true },
-  generos: { key: 'generos', label: 'Géneros', type: 'number', sortable: true },
-  instrumentos: { key: 'instrumentos', label: 'Instrumentos', type: 'number', sortable: true },
-  notasPrograma: { key: 'notasPrograma', label: 'Notas programa', type: 'number', sortable: true },
-  fechasAsociadas: { key: 'fechasAsociadas', label: 'Fechas asociadas', type: 'number', sortable: true },
-  anotaciones: { key: 'anotaciones', label: 'Anotaciones', type: 'number', sortable: true },
-  descriptores: { key: 'descriptores', label: 'Descriptores', type: 'number', sortable: true },
-  enlaces: { key: 'enlaces', label: 'Enlaces', type: 'number', sortable: true },
-  archivosAdjuntos: { key: 'archivosAdjuntos', label: 'Archivos', type: 'number', sortable: true },
   creador: { key: 'creador', label: 'Creador', sortable: true },
   creado: { key: 'creado', label: 'Creado', type: 'date', sortable: true },
 };
@@ -142,40 +122,16 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
                 </mat-card-header>
                 <mat-card-content>
                   <div class="meta">
-                    @if (cardFieldVisible('tipoDeObra') && o.tipoDeObra?.length) {
+                    @if (cardFieldVisible('tipo') && o.tipo) {
                       <div class="meta-row">
                         <mat-icon>category</mat-icon>
-                        <span>{{ o.tipoDeObra.join(', ') }}</span>
+                        <span>{{ o.tipo }}</span>
                       </div>
                     }
-                    @if (cardFieldVisible('estado') && o.estado) {
+                    @if (cardFieldVisible('denominacionRegional') && o.denominacionRegional?.length) {
                       <div class="meta-row">
-                        <mat-icon>info</mat-icon>
-                        <span>{{ o.estado }}</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('anyoEstreno') && o.anyoEstreno) {
-                      <div class="meta-row">
-                        <mat-icon>event</mat-icon>
-                        <span>{{ o.anyoEstreno }}</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('lugarDeEjecucion') && o.lugarDeEjecucion) {
-                      <div class="meta-row">
-                        <mat-icon>place</mat-icon>
-                        <span>{{ o.lugarDeEjecucion }}</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('obrasVinculadas') && o.obrasVinculadas?.length) {
-                      <div class="meta-row">
-                        <mat-icon>link</mat-icon>
-                        <span>{{ o.obrasVinculadas.length }} obra(s) vinculada(s)</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('recursosVinculados') && o.recursosVinculados?.length) {
-                      <div class="meta-row">
-                        <mat-icon>inventory</mat-icon>
-                        <span>{{ o.recursosVinculados.length }} recurso(s)</span>
+                        <mat-icon>language</mat-icon>
+                        <span>{{ o.denominacionRegional.length }} denominación(es)</span>
                       </div>
                     }
                     @if (cardFieldVisible('actores') && o.actores?.length) {
@@ -184,40 +140,46 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
                         <span>{{ o.actores.length }} actor(es)</span>
                       </div>
                     }
-                    @if (cardFieldVisible('proyectos') && o.proyectos?.length) {
-                      <div class="meta-row">
-                        <mat-icon>folder</mat-icon>
-                        <span>{{ o.proyectos.length }} proyecto(s)</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('generos') && o.generos?.length) {
+                    @if (cardFieldVisible('generosFormas') && o.generosFormas?.length) {
                       <div class="meta-row">
                         <mat-icon>music_note</mat-icon>
-                        <span>{{ o.generos.length }} género(s)</span>
+                        <span>{{ o.generosFormas.length }} género(s)</span>
                       </div>
                     }
-                    @if (cardFieldVisible('instrumentos') && o.instrumentos?.length) {
-                      <div class="meta-row">
-                        <mat-icon>straighten</mat-icon>
-                        <span>{{ o.instrumentos.length }} instrumento(s)</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('descriptores') && o.descriptores?.length) {
-                      <div class="meta-row">
-                        <mat-icon>local_offer</mat-icon>
-                        <span>{{ o.descriptores.length }} descriptor(es)</span>
-                      </div>
-                    }
-                    @if (cardFieldVisible('enlaces') && o.enlaces?.length) {
+                    @if (cardFieldVisible('idiomas') && o.idiomas?.length) {
                       <div class="meta-row">
                         <mat-icon>language</mat-icon>
-                        <span>{{ o.enlaces.length }} enlace(s)</span>
+                        <span>{{ o.idiomas.length }} idioma(s)</span>
                       </div>
                     }
-                    @if (cardFieldVisible('archivosAdjuntos') && o.archivosAdjuntos?.length) {
+                    @if (cardFieldVisible('descripcion') && o.descripcion) {
                       <div class="meta-row">
-                        <mat-icon>attach_file</mat-icon>
-                        <span>{{ o.archivosAdjuntos.length }} archivo(s)</span>
+                        <mat-icon>description</mat-icon>
+                        <span>{{ o.descripcion | slice:0:60 }}{{ o.descripcion.length > 60 ? '…' : '' }}</span>
+                      </div>
+                    }
+                    @if (cardFieldVisible('materias') && o.materias?.length) {
+                      <div class="meta-row">
+                        <mat-icon>book</mat-icon>
+                        <span>{{ o.materias.length }} materia(s)</span>
+                      </div>
+                    }
+                    @if (cardFieldVisible('mediosSonoros') && o.mediosSonoros?.length) {
+                      <div class="meta-row">
+                        <mat-icon>speaker</mat-icon>
+                        <span>{{ o.mediosSonoros.length }} medio(s)</span>
+                      </div>
+                    }
+                    @if (cardFieldVisible('sistemasSonoros') && o.sistemasSonoros?.length) {
+                      <div class="meta-row">
+                        <mat-icon>tune</mat-icon>
+                        <span>{{ o.sistemasSonoros.length }} sistema(s)</span>
+                      </div>
+                    }
+                    @if (cardFieldVisible('proyectos') && o.proyectos?.length) {
+                      <div class="meta-row">
+                        <mat-icon>assignment</mat-icon>
+                        <span>{{ o.proyectos.length }} proyecto(s)</span>
                       </div>
                     }
                     @if (cardFieldVisible('creador') && o.creador) {
@@ -264,7 +226,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
 
       @if (!store.hasObras() && !store.isLoading()) {
         <div class="vacio">
-          <mat-icon>library_music</mat-icon>
+          <mat-icon>music_note</mat-icon>
           <h3>No hay obras registradas</h3>
           <p>Aún no se ha catalogado ninguna obra en el archivo.</p>
           <a mat-raised-button color="primary" routerLink="create">

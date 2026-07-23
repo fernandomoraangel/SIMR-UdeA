@@ -4,6 +4,28 @@
   margin: 0 auto;
 }
 
+.graph-page.full-screen {
+  padding: 0;
+  max-width: 100%;
+}
+
+.graph-page.full-screen .graph-card {
+  border-radius: 0;
+  height: 100vh;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1001;
+  background: rgba(255,255,255,0.8);
+}
+
+.full-height {
+  height: 100%;
+}
+
 .graph-header {
   margin-bottom: 2rem;
 }
@@ -208,7 +230,7 @@
 
 .graph-container {
   width: 100%;
-  height: 600px;
+  height: 100%;
   background-color: var(--simr-hueso);
 }
 

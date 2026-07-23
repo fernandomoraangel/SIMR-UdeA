@@ -1,21 +1,28 @@
 import { Component, ElementRef, ViewChild, effect, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgStyle } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import * as d3 from 'd3';
 import { GraphStore } from './graph.store';
 import { GraphNode, ENTITY_DISPLAY_NAMES, ENTITY_ROUTES } from './graph.interface';
+import { HelpDialogComponent } from './components/help-dialog/help-dialog.component';
 
 @Component({
   selector: 'app-graph',
   standalone: true,
-  imports: [NgStyle, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule],
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css'],
 })
 export class GraphComponent implements OnInit {
   private router = inject(Router);
+  private dialog = inject(MatDialog);
   store = inject(GraphStore);
+
+  protected isGraphVisible = false;
 
   @ViewChild('graphContainer') graphContainer?: ElementRef<HTMLDivElement>;
 
@@ -48,12 +55,22 @@ export class GraphComponent implements OnInit {
     this.store.loadMetadata();
   }
 
+  openHelp() {
+    this.dialog.open(HelpDialogComponent);
+  }
+
+  closeGraph() {
+    this.isGraphVisible = false;
+    this.store.clearGraph();
+  }
+
   onGenerate(): void {
     const selected = this.store.entities().filter((e) => e.selected).map((e) => e.key);
     if (selected.length === 0) {
       this.store.setError('Por favor selecciona al menos una entidad para visualizar');
       return;
     }
+    this.isGraphVisible = true;
     this.store.loadGraph({ entities: selected, query: this.store.searchQuery() || null });
   }
 

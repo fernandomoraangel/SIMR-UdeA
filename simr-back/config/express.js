@@ -299,19 +299,21 @@ module.exports = function () {
   require("../app/routes/graph.server.routes.js")(app);
   // Estadísticas del sistema
   require("../app/routes/stats.server.routes.js")(app);
+  // Estadísticas de uso de la aplicación
+  require("../app/routes/usos.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");
   app.use(handleAuthError);
 
   // Servir archivos estáticos de la build de Angular (simr-front/dist)
-  const angularDistPath = path.join(__dirname, "../../simr-front/dist/simr-front");
-  app.use(express.static(angularDistPath));
+  // const angularDistPath = path.join(__dirname, "../../simr-front/dist/simr-front");
+  // app.use(express.static(angularDistPath));
 
   // Fallback para SPA: servir index.html para rutas no API
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(angularDistPath, "index.html"));
-  });
+  // app.get("*", (req, res) => {
+  //   res.sendFile(path.join(angularDistPath, "index.html"));
+  // });
 
   // Devuelve la instancia de la aplicación
   return app;

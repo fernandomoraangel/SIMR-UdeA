@@ -1,64 +1,87 @@
-export interface Contexto {
-  contexto: string;
-  descripcion: string;
+import { AnotacionCartograficoTemporal } from '../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
+
+export interface DenominacionRegional {
+  denominacionRegional: string;
+  fuenteDenominacion: string;
+}
+
+export interface ContenedorAsociado {
+  id: string;
+}
+
+export interface AsientoLigado {
+  id: string;
+  tipoDeRelacion: string;
+  direccionDeRelacion: string;
+  fuenteAutorRelacion: string;
+  notaGeneral: string;
+  proyectoRelacionado: string;
 }
 
 export interface ActorAsociado {
-  actor: any;
+  id: string;
   rol: string;
 }
 
-export interface NotaPrograma {
-  titulo: string;
-  contenido: string;
-  fecha: Date | string;
+export interface MateriaAsociada {
+  id: string;
 }
 
-export interface FechaAsociada {
-  fecha: Date | string;
-  tipo: string;
-  descripcion: string;
+export interface MedioAsociado {
+  id: string;
+}
+
+export interface SistemaAsociado {
+  id: string;
+  centro: string;
+}
+
+export interface IdiomaAsociado {
+  id: string;
+}
+
+export interface GeneroFormaAsociado {
+  id: string;
+}
+
+export interface ProyectoAsociado {
+  id: string;
+}
+
+export interface VinculoRelacionado {
+  etiqueta: string;
+  url: string;
+}
+
+export interface DescriptorLibre {
+  etiqueta: string;
+  contenido: string;
 }
 
 export interface ArchivoAdjunto {
-  archivo: string;
-  descripcion: string;
-}
-
-export interface Anotacion {
-  titulo: string;
-  anotacion: string;
-}
-
-export interface Enlace {
-  url: string;
-  descripcion: string;
+  archivoId: string;
 }
 
 export interface Obra {
   _id: string;
   titulo: string;
-  tituloOriginal?: string;
-  lugarDeEjecucion?: string;
-  anyoEstreno?: string;
+  denominacionRegional: DenominacionRegional[];
   descripcion?: string;
-  duracion?: string;
-  estado?: string;
-  tipoDeObra: string[];
-  ambitoGeografico: string[];
-  contextos: Contexto[];
-  obrasVinculadas: any[];
-  recursosVinculados: any[];
+  tipo?: string;
+  contenedores: ContenedorAsociado[];
+  asientoLigado: AsientoLigado[];
+  generosFormas: GeneroFormaAsociado[];
+  GenerosFormasNoMusicales: GeneroFormaAsociado[];
+  materias: MateriaAsociada[];
+  mediosSonoros: MedioAsociado[];
+  sistemasSonoros: SistemaAsociado[];
+  idiomas: IdiomaAsociado[];
   actores: ActorAsociado[];
-  proyectos: any[];
-  generos: any[];
-  instrumentos: any[];
-  notasPrograma: NotaPrograma[];
-  fechasAsociadas: FechaAsociada[];
+  anotacionCartograficoTemporal: AnotacionCartograficoTemporal[];
+  descriptores: DescriptorLibre[];
+  proyectos: ProyectoAsociado[];
+  vinculosRelacionados: VinculoRelacionado[];
   archivosAdjuntos: ArchivoAdjunto[];
-  anotaciones: Anotacion[];
-  descriptores: string[];
-  enlaces: Enlace[];
   creador: {
     _id: string;
     firstName: string;
@@ -70,50 +93,23 @@ export interface Obra {
 
 export interface CreateObraRequest {
   titulo: string;
-  tituloOriginal?: string;
-  lugarDeEjecucion?: string;
-  anyoEstreno?: string;
+  denominacionRegional?: DenominacionRegional[];
   descripcion?: string;
-  duracion?: string;
-  estado?: string;
-  tipoDeObra?: string[];
-  ambitoGeografico?: string[];
-  contextos?: Contexto[];
-  obrasVinculadas?: any[];
-  recursosVinculados?: any[];
+  tipo?: string;
+  contenedores?: ContenedorAsociado[];
+  asientoLigado?: AsientoLigado[];
+  generosFormas?: GeneroFormaAsociado[];
+  GenerosFormasNoMusicales?: GeneroFormaAsociado[];
+  materias?: MateriaAsociada[];
+  mediosSonoros?: MedioAsociado[];
+  sistemasSonoros?: SistemaAsociado[];
+  idiomas?: IdiomaAsociado[];
   actores?: ActorAsociado[];
-  proyectos?: any[];
-  generos?: any[];
-  instrumentos?: any[];
-  notasPrograma?: NotaPrograma[];
-  fechasAsociadas?: FechaAsociada[];
+  anotacionCartograficoTemporal?: AnotacionCartograficoTemporal[];
+  descriptores?: DescriptorLibre[];
+  proyectos?: ProyectoAsociado[];
+  vinculosRelacionados?: VinculoRelacionado[];
   archivosAdjuntos?: ArchivoAdjunto[];
-  anotaciones?: Anotacion[];
-  descriptores?: string[];
-  enlaces?: Enlace[];
 }
 
-export interface UpdateObraRequest {
-  titulo: string;
-  tituloOriginal?: string;
-  lugarDeEjecucion?: string;
-  anyoEstreno?: string;
-  descripcion?: string;
-  duracion?: string;
-  estado?: string;
-  tipoDeObra?: string[];
-  ambitoGeografico?: string[];
-  contextos?: Contexto[];
-  obrasVinculadas?: any[];
-  recursosVinculados?: any[];
-  actores?: ActorAsociado[];
-  proyectos?: any[];
-  generos?: any[];
-  instrumentos?: any[];
-  notasPrograma?: NotaPrograma[];
-  fechasAsociadas?: FechaAsociada[];
-  archivosAdjuntos?: ArchivoAdjunto[];
-  anotaciones?: Anotacion[];
-  descriptores?: string[];
-  enlaces?: Enlace[];
-}
+export interface UpdateObraRequest extends CreateObraRequest {}

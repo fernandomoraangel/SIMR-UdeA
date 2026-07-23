@@ -35,6 +35,8 @@ module.exports = function () {
   require("../app/models/auditlog.server.model");
   // Modelo de listas
   require("../app/models/lista.server.model");
+  // Modelo de sesiones de uso
+  require("../app/models/sesion-uso.server.model");
   // console.log("Carga de modelos");
   // Devolver la instancia de conexión a Mongoose
   return db;

@@ -6,8 +6,8 @@ const COOKIE_REFRESH_MAX_AGE =
 // Configuración base de cookies seguras
 const baseCookieOptions = {
   httpOnly: true,
-  secure: false, // Cambiado a false para desarrollo con HTTP
-  sameSite: "lax", // 'lax' permite cookies en navegación normal
+  secure: process.env.NODE_ENV === "production", // true en producción con HTTPS
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // 'none' en producción (HTTPS), 'lax' en desarrollo
   path: "/", // Disponible en toda la app
   // No especificar domain en desarrollo permite usar IPs (172.23.0.97)
   // En producción se puede especificar el dominio mediante variable de entorno

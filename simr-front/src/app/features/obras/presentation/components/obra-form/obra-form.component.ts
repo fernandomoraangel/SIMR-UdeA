@@ -8,27 +8,23 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { ObrasStore } from '../../../data/obras.store';
 import { ObrasService } from '../../../data/obras.service';
 import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
 import { AutocompleteCreateComponent } from '../../../../../shared/autocomplete-create/autocomplete-create.component';
-import { ListEditorComponent } from '../../../../../shared/list-editor/list-editor.component';
+import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaciones-cartograficas/anotaciones-cartograficas.component';
+import { AnotacionCartograficoTemporal, toDisplayFecha, precisionFecha } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
 import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archivo.interface';
-
-interface ContextoItem { contexto: string; descripcion: string }
-interface ActorAsociadoItem { actor: any; rol: string }
-interface NotaProgramaItem { titulo: string; contenido: string; fecha: string }
-interface FechaAsociadaItem { fecha: string; tipo: string; descripcion: string }
-interface AnotacionItem { titulo: string; anotacion: string }
-interface EnlaceItem { url: string; descripcion: string }
-interface ArchivoAdjuntoItem { archivo: string; descripcion: string }
+import {
+  DenominacionRegional, ContenedorAsociado, AsientoLigado, ActorAsociado,
+  MateriaAsociada, MedioAsociado, SistemaAsociado, IdiomaAsociado,
+  GeneroFormaAsociado, ProyectoAsociado, VinculoRelacionado, DescriptorLibre, ArchivoAdjunto
+} from '../../../models/obra.interface';
 
 @Component({
   selector: 'app-obra-form',
@@ -37,11 +33,10 @@ interface ArchivoAdjuntoItem { archivo: string; descripcion: string }
     CommonModule, ReactiveFormsModule,
     MatButtonModule, MatIconModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatProgressSpinnerModule, MatProgressBarModule, MatTooltipModule,
-    MatDatepickerModule,
+    MatProgressBarModule, MatTooltipModule,
     CollapsibleSectionComponent,
     AutocompleteCreateComponent,
-    ListEditorComponent,
+    AnotacionesCartograficasComponent,
     ArchivoManagerComponent,
   ],
   providers: [ObrasStore],
@@ -70,391 +65,342 @@ interface ArchivoAdjuntoItem { archivo: string; descripcion: string }
         <form [formGroup]="obraForm" (ngSubmit)="onSubmit()">
           <div class="form-section">
             <mat-form-field appearance="outline" class="campo">
-              <mat-label>Título *</mat-label>
-              <input matInput formControlName="titulo" placeholder="Ej: Sinfonía No. 5 en Do menor" />
+              <mat-label>Título uniforme *</mat-label>
+              <input matInput formControlName="titulo" placeholder="Ej: Sinfonía No. 5" />
               @if (isFieldInvalid('titulo')) {
                 <mat-error>El título es obligatorio</mat-error>
               }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Título original</mat-label>
-              <input matInput formControlName="tituloOriginal" placeholder="Título en lengua original" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Lugar de ejecución</mat-label>
-              <input matInput formControlName="lugarDeEjecucion" placeholder="Ej: Viena" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Año de estreno</mat-label>
-              <input matInput formControlName="anyoEstreno" placeholder="Ej: 1808" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Duración</mat-label>
-              <input matInput formControlName="duracion" placeholder="Ej: 35 min" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Estado</mat-label>
-              <input matInput formControlName="estado" placeholder="Ej: Terminada, En proceso..." />
-            </mat-form-field>
+            <p class="subtitulo">Denominación(es) regional-socio-cultural(es)</p>
+            <div class="inline-editor">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                <mat-label>Denominación</mat-label>
+                <input matInput [formControl]="denominacionControl" placeholder="Ej: Bambuco" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
+                <mat-label>Fuente de la denominación</mat-label>
+                <input matInput [formControl]="fuenteDenominacionControl" placeholder="Ej: Diccionario de la Música Tradicional Colombiana" />
+              </mat-form-field>
+              <button mat-stroked-button type="button" (click)="addDenominacion()"
+                [disabled]="!denominacionControl.value || !fuenteDenominacionControl.value">
+                <mat-icon>add</mat-icon>
+                Agregar
+              </button>
+            </div>
+            @if (denominacionItems.length > 0) {
+              <div class="items-list">
+                @for (d of denominacionItems; track $index) {
+                  <div class="rel-item">
+                    <span class="rel-nombre">{{ d.denominacionRegional }}</span>
+                    <span class="rel-detalle">{{ d.fuenteDenominacion }}</span>
+                    <button mat-icon-button (click)="removeDenominacion($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-hint">No hay denominaciones registradas.</p>
+            }
 
             <mat-form-field appearance="outline" class="campo">
               <mat-label>Descripción</mat-label>
               <textarea matInput formControlName="descripcion" rows="3" placeholder="Descripción de la obra..."></textarea>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Tipo</mat-label>
+              <mat-select formControlName="tipo">
+                @for (t of listaTipos(); track t) {
+                  <mat-option [value]="t">{{ t }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <div class="form-section">
-            <p class="subtitulo">Tipos de obra</p>
+            <p class="subtitulo">Contenedores (obras)</p>
+            <app-autocomplete-create
+              apiEndpoint="obras"
+              placeholder="Buscar obra contenedora..."
+              displayField="titulo"
+              [selected]="contenedoresItems"
+              (selectedChange)="onContenedoresChange($event)"
+            />
+
+            <p class="subtitulo">Actores</p>
             <div class="inline-editor">
+              <app-autocomplete-create
+                apiEndpoint="actores"
+                placeholder="Buscar actor..."
+                displayField="fullName"
+                [selected]="actorSelection"
+                (selectedChange)="onActorChange($event)"
+                class="campo-largo"
+              />
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                <mat-label>Tipo</mat-label>
-                <mat-select [formControl]="tipoObraControl">
-                  @for (t of listaTiposDeObra(); track t) {
-                    <mat-option [value]="t">{{ t }}</mat-option>
+                <mat-label>Rol</mat-label>
+                <mat-select [formControl]="actorRolControl">
+                  @for (r of listaRoles(); track r) {
+                    <mat-option [value]="r">{{ r }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
-              <button mat-stroked-button type="button" (click)="addTipoObra()"
-                [disabled]="!tipoObraControl.value">
+              <button mat-stroked-button type="button" (click)="addActor()"
+                [disabled]="!actorSelection.length || !actorRolControl.value">
                 <mat-icon>add</mat-icon>
                 Agregar
               </button>
             </div>
-            @if (tipoDeObraItems.length > 0) {
+            @if (actorItems.length > 0) {
               <div class="items-list">
-                @for (t of tipoDeObraItems; track $index) {
+                @for (a of actorItems; track $index) {
                   <div class="rel-item">
-                    <span class="rel-nombre">{{ t }}</span>
-                    <button mat-icon-button (click)="removeTipoObra($index)" color="warn" matTooltip="Eliminar" type="button">
+                    <span class="rel-nombre">{{ getActorNombre(a.id) }}</span>
+                    <span class="rel-detalle">{{ a.rol }}</span>
+                    <button mat-icon-button (click)="removeActor($index)" color="warn" matTooltip="Eliminar" type="button">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
                 }
               </div>
             } @else {
-              <p class="empty-hint">No hay tipos de obra.</p>
+              <p class="empty-hint">No hay actores asociados.</p>
             }
 
-            <p class="subtitulo">Ámbitos geográficos</p>
+            <p class="subtitulo">Géneros-formas-especies (musicales)</p>
+            <app-autocomplete-create
+              apiEndpoint="generos"
+              placeholder="Buscar género musical..."
+              displayField="nombre"
+              [selected]="generosFormasItems"
+              (selectedChange)="onGenerosFormasChange($event)"
+            />
+
+            <p class="subtitulo">Géneros-formas no musicales</p>
+            <app-autocomplete-create
+              apiEndpoint="generosnomusicales"
+              placeholder="Buscar género no musical..."
+              displayField="nombre"
+              [selected]="generosNoMusicalesItems"
+              (selectedChange)="onGenerosNoMusicalesChange($event)"
+            />
+
+            <p class="subtitulo">Materias</p>
+            <app-autocomplete-create
+              apiEndpoint="materias"
+              placeholder="Buscar materia..."
+              displayField="nombre"
+              [selected]="materiaItems"
+              (selectedChange)="onMateriasChange($event)"
+            />
+
+            <p class="subtitulo">Medios sonoros-formatos asociados</p>
+            <app-autocomplete-create
+              apiEndpoint="medios"
+              placeholder="Buscar medio sonoro..."
+              displayField="nombre"
+              [selected]="medioItems"
+              (selectedChange)="onMediosChange($event)"
+            />
+
+            <p class="subtitulo">Sistemas sonoros asociados</p>
             <div class="inline-editor">
+              <app-autocomplete-create
+                apiEndpoint="sistemas"
+                placeholder="Buscar sistema sonoro..."
+                displayField="nombre"
+                [selected]="sistemaSelection"
+                (selectedChange)="onSistemaChange($event)"
+                class="campo-largo"
+              />
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                <mat-label>Ámbito</mat-label>
-                <mat-select [formControl]="ambitoGeograficoControl">
-                  @for (a of listaAmbitosGeograficos(); track a) {
-                    <mat-option [value]="a">{{ a }}</mat-option>
+                <mat-label>Centro (tonalidad)</mat-label>
+                <mat-select [formControl]="sistemaCentroControl">
+                  @for (c of listaCentros(); track c) {
+                    <mat-option [value]="c">{{ c }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
-              <button mat-stroked-button type="button" (click)="addAmbitoGeografico()"
-                [disabled]="!ambitoGeograficoControl.value">
+              <button mat-stroked-button type="button" (click)="addSistema()"
+                [disabled]="!sistemaSelection.length">
                 <mat-icon>add</mat-icon>
                 Agregar
               </button>
             </div>
-            @if (ambitoGeograficoItems.length > 0) {
+            @if (sistemaItems.length > 0) {
               <div class="items-list">
-                @for (a of ambitoGeograficoItems; track $index) {
+                @for (s of sistemaItems; track $index) {
                   <div class="rel-item">
-                    <span class="rel-nombre">{{ a }}</span>
-                    <button mat-icon-button (click)="removeAmbitoGeografico($index)" color="warn" matTooltip="Eliminar" type="button">
+                    <span class="rel-nombre">{{ getSistemaNombre(s.id) }}</span>
+                    <span class="rel-detalle">{{ s.centro ? 'Centro: ' + s.centro : '' }}</span>
+                    <button mat-icon-button (click)="removeSistema($index)" color="warn" matTooltip="Eliminar" type="button">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
                 }
               </div>
             } @else {
-              <p class="empty-hint">No hay ámbitos geográficos.</p>
+              <p class="empty-hint">No hay sistemas sonoros asociados.</p>
             }
+
+            <p class="subtitulo">Idiomas</p>
+            <app-autocomplete-create
+              apiEndpoint="idiomas"
+              placeholder="Buscar idioma..."
+              displayField="idioma"
+              [selected]="idiomaItems"
+              (selectedChange)="onIdiomasChange($event)"
+            />
           </div>
 
-          <app-collapsible-section title="Contextos" icon="description" [collapsed]="true">
-            <div class="section-content">
-              <div class="inline-editor">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Contexto</mat-label>
-                  <input matInput [formControl]="contextoContextoControl" placeholder="Ej: Político" />
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
-                  <mat-label>Descripción</mat-label>
-                  <input matInput [formControl]="contextoDescripcionControl" placeholder="Descripción del contexto" />
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addContexto()"
-                  [disabled]="!contextoContextoControl.value || !contextoDescripcionControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
-              </div>
-              @if (contextoItems.length > 0) {
-                <div class="items-list">
-                  @for (c of contextoItems; track $index) {
-                    <div class="rel-item">
-                      <span class="rel-nombre">{{ c.contexto }}</span>
-                      <span class="rel-detalle">{{ c.descripcion }}</span>
-                      <button mat-icon-button (click)="removeContexto($index)" color="warn" matTooltip="Eliminar" type="button">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="empty-hint">No hay contextos registrados.</p>
-              }
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Obras vinculadas" icon="link" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="obras"
-                placeholder="Buscar obra..."
-                displayField="titulo"
-                [selected]="obrasVinculadasItems"
-                (selectedChange)="onObrasVinculadasChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Recursos vinculados" icon="inventory" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="recursos"
-                placeholder="Buscar recurso..."
-                displayField="titulo"
-                [selected]="recursosVinculadosItems"
-                (selectedChange)="onRecursosVinculadosChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Actores" icon="people" [collapsed]="true">
+          <app-collapsible-section title="Asientos ligados" icon="link" [collapsed]="true">
             <div class="section-content">
               <div class="inline-editor">
                 <app-autocomplete-create
-                  apiEndpoint="actores"
-                  placeholder="Buscar actor..."
-                  displayField="fullName"
-                  [selected]="actorSelection"
-                  (selectedChange)="onActorChange($event)"
+                  apiEndpoint="obras"
+                  placeholder="Buscar obra..."
+                  displayField="titulo"
+                  [selected]="asientoObraSelection"
+                  (selectedChange)="onAsientoObraChange($event)"
                   class="campo-largo"
                 />
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Rol</mat-label>
-                  <input matInput [formControl]="actorRolControl" placeholder="Ej: Compositor" />
+                  <mat-label>Tipo de relación</mat-label>
+                  <mat-select [formControl]="asientoTipoControl">
+                    @for (t of listaTiposDeRelacion(); track t) {
+                      <mat-option [value]="t">{{ t }}</mat-option>
+                    }
+                  </mat-select>
                 </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addActor()"
-                  [disabled]="!actorSelection.length || !actorRolControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
               </div>
-              @if (actorItems.length > 0) {
+              <div class="inline-editor">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                  <mat-label>Dirección de la relación</mat-label>
+                  <mat-select [formControl]="asientoDireccionControl">
+                    @for (d of listaDirecciones(); track d) {
+                      <mat-option [value]="d">{{ d }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
+                  <mat-label>Fuente de la relación</mat-label>
+                  <input matInput [formControl]="asientoFuenteControl" placeholder="Fuente" />
+                </mat-form-field>
+              </div>
+              <div class="inline-editor">
+                <app-autocomplete-create
+                  apiEndpoint="proyectos"
+                  placeholder="Buscar proyecto asociado..."
+                  displayField="nombre"
+                  [selected]="asientoProyectoSelection"
+                  (selectedChange)="onAsientoProyectoChange($event)"
+                  class="campo-largo"
+                />
+              </div>
+              <mat-form-field appearance="outline" class="campo">
+                <mat-label>Nota general</mat-label>
+                <textarea matInput [formControl]="asientoNotaControl" rows="2" placeholder="Nota general"></textarea>
+              </mat-form-field>
+              <button mat-stroked-button type="button" (click)="addAsientoLigado()"
+                [disabled]="!asientoObraSelection.length">
+                <mat-icon>add</mat-icon>
+                Agregar
+              </button>
+              @if (asientoItems.length > 0) {
                 <div class="items-list">
-                  @for (a of actorItems; track $index) {
+                  @for (a of asientoItems; track $index) {
                     <div class="rel-item">
-                      <span class="rel-nombre">{{ getActorNombre(a.actor) }}</span>
-                      <span class="rel-detalle">{{ a.rol }}</span>
-                      <button mat-icon-button (click)="removeActor($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <span class="rel-nombre">{{ getObraNombre(a.id) }}</span>
+                      <span class="rel-detalle">{{ a.tipoDeRelacion }} — {{ a.direccionDeRelacion }}</span>
+                      <button mat-icon-button (click)="removeAsiento($index)" color="warn" matTooltip="Eliminar" type="button">
                         <mat-icon>close</mat-icon>
                       </button>
                     </div>
                   }
                 </div>
               } @else {
-                <p class="empty-hint">No hay actores asociados.</p>
+                <p class="empty-hint">No hay asientos ligados.</p>
               }
             </div>
           </app-collapsible-section>
 
-          <app-collapsible-section title="Proyectos" icon="folder" [collapsed]="true">
+          <app-collapsible-section title="Anotaciones cartográfico temporales" icon="map" [collapsed]="true">
             <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="proyectos"
-                placeholder="Buscar proyecto..."
-                displayField="nombre"
-                [selected]="proyectosItems"
-                (selectedChange)="onProyectosChange($event)"
+              <app-anotaciones-cartograficas
+                [anotaciones]="anotacionesItems"
+                [lugares]="lugares()"
+                [coberturas]="coberturas()"
+                (anotacionesChange)="anotacionesItems = $event"
               />
             </div>
           </app-collapsible-section>
 
-          <app-collapsible-section title="Géneros" icon="music_note" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="generos"
-                placeholder="Buscar género..."
-                displayField="nombre"
-                [selected]="generosItems"
-                (selectedChange)="onGenerosChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Instrumentos" icon="straighten" [collapsed]="true">
-            <div class="section-content">
-              <app-autocomplete-create
-                apiEndpoint="instrumentos"
-                placeholder="Buscar instrumento..."
-                displayField="nombre"
-                [selected]="instrumentosItems"
-                (selectedChange)="onInstrumentosChange($event)"
-              />
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Notas de programa" icon="notes" [collapsed]="true">
+          <app-collapsible-section title="Descriptores libres" icon="label" [collapsed]="true">
             <div class="section-content">
               <div class="inline-editor">
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Título</mat-label>
-                  <input matInput [formControl]="notaTituloControl" placeholder="Título de la nota" />
+                  <mat-label>Etiqueta</mat-label>
+                  <mat-select [formControl]="descEtiquetaControl">
+                    @for (e of listaEtiquetas(); track e) {
+                      <mat-option [value]="e">{{ e }}</mat-option>
+                    }
+                  </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
                   <mat-label>Contenido</mat-label>
-                  <input matInput [formControl]="notaContenidoControl" placeholder="Contenido de la nota" />
+                  <input matInput [formControl]="descContenidoControl" placeholder="Contenido del descriptor" />
                 </mat-form-field>
-              </div>
-              <div class="inline-editor">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Fecha</mat-label>
-                  <input matInput [formControl]="notaFechaControl" placeholder="AAAA-MM-DD" />
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addNotaPrograma()"
-                  [disabled]="!notaTituloControl.value">
+                <button mat-stroked-button type="button" (click)="addDescriptor()"
+                  [disabled]="!descEtiquetaControl.value || !descContenidoControl.value">
                   <mat-icon>add</mat-icon>
                   Agregar
                 </button>
               </div>
-              @if (notasProgramaItems.length > 0) {
+              @if (descriptorItems.length > 0) {
                 <div class="items-list">
-                  @for (n of notasProgramaItems; track $index) {
+                  @for (d of descriptorItems; track $index) {
                     <div class="rel-item">
-                      <span class="rel-nombre">{{ n.titulo }}</span>
-                      <span class="rel-detalle">{{ n.contenido }} @if (n.fecha) { — {{ n.fecha }} }</span>
-                      <button mat-icon-button (click)="removeNotaPrograma($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <span class="rel-nombre">{{ d.etiqueta }}</span>
+                      <span class="rel-detalle">{{ d.contenido }}</span>
+                      <button mat-icon-button (click)="removeDescriptor($index)" color="warn" matTooltip="Eliminar" type="button">
                         <mat-icon>close</mat-icon>
                       </button>
                     </div>
                   }
                 </div>
               } @else {
-                <p class="empty-hint">No hay notas de programa.</p>
+                <p class="empty-hint">No hay descriptores libres.</p>
               }
             </div>
           </app-collapsible-section>
 
-          <app-collapsible-section title="Fechas asociadas" icon="event" [collapsed]="true">
+          <app-collapsible-section title="Enlaces y archivos" icon="link" [collapsed]="true">
             <div class="section-content">
+              <h3>Enlaces</h3>
               <div class="inline-editor">
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Fecha</mat-label>
-                  <input matInput [formControl]="fechaFechaControl" placeholder="AAAA-MM-DD" />
+                  <mat-label>Nombre (descripción)</mat-label>
+                  <input matInput [formControl]="vinculoEtiquetaControl" placeholder="Nombre del enlace" />
                 </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Tipo</mat-label>
-                  <input matInput [formControl]="fechaTipoControl" placeholder="Ej: Estreno" />
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
-                  <mat-label>Descripción</mat-label>
-                  <input matInput [formControl]="fechaDescripcionControl" placeholder="Descripción" />
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addFechaAsociada()"
-                  [disabled]="!fechaFechaControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
-              </div>
-              @if (fechasAsociadasItems.length > 0) {
-                <div class="items-list">
-                  @for (f of fechasAsociadasItems; track $index) {
-                    <div class="rel-item">
-                      <span class="rel-nombre">{{ f.tipo }}</span>
-                      <span class="rel-detalle">{{ f.fecha }} @if (f.descripcion) { — {{ f.descripcion }} }</span>
-                      <button mat-icon-button (click)="removeFechaAsociada($index)" color="warn" matTooltip="Eliminar" type="button">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="empty-hint">No hay fechas asociadas.</p>
-              }
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Anotaciones" icon="comment" [collapsed]="true">
-            <div class="section-content">
-              <div class="inline-editor">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Título</mat-label>
-                  <input matInput [formControl]="anotacionTituloControl" placeholder="Título de la anotación" />
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
-                  <mat-label>Anotación</mat-label>
-                  <input matInput [formControl]="anotacionTextoControl" placeholder="Contenido de la anotación" />
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addAnotacion()"
-                  [disabled]="!anotacionTituloControl.value || !anotacionTextoControl.value">
-                  <mat-icon>add</mat-icon>
-                  Agregar
-                </button>
-              </div>
-              @if (anotacionItems.length > 0) {
-                <div class="items-list">
-                  @for (a of anotacionItems; track $index) {
-                    <div class="rel-item">
-                      <span class="rel-nombre">{{ a.titulo }}</span>
-                      <span class="rel-detalle">{{ a.anotacion }}</span>
-                      <button mat-icon-button (click)="removeAnotacion($index)" color="warn" matTooltip="Eliminar" type="button">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="empty-hint">No hay anotaciones.</p>
-              }
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Descriptores" icon="label" [collapsed]="true">
-            <div class="section-content">
-              <app-list-editor
-                [value]="descriptorItems"
-                placeholder="Agregar descriptor…"
-                (valueChange)="descriptorItems = $event"
-              />
-            </div>
-          </app-collapsible-section>
-
-          <app-collapsible-section title="Enlaces" icon="language" [collapsed]="true">
-            <div class="section-content">
-              <div class="inline-editor">
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
                   <mat-label>URL</mat-label>
-                  <input matInput [formControl]="enlaceUrlControl" placeholder="https://..." />
+                  <input matInput [formControl]="vinculoUrlControl" placeholder="https://..." />
                 </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                  <mat-label>Descripción</mat-label>
-                  <input matInput [formControl]="enlaceDescripcionControl" placeholder="Descripción del enlace" />
-                </mat-form-field>
-                <button mat-stroked-button type="button" (click)="addEnlace()"
-                  [disabled]="!enlaceUrlControl.value">
+                <button mat-stroked-button type="button" (click)="addVinculo()"
+                  [disabled]="!vinculoUrlControl.value">
                   <mat-icon>add</mat-icon>
                   Agregar
                 </button>
               </div>
-              @if (enlaceItems.length > 0) {
+              @if (vinculoItems.length > 0) {
                 <div class="items-list">
-                  @for (e of enlaceItems; track $index) {
+                  @for (v of vinculoItems; track $index) {
                     <div class="rel-item">
-                      <span class="rel-nombre">{{ e.descripcion || 'Enlace' }}</span>
-                      <span class="rel-detalle">{{ e.url }}</span>
-                      <button mat-icon-button (click)="removeEnlace($index)" color="warn" matTooltip="Eliminar" type="button">
+                      <span class="rel-nombre">{{ v.etiqueta || 'Enlace' }}</span>
+                      <span class="rel-detalle">{{ v.url }}</span>
+                      <button mat-icon-button (click)="removeVinculo($index)" color="warn" matTooltip="Eliminar" type="button">
                         <mat-icon>close</mat-icon>
                       </button>
                     </div>
@@ -463,16 +409,26 @@ interface ArchivoAdjuntoItem { archivo: string; descripcion: string }
               } @else {
                 <p class="empty-hint">No hay enlaces registrados.</p>
               }
-            </div>
-          </app-collapsible-section>
 
-          <app-collapsible-section title="Archivos adjuntos" icon="attachment" [collapsed]="true">
-            <div class="section-content">
+              <hr />
+              <h3>Archivos</h3>
               <app-archivo-manager
                 [documentId]="documentId()"
                 collection="obras"
                 (fileUploaded)="onFileUploaded($event)"
                 (fileDeleted)="onFileDeleted($event)"
+              />
+            </div>
+          </app-collapsible-section>
+
+          <app-collapsible-section title="Proyectos asociados" icon="folder" [collapsed]="true">
+            <div class="section-content">
+              <app-autocomplete-create
+                apiEndpoint="proyectos"
+                placeholder="Buscar proyecto..."
+                displayField="nombre"
+                [selected]="proyectosItems"
+                (selectedChange)="onProyectosChange($event)"
               />
             </div>
           </app-collapsible-section>
@@ -499,6 +455,7 @@ interface ArchivoAdjuntoItem { archivo: string; descripcion: string }
     .campo { min-width: 0; }
     .alerta { display: flex; align-items: center; gap: 0.75rem; background: #fbeae6; color: var(--simr-sello-osc); border: 1px solid var(--simr-sello); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; }
     .section-content { padding: 0.5rem 0; }
+    .section-content h3 { margin: 0.75rem 0 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--simr-tinta); }
     .inline-editor { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem; margin-bottom: 0.75rem; }
     .campo-largo { flex: 1; min-width: 200px; }
     .campo-medio { width: 220px; }
@@ -518,6 +475,7 @@ interface ArchivoAdjuntoItem { archivo: string; descripcion: string }
     }
     .subtitulo { margin: 0.5rem 0 0.25rem; font-size: 0.88rem; color: var(--simr-tinta); font-weight: 600; }
     .form-actions { display: flex; gap: 1rem; justify-content: flex-end; padding: 1.5rem 2rem; border-top: 1px solid var(--mat-sys-outline); }
+    hr { border: none; border-top: 1px solid var(--mat-sys-outline); margin: 0.75rem 0; }
     @media (max-width: 600px) {
       .form-container { padding: 0 1rem; }
       .form-section { padding: 1.5rem 1rem 0; }
@@ -538,51 +496,60 @@ export class ObraFormComponent implements OnInit {
   protected isEditMode = false;
   protected obraId: string | null = null;
 
-  protected tipoDeObraItems: string[] = [];
-  protected ambitoGeograficoItems: string[] = [];
-  protected contextoItems: ContextoItem[] = [];
-  protected obrasVinculadasItems: any[] = [];
-  protected recursosVinculadosItems: any[] = [];
-  protected actorItems: ActorAsociadoItem[] = [];
+  protected denominacionItems: DenominacionRegional[] = [];
+  protected contenedoresItems: any[] = [];
+  protected actorItems: ActorAsociado[] = [];
   protected actorSelection: any[] = [];
+  protected generosFormasItems: any[] = [];
+  protected generosNoMusicalesItems: any[] = [];
+  protected materiaItems: any[] = [];
+  protected medioItems: any[] = [];
+  protected sistemaItems: SistemaAsociado[] = [];
+  protected sistemaSelection: any[] = [];
+  protected idiomaItems: any[] = [];
   protected proyectosItems: any[] = [];
-  protected generosItems: any[] = [];
-  protected instrumentosItems: any[] = [];
-  protected notasProgramaItems: NotaProgramaItem[] = [];
-  protected fechasAsociadasItems: FechaAsociadaItem[] = [];
-  protected anotacionItems: AnotacionItem[] = [];
-  protected descriptorItems: string[] = [];
-  protected enlaceItems: EnlaceItem[] = [];
-  protected archivosAdjuntosItems: ArchivoAdjuntoItem[] = [];
 
-  protected listaTiposDeObra = signal<string[]>([]);
-  protected listaAmbitosGeograficos = signal<string[]>([]);
+  protected asientoItems: AsientoLigado[] = [];
+  protected asientoObraSelection: any[] = [];
+  protected asientoProyectoSelection: any[] = [];
+
+  protected anotacionesItems: AnotacionCartograficoTemporal[] = [];
+
+  protected descriptorItems: DescriptorLibre[] = [];
+  protected vinculoItems: VinculoRelacionado[] = [];
+  protected archivosAdjuntosItems: { archivoId: string }[] = [];
+
+  protected listaTipos = signal<string[]>([]);
+  protected listaRoles = signal<string[]>([]);
+  protected listaCentros = signal<string[]>([]);
+  protected listaTiposDeRelacion = signal<string[]>([]);
+  protected listaDirecciones = signal<string[]>([]);
+  protected listaEtiquetas = signal<string[]>([]);
+  protected lugares = signal<string[]>([]);
+  protected coberturas = signal<string[]>([]);
   protected documentId = signal<string>('');
 
-  protected tipoObraControl = this.fb.control<string | null>(null);
-  protected ambitoGeograficoControl = this.fb.control<string | null>(null);
-  protected contextoContextoControl = this.fb.control<string | null>(null);
-  protected contextoDescripcionControl = this.fb.control<string | null>(null);
+  protected denominacionControl = this.fb.control<string | null>(null);
+  protected fuenteDenominacionControl = this.fb.control<string | null>(null);
   protected actorRolControl = this.fb.control<string | null>(null);
-  protected notaTituloControl = this.fb.control<string | null>(null);
-  protected notaContenidoControl = this.fb.control<string | null>(null);
-  protected notaFechaControl = this.fb.control<string | null>(null);
-  protected fechaFechaControl = this.fb.control<string | null>(null);
-  protected fechaTipoControl = this.fb.control<string | null>(null);
-  protected fechaDescripcionControl = this.fb.control<string | null>(null);
-  protected anotacionTituloControl = this.fb.control<string | null>(null);
-  protected anotacionTextoControl = this.fb.control<string | null>(null);
-  protected enlaceUrlControl = this.fb.control<string | null>(null);
-  protected enlaceDescripcionControl = this.fb.control<string | null>(null);
+  protected sistemaCentroControl = this.fb.control<string | null>(null);
+  protected asientoTipoControl = this.fb.control<string | null>(null);
+  protected asientoDireccionControl = this.fb.control<string | null>(null);
+  protected asientoFuenteControl = this.fb.control<string | null>(null);
+  protected asientoNotaControl = this.fb.control<string | null>(null);
+  protected descEtiquetaControl = this.fb.control<string | null>(null);
+  protected descContenidoControl = this.fb.control<string | null>(null);
+  protected vinculoEtiquetaControl = this.fb.control<string | null>(null);
+  protected vinculoUrlControl = this.fb.control<string | null>(null);
+
+  protected allActores = signal<any[]>([]);
+  protected allObras = signal<any[]>([]);
+  protected allSistemas = signal<any[]>([]);
 
   obraForm: FormGroup = this.fb.group({
     titulo: ['', Validators.required],
-    tituloOriginal: [''],
-    lugarDeEjecucion: [''],
-    anyoEstreno: [''],
     descripcion: [''],
-    duracion: [''],
-    estado: [''],
+    tipo: [''],
   });
 
   constructor() {
@@ -605,9 +572,7 @@ export class ObraFormComponent implements OnInit {
         this.store.setInitialState();
         this.store.loadById(id);
         this.http.get(`${environment.apiUrl}/obras/${id}`).subscribe({
-          next: (obra: any) => {
-            this.loadObraData(obra);
-          },
+          next: (obra: any) => this.loadObraData(obra),
           error: (err) => console.error('[ObraForm] error al cargar', err),
         });
       }
@@ -616,73 +581,134 @@ export class ObraFormComponent implements OnInit {
 
   private loadReferenceData() {
     const apiUrl = environment.apiUrl;
-    this.http.get(`${apiUrl}/listas/tiposDeObra`).subscribe({
+    this.http.get(`${apiUrl}/listas/tipos`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
-        this.listaTiposDeObra.set(Array.isArray(list) ? list : []);
+        this.listaTipos.set(Array.isArray(list) ? list : []);
       },
-      error: () => this.listaTiposDeObra.set([]),
+      error: () => this.listaTipos.set([]),
     });
-    this.http.get(`${apiUrl}/listas/ambitosGeograficos`).subscribe({
+    this.http.get(`${apiUrl}/listas/roles`).subscribe({
       next: (data: any) => {
         const list = data?.elementos || data?.data?.elementos || data || [];
-        this.listaAmbitosGeograficos.set(Array.isArray(list) ? list : []);
+        this.listaRoles.set(Array.isArray(list) ? list : []);
       },
-      error: () => this.listaAmbitosGeograficos.set([]),
+      error: () => this.listaRoles.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/centros`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.listaCentros.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.listaCentros.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/tiposDeRelacion`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.listaTiposDeRelacion.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.listaTiposDeRelacion.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/direcciones`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.listaDirecciones.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.listaDirecciones.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/dEtiquetas`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.listaEtiquetas.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.listaEtiquetas.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/lugares`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.lugares.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.lugares.set([]),
+    });
+    this.http.get(`${apiUrl}/listas/coberturas`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.coberturas.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.coberturas.set([]),
+    });
+    this.http.get<any>(`${apiUrl}/actores`).subscribe({
+      next: (res) => this.allActores.set(Array.isArray(res) ? res : res?.data || []),
+      error: () => {},
+    });
+    this.http.get<any>(`${apiUrl}/obras`).subscribe({
+      next: (res) => this.allObras.set(Array.isArray(res) ? res : res?.data || []),
+      error: () => {},
+    });
+    this.http.get<any>(`${apiUrl}/sistemas`).subscribe({
+      next: (res) => this.allSistemas.set(Array.isArray(res) ? res : res?.data || []),
+      error: () => {},
     });
   }
 
   private loadObraData(obra: any) {
     this.obraForm.patchValue({
       titulo: obra.titulo || '',
-      tituloOriginal: obra.tituloOriginal || '',
-      lugarDeEjecucion: obra.lugarDeEjecucion || '',
-      anyoEstreno: obra.anyoEstreno || '',
       descripcion: obra.descripcion || '',
-      duracion: obra.duracion || '',
-      estado: obra.estado || '',
+      tipo: obra.tipo || '',
     });
-    this.tipoDeObraItems = obra.tipoDeObra || [];
-    this.ambitoGeograficoItems = obra.ambitoGeografico || [];
-    this.contextoItems = obra.contextos || [];
-    this.obrasVinculadasItems = (obra.obrasVinculadas || []).map((o: any) => {
-      const id = o.id || o;
-      if (typeof id === 'object') return { _id: id._id, titulo: id.titulo };
-      return { _id: id, titulo: '(cargando...)' };
-    });
-    this.recursosVinculadosItems = (obra.recursosVinculados || []).map((r: any) => {
-      const id = r.id || r;
+    this.denominacionItems = obra.denominacionRegional || [];
+    this.contenedoresItems = (obra.contenedores || []).map((c: any) => {
+      const id = c.id || c;
       if (typeof id === 'object') return { _id: id._id, titulo: id.titulo };
       return { _id: id, titulo: '(cargando...)' };
     });
     this.actorItems = (obra.actores || []).map((a: any) => ({
-      actor: a.actor || a.id,
+      id: a.id || a,
       rol: a.rol || '',
     }));
+    this.generosFormasItems = (obra.generosFormas || []).map((g: any) => {
+      const id = g.id || g;
+      if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
+      return { _id: id, nombre: '(cargando...)' };
+    });
+    this.generosNoMusicalesItems = (obra.GenerosFormasNoMusicales || []).map((g: any) => {
+      const id = g.id || g;
+      if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
+      return { _id: id, nombre: '(cargando...)' };
+    });
+    this.materiaItems = (obra.materias || []).map((m: any) => {
+      const id = m.id || m;
+      if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
+      return { _id: id, nombre: '(cargando...)' };
+    });
+    this.medioItems = (obra.mediosSonoros || []).map((m: any) => {
+      const id = m.id || m;
+      if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
+      return { _id: id, nombre: '(cargando...)' };
+    });
+    this.sistemaItems = (obra.sistemasSonoros || []).map((s: any) => ({
+      id: s.id || s,
+      centro: s.centro || '',
+    }));
+    this.idiomaItems = (obra.idiomas || []).map((i: any) => {
+      const id = i.id || i;
+      if (typeof id === 'object') return { _id: id._id, idioma: id.idioma || id.nombre };
+      return { _id: id, idioma: '(cargando...)' };
+    });
+    this.asientoItems = obra.asientoLigado || [];
+    this.anotacionesItems = (obra.anotacionCartograficoTemporal || []).map((a: any) => ({
+      ...a,
+      fechaInicio: a.fechaInicio ? toDisplayFecha(a.fechaInicio) : undefined,
+      fechaFin: a.fechaFin ? toDisplayFecha(a.fechaFin) : undefined,
+    }));
+    this.descriptorItems = obra.descriptores || [];
+    this.vinculoItems = obra.vinculosRelacionados || [];
     this.proyectosItems = (obra.proyectos || []).map((p: any) => {
       const id = p.id || p;
       if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
       return { _id: id, nombre: '(cargando...)' };
     });
-    this.generosItems = (obra.generos || []).map((g: any) => {
-      const id = g.id || g;
-      if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
-      return { _id: id, nombre: '(cargando...)' };
-    });
-    this.instrumentosItems = (obra.instrumentos || []).map((i: any) => {
-      const id = i.id || i;
-      if (typeof id === 'object') return { _id: id._id, nombre: id.nombre };
-      return { _id: id, nombre: '(cargando...)' };
-    });
-    this.notasProgramaItems = obra.notasPrograma || [];
-    this.fechasAsociadasItems = obra.fechasAsociadas || [];
-    this.anotacionItems = obra.anotaciones || [];
-    this.descriptorItems = obra.descriptores || [];
-    this.enlaceItems = obra.enlaces || [];
-    this.archivosAdjuntosItems = (obra.archivosAdjuntos || []).map((a: any) => ({
-      archivo: a.archivo || a.id || a._id,
-      descripcion: a.descripcion || '',
-    }));
   }
 
   protected isFieldInvalid(field: string): boolean {
@@ -690,50 +716,24 @@ export class ObraFormComponent implements OnInit {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  protected addTipoObra() {
-    const val = this.tipoObraControl.value;
-    if (!val) return;
-    if (!this.tipoDeObraItems.includes(val)) {
-      this.tipoDeObraItems = [...this.tipoDeObraItems, val];
-    }
-    this.tipoObraControl.reset();
+  protected addDenominacion() {
+    const dr = this.denominacionControl.value;
+    const fd = this.fuenteDenominacionControl.value;
+    if (!dr || !fd) return;
+    this.denominacionItems = [...this.denominacionItems, { denominacionRegional: dr, fuenteDenominacion: fd }];
+    this.denominacionControl.reset();
+    this.fuenteDenominacionControl.reset();
   }
 
-  protected removeTipoObra(index: number) {
-    this.tipoDeObraItems = this.tipoDeObraItems.filter((_, i) => i !== index);
-  }
-
-  protected addAmbitoGeografico() {
-    const val = this.ambitoGeograficoControl.value;
-    if (!val) return;
-    if (!this.ambitoGeograficoItems.includes(val)) {
-      this.ambitoGeograficoItems = [...this.ambitoGeograficoItems, val];
-    }
-    this.ambitoGeograficoControl.reset();
-  }
-
-  protected removeAmbitoGeografico(index: number) {
-    this.ambitoGeograficoItems = this.ambitoGeograficoItems.filter((_, i) => i !== index);
-  }
-
-  protected addContexto() {
-    const contexto = this.contextoContextoControl.value;
-    const descripcion = this.contextoDescripcionControl.value;
-    if (!contexto || !descripcion) return;
-    this.contextoItems = [...this.contextoItems, { contexto, descripcion }];
-    this.contextoContextoControl.reset();
-    this.contextoDescripcionControl.reset();
-  }
-
-  protected removeContexto(index: number) {
-    this.contextoItems = this.contextoItems.filter((_, i) => i !== index);
+  protected removeDenominacion(index: number) {
+    this.denominacionItems = this.denominacionItems.filter((_, i) => i !== index);
   }
 
   protected addActor() {
     const actor = this.actorSelection[0];
     const rol = this.actorRolControl.value;
     if (!actor || !rol) return;
-    this.actorItems = [...this.actorItems, { actor: { _id: actor._id, fullName: actor.fullName || actor.nombre }, rol }];
+    this.actorItems = [...this.actorItems, { id: actor._id, rol }];
     this.actorSelection = [];
     this.actorRolControl.reset();
   }
@@ -742,106 +742,103 @@ export class ObraFormComponent implements OnInit {
     this.actorItems = this.actorItems.filter((_, i) => i !== index);
   }
 
-  protected getActorNombre(actor: any): string {
-    if (!actor) return '';
-    if (typeof actor === 'object' && actor.fullName) return actor.fullName;
-    if (typeof actor === 'object' && actor.nombre) return actor.nombre;
-    if (typeof actor === 'object' && actor._id) return '(seleccionado)';
-    return typeof actor === 'string' ? actor : '';
+  protected getActorNombre(id: string): string {
+    if (!id) return '';
+    const found = this.allActores().find((a: any) => a._id === id || a.id === id);
+    return found?.fullName || found?.nombre || '(cargando...)';
   }
 
-  protected addNotaPrograma() {
-    const titulo = this.notaTituloControl.value;
-    if (!titulo) return;
-    this.notasProgramaItems = [...this.notasProgramaItems, {
-      titulo,
-      contenido: this.notaContenidoControl.value || '',
-      fecha: this.notaFechaControl.value || '',
+  protected addSistema() {
+    const sis = this.sistemaSelection[0];
+    if (!sis) return;
+    this.sistemaItems = [...this.sistemaItems, { id: sis._id, centro: this.sistemaCentroControl.value || '' }];
+    this.sistemaSelection = [];
+    this.sistemaCentroControl.reset();
+  }
+
+  protected removeSistema(index: number) {
+    this.sistemaItems = this.sistemaItems.filter((_, i) => i !== index);
+  }
+
+  protected getSistemaNombre(id: string): string {
+    if (!id) return '';
+    const found = this.allSistemas().find((s: any) => s._id === id || s.id === id);
+    return found?.nombre || '(cargando...)';
+  }
+
+  protected addAsientoLigado() {
+    const obra = this.asientoObraSelection[0];
+    if (!obra) return;
+    const proy = this.asientoProyectoSelection[0];
+    this.asientoItems = [...this.asientoItems, {
+      id: obra._id,
+      tipoDeRelacion: this.asientoTipoControl.value || '',
+      direccionDeRelacion: this.asientoDireccionControl.value || '',
+      fuenteAutorRelacion: this.asientoFuenteControl.value || '',
+      notaGeneral: this.asientoNotaControl.value || '',
+      proyectoRelacionado: proy?._id || '',
     }];
-    this.notaTituloControl.reset();
-    this.notaContenidoControl.reset();
-    this.notaFechaControl.reset();
+    this.asientoObraSelection = [];
+    this.asientoProyectoSelection = [];
+    this.asientoTipoControl.reset();
+    this.asientoDireccionControl.reset();
+    this.asientoFuenteControl.reset();
+    this.asientoNotaControl.reset();
   }
 
-  protected removeNotaPrograma(index: number) {
-    this.notasProgramaItems = this.notasProgramaItems.filter((_, i) => i !== index);
+  protected removeAsiento(index: number) {
+    this.asientoItems = this.asientoItems.filter((_, i) => i !== index);
   }
 
-  protected addFechaAsociada() {
-    const fecha = this.fechaFechaControl.value;
-    if (!fecha) return;
-    this.fechasAsociadasItems = [...this.fechasAsociadasItems, {
-      fecha,
-      tipo: this.fechaTipoControl.value || '',
-      descripcion: this.fechaDescripcionControl.value || '',
-    }];
-    this.fechaFechaControl.reset();
-    this.fechaTipoControl.reset();
-    this.fechaDescripcionControl.reset();
+  protected getObraNombre(id: string): string {
+    if (!id) return '';
+    const found = this.allObras().find((o: any) => o._id === id || o.id === id);
+    return found?.titulo || '(cargando...)';
   }
 
-  protected removeFechaAsociada(index: number) {
-    this.fechasAsociadasItems = this.fechasAsociadasItems.filter((_, i) => i !== index);
+  protected addDescriptor() {
+    const etiqueta = this.descEtiquetaControl.value;
+    const contenido = this.descContenidoControl.value;
+    if (!etiqueta || !contenido) return;
+    this.descriptorItems = [...this.descriptorItems, { etiqueta, contenido }];
+    this.descEtiquetaControl.reset();
+    this.descContenidoControl.reset();
   }
 
-  protected addAnotacion() {
-    const titulo = this.anotacionTituloControl.value;
-    const texto = this.anotacionTextoControl.value;
-    if (!titulo || !texto) return;
-    this.anotacionItems = [...this.anotacionItems, { titulo, anotacion: texto }];
-    this.anotacionTituloControl.reset();
-    this.anotacionTextoControl.reset();
+  protected removeDescriptor(index: number) {
+    this.descriptorItems = this.descriptorItems.filter((_, i) => i !== index);
   }
 
-  protected removeAnotacion(index: number) {
-    this.anotacionItems = this.anotacionItems.filter((_, i) => i !== index);
-  }
-
-  protected addEnlace() {
-    const url = this.enlaceUrlControl.value;
+  protected addVinculo() {
+    const url = this.vinculoUrlControl.value;
     if (!url) return;
-    this.enlaceItems = [...this.enlaceItems, {
-      url,
-      descripcion: this.enlaceDescripcionControl.value || '',
-    }];
-    this.enlaceUrlControl.reset();
-    this.enlaceDescripcionControl.reset();
+    this.vinculoItems = [...this.vinculoItems, { etiqueta: this.vinculoEtiquetaControl.value || '', url }];
+    this.vinculoUrlControl.reset();
+    this.vinculoEtiquetaControl.reset();
   }
 
-  protected removeEnlace(index: number) {
-    this.enlaceItems = this.enlaceItems.filter((_, i) => i !== index);
+  protected removeVinculo(index: number) {
+    this.vinculoItems = this.vinculoItems.filter((_, i) => i !== index);
   }
 
-  protected onObrasVinculadasChange(items: any[]) {
-    this.obrasVinculadasItems = items;
-  }
-
-  protected onRecursosVinculadosChange(items: any[]) {
-    this.recursosVinculadosItems = items;
-  }
-
-  protected onActorChange(items: any[]) {
-    this.actorSelection = items;
-  }
-
-  protected onProyectosChange(items: any[]) {
-    this.proyectosItems = items;
-  }
-
-  protected onGenerosChange(items: any[]) {
-    this.generosItems = items;
-  }
-
-  protected onInstrumentosChange(items: any[]) {
-    this.instrumentosItems = items;
-  }
+  protected onContenedoresChange(items: any[]) { this.contenedoresItems = items; }
+  protected onActorChange(items: any[]) { this.actorSelection = items; }
+  protected onGenerosFormasChange(items: any[]) { this.generosFormasItems = items; }
+  protected onGenerosNoMusicalesChange(items: any[]) { this.generosNoMusicalesItems = items; }
+  protected onMateriasChange(items: any[]) { this.materiaItems = items; }
+  protected onMediosChange(items: any[]) { this.medioItems = items; }
+  protected onSistemaChange(items: any[]) { this.sistemaSelection = items; }
+  protected onIdiomasChange(items: any[]) { this.idiomaItems = items; }
+  protected onProyectosChange(items: any[]) { this.proyectosItems = items; }
+  protected onAsientoObraChange(items: any[]) { this.asientoObraSelection = items; }
+  protected onAsientoProyectoChange(items: any[]) { this.asientoProyectoSelection = items; }
 
   protected onFileUploaded(file: FileBasicInfo) {
-    this.archivosAdjuntosItems = [...this.archivosAdjuntosItems, { archivo: file.id, descripcion: '' }];
+    this.archivosAdjuntosItems = [...this.archivosAdjuntosItems, { archivoId: file.id }];
   }
 
   protected onFileDeleted(file: FileDeleteInfo) {
-    this.archivosAdjuntosItems = this.archivosAdjuntosItems.filter((f) => f.archivo !== file.id);
+    this.archivosAdjuntosItems = this.archivosAdjuntosItems.filter((f) => f.archivoId !== file.id);
   }
 
   protected onSubmit() {
@@ -849,26 +846,22 @@ export class ObraFormComponent implements OnInit {
 
     const payload: any = {
       titulo: this.obraForm.value.titulo,
-      tituloOriginal: this.obraForm.value.tituloOriginal || '',
-      lugarDeEjecucion: this.obraForm.value.lugarDeEjecucion || '',
-      anyoEstreno: this.obraForm.value.anyoEstreno || '',
       descripcion: this.obraForm.value.descripcion || '',
-      duracion: this.obraForm.value.duracion || '',
-      estado: this.obraForm.value.estado || '',
-      tipoDeObra: this.tipoDeObraItems,
-      ambitoGeografico: this.ambitoGeograficoItems,
-      contextos: this.contextoItems,
-      obrasVinculadas: this.obrasVinculadasItems.map((o) => ({ id: o._id })),
-      recursosVinculados: this.recursosVinculadosItems.map((r) => ({ id: r._id })),
+      tipo: this.obraForm.value.tipo || '',
+      denominacionRegional: this.denominacionItems,
+      contenedores: this.contenedoresItems.map((c) => ({ id: c._id })),
       actores: this.actorItems,
-      proyectos: this.proyectosItems.map((p) => ({ id: p._id })),
-      generos: this.generosItems.map((g) => ({ id: g._id })),
-      instrumentos: this.instrumentosItems.map((i) => ({ id: i._id })),
-      notasPrograma: this.notasProgramaItems,
-      fechasAsociadas: this.fechasAsociadasItems,
-      anotaciones: this.anotacionItems,
+      generosFormas: this.generosFormasItems.map((g) => ({ id: g._id })),
+      GenerosFormasNoMusicales: this.generosNoMusicalesItems.map((g) => ({ id: g._id })),
+      materias: this.materiaItems.map((m) => ({ id: m._id })),
+      mediosSonoros: this.medioItems.map((m) => ({ id: m._id })),
+      sistemasSonoros: this.sistemaItems,
+      idiomas: this.idiomaItems.map((i) => ({ id: i._id })),
+      asientoLigado: this.asientoItems,
+      anotacionCartograficoTemporal: this.anotacionesItems,
       descriptores: this.descriptorItems,
-      enlaces: this.enlaceItems,
+      vinculosRelacionados: this.vinculoItems,
+      proyectos: this.proyectosItems.map((p) => ({ id: p._id })),
       archivosAdjuntos: this.archivosAdjuntosItems,
     };
 

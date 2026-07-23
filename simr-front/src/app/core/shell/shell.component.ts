@@ -27,44 +27,29 @@ export class ShellComponent implements OnInit {
   isAuthenticated = false;
   currentUser: { fullName?: string } | null = null;
 
-  // Menú definitivo: nombre corto de la entidad.
+  // Menú definitivo: organizado por categorías funcionales.
   // Migrados → ruta real; no migrados → /no-implementado/:modulo.
   grupos: MenuGroup[] = [
     {
-      label: 'Obras',
+      label: 'Catalogación',
       items: [
         { label: 'Obras', ruta: '/obras' },
         { label: 'Actores', ruta: '/actores' },
-      ],
-    },
-    {
-      label: 'Recursos',
-      items: [
         { label: 'Recursos', ruta: '/recursos' },
         { label: 'Ejemplares', ruta: '/ejemplares' },
-      ],
-    },
-    {
-      label: 'Proyectos',
-      items: [
         { label: 'Proyectos', ruta: '/proyectos' },
-      ],
-    },
-    {
-      label: 'Fondos',
-      items: [
         { label: 'Fondos documentales', ruta: '/fondos' },
         { label: 'Colecciones', ruta: '/colecciones' },
       ],
     },
     {
-      label: 'Términos',
+      label: 'Vocabularios controlados',
       items: [
         { label: 'Materias', ruta: '/materias' },
         { label: 'Medios sonoros', ruta: '/medios' },
         { label: 'Sistemas sonoros', ruta: '/sistemas' },
         { label: 'Instrumentos', ruta: '/instrumentos' },
-        { label: 'Géneros o Formas', ruta: '/generos' },
+        { label: 'Géneros o formas', ruta: '/generos' },
         { label: 'Géneros no musicales', ruta: '/generos-no-musicales' },
         { label: 'Idiomas', ruta: '/idiomas' },
         { label: 'Diccionario', ruta: '/diccionarios' },
@@ -72,11 +57,18 @@ export class ShellComponent implements OnInit {
       ],
     },
     {
+      label: 'Visualización de datos',
+      items: [
+        { label: 'Grafo de base de datos', ruta: '/graph' },
+        { label: 'Mapa visualizador', ruta: '/mapa-visualizador' },
+        { label: 'Estadísticas', ruta: '/estadisticas' },
+      ],
+    },
+    {
       label: 'Utilidades',
       items: [
-        { label: 'Búsqueda General', ruta: '/search' },
-        { label: 'Estadísticas', ruta: '/estadisticas' },
-        { label: 'Grafo de Base de Datos', ruta: '/graph' },
+        { label: 'Búsqueda general', ruta: '/search' },
+        { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
       ],
     },
   ];
