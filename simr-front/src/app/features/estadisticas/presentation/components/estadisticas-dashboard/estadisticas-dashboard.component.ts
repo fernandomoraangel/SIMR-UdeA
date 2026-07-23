@@ -49,7 +49,7 @@ interface SearchHit {
   _id: string;
   _entityType: string;
   _searchScore?: number;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 interface SearchResponse {
@@ -669,11 +669,13 @@ export class EstadisticasDashboardComponent implements OnInit, AfterViewInit {
       const first = val[0];
       if (typeof first === 'string') return first;
       if (typeof first === 'object' && first !== null) {
-        return first.nombre || first.denominacionRegional || first.contenido || JSON.stringify(first);
+        const o: any = first;
+        return o.nombre || o.denominacionRegional || o.contenido || JSON.stringify(first);
       }
     }
     if (typeof val === 'object' && val !== null) {
-      return val.nombre || val.denominacionRegional || JSON.stringify(val);
+      const o: any = val;
+      return o.nombre || o.denominacionRegional || JSON.stringify(val);
     }
     return rec._id;
   }
