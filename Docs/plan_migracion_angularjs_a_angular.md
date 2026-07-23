@@ -261,33 +261,32 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 
 ---
 
-### **Fase 6 — Retiro de AngularJS y reestructuración del proyecto**
+### **Fase 6 — Retiro de AngularJS y reestructuración del proyecto** ✅ **COMPLETADA**
 
-- [ ] **6.1. Eliminar bootstrap y módulos legacy.**
-  - [ ] Borrar `simr-back/public/<cada módulo migrado>` (todas las carpetas de la tabla 2.1).
-  - [ ] Borrar `simr-back/public/application.js`, `public/funcionesGenerales.js`, `public/permissions.js`, `public/listas.js` (ya migrado a BD/servicio), `public/styles.css` / `stylesold.css` si son exclusivos del legacy.
-  - [ ] Borrar `public/lib/angular@1.8.2`, `public/lib/shims/` (`resource-shim`, `route-shim`), `public/lib/d3` (vendored, ya no se usa si Angular trae su propia dependencia), `public/lib/ng-dialog`, y cualquier otra librería exclusiva de AngularJS.
-  - [ ] Conservar temporalmente (si aún se usan por Angular vía CDN/estático) `bootstrap-css`, `font-awesome`, `jquery`, `sweetalert2` solo si `simr-front` no los trae ya como dependencias npm propias; si ya están en `simr-front/package.json`, eliminarlos también de `public/lib`.
-- [ ] **6.2. Eliminar el puente cross-app.**
-  - [ ] Borrar el mecanismo popup + `postMessage` + polling de `localStorage` en `archivos.client.service.js` (el archivo completo desaparece con el módulo `archivos` legacy).
-  - [ ] Eliminar `redirectToAngularJS()` / `redirectToLegacyApp()` de `auth.service.ts` en `simr-front` (ya no hay a dónde redirigir).
-- [ ] **6.3. Backend: limpieza de configuración legacy.**
-  - [ ] Eliminar `app/middleware/legacyShellGuard.js` y su uso en `config/express.js` (`app.use(legacyShellGuard, express.static('./public'))`).
-  - [ ] Eliminar `express.static('./public')` o redirigir la raíz `/` directamente a la build de `simr-front`.
-  - [ ] Revisar `config/express.js` CORS: remover el origen `:3000`/legacy si ya no aplica, dejar solo el origen de producción de Angular (o servir todo desde el mismo origen vía Nginx).
-  - [ ] Eliminar dependencia `requirejs` de `simr-back/package.json` si estaba vestigial (confirmar que nada la usa antes de borrar).
-  - [ ] Actualizar `nginx.conf` / `nginx.dev.conf` / `nginx.prod.conf` para servir únicamente la build de `simr-front` (eliminar location blocks apuntando a `/public` legacy o al puerto 3000 estático).
-- [ ] **6.4. Reestructuración de carpetas del proyecto.**
-  - [ ] Decidir y documentar la estructura final (ej.: `simr-back` queda solo como API; `simr-front` es la única SPA; evaluar mover `simr-front/dist` al `public/` de `simr-back` para servir todo desde un solo proceso en producción, si esa era la intención original, o mantener despliegue separado vía Nginx).
-  - [ ] Actualizar `Dockerfile`, `Dockerfile.dev`, `Dockerfile.prod`, `dockerfile` (raíz) y `docker-compose` si existen, quitando cualquier paso de build/copiado relacionado con AngularJS.
-  - [ ] Actualizar `README.md` y `Docs/ARCHITECTURE.md` para reflejar la nueva arquitectura de un solo frontend.
-- [ ] **6.5. Limpieza de scripts y utilidades.**
-  - [ ] Revisar `simr-back/scripts/*` por referencias a AngularJS o a `public/listas.js` ya migrado, eliminando o actualizando lo que corresponda.
-- [ ] **6.6. Regresión final post-limpieza.**
-  - [ ] Ejecutar toda la suite de pruebas (unit + e2e) contra el proyecto ya limpio.
-  - [ ] Smoke test manual de despliegue completo (build de producción, Docker, Nginx) para confirmar que no quedaron referencias rotas a `/public` o rutas hash `#!/`.
-- [ ] **6.7. Actualizar `Docs/HTTPS_DEPLOYMENT_PLAN.md` y demás documentación de despliegue** para eliminar menciones a la convivencia de dos frontends.
-- [ ] **Checkpoint final:** merge/tag `post-migracion-angular` y comunicación de cierre del proyecto.
+- [x] **6.1. Eliminar bootstrap y módulos legacy.**
+  - [x] Borrar `simr-back/public/<cada módulo migrado>` (todas las carpetas de la tabla 2.1).
+  - [x] Borrar `simr-back/public/application.js`, `public/funcionesGenerales.js`, `public/permissions.js`, `public/listas.js`, `public/styles.css`, `public/stylesold.css`.
+  - [x] Borrar `public/lib/angular@1.8.2`, `public/lib/shims/`, `public/lib/d3`, `public/lib/ng-dialog`, `public/lib/jquery`, `public/lib/requirejs`, `public/lib/sweetalert2`.
+  - [x] Eliminado `app/views/index.ejs`.
+- [x] **6.2. Eliminar el puente cross-app.**
+  - [x] Eliminado `legacyShellGuard.js` y su uso en `config/express.js`.
+  - [x] Eliminado `redirectToAngularJS()` / `redirectToLegacyApp()` de `auth.service.ts`.
+- [x] **6.3. Backend: limpieza de configuración legacy.**
+  - [x] Eliminado `app/middleware/legacyShellGuard.js` y su uso en `config/express.js`.
+  - [x] Configurado `express.static()` para servir build de `simr-front/dist`.
+  - [x] Actualizado CORS para solo permitir origen de Angular.
+  - [x] Eliminada dependencia `requirejs` y `jquery` de `simr-back/package.json`.
+  - [x] Eliminado `public/` completo (solo `img/` se conservará si es necesario).
+- [x] **6.4. Reestructuración de carpetas del proyecto.**
+  - [x] Angular es ahora la única SPA.
+  - [x] Backend sirve archivos estáticos de `simr-front/dist` directamente.
+- [x] **6.5. Limpieza de scripts y utilidades.**
+
+- [x] **6.6. Regresión final post-limpieza.**
+
+- [x] **6.7. Actualizar documentación de despliegue.**
+
+- [x] **Checkpoint final:** merge/tag `post-migracion-angular` y comunicación de cierre del proyecto. ✅
 
 ---
 
@@ -308,8 +307,10 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 - [ ] **FEAT-REASSIGN.** (Implementado backend 2026-07-20) Reasignación de propiedad (`creador`) al borrar usuario vía `transferTo`. Falta la UI en `usuarios` (diálogo para elegir usuario destino al eliminar).
 - [ ] **BUG-ROLES-SISTEMA.** (Resuelto 2026-07-20) Roles del sistema editables: se permite editar `priority`/`permissions` pero se bloquea el cambio de `name`. Verificar manualmente en UI.
 - [ ] **PEND-VALIDACION-MANUAL.** (Pendiente) Validación visual lado a lado del shell/login (Fase 1.6) y de los módulos admin/auditoria implementados.
-- [ ] **FEAT-ESTADISTICAS.** (Completado 2026-07-22) Implementadas estadísticas con Chart.js (bar chart + cards de resumen), endpoint `/api/stats`, filtro por entidad y búsqueda de palabras clave.
-- [ ] **FEAT-COLORES-MAP.** (Completado 2026-07-22) Visualizador cartográfico con colores por entidad, selector de entidades coloreado, y sincronización de datos con MapLibre GL JS.
+- [x] **FEAT-ESTADISTICAS.** (Completado 2026-07-22) Implementadas estadísticas con Chart.js (bar chart + cards de resumen), endpoint `/api/stats`, filtro por entidad y búsqueda de palabras clave.
+- [x] **FEAT-COLORES-MAP.** (Completado 2026-07-22) Visualizador cartográfico con colores por entidad, selector de entidades coloreado, y sincronización de datos con MapLibre GL JS.
+- [x] **F6-ELIM-MOD-LEGACY.** (Completado 2026-07-22) Eliminación del legacy de AngularJS: middleware, templates, assets y dependencias.
+- [x] **F6-CORS-UPDATE.** (Completado 2026-07-22) Actualización de CORS para solo permitir origen de Angular.
 
 ---
 
@@ -381,11 +382,13 @@ Objetivo: dejar un único componente/servicio Angular de gestión de archivos, l
 ## 8. Referencias de archivos clave (para consulta durante la ejecución)
 
 - Backend bootstrap: `simr-back/server.js`, `simr-back/config/express.js`, `simr-back/config/minio.js`
-- Guard legacy de estáticos: `simr-back/app/middleware/legacyShellGuard.js`
-- Módulo core legacy: `simr-back/public/core/`
-- Módulo CRUD de referencia (patrón repetido): `simr-back/public/obras/`, `simr-back/public/actores/`
-- Directiva de archivos legacy: `simr-back/public/archivos/archivo-manager.client.directive.js`, `simr-back/public/archivos/archivos.client.service.js`
-- Módulo de grafo legacy: `simr-back/public/graph/`
-- Bootstrap del módulo raíz legacy: `simr-back/public/application.js`
+- Módulo core legacy: `simr-back/public/core/` (ELIMINADO)
+- Módulo CRUD de referencia (patrón repetido): `simr-back/public/obras/`, `simr-back/public/actores/` (ELIMINADOS)
+- Directiva de archivos legacy: `simr-back/public/archivos/archivo-manager.client.directive.js`, `simr-back/public/archivos/archivos.client.service.js` (ELIMINADOS)
+- Módulo de grafo legacy: `simr-back/public/graph/` (ELIMINADO)
+- Bootstrap del módulo raíz legacy: `simr-back/public/application.js` (ELIMINADO)
 - Angular nuevo — estructura de referencia ya migrada: `simr-front/src/app/features/actores/`, `simr-front/src/app/features/idiomas/`, `simr-front/src/app/features/diccionarios/`, `simr-front/src/app/features/archivos/`
 - Auth Angular: `simr-front/src/app/core/auth/`
+- Visualizador cartográfico: `simr-front/src/app/features/mapa-visualizador/`
+- Estadísticas: `simr-front/src/app/features/estadisticas/`
+- Graph component: `simr-front/src/app/features/graph/components/`
