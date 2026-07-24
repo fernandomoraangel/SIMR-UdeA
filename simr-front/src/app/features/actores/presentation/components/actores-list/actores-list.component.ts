@@ -227,6 +227,8 @@ export class ActoresListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly prefsService = inject(UserPreferencesService);
 
+  protected formatActorName = formatActorName;
+
   protected searchTerm = signal('');
   protected savedView = signal<ViewMode | null>(null);
   protected tableFieldKeys = signal<string[]>([]);

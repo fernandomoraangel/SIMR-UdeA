@@ -340,6 +340,8 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
 export class OpacActoresComponent {
   private readonly opacService = inject(OpacService);
 
+  protected formatActorName = formatActorName;
+
   query = '';
   lastQuery = '';
   loading = signal(false);

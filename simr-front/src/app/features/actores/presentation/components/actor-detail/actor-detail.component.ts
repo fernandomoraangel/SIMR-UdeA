@@ -188,6 +188,8 @@ export class ActorDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
 
+  protected formatActorName = formatActorName;
+
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
