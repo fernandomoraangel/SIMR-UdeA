@@ -18,6 +18,7 @@ import { RecursosService } from '../../../data/recursos.service';
 import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
 import { AutocompleteCreateComponent } from '../../../../../shared/autocomplete-create/autocomplete-create.component';
 import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaciones-cartograficas/anotaciones-cartograficas.component';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 import { AnotacionCartograficoTemporal, toDisplayFecha, precisionFecha, formatDate } from '../../../../../shared/anotaciones-cartograficas/models/anotacion-cartografica.interface';
 import {
   VinculoRelacionadoEditorComponent, VinculoRelacionado
@@ -655,6 +656,9 @@ export class RecursoFormComponent implements OnInit {
 
   protected getActorNombre(actor: any): string {
     if (!actor) return '';
+    if (typeof actor === 'object' && (actor.nombres || actor.apellidos || actor.nombreArtistico || actor.nombreReunion)) {
+      return formatActorName(actor);
+    }
     if (typeof actor === 'object' && actor.nombre) return actor.nombre;
     if (typeof actor === 'object' && actor._id) {
       return '(seleccionado)';

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 
 import { OpacService } from '../../../opac.service';
 import { OpacActor } from '../../../opac.models';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 
 @Component({
   selector: 'app-opac-actores',
@@ -49,7 +50,7 @@ import { OpacActor } from '../../../opac.models';
         @for (actor of results(); track actor._id) {
           <div class="opac-card">
             <div class="card-header">
-              <h2 class="card-title">{{ actor.fullName || actor.nombreReunion }}</h2>
+              <h2 class="card-title">{{ formatActorName(actor) }}</h2>
               @if (actor.nombreReunion) {
                 <span class="card-badge">Reunión</span>
               }

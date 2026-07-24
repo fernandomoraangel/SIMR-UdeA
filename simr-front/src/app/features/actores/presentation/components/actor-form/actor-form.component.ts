@@ -1,6 +1,6 @@
 import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -56,23 +56,24 @@ import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archi
         <form [formGroup]="actorForm" (ngSubmit)="onSubmit()">
           <div class="form-section">
             <mat-form-field appearance="outline" class="campo">
-              <mat-label>Nombres *</mat-label>
+              <mat-label>Nombres</mat-label>
               <input matInput formControlName="nombres" placeholder="Ej: Ludwig van" />
-              @if (isFieldInvalid('nombres')) {
-                <mat-error>Los nombres son obligatorios</mat-error>
-              }
             </mat-form-field>
             <mat-form-field appearance="outline" class="campo">
-              <mat-label>Apellidos *</mat-label>
+              <mat-label>Apellidos</mat-label>
               <input matInput formControlName="apellidos" placeholder="Ej: Beethoven" />
-              @if (isFieldInvalid('apellidos')) {
-                <mat-error>Los apellidos son obligatorios</mat-error>
-              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="campo">
+              <mat-label>Nombre artístico</mat-label>
+              <input matInput formControlName="nombreArtistico" placeholder="Ej: El piano de Beethoven" />
             </mat-form-field>
             <mat-form-field appearance="outline" class="campo">
               <mat-label>Nombre de reunión</mat-label>
               <input matInput formControlName="nombreReunion" placeholder="Ej: Beethoven (Ludwig van)" />
             </mat-form-field>
+            @if (actorForm.errors?.['requiredActorName'] && actorForm.touched) {
+              <p class="error-text">Debe ingresar al menos Nombre y Apellido, Nombre artístico o Nombre de reunión.</p>
+            }
           </div>
 
           <app-collapsible-section title="Contenedores (actores asociados)" icon="link" [collapsed]="true">
@@ -222,6 +223,7 @@ import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archi
     .actor-form { padding: 0; border-radius: 14px !important; border-color: var(--mat-sys-outline) !important; overflow: hidden; }
     .form-section { padding: 2rem 2rem 0; display: flex; flex-direction: column; gap: 1rem; }
     .campo { min-width: 0; }
+    .error-text { font-size: 0.82rem; color: var(--simr-sello); margin: -0.5rem 0 0; padding: 0; }
     .alerta { display: flex; align-items: center; gap: 0.75rem; background: #fbeae6; color: var(--simr-sello-osc); border: 1px solid var(--simr-sello); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; }
     .section-content { padding: 0.5rem 0; }
     .inline-editor { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem; margin-bottom: 0.75rem; }
@@ -280,10 +282,11 @@ export class ActorFormComponent implements OnInit {
   protected vinculoEtiquetaControl = this.fb.control<string | null>(null);
 
   actorForm: FormGroup = this.fb.group({
-    nombres: ['', Validators.required],
-    apellidos: ['', Validators.required],
+    nombres: [''],
+    apellidos: [''],
+    nombreArtistico: [''],
     nombreReunion: [''],
-  });
+  }, { validators: this.actorNameValidator });
 
   constructor() {
     effect(() => {
@@ -315,6 +318,7 @@ export class ActorFormComponent implements OnInit {
     this.actorForm.patchValue({
       nombres: actor.nombres || '',
       apellidos: actor.apellidos || '',
+      nombreArtistico: actor.nombreArtistico || '',
       nombreReunion: actor.nombreReunion || '',
     });
     this.contenedorItems = (actor.contenedor || []).map((c: any) => {
@@ -334,6 +338,18 @@ export class ActorFormComponent implements OnInit {
   protected isFieldInvalid(field: string): boolean {
     const control = this.actorForm.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  protected actorNameValidator(group: AbstractControl) {
+    const nombres = group.get('nombres')?.value?.trim();
+    const apellidos = group.get('apellidos')?.value?.trim();
+    const artistico = group.get('nombreArtistico')?.value?.trim();
+    const reunion = group.get('nombreReunion')?.value?.trim();
+
+    if ((nombres && apellidos) || artistico || reunion) {
+      return null;
+    }
+    return { requiredActorName: true };
   }
 
   protected onContenedorChange(items: any[]) {
@@ -399,6 +415,7 @@ export class ActorFormComponent implements OnInit {
     const payload: any = {
       nombres: this.actorForm.value.nombres,
       apellidos: this.actorForm.value.apellidos,
+      nombreArtistico: this.actorForm.value.nombreArtistico || '',
       nombreReunion: this.actorForm.value.nombreReunion || '',
       contenedor: this.contenedorItems.map((c) => ({ id: c._id })),
       anotacionCartograficoTemporal: this.ctItems,

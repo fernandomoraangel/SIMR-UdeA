@@ -13,6 +13,7 @@ import { ProyectosStore } from '../../../state/proyectos.store';
 import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
 import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 
 @Component({
   selector: 'app-proyecto-detail',
@@ -241,7 +242,7 @@ export class ProyectoDetailComponent implements OnInit {
   protected getActorNombre(ref: string): string {
     if (!ref) return '';
     const found = this.actoresCache.find((a) => a._id === ref);
-    return found?.nombre || '(cargando…)';
+    return found ? formatActorName(found) || '(cargando…)' : '(cargando…)';
   }
 
   navigateToEdit(id: string) {

@@ -23,6 +23,7 @@ import { VinculoRelacionadoEditorComponent, VinculoRelacionado } from '../../../
 import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archivo.interface';
 import { Investigador, FechaAsociada } from '../../../domain/proyecto.interface';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 
 const PRECISION_OPTIONS = ['Año', 'Mes', 'Día', 'Hora'];
 const PRECISION_DATE_OPTIONS = ['Año', 'Mes', 'Día'];
@@ -436,7 +437,7 @@ export class ProyectoFormComponent implements OnInit {
   protected getActorNombre(id: string): string {
     if (!id) return '';
     const found = this.actores().find((a: any) => a._id === id);
-    return found?.fullName || (found?.nombres ? found.nombres + ' ' + (found.apellidos || '') : '') || '(cargando…)';
+    return found ? formatActorName(found) || '(cargando…)' : '(cargando…)';
   }
 
   protected addInvestigador() {

@@ -31,8 +31,9 @@ export interface ArchivoAdjunto {
 
 export interface Actor {
   _id: string;
-  nombres: string;
-  apellidos: string;
+  nombres?: string;
+  apellidos?: string;
+  nombreArtistico?: string;
   fullName: string;
   nombreReunion?: string;
   contenedor: ContenedorAsociado[];
@@ -43,4 +44,29 @@ export interface Actor {
   registroOperacion?: any[];
   creador: { _id: string; firstName: string; lastName: string; fullName: string };
   creado: string;
+}
+
+export function formatActorName(actor: any): string {
+  if (!actor) return '';
+  if (typeof actor === 'string') return actor;
+  const nombres = actor.nombres?.trim() || '';
+  const apellidos = actor.apellidos?.trim() || '';
+  const artistico = actor.nombreArtistico?.trim() || '';
+  const reunion = actor.nombreReunion?.trim() || '';
+
+  const nameSurname = [nombres, apellidos].filter(Boolean).join(' ');
+
+  if (nameSurname && artistico) {
+    return `${nameSurname} (${artistico})`;
+  }
+  if (nameSurname) {
+    return nameSurname;
+  }
+  if (artistico) {
+    return artistico;
+  }
+  if (reunion) {
+    return reunion;
+  }
+  return actor.fullName || '';
 }

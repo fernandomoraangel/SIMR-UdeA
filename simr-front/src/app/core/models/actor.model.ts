@@ -35,8 +35,9 @@ export interface DescriptorLibre {
 
 export interface Actor {
   _id?: string;
-  nombres: string;
-  apellidos: string;
+  nombres?: string;
+  apellidos?: string;
+  nombreArtistico?: string;
   nombreReunion?: string;
   contenedor?: ContenedorAsociado[];
   anotacionCartograficoTemporal?: AnotacionCartograficoTemporal[];

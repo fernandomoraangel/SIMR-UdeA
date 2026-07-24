@@ -25,6 +25,7 @@ import {
   MateriaAsociada, MedioAsociado, SistemaAsociado, IdiomaAsociado,
   GeneroFormaAsociado, ProyectoAsociado, VinculoRelacionado, DescriptorLibre, ArchivoAdjunto
 } from '../../../models/obra.interface';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 
 @Component({
   selector: 'app-obra-form',
@@ -745,7 +746,7 @@ export class ObraFormComponent implements OnInit {
   protected getActorNombre(id: string): string {
     if (!id) return '';
     const found = this.allActores().find((a: any) => a._id === id || a.id === id);
-    return found?.fullName || found?.nombre || '(cargando...)';
+    return found ? formatActorName(found) || '(cargando...)' : '(cargando...)';
   }
 
   protected addSistema() {

@@ -56,15 +56,25 @@ var descriptorLibre = new Schema({
 var ActorSchema = new Schema({
   nombres: {
     type: String,
-    required:'El nombre no puede estar en blanco'
+    required: function() {
+      return !this.nombreArtistico && !this.nombreReunion;
+    }
   },
   apellidos: {
     type: String,
-    required:'El campo apellidos no puede estar en blanco'
+    required: function() {
+      return !this.nombreArtistico && !this.nombreReunion;
+    }
+  },
+  nombreArtistico: {
+    type: String,
+    default: "",
+    trim: true,
   },
   nombreReunion: {
     type: String,
     default: "",
+    trim: true,
   },
   contenedor: [contenedorAsociado],
   anotacionCartograficoTemporal: [anotacionCartograficoTemporal],
@@ -84,12 +94,26 @@ var ActorSchema = new Schema({
 
 ActorSchema.virtual("fullName")
   .get(function () {
-    return this.nombres + " " + this.apellidos;
-  })
-  .set(function (fullName) {
-    var splitName = fullName.split("");
-    this.nombres = splitName[0] || "";
-    this.apellidos = splitName[1] || "";
+    const nombres = this.nombres ? this.nombres.trim() : "";
+    const apellidos = this.apellidos ? this.apellidos.trim() : "";
+    const artistico = this.nombreArtistico ? this.nombreArtistico.trim() : "";
+    const reunion = this.nombreReunion ? this.nombreReunion.trim() : "";
+
+    const nameSurname = [nombres, apellidos].filter(Boolean).join(" ");
+
+    if (nameSurname && artistico) {
+      return `${nameSurname} (${artistico})`;
+    }
+    if (nameSurname) {
+      return nameSurname;
+    }
+    if (artistico) {
+      return artistico;
+    }
+    if (reunion) {
+      return reunion;
+    }
+    return "";
   });
 //Configura el 'UserSchema' para usar getters y virtuals cuando se transforme a JSON
 ActorSchema.set("toJSON", {

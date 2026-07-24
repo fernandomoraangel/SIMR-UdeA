@@ -57,6 +57,7 @@ export interface OpacActor {
   _id: string;
   nombres: string;
   apellidos: string;
+  nombreArtistico?: string;
   nombreReunion?: string;
   fullName: string;
   obras: OpacObraResult[];

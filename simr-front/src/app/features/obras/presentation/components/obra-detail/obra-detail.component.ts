@@ -13,6 +13,7 @@ import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-s
 import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
 import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaciones-cartograficas/anotaciones-cartograficas.component';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 
 @Component({
   selector: 'app-obra-detail',
@@ -408,7 +409,7 @@ export class ObraDetailComponent implements OnInit {
   protected getActorNombre(ref: string): string {
     if (!ref) return '';
     const found = this.actoresCache.find((a) => a._id === ref);
-    return found?.fullName || '(cargando...)';
+    return found ? formatActorName(found) || '(cargando...)' : '(cargando...)';
   }
 
   protected getGeneroNombre(ref: string): string {

@@ -11,6 +11,7 @@ import { ActoresStore } from '../../../data/actores.store';
 import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
 import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
+import { formatActorName } from '../../../models/actor.interface';
 
 @Component({
   selector: 'app-actor-detail',
@@ -55,7 +56,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/con
           <div class="ficha-cabecera">
             <div class="titulo">
               <mat-icon>person</mat-icon>
-              <h1>{{ a.fullName || a.nombres + ' ' + a.apellidos }}</h1>
+              <h1>{{ formatActorName(a) }}</h1>
             </div>
             <span class="simr-codigo">ID {{ a._id }}</span>
           </div>
@@ -216,7 +217,7 @@ export class ActorDetailComponent implements OnInit {
   }
 
   confirmDelete(id: string) {
-    const name = this.store.selectedActor()?.fullName || 'este actor';
+    const name = formatActorName(this.store.selectedActor()) || 'este actor';
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { title: 'Eliminar actor', message: `¿Confirma eliminar "${name}"?`, confirmText: 'Eliminar', danger: true },
     });

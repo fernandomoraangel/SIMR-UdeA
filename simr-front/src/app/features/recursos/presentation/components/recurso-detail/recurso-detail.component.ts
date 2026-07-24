@@ -14,6 +14,7 @@ import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-s
 import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { ConfirmDialogComponent } from '../../../../../shared/confirm-dialog/confirm-dialog.component';
 import { AnotacionesCartograficasComponent } from '../../../../../shared/anotaciones-cartograficas/anotaciones-cartograficas.component';
+import { formatActorName } from '../../../../actores/models/actor.interface';
 
 @Component({
   selector: 'app-recurso-detail',
@@ -420,17 +421,17 @@ export class RecursoDetailComponent implements OnInit {
 
   protected getActorNombre(actor: any): string {
     if (!actor) return '';
-    if (typeof actor === 'object' && (actor.nombres || actor.apellidos)) {
-      return [actor.nombres, actor.apellidos].filter(Boolean).join(' ');
+    if (typeof actor === 'object' && (actor.nombres || actor.apellidos || actor.nombreArtistico || actor.nombreReunion)) {
+      return formatActorName(actor);
     }
     if (typeof actor === 'object' && actor.nombre) return actor.nombre;
     if (typeof actor === 'object' && actor._id) {
       const found = this.actoresCache.find((a) => a._id === actor._id);
-      if (found) return [found.nombres, found.apellidos].filter(Boolean).join(' ') || '(cargando…)';
+      if (found) return formatActorName(found) || '(cargando…)';
       return '(cargando…)';
     }
     const found = this.actoresCache.find((a) => a._id === actor);
-    if (found) return [found.nombres, found.apellidos].filter(Boolean).join(' ') || '(cargando…)';
+    if (found) return formatActorName(found) || '(cargando…)';
     return '(cargando…)';
   }
 

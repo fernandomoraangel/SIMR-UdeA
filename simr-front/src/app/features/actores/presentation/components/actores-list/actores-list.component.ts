@@ -14,6 +14,7 @@ import { ViewToggleComponent, ViewMode } from '../../../../../shared/components/
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/data-table/data-table.component';
 import { ColumnSelectorComponent, ColumnOption } from '../../../../../shared/column-selector/column-selector.component';
 import { UserPreferencesService } from '../../../../../core/services/user-preferences.service';
+import { formatActorName } from '../../../models/actor.interface';
 
 const ALL_FIELDS = [
   { key: 'fullName', label: 'Nombre completo', required: true },
@@ -107,7 +108,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
             @for (a of filteredActores(); track a._id) {
               <mat-card class="card" appearance="outlined" (click)="navigateToDetail(a._id)">
                 <mat-card-header>
-                  <mat-card-title>{{ a.fullName || a.nombres + ' ' + a.apellidos }}</mat-card-title>
+                  <mat-card-title>{{ formatActorName(a) }}</mat-card-title>
                   <span class="simr-codigo">ID {{ a._id.slice(-6) }}</span>
                 </mat-card-header>
                 <mat-card-content>
@@ -244,7 +245,7 @@ export class ActoresListComponent implements OnInit {
     const term = this.searchTerm().toLowerCase().trim();
     if (!term) return actores;
     return actores.filter((a) =>
-      (a.fullName || a.nombres + ' ' + a.apellidos).toLowerCase().includes(term)
+      formatActorName(a).toLowerCase().includes(term)
     );
   });
 
@@ -354,7 +355,7 @@ export class ActoresListComponent implements OnInit {
 
   confirmDelete(id: string) {
     const actor = this.store.actores().find((a) => a._id === id);
-    const name = actor?.fullName || actor?.nombres || 'este actor';
+    const name = formatActorName(actor) || 'este actor';
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { title: 'Eliminar actor', message: `¿Confirma eliminar "${name}"?`, confirmText: 'Eliminar', danger: true },
     });
