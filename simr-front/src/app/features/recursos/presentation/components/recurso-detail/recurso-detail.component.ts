@@ -420,13 +420,18 @@ export class RecursoDetailComponent implements OnInit {
 
   protected getActorNombre(actor: any): string {
     if (!actor) return '';
+    if (typeof actor === 'object' && (actor.nombres || actor.apellidos)) {
+      return [actor.nombres, actor.apellidos].filter(Boolean).join(' ');
+    }
     if (typeof actor === 'object' && actor.nombre) return actor.nombre;
     if (typeof actor === 'object' && actor._id) {
       const found = this.actoresCache.find((a) => a._id === actor._id);
-      return found?.nombre || '(cargando…)';
+      if (found) return [found.nombres, found.apellidos].filter(Boolean).join(' ') || '(cargando…)';
+      return '(cargando…)';
     }
     const found = this.actoresCache.find((a) => a._id === actor);
-    return found?.nombre || '(cargando…)';
+    if (found) return [found.nombres, found.apellidos].filter(Boolean).join(' ') || '(cargando…)';
+    return '(cargando…)';
   }
 
   protected navigateToRecurso(id: string) {

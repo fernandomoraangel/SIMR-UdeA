@@ -131,6 +131,7 @@ exports.recursoByID = async (req, res, next, id) => {
   try {
     const recurso = await Recurso.findById(id)
       .populate("creador", "firstName lastName fullName")
+      .populate("mencionResponsabilidad.actor", "nombres apellidos")
       .exec();
     if (!recurso) return next(new Error("Fallo al cargar la recurso" + id));
     // Si la recurso es encontrada, usar el objeto 'request' para pasarla al sgte middleware
