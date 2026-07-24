@@ -145,7 +145,7 @@ exports.searchActores = async (req, res) => {
 
     const obraIds = obras.map(o => o._id);
     const recursos = await Recurso.find({ 'obrasRelacionadas.id': { $in: obraIds } })
-      .select('titulo')
+      .select('titulo obrasRelacionadas')
       .limit(200)
       .lean();
 
