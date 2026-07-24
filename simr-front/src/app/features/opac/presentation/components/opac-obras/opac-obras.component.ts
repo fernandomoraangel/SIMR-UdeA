@@ -49,7 +49,9 @@ import { OpacObra } from '../../../opac.models';
         @for (obra of results(); track obra._id) {
           <div class="opac-card">
             <div class="card-header">
-              <h2 class="card-title">{{ obra.titulo }}</h2>
+              <a class="card-title entity-link" [routerLink]="'/obras/' + obra._id">
+                <mat-icon class="ej-link-icon title-link-icon">link</mat-icon>{{ obra.titulo }}
+              </a>
               @if (obra.tipo) {
                 <span class="card-badge">{{ obra.tipo }}</span>
               }
@@ -79,13 +81,17 @@ import { OpacObra } from '../../../opac.models';
               @if (obra.generosFormas?.length) {
                 <div class="meta-section">
                   <span class="meta-label">Géneros:</span>
-                  <span class="meta-value">{{ joinNames(obra.generosFormas) }}</span>
+                  @for (g of obra.generosFormas; track g.id || g._id) {
+                    <a class="entity-link" [routerLink]="'/generos/' + (g.id || g._id)">{{ g.nombre }}</a>
+                  }
                 </div>
               }
               @if (obra.materias?.length) {
                 <div class="meta-section">
                   <span class="meta-label">Materias:</span>
-                  <span class="meta-value">{{ joinNames(obra.materias) }}</span>
+                  @for (m of obra.materias; track m.id || m._id) {
+                    <a class="entity-link" [routerLink]="'/materias/' + (m.id || m._id)">{{ m.nombre }}</a>
+                  }
                 </div>
               }
             </div>
@@ -162,7 +168,8 @@ import { OpacObra } from '../../../opac.models';
       padding: 1.5rem; border: 1px solid var(--mat-sys-outline);
     }
     .card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
-    .card-title { margin: 0; font-size: 1.15rem; color: var(--simr-tinta); }
+    .card-title { margin: 0; font-size: 1.15rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+    .title-link-icon { font-size: 14px; width: 14px; height: 14px; }
     .card-badge {
       font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
       background: var(--simr-cobre); color: white; padding: 0.15rem 0.5rem;
@@ -234,7 +241,4 @@ export class OpacObrasComponent {
     });
   }
 
-  joinNames(items: { nombre?: string }[]): string {
-    return items.map(i => i.nombre).filter(n => !!n).join(', ');
-  }
 }

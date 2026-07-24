@@ -6,12 +6,14 @@ export interface OpacActorRef {
 }
 
 export interface OpacGeneroRef {
-  _id: string;
+  _id?: string;
+  id?: string;
   nombre: string;
 }
 
 export interface OpacMateriaRef {
-  _id: string;
+  _id?: string;
+  id?: string;
   nombre: string;
 }
 
