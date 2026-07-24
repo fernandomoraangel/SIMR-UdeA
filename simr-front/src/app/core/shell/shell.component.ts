@@ -33,18 +33,6 @@ export class ShellComponent implements OnInit {
   // Migrados → ruta real; no migrados → /no-implementado/:modulo.
   grupos: MenuGroup[] = [
     {
-      label: 'Catalogación',
-      items: [
-        { label: 'Obras', ruta: '/obras' },
-        { label: 'Actores', ruta: '/actores' },
-        { label: 'Recursos', ruta: '/recursos' },
-        { label: 'Ejemplares', ruta: '/ejemplares' },
-        { label: 'Proyectos', ruta: '/proyectos' },
-        { label: 'Fondos documentales', ruta: '/fondos' },
-        { label: 'Colecciones', ruta: '/colecciones' },
-      ],
-    },
-    {
       label: 'Catálogo público',
       items: [
         { label: 'Búsqueda general', ruta: '/search' },
@@ -55,6 +43,18 @@ export class ShellComponent implements OnInit {
         { label: 'Roles', ruta: '/opac/roles' },
         { label: 'Instrumentos', ruta: '/opac/instrumentos' },
         { label: 'Géneros', ruta: '/opac/generos' },
+      ],
+    },
+    {
+      label: 'Catalogación',
+      items: [
+        { label: 'Obras', ruta: '/obras' },
+        { label: 'Actores', ruta: '/actores' },
+        { label: 'Recursos', ruta: '/recursos' },
+        { label: 'Ejemplares', ruta: '/ejemplares' },
+        { label: 'Proyectos', ruta: '/proyectos' },
+        { label: 'Fondos documentales', ruta: '/fondos' },
+        { label: 'Colecciones', ruta: '/colecciones' },
       ],
     },
     {

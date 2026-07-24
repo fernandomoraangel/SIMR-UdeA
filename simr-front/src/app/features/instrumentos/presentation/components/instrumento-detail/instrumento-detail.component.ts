@@ -143,50 +143,55 @@ import { HsClassificationService } from '../../../../../shared/hs-classification
           }
 
           @if (m.vinculoRelacionado && m.vinculoRelacionado.length > 0) {
-            <app-collapsible-section title="Vínculos relacionados" icon="link">
+            <app-collapsible-section title="Vínculos relacionados" icon="language">
               <div class="kv-list">
                 @for (v of m.vinculoRelacionado; track $index) {
                   <div class="kv-item">
                     <span class="kv-key">{{ v.etiqueta }}</span>
-                    <a class="kv-value" [href]="v.url" target="_blank" rel="noopener">{{ v.url }}</a>
+                    <a class="kv-value kv-link" [href]="v.url" target="_blank" rel="noopener">{{ v.url }}</a>
                   </div>
                 }
               </div>
             </app-collapsible-section>
           }
 
-          <app-collapsible-section title="Archivos" icon="attach_file">
+          <app-collapsible-section title="Archivos adjuntos" icon="attachment" [collapsed]="true">
             <app-archivo-manager
               [documentId]="m._id"
               collection="instrumentos"
             />
           </app-collapsible-section>
 
-          @if (m.creador) {
-            <div class="creador-info">
-              <mat-icon>person</mat-icon>
-              <span>
-                Creado por <strong>{{ getCreatorName(m.creador) }}</strong>
-                el {{ m.creado | date:'dd/MM/yyyy' }}
-              </span>
+          <section class="seccion">
+            <h3><mat-icon>person</mat-icon> Información del creador</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Nombre completo</label>
+                <span>{{ getCreatorName(m.creador) }}</span>
+              </div>
+              <div class="info-item">
+                <label>Fecha de creación</label>
+                <span>{{ m.creado | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
             </div>
-          }
+          </section>
         </mat-card>
       }
     </div>
   `,
   styles: [`
-    .detail-container { max-width: 800px; margin: 2rem auto; padding: 0 2rem; }
+    .detail-container { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
     .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
     .volver { color: var(--simr-musgo); }
     .header-actions { display: flex; gap: 0.75rem; }
-    .cargando { display: flex; align-items: center; gap: 1rem; justify-content: center; padding: 4rem 0; color: var(--simr-tinta-2); }
-    .alerta { display: flex; align-items: center; gap: 0.75rem; background: #fbeae6; color: var(--simr-sello-osc); border: 1px solid var(--simr-sello); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; }
-    .ficha { padding: 0; border-radius: 14px !important; border-color: var(--mat-sys-outline) !important; overflow: hidden; }
-    .ficha-cabecera { padding: 2rem 2rem 1rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
-    .ficha-cabecera .titulo { display: flex; align-items: center; gap: 0.75rem; }
-    .ficha-cabecera .titulo h1 { margin: 0; font-family: var(--simr-display); font-weight: 600; font-size: 1.35rem; }
-    .ficha-cabecera .titulo mat-icon { font-size: 28px; width: 28px; height: 28px; color: var(--simr-cobre); }
+    .cargando { display: flex; align-items: center; gap: 1rem; justify-content: center; padding: 3rem; color: var(--simr-tinta-2); }
+    .alerta { display: flex; align-items: center; gap: 0.75rem; background: #fbeae6; color: var(--simr-sello-osc); border: 1px solid var(--simr-sello); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+    .ficha { border-radius: 14px !important; border-color: var(--mat-sys-outline) !important; overflow: hidden; }
+    .ficha-cabecera { background: var(--simr-tinta); color: var(--simr-hueso); padding: 1.75rem 2rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .titulo { display: flex; align-items: center; gap: 0.75rem; }
+    .titulo mat-icon { font-size: 2rem; width: 2rem; height: 2rem; color: var(--simr-cobre); }
+    .titulo h1 { margin: 0; font-family: var(--simr-display); font-weight: 600; font-size: 2rem; color: var(--simr-hueso); }
+    .ficha-cabecera .simr-codigo { color: rgba(251,249,244,0.7); }
     .hs-with-popup { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; position: relative; cursor: help; }
     .hs-code { font-family: 'IBM Plex Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--simr-musgo); }
     .hs-name { font-size: 0.9rem; color: var(--simr-tinta-2); }
@@ -201,12 +206,18 @@ import { HsClassificationService } from '../../../../../shared/hs-classification
     .chips-wrapper { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0; }
     .detalle-chip { background: var(--simr-hueso); border: 1px solid var(--mat-sys-outline); border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.82rem; color: var(--simr-tinta-2); }
     .kv-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .kv-item { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-bottom: 1px solid var(--mat-sys-outline); }
-    .kv-item:last-child { border-bottom: none; }
-    .kv-key { font-weight: 600; font-size: 0.88rem; color: var(--simr-tinta); }
-    .kv-value { font-size: 0.88rem; color: var(--simr-tinta-2); word-break: break-all; }
-    .creador-info { display: flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; border-top: 1px solid var(--mat-sys-outline); font-size: 0.82rem; color: var(--simr-tinta-2); }
-    .creador-info mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    .kv-item { display: flex; align-items: center; gap: 0.75rem; background: var(--simr-papel); border: 1px solid var(--mat-sys-outline); border-radius: 8px; padding: 0.6rem 0.75rem; }
+    .kv-key { font-weight: 600; font-size: 0.85rem; color: var(--simr-tinta); min-width: 120px; padding: 0.15rem 0.5rem; background: var(--simr-hueso); border-radius: 4px; text-align: center; }
+    .kv-value { flex: 1; font-size: 0.9rem; color: var(--simr-tinta-2); }
+    .kv-link { color: var(--simr-musgo); text-decoration: none; }
+    .kv-link:hover { text-decoration: underline; color: var(--simr-cobre); }
+    .seccion { padding: 1.5rem 2rem; border-top: 1px solid var(--mat-sys-outline); }
+    .seccion h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem; font-family: var(--simr-body); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--simr-sello); }
+    .seccion h3 mat-icon { font-size: 20px; width: 20px; height: 20px; color: var(--simr-sello); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+    .info-item { background: var(--simr-papel); padding: 1rem 1.25rem; border-radius: 10px; border-left: 3px solid var(--simr-cobre); }
+    .info-item label { display: block; font-weight: 600; color: var(--simr-tinta-2); font-size: 0.8rem; margin-bottom: 0.25rem; }
+    .info-item span { color: var(--simr-tinta); font-size: 1rem; }
   `],
 })
 export class InstrumentoDetailComponent implements OnInit {

@@ -107,7 +107,15 @@ const PRECISION_DATE_OPTIONS = ['Año', 'Mes', 'Día'];
                 </mat-form-field>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
                   <mat-label>Rol</mat-label>
-                  <input matInput [formControl]="rolControl" placeholder="Ej: Investigador principal" />
+                  <input matInput [matAutocomplete]="autoRol" [formControl]="rolControl" placeholder="Ej: Investigador principal" />
+                  <mat-autocomplete #autoRol="matAutocomplete">
+                    @for (r of filteredRoles(); track r) {
+                      <mat-option [value]="r">{{ r }}</mat-option>
+                    }
+                    @if (filteredRoles().length === 0 && rolControl.value?.trim()) {
+                      <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                    }
+                  </mat-autocomplete>
                 </mat-form-field>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-fecha">
                   <mat-label>Activo desde</mat-label>
@@ -318,6 +326,7 @@ export class ProyectoFormComponent implements OnInit {
   protected estados = signal<string[]>([]);
   protected filteredEstados = signal<string[]>([]);
   protected filteredActores = signal<any[]>([]);
+  protected filteredRoles = signal<string[]>([]);
   protected documentId = signal<string>('');
 
   protected actorControl = this.fb.control<any>(null);
@@ -353,6 +362,14 @@ export class ProyectoFormComponent implements OnInit {
           )
         );
       }
+    });
+
+    this.rolControl.valueChanges.subscribe((val) => {
+      const term = (val || '').toLowerCase().trim();
+      const roles = [...new Set(this.investigadoresItems.map((i) => i.rol).filter(Boolean))] as string[];
+      this.filteredRoles.set(
+        term ? roles.filter((r) => r.toLowerCase().includes(term)) : roles
+      );
     });
 
     this.proyectoForm.get('estado')?.valueChanges.subscribe((val) => {
