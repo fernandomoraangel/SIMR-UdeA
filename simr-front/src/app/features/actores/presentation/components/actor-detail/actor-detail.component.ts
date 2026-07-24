@@ -202,6 +202,9 @@ export class ActorDetailComponent implements OnInit {
 
   protected getContenedorName(c: any): string {
     if (!c) return '';
+    if (typeof c.id === 'object' && (c.id?.nombres || c.id?.nombreArtistico || c.id?.nombreReunion)) {
+      return formatActorName(c.id);
+    }
     if (typeof c.id === 'object' && c.id?.fullName) return c.id.fullName;
     if (typeof c.id === 'string') return c.id;
     return '(referencia)';

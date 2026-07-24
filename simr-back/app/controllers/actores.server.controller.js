@@ -54,6 +54,7 @@ exports.list = async (req, res) => {
     const actores = await Actor.find()
       .sort("-created")
       .populate("creador", "firstName lastName fullName")
+      .populate("contenedor.id", "nombres apellidos nombreArtistico nombreReunion")
       .exec();
     res.json(actores);
   } catch (err) {
@@ -76,6 +77,7 @@ exports.update = async (req, res) => {
   // Actualiza los campos
   actor.nombres = req.body.nombres;
   actor.apellidos = req.body.apellidos;
+  actor.nombreArtistico = req.body.nombreArtistico;
   actor.nombreReunion = req.body.nombreReunion;
   actor.contenedor = req.body.contenedor;
   actor.anotacionCartograficoTemporal = req.body.anotacionCartograficoTemporal;
@@ -115,6 +117,7 @@ exports.actorByID = async (req, res, next, id) => {
   try {
     const actor = await Actor.findById(id)
       .populate("creador", "firstName lastName fullName")
+      .populate("contenedor.id", "nombres apellidos nombreArtistico nombreReunion")
       .exec();
     if (!actor) return next(new Error("Fallo al cargar el actor" + id));
     // Si la materia es encontrada, usar el objeto 'request' para pasarla al sgte middleware
