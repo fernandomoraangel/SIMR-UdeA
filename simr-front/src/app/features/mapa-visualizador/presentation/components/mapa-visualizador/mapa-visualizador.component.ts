@@ -140,12 +140,17 @@ export class MapaVisualizadorComponent implements OnInit {
       return this.http.get<any[]>(`${environment.apiUrl}/${backendKey}`).pipe(
         map(items => items
           .filter(i => i.anotacionCartograficoTemporal && i.anotacionCartograficoTemporal.length > 0)
-          .flatMap(i => i.anotacionCartograficoTemporal.map((a: any) => ({
-            ...a, 
-            entidadNombre: i.titulo || i.nombre || i.fullName || 'Sin nombre',
-            entidadKey: e.key,
-            color: entityColor
-          })))
+          .flatMap(i => i.anotacionCartograficoTemporal.map((a: any) => {
+            let nombre = i.titulo || i.nombre || i.fullName || '';
+            if (!nombre && i.nombres) nombre = `${i.nombres || ''} ${i.apellidos || ''}`.trim();
+            return {
+              ...a,
+              entidadNombre: nombre || 'Sin nombre',
+              entidadKey: e.key,
+              entidadLabel: e.label,
+              color: entityColor,
+            };
+          }))
         ),
         catchError(() => of([]))
       );

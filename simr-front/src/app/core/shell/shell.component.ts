@@ -63,6 +63,7 @@ export class ShellComponent implements OnInit {
       items: [
         { label: 'Grafo de base de datos', ruta: '/graph' },
         { label: 'Mapa visualizador', ruta: '/mapa-visualizador' },
+        { label: 'Línea de tiempo', ruta: '/linea-tiempo' },
         { label: 'Estadísticas', ruta: '/estadisticas' },
       ],
     },

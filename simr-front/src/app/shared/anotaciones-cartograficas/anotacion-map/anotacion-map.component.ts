@@ -16,6 +16,9 @@ import { AnotacionCartograficoTemporal, toDisplayFecha, formatDate } from '../mo
 
 interface AnotacionWithColor extends AnotacionCartograficoTemporal {
   color?: string;
+  entidadKey?: string;
+  entidadLabel?: string;
+  entidadNombre?: string;
 }
 
 const MEDELLIN: [number, number] = [-75.5658, 6.2476];
@@ -185,7 +188,7 @@ export class AnotacionMapComponent implements OnDestroy {
       const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
 
       this.popup?.remove();
-      const props = feature.properties as Partial<AnotacionCartograficoTemporal>;
+      const props = feature.properties as AnotacionWithColor;
       this.popup = new maplibregl.Popup({
         maxWidth: '340px',
         closeButton: true,
@@ -259,17 +262,22 @@ export class AnotacionMapComponent implements OnDestroy {
     }
   }
 
-  private buildPopup(a: Partial<AnotacionCartograficoTemporal>): string {
+  private buildPopup(a: AnotacionWithColor): string {
     const esc = (s: string) =>
       s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const rows: string[] = [];
 
-    if (a.evento) {
-      rows.push(`<div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1rem;color:#1f2a24;border-bottom:1px solid #cdbfa6;padding-bottom:5px;margin-bottom:7px;letter-spacing:-0.01em">${esc(a.evento)}</div>`);
+    const tipoEntidad = a.entidadLabel || a.entidadKey;
+    if (tipoEntidad) {
+      rows.push(`<div style="font-size:0.6rem;color:#8f9080;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1px">${esc(tipoEntidad)}</div>`);
     }
 
-    if (a.entidadNombre) { // Added this to show which entity
-       rows.push(`<div style="margin-bottom:4px;font-size:0.7rem;font-weight:600;color:#c8772e;text-transform:uppercase">${esc(a.entidadNombre)}</div>`);
+    if (a.entidadNombre) {
+      rows.push(`<div style="font-size:0.9rem;font-weight:600;color:#2f3d35;margin-bottom:6px">${esc(a.entidadNombre)}</div>`);
+    }
+
+    if (a.evento) {
+      rows.push(`<div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1rem;color:#1f2a24;border-bottom:1px solid #cdbfa6;padding-bottom:5px;margin-bottom:7px;letter-spacing:-0.01em">${esc(a.evento)}</div>`);
     }
 
     if (a.lugar) {

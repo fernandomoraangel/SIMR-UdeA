@@ -86,6 +86,12 @@ import {
           [class.tl-dot--punctual]="!isRange(event)"
         ></div>
         <div class="tl-info">
+          @if (getEntidadLabel(event); as entLabel) {
+            <span class="tl-info__ent-tipo">{{ entLabel }}</span>
+          }
+          @if (getEntidadNombre(event); as entNom) {
+            <span class="tl-info__ent-nombre">{{ entNom }}</span>
+          }
           @if (getEvento(event); as ev) {
             <span class="tl-info__evento">{{ ev }}</span>
           }
@@ -163,6 +169,14 @@ import {
     .tl-info {
       display: flex; flex-direction: column; gap: 0.1rem;
       min-width: 0;
+    }
+    .tl-info__ent-tipo {
+      font-size: 0.6rem; color: #8f9080; text-transform: uppercase;
+      letter-spacing: 0.08em; line-height: 1.2;
+    }
+    .tl-info__ent-nombre {
+      font-size: 0.82rem; font-weight: 600; color: #2f3d35;
+      line-height: 1.3; margin-bottom: 1px;
     }
     .tl-info__evento {
       font-size: 0.78rem; font-weight: 600; color: var(--simr-tinta);
@@ -267,6 +281,16 @@ export class AnotacionTimelineComponent {
   protected isRange(item: NgxTimelineItem): boolean {
     const a = this.findAnotacion(item);
     return !!(a?.fechaInicio && a?.fechaFin);
+  }
+
+  protected getEntidadLabel(item: NgxTimelineItem): string {
+    const a: any = this.findAnotacion(item);
+    return a?.entidadLabel || a?.entidadKey || '';
+  }
+
+  protected getEntidadNombre(item: NgxTimelineItem): string {
+    const a: any = this.findAnotacion(item);
+    return a?.entidadNombre || '';
   }
 
   protected getEvento(item: NgxTimelineItem): string {

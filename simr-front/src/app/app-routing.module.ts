@@ -155,6 +155,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'linea-tiempo',
+    loadChildren: () =>
+      import('./features/linea-tiempo/linea-tiempo.routes').then(
+        (r) => r.LINEA_TIEMPO_ROUTES
+      ),
+  },
+  {
     path: 'estadisticas-uso',
     loadChildren: () =>
       import('./features/estadisticas-uso/estadisticas-uso.routes').then(
