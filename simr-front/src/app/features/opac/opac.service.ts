@@ -32,4 +32,8 @@ export class OpacService {
   searchByGenero(q: string): Observable<OpacResponse<OpacGeneroResult>> {
     return this.http.get<OpacResponse<OpacGeneroResult>>(`${this.API}/generos`, { params: { q } });
   }
+
+  searchMulti(params: Record<string, string>): Observable<{ results: OpacObra[]; filters: Record<string, string> }> {
+    return this.http.get<{ results: OpacObra[]; filters: Record<string, string> }>(`${this.API}/multi`, { params });
+  }
 }

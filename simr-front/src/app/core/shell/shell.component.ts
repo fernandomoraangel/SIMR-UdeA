@@ -47,6 +47,8 @@ export class ShellComponent implements OnInit {
     {
       label: 'Catálogo público',
       items: [
+        { label: 'Búsqueda general', ruta: '/search' },
+        { label: 'Búsqueda avanzada', ruta: '/opac/multi' },
         { label: 'Obras', ruta: '/opac/obras' },
         { label: 'Actores', ruta: '/opac/actores' },
         { label: 'Fondos y Colecciones', ruta: '/opac/fondos' },
@@ -81,7 +83,6 @@ export class ShellComponent implements OnInit {
     {
       label: 'Utilidades',
       items: [
-        { label: 'Búsqueda general', ruta: '/search' },
         { label: 'Nube de archivos', ruta: '/nube-archivos' },
         { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
         { label: 'Soporte técnico', ruta: '/soporte' },

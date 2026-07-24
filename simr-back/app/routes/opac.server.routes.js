@@ -7,4 +7,5 @@ module.exports = function (app) {
   app.get('/api/opac/roles', opac.searchByRole);
   app.get('/api/opac/instrumentos', opac.searchByInstrumento);
   app.get('/api/opac/generos', opac.searchByGenero);
+  app.get('/api/opac/multi', opac.searchMulti);
 };

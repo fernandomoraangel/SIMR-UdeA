@@ -9,6 +9,8 @@ const Proyecto = mongoose.model('Proyecto');
 const Instrumento = mongoose.model('Instrumento');
 const Medio = mongoose.model('Medio');
 const Genero = mongoose.model('Genero');
+const Materia = mongoose.model('Materia');
+const Sistema = mongoose.model('Sistema');
 
 const getErrorMessage = (err) => {
   let message = '';
@@ -521,6 +523,199 @@ exports.searchByGenero = async (req, res) => {
     res.json({ results });
   } catch (err) {
     console.error('OPAC generos search error:', err);
+    res.status(500).json({ message: getErrorMessage(err), results: [] });
+  }
+};
+
+exports.searchMulti = async (req, res) => {
+  try {
+    const filters = {
+      obra: (req.query.obra || '').trim(),
+      actor: (req.query.actor || '').trim(),
+      rol: (req.query.rol || '').trim(),
+      genero: (req.query.genero || '').trim(),
+      recurso: (req.query.recurso || '').trim(),
+      instrumento: (req.query.instrumento || '').trim(),
+      materia: (req.query.materia || '').trim(),
+      medio: (req.query.medio || '').trim(),
+      sistema: (req.query.sistema || '').trim(),
+    };
+
+    const hasAnyFilter = Object.values(filters).some(v => v);
+    if (!hasAnyFilter) return res.json({ results: [] });
+
+    const sets = [];
+
+    if (filters.obra) {
+      const obras = await Obra.find({ titulo: { $regex: filters.obra, $options: 'i' } })
+        .select('_id').limit(200).lean();
+      sets.push(new Set(obras.map(o => o._id.toString())));
+    }
+
+    if (filters.actor || filters.rol) {
+      const actorQuery = {};
+      if (filters.actor) {
+        actorQuery.$or = [
+          { nombres: { $regex: filters.actor, $options: 'i' } },
+          { apellidos: { $regex: filters.actor, $options: 'i' } },
+          { nombreReunion: { $regex: filters.actor, $options: 'i' } },
+        ];
+      }
+      const actores = await Actor.find(actorQuery).select('_id').limit(100).lean();
+      if (actores.length) {
+        const actorIds = actores.map(a => a._id);
+        const obraQuery = { 'actores.id': { $in: actorIds } };
+        if (filters.rol) obraQuery['actores.rol'] = { $regex: filters.rol, $options: 'i' };
+        const obras = await Obra.find(obraQuery).select('_id').limit(200).lean();
+        sets.push(new Set(obras.map(o => o._id.toString())));
+      } else {
+        sets.push(new Set());
+      }
+    }
+
+    if (filters.genero) {
+      const generos = await Genero.find({ nombre: { $regex: filters.genero, $options: 'i' } })
+        .select('_id').limit(100).lean();
+      if (generos.length) {
+        const generoIds = generos.map(g => g._id);
+        const obras = await Obra.find({ 'generosFormas.id': { $in: generoIds } })
+          .select('_id').limit(200).lean();
+        sets.push(new Set(obras.map(o => o._id.toString())));
+      } else {
+        sets.push(new Set());
+      }
+    }
+
+    if (filters.recurso) {
+      const recursos = await Recurso.find({ titulo: { $regex: filters.recurso, $options: 'i' } })
+        .select('obrasRelacionadas').limit(200).lean();
+      const ids = new Set();
+      for (const r of recursos) {
+        for (const or of (r.obrasRelacionadas || [])) {
+          if (or.id) ids.add(or.id.toString());
+        }
+      }
+      sets.push(ids);
+    }
+
+    if (filters.instrumento) {
+      const instrumentos = await Instrumento.find({ nombre: { $regex: filters.instrumento, $options: 'i' } })
+        .select('_id').limit(100).lean();
+      if (instrumentos.length) {
+        const instIds = instrumentos.map(i => i._id);
+        const medios = await Medio.find({ 'instrumentos.instrumento': { $in: instIds } })
+          .select('_id').limit(100).lean();
+        const medioIds = medios.map(m => m._id);
+        const obras = await Obra.find({ 'mediosSonoros.id': { $in: medioIds } })
+          .select('_id').limit(200).lean();
+        sets.push(new Set(obras.map(o => o._id.toString())));
+      } else {
+        sets.push(new Set());
+      }
+    }
+
+    if (filters.materia) {
+      const materias = await Materia.find({ nombre: { $regex: filters.materia, $options: 'i' } })
+        .select('_id').limit(100).lean();
+      if (materias.length) {
+        const materiaIds = materias.map(m => m._id);
+        const obras = await Obra.find({ 'materias.id': { $in: materiaIds } })
+          .select('_id').limit(200).lean();
+        sets.push(new Set(obras.map(o => o._id.toString())));
+      } else {
+        sets.push(new Set());
+      }
+    }
+
+    if (filters.medio) {
+      const medios = await Medio.find({ nombre: { $regex: filters.medio, $options: 'i' } })
+        .select('_id').limit(100).lean();
+      if (medios.length) {
+        const medioIds = medios.map(m => m._id);
+        const obras = await Obra.find({ 'mediosSonoros.id': { $in: medioIds } })
+          .select('_id').limit(200).lean();
+        sets.push(new Set(obras.map(o => o._id.toString())));
+      } else {
+        sets.push(new Set());
+      }
+    }
+
+    if (filters.sistema) {
+      const sistemas = await Sistema.find({ nombre: { $regex: filters.sistema, $options: 'i' } })
+        .select('_id').limit(100).lean();
+      if (sistemas.length) {
+        const sistemaIds = sistemas.map(s => s._id);
+        const obras = await Obra.find({ 'sistemasSonoros.id': { $in: sistemaIds } })
+          .select('_id').limit(200).lean();
+        sets.push(new Set(obras.map(o => o._id.toString())));
+      } else {
+        sets.push(new Set());
+      }
+    }
+
+    if (!sets.length) return res.json({ results: [] });
+    let intersection = sets[0];
+    for (let i = 1; i < sets.length; i++) {
+      intersection = new Set([...intersection].filter(id => sets[i].has(id)));
+    }
+    if (!intersection.size) return res.json({ results: [] });
+
+    const obras = await Obra.find({ _id: { $in: [...intersection] } })
+      .select('titulo actores generosFormas materias')
+      .populate('actores.id', 'nombres apellidos')
+      .populate('generosFormas.id', 'nombre')
+      .populate('materias.id', 'nombre')
+      .limit(100)
+      .lean();
+
+    const obraIds = obras.map(o => o._id);
+    const recursos = await Recurso.find({ 'obrasRelacionadas.id': { $in: obraIds } })
+      .select('titulo obrasRelacionadas')
+      .limit(200)
+      .lean();
+    const recursoIds = recursos.map(r => r._id);
+    const ejemplares = await Ejemplar.find({ recurso: { $in: recursoIds } })
+      .select('numeroEjemplar disponibilidad recurso')
+      .limit(500)
+      .lean();
+
+    const ejPorRecurso = {};
+    for (const ej of ejemplares) {
+      const rid = ej.recurso?.toString();
+      if (rid) {
+        if (!ejPorRecurso[rid]) ejPorRecurso[rid] = [];
+        ejPorRecurso[rid].push({ _id: ej._id, numeroEjemplar: ej.numeroEjemplar, disponibilidad: ej.disponibilidad });
+      }
+    }
+
+    const results = obras.map(o => ({
+      _id: o._id,
+      titulo: o.titulo,
+      actores: (o.actores || []).map(a => ({
+        id: a.id?._id || a.id,
+        nombre: a.id?.nombres && a.id?.apellidos ? `${a.id.nombres} ${a.id.apellidos}` : '',
+        rol: a.rol,
+      })),
+      generosFormas: (o.generosFormas || []).map(g => ({
+        id: g.id?._id || g.id,
+        nombre: g.id?.nombre || '',
+      })),
+      materias: (o.materias || []).map(m => ({
+        id: m.id?._id || m.id,
+        nombre: m.id?.nombre || '',
+      })),
+      recursos: recursos.filter(r =>
+        r.obrasRelacionadas?.some(or => or.id?.toString() === o._id.toString())
+      ).map(r => ({
+        _id: r._id,
+        titulo: r.titulo,
+        ejemplares: ejPorRecurso[r._id.toString()] || [],
+      })),
+    }));
+
+    res.json({ results, filters });
+  } catch (err) {
+    console.error('OPAC multi search error:', err);
     res.status(500).json({ message: getErrorMessage(err), results: [] });
   }
 };

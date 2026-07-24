@@ -27,6 +27,11 @@ export const OPAC_ROUTES: Routes = [
       import('./presentation/components/opac-instrumentos/opac-instrumentos.component').then(c => c.OpacInstrumentosComponent),
   },
   {
+    path: 'multi',
+    loadComponent: () =>
+      import('./presentation/components/opac-multi/opac-multi.component').then(c => c.OpacMultiComponent),
+  },
+  {
     path: 'generos',
     loadComponent: () =>
       import('./presentation/components/opac-generos/opac-generos.component').then(c => c.OpacGenerosComponent),
