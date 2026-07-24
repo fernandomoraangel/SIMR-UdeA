@@ -305,6 +305,8 @@ module.exports = function () {
 require("../app/routes/nube-archivo.server.routes.js")(app);
 // Tickets de soporte
 require("../app/routes/support-ticket.server.routes.js")(app);
+// Catálogo público OPAC (sin autenticación)
+require("../app/routes/opac.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");
