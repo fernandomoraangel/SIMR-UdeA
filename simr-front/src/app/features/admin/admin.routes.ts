@@ -5,6 +5,7 @@ import { UsuariosFormComponent } from './users/usuarios-form.component';
 import { RolesListaComponent } from './roles/roles-lista.component';
 import { RolesFormComponent } from './roles/roles-form.component';
 import { AuditoriaListaComponent } from './auditoria/auditoria-lista.component';
+import { NubeConfigListaComponent } from './nube-config/nube-config-lista.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -46,6 +47,12 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'auditoria',
     component: AuditoriaListaComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['admin'] },
+  },
+  {
+    path: 'nube-config',
+    component: NubeConfigListaComponent,
     canActivate: [RoleGuard],
     data: { roles: ['admin'] },
   },

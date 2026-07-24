@@ -38,6 +38,8 @@ const PermissionSchema = new Schema(
         "diccionario",
         "archivo",
         "search",
+        "nube",
+        "soporte",
       ],
     },
     actions: {
@@ -319,8 +321,22 @@ RoleSchema.statics.createSystemRoles = async function () {
           ]),
         },
         {
-          resource: "search",
-          actions: new Map([["read", "any"]]),
+          resource: "nube",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "any"],
+            ["update", "any"],
+            ["delete", "any"],
+          ]),
+        },
+        {
+          resource: "soporte",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "any"],
+            ["update", "any"],
+            ["delete", "any"],
+          ]),
         },
         {
           resource: "search",
@@ -399,6 +415,17 @@ RoleSchema.statics.createSystemRoles = async function () {
           actions: new Map([["read", "any"]]),
         },
         {
+          resource: "nube",
+          actions: new Map([["read", "any"]]),
+        },
+        {
+          resource: "soporte",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "own"],
+          ]),
+        },
+        {
           resource: "search",
           actions: new Map([["read", "any"]]),
         },
@@ -450,6 +477,23 @@ RoleSchema.statics.createSystemRoles = async function () {
             ["read", "any"],
             ["update", "own"],
             ["delete", "own"],
+          ]),
+        },
+        {
+          resource: "nube",
+          actions: new Map([
+            ["create", "own"],
+            ["read", "any"],
+            ["update", "own"],
+            ["delete", "own"],
+          ]),
+        },
+        {
+          resource: "soporte",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "own"],
+            ["update", "own"],
           ]),
         },
         {
@@ -591,6 +635,23 @@ RoleSchema.statics.createSystemRoles = async function () {
             ["create", "any"],
             ["read", "any"],
             ["update", "any"],
+          ]),
+        },
+        {
+          resource: "nube",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "any"],
+            ["update", "any"],
+          ]),
+        },
+        {
+          resource: "soporte",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "any"],
+            ["update", "any"],
+            ["delete", "any"],
           ]),
         },
         {
@@ -743,6 +804,24 @@ RoleSchema.statics.createSystemRoles = async function () {
         },
         {
           resource: "archivo",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "any"],
+            ["update", "any"],
+            ["delete", "any"],
+          ]),
+        },
+        {
+          resource: "nube",
+          actions: new Map([
+            ["create", "any"],
+            ["read", "any"],
+            ["update", "any"],
+            ["delete", "any"],
+          ]),
+        },
+        {
+          resource: "soporte",
           actions: new Map([
             ["create", "any"],
             ["read", "any"],

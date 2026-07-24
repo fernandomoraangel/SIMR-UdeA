@@ -169,6 +169,11 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'soporte',
+    loadChildren: () =>
+      import('./features/soporte/soporte.routes').then((r) => r.SOPORTE_ROUTES),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then((r) => r.ADMIN_ROUTES),

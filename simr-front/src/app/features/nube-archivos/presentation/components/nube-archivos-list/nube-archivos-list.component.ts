@@ -153,7 +153,7 @@ export class NubeArchivosListComponent implements OnInit {
   }
 
   confirmDelete(file: NubeArchivo): void {
-    this.sweetAlert.showConfirm('Eliminar archivo', `¿Eliminar "${file.originalName}"?`).then((confirmed) => {
+    this.sweetAlert.confirm('Eliminar archivo', `¿Eliminar "${file.originalName}"?`).then((confirmed: any) => {
       if (confirmed) {
         this.service.remove(file._id).subscribe({
           next: () => {

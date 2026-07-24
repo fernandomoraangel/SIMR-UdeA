@@ -38,7 +38,7 @@
       @for (t of availableTags; track t.tag) {
         <button
           mat-chip
-          [selected]="selectedTags.includes(t.tag)"
+          [class.selected]="selectedTags.includes(t.tag)"
           (click)="toggleTag(t.tag)"
         >
           {{ t.tag }}

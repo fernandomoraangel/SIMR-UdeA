@@ -16,17 +16,17 @@ function setMinio(client, bucket) {
   _bucketName = bucket;
 }
 
-// Middleware: requiere rol investigador, bibliotecólogo o admin
-async function requireNubeRole(req, res, next) {
-  if (!req.user) {
-    return errorResponse(res, 'Autenticación requerida', 401);
+const DEFAULT_MAX_SIZE = 200 * 1024 * 1024; // 200 MB
+
+// Obtener tamaño máximo desde el documento de configuración
+async function getMaxFileSize() {
+  try {
+    const NubeConfig = mongoose.model('NubeConfig');
+    const config = await NubeConfig.findOne({});
+    return config?.maxFileSize || DEFAULT_MAX_SIZE;
+  } catch {
+    return DEFAULT_MAX_SIZE;
   }
-  await req.user.populate('roles', 'name');
-  const roleNames = (req.user.roles || []).map(r => r.name);
-  if (!roleNames.some(r => ['admin', 'investigador', 'bibliotecologo'].includes(r))) {
-    return errorResponse(res, 'Permisos insuficientes. Se requiere rol investigador, bibliotecólogo o administrador.', 403);
-  }
-  next();
 }
 
 //* LIST - Listar archivos con filtro opcional por tags
@@ -70,6 +70,13 @@ async function upload(req, res) {
   try {
     if (!req.file) {
       return errorResponse(res, 'No se ha enviado ningún archivo', 400);
+    }
+
+    // Validar contra tamaño máximo configurable
+    const maxSize = await getMaxFileSize();
+    if (req.file.size > maxSize) {
+      const maxMB = Math.round(maxSize / (1024 * 1024));
+      return errorResponse(res, `El archivo excede el tamaño máximo permitido de ${maxMB} MB`, 413);
     }
 
     const { originalname, mimetype, size, buffer } = req.file;
@@ -202,9 +209,54 @@ async function allTags(req, res) {
   }
 }
 
+//* GET CONFIG
+async function getConfig(req, res) {
+  try {
+    const NubeConfig = mongoose.model('NubeConfig');
+    let config = await NubeConfig.findOne({});
+    if (!config) {
+      config = await NubeConfig.create({ maxFileSize: DEFAULT_MAX_SIZE });
+    }
+    successResponse(res, 'Configuración obtenida', 200, {
+      maxFileSize: config.maxFileSize,
+      maxFileSizeMB: Math.round(config.maxFileSize / (1024 * 1024)),
+    });
+  } catch (err) {
+    console.error('[nube-archivo] getConfig error:', err);
+    errorResponse(res, 'Error al obtener configuración', 500);
+  }
+}
+
+//* UPDATE CONFIG
+async function updateConfig(req, res) {
+  try {
+    const { maxFileSizeMB } = req.body;
+    if (!maxFileSizeMB || typeof maxFileSizeMB !== 'number' || maxFileSizeMB < 1) {
+      return errorResponse(res, 'maxFileSizeMB debe ser un número mayor a 0', 400);
+    }
+
+    const maxFileSize = maxFileSizeMB * 1024 * 1024;
+    const NubeConfig = mongoose.model('NubeConfig');
+    let config = await NubeConfig.findOne({});
+    if (!config) {
+      config = await NubeConfig.create({ maxFileSize });
+    } else {
+      config.maxFileSize = maxFileSize;
+      await config.save();
+    }
+
+    successResponse(res, 'Configuración actualizada', 200, {
+      maxFileSize: config.maxFileSize,
+      maxFileSizeMB: Math.round(config.maxFileSize / (1024 * 1024)),
+    });
+  } catch (err) {
+    console.error('[nube-archivo] updateConfig error:', err);
+    errorResponse(res, 'Error al actualizar configuración', 500);
+  }
+}
+
 module.exports = {
   setMinio,
-  requireNubeRole,
   list,
   upload,
   read,
@@ -212,4 +264,6 @@ module.exports = {
   updateTags,
   remove,
   allTags,
+  getConfig,
+  updateConfig,
 };

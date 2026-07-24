@@ -33,7 +33,7 @@ export class NubeArchivosUploadComponent {
   errorMessage = '';
   dragOver = false;
 
-  private readonly dialogRef = inject(MatDialogRef<NubeArchivosUploadComponent>);
+  readonly dialogRef = inject(MatDialogRef<NubeArchivosUploadComponent>);
   private readonly sweetAlert = inject(SweetAlertService);
 
   constructor(public service: NubeArchivosService) {}
@@ -77,7 +77,7 @@ export class NubeArchivosUploadComponent {
     this.service.upload(this.selectedFile, this.tags).subscribe({
       next: () => {
         this.isLoading = false;
-        this.sweetAlert.showSuccess('Archivo subido', `${this.selectedFile!.name} se subió correctamente`);
+        this.sweetAlert.success('Archivo subido', `${this.selectedFile!.name} se subió correctamente`);
         this.dialogRef.close(true);
       },
       error: (err) => {

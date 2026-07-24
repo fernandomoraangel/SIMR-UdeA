@@ -72,6 +72,7 @@ export class ShellComponent implements OnInit {
         { label: 'Búsqueda general', ruta: '/search' },
         { label: 'Nube de archivos', ruta: '/nube-archivos' },
         { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
+        { label: 'Soporte técnico', ruta: '/soporte' },
       ],
     },
   ];
@@ -82,6 +83,7 @@ export class ShellComponent implements OnInit {
         { label: 'Gestión de Usuarios', ruta: '/admin/usuarios' },
         { label: 'Gestión de Roles', ruta: '/admin/roles' },
         { label: 'Auditoría del Sistema', ruta: '/admin/auditoria' },
+        { label: 'Nube de Archivos', ruta: '/admin/nube-config' },
       ],
   };
 

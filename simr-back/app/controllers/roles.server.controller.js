@@ -540,6 +540,16 @@ exports.getResources = async (req, res) => {
         name: "Archivos",
         description: "Gestión de archivos adjuntos",
       },
+      {
+        key: "nube",
+        name: "Nube de Archivos",
+        description: "Almacenamiento en nube (MinIO)",
+      },
+      {
+        key: "soporte",
+        name: "Soporte Técnico",
+        description: "Tickets de soporte y solicitudes de ayuda",
+      },
     ];
 
     successResponse(
