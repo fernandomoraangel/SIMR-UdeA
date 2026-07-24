@@ -63,17 +63,23 @@ import { OpacActor } from '../../../opac.models';
                       <span class="sub-card-title">{{ obra.titulo }}</span>
                     </div>
                     @if (obra.recursos?.length) {
-                      <div class="sub-section">
-                        <span class="sub-label">Recursos:</span>
+                      <div class="recursos-section">
                         @for (rec of obra.recursos; track rec._id) {
-                          <div class="rec-item">
-                            <span>{{ rec.titulo }}</span>
+                          <div class="rec-card">
+                            <span class="rec-card-title">{{ rec.titulo }}</span>
                             @if (rec.ejemplares?.length) {
-                              <div class="ej-list">
+                              <div class="ejemplares-list">
                                 @for (ej of rec.ejemplares; track ej._id) {
-                                  <span class="ej-chip">{{ ej.numeroEjemplar || '—' }}</span>
+                                  <div class="ej-item">
+                                    <span class="ej-num">{{ ej.numeroEjemplar || '—' }}</span>
+                                    <span class="ej-status" [class.disp]="ej.disponibilidad === 'Disponible'">{{ ej.disponibilidad || '—' }}</span>
+                                    @if (ej.fondo) { <span class="ej-loc">{{ ej.fondo.nombre }}</span> }
+                                    @if (ej.coleccion) { <span class="ej-loc">{{ ej.coleccion.nombre }}</span> }
+                                  </div>
                                 }
                               </div>
+                            } @else {
+                              <span class="no-data">Sin ejemplares</span>
                             }
                           </div>
                         }
@@ -162,17 +168,20 @@ import { OpacActor } from '../../../opac.models';
     .sub-card-header { margin-bottom: 0.35rem; }
     .sub-card-title { font-size: 0.85rem; font-weight: 600; color: var(--simr-tinta); }
 
-    .sub-section { margin-top: 0.4rem; }
-    .sub-label { font-size: 0.72rem; font-weight: 600; color: var(--simr-tinta-2); display: block; margin-bottom: 0.25rem; }
-    .rec-item {
-      font-size: 0.78rem; color: var(--simr-tinta); padding: 0.15rem 0;
-      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+    .recursos-section { margin-top: 0.4rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .rec-card {
+      background: var(--simr-papel); border-radius: 8px; padding: 0.5rem 0.75rem;
     }
-    .ej-list { display: flex; gap: 0.25rem; }
-    .ej-chip {
-      font-size: 0.65rem; font-family: 'IBM Plex Mono', monospace;
-      background: var(--simr-papel); padding: 0.05rem 0.35rem; border-radius: 3px;
+    .rec-card-title { font-size: 0.8rem; font-weight: 600; color: var(--simr-tinta); display: block; margin-bottom: 0.3rem; }
+    .ejemplares-list { display: flex; flex-direction: column; gap: 0.15rem; }
+    .ej-item {
+      display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; padding: 0.1rem 0;
     }
+    .ej-num { font-family: 'IBM Plex Mono', monospace; color: var(--simr-tinta-2); min-width: 90px; }
+    .ej-status { font-weight: 600; color: var(--simr-tinta-2); }
+    .ej-status.disp { color: #2e7d32; }
+    .ej-loc { color: var(--simr-tinta-2); }
+    .ej-loc::before { content: '·'; margin: 0 0.35rem; }
 
     .proyectos-list { display: flex; flex-direction: column; gap: 0.5rem; }
     .proyecto-item {
