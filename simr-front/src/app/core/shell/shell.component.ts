@@ -47,9 +47,9 @@ export class ShellComponent implements OnInit {
     {
       label: 'Catálogo público',
       items: [
-        { label: 'Buscador de obras', ruta: '/opac/obras' },
-        { label: 'Búsqueda por actores', ruta: '/opac/actores' },
-        { label: 'Fondos y colecciones', ruta: '/opac/fondos' },
+        { label: 'Obras', ruta: '/opac/obras' },
+        { label: 'Actores', ruta: '/opac/actores' },
+        { label: 'Fondos y Colecciones', ruta: '/opac/fondos' },
       ],
     },
     {
