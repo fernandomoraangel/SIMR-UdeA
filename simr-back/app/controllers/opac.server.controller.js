@@ -177,6 +177,10 @@ exports.searchActores = async (req, res) => {
           a.id?._id?.toString() === actor._id.toString() || a.id?.toString() === actor._id.toString()
         ))
         .map(o => {
+          const actorEntry = (o.actores || []).find(a =>
+            a.id?._id?.toString() === actor._id.toString() || a.id?.toString() === actor._id.toString()
+          );
+          const rol = actorEntry?.rol || '';
           const recursosDeObra = recursos.filter(r =>
             o._id && r.obrasRelacionadas?.some(or =>
               or.id?.toString() === o._id.toString()
@@ -185,9 +189,11 @@ exports.searchActores = async (req, res) => {
           return {
             _id: o._id,
             titulo: o.titulo,
+            rol,
             recursos: recursosDeObra.map(r => ({
               _id: r._id,
               titulo: r.titulo,
+              rol,
               ejemplares: ejemplaresPorRecurso[r._id.toString()] || [],
             })),
           };

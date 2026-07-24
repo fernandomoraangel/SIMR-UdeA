@@ -62,12 +62,20 @@ import { OpacActor } from '../../../opac.models';
                   <div class="sub-card">
                     <div class="sub-card-header">
                       <a class="sub-card-title entity-link" [routerLink]="'/obras/' + obra._id">{{ obra.titulo }}</a>
+                      @if (obra.rol) {
+                        <span class="card-rol">{{ obra.rol }}</span>
+                      }
                     </div>
                     @if (obra.recursos?.length) {
                       <div class="recursos-section">
                         @for (rec of obra.recursos; track rec._id) {
                           <div class="rec-card">
-                            <a class="rec-card-title entity-link" [routerLink]="'/recursos/' + rec._id">{{ rec.titulo }}</a>
+                            <div class="rec-card-header">
+                              <a class="rec-card-title entity-link" [routerLink]="'/recursos/' + rec._id">{{ rec.titulo }}</a>
+                              @if (rec.rol) {
+                                <span class="card-rol">{{ rec.rol }}</span>
+                              }
+                            </div>
                             @if (rec.ejemplares?.length) {
                               <div class="ejemplares-list">
                                 @for (ej of rec.ejemplares; track ej._id) {
@@ -105,7 +113,9 @@ import { OpacActor } from '../../../opac.models';
                 <div class="proyectos-list">
                   @for (p of actor.proyectos; track p._id) {
                     <div class="proyecto-item">
-                      <span class="proyecto-nombre">{{ p.nombre }}</span>
+                      <a class="proyecto-nombre entity-link" [routerLink]="'/proyectos/' + p._id">
+                        <mat-icon class="ej-link-icon">link</mat-icon>{{ p.nombre }}
+                      </a>
                       @if (p.descripcion) {
                         <span class="proyecto-desc">{{ p.descripcion }}</span>
                       }
@@ -168,14 +178,20 @@ import { OpacActor } from '../../../opac.models';
       background: var(--simr-hueso); border-radius: 10px;
       padding: 0.75rem 1rem; margin-bottom: 0.5rem;
     }
-    .sub-card-header { margin-bottom: 0.35rem; }
+    .sub-card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
     .sub-card-title { font-size: 0.85rem; font-weight: 600; color: var(--simr-tinta); }
+    .card-rol {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      background: #9b8c6e; color: white; padding: 0.1rem 0.45rem; border-radius: 3px;
+      white-space: nowrap;
+    }
 
     .recursos-section { margin-top: 0.4rem; display: flex; flex-direction: column; gap: 0.4rem; }
     .rec-card {
       background: var(--simr-papel); border-radius: 8px; padding: 0.5rem 0.75rem;
     }
-    .rec-card-title { font-size: 0.8rem; font-weight: 600; color: var(--simr-tinta); display: block; margin-bottom: 0.3rem; }
+    .rec-card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+    .rec-card-title { font-size: 0.8rem; font-weight: 600; color: var(--simr-tinta); }
     .ejemplares-list { display: flex; flex-direction: column; gap: 0.15rem; }
     .ej-item {
       display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; padding: 0.1rem 0;

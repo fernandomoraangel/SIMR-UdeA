@@ -100,7 +100,9 @@ import { OpacFondoColeccion } from '../../../opac.models';
                 @for (rec of item.recursos; track rec._id) {
                   <div class="sub-card">
                     <div class="sub-card-header">
-                      <a class="sub-card-title entity-link" [routerLink]="'/recursos/' + rec._id">{{ rec.titulo }}</a>
+                      <a class="sub-card-title entity-link" [routerLink]="'/recursos/' + rec._id">
+                      <mat-icon class="ej-link-icon">link</mat-icon>{{ rec.titulo }}
+                    </a>
                     </div>
 
                     @if (rec.ejemplares?.length) {

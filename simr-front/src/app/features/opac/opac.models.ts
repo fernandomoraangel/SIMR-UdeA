@@ -28,6 +28,7 @@ export interface OpacRecurso {
   _id: string;
   titulo: string;
   ejemplares: OpacEjemplar[];
+  rol?: string;
 }
 
 export interface OpacObra {
@@ -45,6 +46,7 @@ export interface OpacObra {
 export interface OpacObraResult {
   _id: string;
   titulo: string;
+  rol?: string;
   actores: OpacActorRef[];
   recursos: OpacRecurso[];
 }
