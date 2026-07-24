@@ -16,5 +16,20 @@ export const OPAC_ROUTES: Routes = [
     loadComponent: () =>
       import('./presentation/components/opac-fondos/opac-fondos.component').then(c => c.OpacFondosComponent),
   },
+  {
+    path: 'roles',
+    loadComponent: () =>
+      import('./presentation/components/opac-roles/opac-roles.component').then(c => c.OpacRolesComponent),
+  },
+  {
+    path: 'instrumentos',
+    loadComponent: () =>
+      import('./presentation/components/opac-instrumentos/opac-instrumentos.component').then(c => c.OpacInstrumentosComponent),
+  },
+  {
+    path: 'generos',
+    loadComponent: () =>
+      import('./presentation/components/opac-generos/opac-generos.component').then(c => c.OpacGenerosComponent),
+  },
   { path: '**', redirectTo: 'obras' },
 ];

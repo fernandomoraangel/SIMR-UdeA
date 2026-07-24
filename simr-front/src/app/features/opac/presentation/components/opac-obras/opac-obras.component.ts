@@ -74,7 +74,12 @@ import { OpacObra } from '../../../opac.models';
                 <div class="meta-section">
                   <span class="meta-label">Actores:</span>
                   @for (a of obra.actores; track a.id || a._id) {
-                    <a class="entity-link" [routerLink]="'/actores/' + (a.id || a._id)">{{ a.nombre || '—' }}</a>
+                    <span class="actor-with-role">
+                      <a class="entity-link" [routerLink]="'/actores/' + (a.id || a._id)">{{ a.nombre || '—' }}</a>
+                      @if (a.rol) {
+                        <span class="role-badge">{{ a.rol }}</span>
+                      }
+                    </span>
                   }
                 </div>
               }
@@ -211,6 +216,11 @@ import { OpacObra } from '../../../opac.models';
     .ej-link-icon { font-size: 12px; width: 12px; height: 12px; vertical-align: middle; margin-right: 2px; }
     .entity-link { color: var(--simr-cobre); text-decoration: none; cursor: pointer; }
     .entity-link:hover { text-decoration: underline; }
+    .actor-with-role { display: inline-flex; align-items: center; gap: 0.35rem; margin-right: 0.5rem; white-space: nowrap; }
+    .role-badge {
+      font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      background: #9b8c6e; color: white; padding: 0.08rem 0.4rem; border-radius: 3px;
+    }
 
     .no-data { font-size: 0.75rem; color: var(--simr-tinta-2); font-style: italic; }
   `],

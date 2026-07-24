@@ -75,6 +75,43 @@ export interface OpacFondoColeccion {
   actores: OpacActorRef[];
 }
 
+export interface OpacRolActor {
+  _id: string;
+  nombre: string;
+  obras: { _id: string; titulo: string }[];
+}
+
+export interface OpacRolResult {
+  rol: string;
+  actores: OpacRolActor[];
+}
+
+export interface OpacRoleResponse {
+  results: OpacRolResult[];
+  totalActores: number;
+}
+
+export interface OpacInstrumentoResult {
+  _id: string;
+  nombre: string;
+  clasificacion?: string;
+  obras: {
+    _id: string;
+    titulo: string;
+    recursos: OpacRecurso[];
+  }[];
+}
+
+export interface OpacGeneroResult {
+  _id: string;
+  nombre: string;
+  obras: {
+    _id: string;
+    titulo: string;
+    recursos: OpacRecurso[];
+  }[];
+}
+
 export interface OpacResponse<T> {
   results: T[];
 }

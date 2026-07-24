@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
-import { OpacObra, OpacActor, OpacFondoColeccion, OpacResponse } from './opac.models';
+import { OpacObra, OpacActor, OpacFondoColeccion, OpacRoleResponse, OpacInstrumentoResult, OpacGeneroResult, OpacResponse } from './opac.models';
 
 @Injectable({ providedIn: 'root' })
 export class OpacService {
@@ -19,5 +19,17 @@ export class OpacService {
 
   searchFondosColecciones(q: string): Observable<OpacResponse<OpacFondoColeccion>> {
     return this.http.get<OpacResponse<OpacFondoColeccion>>(`${this.API}/fondos`, { params: { q } });
+  }
+
+  searchByRole(q: string): Observable<OpacRoleResponse> {
+    return this.http.get<OpacRoleResponse>(`${this.API}/roles`, { params: { q } });
+  }
+
+  searchByInstrumento(q: string): Observable<OpacResponse<OpacInstrumentoResult>> {
+    return this.http.get<OpacResponse<OpacInstrumentoResult>>(`${this.API}/instrumentos`, { params: { q } });
+  }
+
+  searchByGenero(q: string): Observable<OpacResponse<OpacGeneroResult>> {
+    return this.http.get<OpacResponse<OpacGeneroResult>>(`${this.API}/generos`, { params: { q } });
   }
 }

@@ -50,6 +50,9 @@ export class ShellComponent implements OnInit {
         { label: 'Obras', ruta: '/opac/obras' },
         { label: 'Actores', ruta: '/opac/actores' },
         { label: 'Fondos y Colecciones', ruta: '/opac/fondos' },
+        { label: 'Roles', ruta: '/opac/roles' },
+        { label: 'Instrumentos', ruta: '/opac/instrumentos' },
+        { label: 'Géneros', ruta: '/opac/generos' },
       ],
     },
     {
