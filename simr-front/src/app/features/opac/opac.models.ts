@@ -1,6 +1,7 @@
 export interface OpacActorRef {
-  _id: string;
-  nombre: string;
+  _id?: string;
+  id?: string;
+  nombre?: string;
   rol?: string;
 }
 

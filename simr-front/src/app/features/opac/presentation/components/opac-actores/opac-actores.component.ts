@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 import { OpacService } from '../../../opac.service';
 import { OpacActor } from '../../../opac.models';
@@ -9,12 +10,12 @@ import { OpacActor } from '../../../opac.models';
 @Component({
   selector: 'app-opac-actores',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, RouterLink],
   template: `
     <div class="opac-page">
       <header class="opac-header">
-        <h1>Buscador de autores</h1>
-        <p class="opac-subtitle">Catálogo público — consulta autores, sus obras, recursos, ejemplares y proyectos</p>
+        <h1>Buscador de actores</h1>
+        <p class="opac-subtitle">Catálogo público — consulta actores, sus obras, recursos, ejemplares y proyectos</p>
       </header>
 
       <div class="opac-search">
@@ -60,18 +61,20 @@ import { OpacActor } from '../../../opac.models';
                 @for (obra of actor.obras; track obra._id) {
                   <div class="sub-card">
                     <div class="sub-card-header">
-                      <span class="sub-card-title">{{ obra.titulo }}</span>
+                      <a class="sub-card-title entity-link" [routerLink]="'/obras/' + obra._id">{{ obra.titulo }}</a>
                     </div>
                     @if (obra.recursos?.length) {
                       <div class="recursos-section">
                         @for (rec of obra.recursos; track rec._id) {
                           <div class="rec-card">
-                            <span class="rec-card-title">{{ rec.titulo }}</span>
+                            <a class="rec-card-title entity-link" [routerLink]="'/recursos/' + rec._id">{{ rec.titulo }}</a>
                             @if (rec.ejemplares?.length) {
                               <div class="ejemplares-list">
                                 @for (ej of rec.ejemplares; track ej._id) {
                                   <div class="ej-item">
-                                    <span class="ej-num">{{ ej.numeroEjemplar || '—' }}</span>
+                                    <a class="ej-num entity-link" [routerLink]="'/ejemplares/' + ej._id">
+                                      <mat-icon class="ej-link-icon">link</mat-icon>{{ ej.numeroEjemplar || '—' }}
+                                    </a>
                                     <span class="ej-status" [class.disp]="ej.disponibilidad === 'Disponible'">{{ ej.disponibilidad || '—' }}</span>
                                     @if (ej.fondo) { <span class="ej-loc">{{ ej.fondo.nombre }}</span> }
                                     @if (ej.coleccion) { <span class="ej-loc">{{ ej.coleccion.nombre }}</span> }
@@ -182,6 +185,9 @@ import { OpacActor } from '../../../opac.models';
     .ej-status.disp { color: #2e7d32; }
     .ej-loc { color: var(--simr-tinta-2); }
     .ej-loc::before { content: '·'; margin: 0 0.35rem; }
+    .ej-link-icon { font-size: 12px; width: 12px; height: 12px; vertical-align: middle; margin-right: 2px; }
+    .entity-link { color: var(--simr-cobre); text-decoration: none; cursor: pointer; }
+    .entity-link:hover { text-decoration: underline; }
 
     .proyectos-list { display: flex; flex-direction: column; gap: 0.5rem; }
     .proyecto-item {

@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 import { OpacService } from '../../../opac.service';
 import { OpacFondoColeccion } from '../../../opac.models';
@@ -9,7 +10,7 @@ import { OpacFondoColeccion } from '../../../opac.models';
 @Component({
   selector: 'app-opac-fondos',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, RouterLink],
   template: `
     <div class="opac-page">
       <header class="opac-header">
@@ -44,8 +45,26 @@ import { OpacFondoColeccion } from '../../../opac.models';
         </div>
       }
 
+      @if (results().length) {
+        <div class="opac-filters">
+          <div class="filter-row">
+            <input
+              type="text"
+              [(ngModel)]="filterText"
+              placeholder="Filtrar resultados…"
+              class="filter-input"
+            />
+            <select [(ngModel)]="filterType" class="filter-select">
+              <option value="">Todos</option>
+              <option value="Fondo">Solo fondos</option>
+              <option value="Colección">Solo colecciones</option>
+            </select>
+          </div>
+        </div>
+      }
+
       <div class="opac-results">
-        @for (item of results(); track item._id) {
+        @for (item of filteredResults(); track item._id) {
           <div class="opac-card">
             <div class="card-header">
               <span class="entity-badge" [class.fondo]="item.tipoEntidad === 'Fondo'" [class.coleccion]="item.tipoEntidad === 'Colección'">{{ item.tipoEntidad }}</span>
@@ -81,14 +100,16 @@ import { OpacFondoColeccion } from '../../../opac.models';
                 @for (rec of item.recursos; track rec._id) {
                   <div class="sub-card">
                     <div class="sub-card-header">
-                      <span class="sub-card-title">{{ rec.titulo }}</span>
+                      <a class="sub-card-title entity-link" [routerLink]="'/recursos/' + rec._id">{{ rec.titulo }}</a>
                     </div>
 
                     @if (rec.ejemplares?.length) {
                       <div class="ej-list">
                         @for (ej of rec.ejemplares; track ej._id) {
                           <div class="ej-item">
-                            <span class="ej-num">{{ ej.numeroEjemplar || '—' }}</span>
+                            <a class="ej-num entity-link" [routerLink]="'/ejemplares/' + ej._id">
+                              <mat-icon class="ej-link-icon">link</mat-icon>{{ ej.numeroEjemplar || '—' }}
+                            </a>
                             <span class="ej-status" [class.disp]="ej.disponibilidad === 'Disponible'">{{ ej.disponibilidad || '—' }}</span>
                           </div>
                         }
@@ -100,7 +121,7 @@ import { OpacFondoColeccion } from '../../../opac.models';
                         <span class="sub-label">Obras:</span>
                         @for (o of rec.obras; track o._id) {
                           <div class="obra-item">
-                            <span class="obra-titulo">{{ o.titulo }}</span>
+                            <a class="obra-titulo entity-link" [routerLink]="'/obras/' + o._id">{{ o.titulo }}</a>
                             @if (o.actores?.length) {
                               <span class="obra-actores">{{ joinActorNames(o.actores) }}</span>
                             }
@@ -191,6 +212,21 @@ import { OpacFondoColeccion } from '../../../opac.models';
     .ej-num { font-family: 'IBM Plex Mono', monospace; color: var(--simr-tinta-2); min-width: 90px; }
     .ej-status { font-weight: 600; color: var(--simr-tinta-2); }
     .ej-status.disp { color: #2e7d32; }
+    .ej-link-icon { font-size: 12px; width: 12px; height: 12px; vertical-align: middle; margin-right: 2px; }
+    .entity-link { color: var(--simr-cobre); text-decoration: none; cursor: pointer; }
+    .entity-link:hover { text-decoration: underline; }
+
+    .opac-filters { margin-bottom: 1rem; }
+    .filter-row { display: flex; gap: 0.5rem; }
+    .filter-input {
+      flex: 1; padding: 0.5rem 0.75rem; border-radius: 8px;
+      border: 1px solid var(--mat-sys-outline); font-size: 0.85rem;
+    }
+    .filter-select {
+      padding: 0.5rem 0.75rem; border-radius: 8px;
+      border: 1px solid var(--mat-sys-outline); font-size: 0.85rem;
+      background: var(--simr-papel);
+    }
 
     .obras-section { margin-top: 0.4rem; }
     .sub-label { font-size: 0.72rem; font-weight: 600; color: var(--simr-tinta-2); display: block; margin-bottom: 0.25rem; }
@@ -213,6 +249,19 @@ export class OpacFondosComponent {
   error = signal('');
   results = signal<OpacFondoColeccion[]>([]);
   searched = signal(false);
+  filterText = '';
+  filterType = '';
+
+  filteredResults = computed(() => {
+    const list = this.results();
+    const txt = this.filterText.toLowerCase().trim();
+    const type = this.filterType;
+    return list.filter(item => {
+      if (type && item.tipoEntidad !== type) return false;
+      if (txt && !item.nombre.toLowerCase().includes(txt)) return false;
+      return true;
+    });
+  });
 
   search() {
     const q = this.query.trim();
