@@ -39,7 +39,8 @@
     "passport-local": "~1.0.0",
     "range-parser": "^1.2.1",
     "sweetalert2": "^11.22.3",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "xlsx": "^0.18.5"
   },
   "repository": {
     "type": "git",

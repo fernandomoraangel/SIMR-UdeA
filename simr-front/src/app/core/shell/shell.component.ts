@@ -89,6 +89,7 @@ export class ShellComponent implements OnInit {
         { label: 'Nube de archivos', ruta: '/nube-archivos' },
         { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
         { label: 'Soporte técnico', ruta: '/soporte' },
+        { label: 'Importar Excel', ruta: '/admin/importar-excel' },
       ],
     },
   ];
