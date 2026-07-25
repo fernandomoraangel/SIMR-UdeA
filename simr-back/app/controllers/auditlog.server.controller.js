@@ -22,21 +22,67 @@ const errorResponse = (res, message, statusCode = 400, details = null) => {
 };
 
 //* LIST - Listar logs de auditoría con filtros
+function buildSort(sortField, sortDir) {
+  const field = sortField || 'createdAt';
+  const dir = sortDir === 'asc' ? 1 : -1;
+  return { [field]: dir };
+}
+
 exports.list = async (req, res) => {
   try {
-    const { action, userId, roleId, limit = 50, skip = 0 } = req.query;
+    const { action, userId, roleId, targetType, search, dateFrom, dateTo, sortField, sortDir, limit = 50, skip = 0 } = req.query;
 
-    // Construir filtro
-    const filter = {};
-    if (action) filter.action = action;
-    if (userId) filter.$or = [{ performedBy: userId }, { targetUser: userId }];
-    if (roleId) filter.targetRole = roleId;
+    // Construir filtros
+    const filters = [];
+    // Filtro por acción: verbos genéricos usan regex para emparejar compuestos
+    if (action) {
+      if (action === 'create') {
+        filters.push({ action: { $regex: '(created|creada|creado|added|uploaded)$', $options: 'i' } });
+      } else if (action === 'update') {
+        filters.push({ action: { $regex: '(updated|actualizado|modificado|assigned)$', $options: 'i' } });
+      } else if (action === 'delete') {
+        filters.push({ action: { $regex: '(deleted|eliminado)$', $options: 'i' } });
+      } else {
+        filters.push({ action });
+      }
+    }
+    if (targetType) filters.push({ targetType });
+    if (roleId) filters.push({ targetRole: roleId });
+
+    // Filtro por usuario (ejecutor o usuario objetivo)
+    if (userId) {
+      filters.push({ $or: [{ performedBy: userId }, { targetUser: userId }] });
+    }
+
+    // Filtro por rango de fechas
+    const dateFilter = {};
+    if (dateFrom) dateFilter.$gte = new Date(dateFrom);
+    if (dateTo) dateFilter.$lte = new Date(dateTo);
+    if (Object.keys(dateFilter).length > 0) filters.push({ createdAt: dateFilter });
+
+    // Buscar texto completo en todos los campos texto relevantes
+    if (search) {
+      const regex = new RegExp(search, 'i');
+      filters.push({
+        $or: [
+          { action: regex },
+          { targetType: regex },
+          { targetName: regex },
+          { 'performedBy.firstName': regex },
+          { 'performedBy.lastName': regex },
+          { 'targetUser.firstName': regex },
+          { 'targetUser.lastName': regex },
+        ],
+      });
+    }
+
+    const filter = filters.length > 0 ? (filters.length === 1 ? filters[0] : { $and: filters }) : {};
 
     const logs = await AuditLog.find(filter)
       .populate("performedBy", "firstName lastName email")
       .populate("targetUser", "firstName lastName email")
       .populate("targetRole", "name description")
-      .sort({ createdAt: -1 })
+      .sort(buildSort(sortField, sortDir))
       .limit(parseInt(limit))
       .skip(parseInt(skip));
 

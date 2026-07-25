@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -41,7 +42,7 @@ import {
     CommonModule, ReactiveFormsModule,
     MatButtonModule, MatIconModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatProgressSpinnerModule, MatProgressBarModule, MatTooltipModule,
+    MatProgressSpinnerModule, MatProgressBarModule, MatTooltipModule, MatAutocompleteModule,
     CollapsibleSectionComponent,
     AutocompleteCreateComponent,
     AnotacionesCartograficasComponent,
@@ -197,7 +198,15 @@ import {
               </mat-form-field>
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
                 <mat-label>Lugar</mat-label>
-                <input matInput [formControl]="fuenteLugarControl" placeholder="Ej: Bogotá" />
+                <input matInput [matAutocomplete]="autoLugar" [formControl]="fuenteLugarControl" placeholder="Ej: Bogotá" />
+                <mat-autocomplete #autoLugar="matAutocomplete">
+                  @for (l of filteredLugares(); track l) {
+                    <mat-option [value]="l">{{ l }}</mat-option>
+                  }
+                  @if (filteredLugares().length === 0 && fuenteLugarControl.value?.trim()) {
+                    <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                  }
+                </mat-autocomplete>
               </mat-form-field>
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
                 <mat-label>Nombre</mat-label>
@@ -459,6 +468,12 @@ export class RecursoFormComponent implements OnInit {
   protected allRecursos = signal<any[]>([]);
   protected allActores = signal<any[]>([]);
   protected lugares = signal<string[]>([]);
+  protected lugarTerm = signal('');
+  protected filteredLugares = computed(() => {
+    const term = this.lugarTerm().toLowerCase().trim();
+    const all = this.lugares();
+    return term ? all.filter((l) => l.toLowerCase().includes(term)) : all;
+  });
   protected coberturas = signal<string[]>([]);
   protected listaNumeroNormalizado = signal<string[]>([]);
   protected listaRoles = signal<string[]>([]);
@@ -491,6 +506,10 @@ export class RecursoFormComponent implements OnInit {
       if (recurso && this.isEditMode) {
         this.loadRecursoData(recurso);
       }
+    });
+
+    this.fuenteLugarControl.valueChanges.subscribe((val) => {
+      this.lugarTerm.set(val || '');
     });
   }
 

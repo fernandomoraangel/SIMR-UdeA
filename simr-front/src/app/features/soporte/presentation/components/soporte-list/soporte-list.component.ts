@@ -29,8 +29,8 @@ import { SupportTicket, STATUS_LABELS, PRIORITY_LABELS } from '../../../domain/s
     <div class="page">
       <header class="page-head">
         <div>
-          <h1 class="page-title">Soporte T&eacute;cnico</h1>
-          <p class="simr-eyebrow">Tickets de soporte y solicitudes de ayuda</p>
+          <p class="simr-eyebrow">Utilidades</p>
+          <h1 class="page-title">Soporte Técnico</h1>
         </div>
         <button mat-flat-button color="primary" routerLink="/soporte/crear">
           <mat-icon>add</mat-icon> Nuevo ticket
@@ -113,7 +113,6 @@ import { SupportTicket, STATUS_LABELS, PRIORITY_LABELS } from '../../../domain/s
     .page { max-width: 960px; margin: 0 auto; padding: 28px 24px 48px; }
     .page-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
     .page-title { font-family: var(--simr-display); color: var(--simr-tinta); font-size: 1.7rem; margin: 0; }
-    .simr-eyebrow { font-family: var(--simr-body); color: var(--simr-apunte); font-size: 0.88rem; margin: 4px 0 0; }
     .filters-card { margin-bottom: 16px; }
     .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 8px; }
     .filters mat-form-field { min-width: 180px; flex: 1; }

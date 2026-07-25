@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Ejemplar = mongoose.model("Ejemplar");
 
 // Método para el manejo de errores
@@ -37,6 +38,7 @@ exports.create = async (req, res) => {
   try {
     // Intentar salvar la ejemplar
     const savedEjemplar = await ejemplar.save();
+    await logAudit(req, "ejemplar_created", "ejemplar", savedEjemplar._id, savedEjemplar.numeroEjemplar);
     // Enviar una representación JSON de la ejemplar
     res.json(savedEjemplar);
   } catch (err) {
@@ -83,6 +85,7 @@ exports.update = async (req, res) => {
   try {
     // Intenta salvar
     const updatedEjemplar = await ejemplar.save();
+    await logAudit(req, "ejemplar_updated", "ejemplar", updatedEjemplar._id, updatedEjemplar.numeroEjemplar);
     res.json(updatedEjemplar);
   } catch (err) {
     res.status(400).send({
@@ -96,7 +99,7 @@ exports.delete = async (req, res) => {
   // Obtener la ejemplar usando el objeto 'request'
   const ejemplar = req.ejemplar;
   try {
-    // Usar el método model 'deleteOne' para borrar
+    await logAudit(req, "ejemplar_deleted", "ejemplar", ejemplar._id, ejemplar.numeroEjemplar);
     await ejemplar.deleteOne();
     res.json(ejemplar);
   } catch (err) {

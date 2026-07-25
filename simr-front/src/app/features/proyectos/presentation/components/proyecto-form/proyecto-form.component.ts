@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -326,7 +326,13 @@ export class ProyectoFormComponent implements OnInit {
   protected estados = signal<string[]>([]);
   protected filteredEstados = signal<string[]>([]);
   protected filteredActores = signal<any[]>([]);
-  protected filteredRoles = signal<string[]>([]);
+  protected roles = signal<string[]>([]);
+  protected rolTerm = signal('');
+  protected filteredRoles = computed(() => {
+    const term = this.rolTerm().toLowerCase().trim();
+    const allRoles = this.roles();
+    return term ? allRoles.filter((r) => r.toLowerCase().includes(term)) : allRoles;
+  });
   protected documentId = signal<string>('');
 
   protected actorControl = this.fb.control<any>(null);
@@ -365,11 +371,7 @@ export class ProyectoFormComponent implements OnInit {
     });
 
     this.rolControl.valueChanges.subscribe((val) => {
-      const term = (val || '').toLowerCase().trim();
-      const roles = [...new Set(this.investigadoresItems.map((i) => i.rol).filter(Boolean))] as string[];
-      this.filteredRoles.set(
-        term ? roles.filter((r) => r.toLowerCase().includes(term)) : roles
-      );
+      this.rolTerm.set(val || '');
     });
 
     this.proyectoForm.get('estado')?.valueChanges.subscribe((val) => {
@@ -421,6 +423,13 @@ export class ProyectoFormComponent implements OnInit {
         this.estados.set([]);
         this.filteredEstados.set([]);
       },
+    });
+    this.http.get(`${environment.apiUrl}/listas/roles`).subscribe({
+      next: (data: any) => {
+        const list = data?.elementos || data?.data?.elementos || data || [];
+        this.roles.set(Array.isArray(list) ? list : []);
+      },
+      error: () => this.roles.set([]),
     });
   }
 

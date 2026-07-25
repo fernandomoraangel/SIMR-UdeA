@@ -10,6 +10,9 @@ export interface AuditLog {
   performedBy?: { _id: string; firstName?: string; lastName?: string; email?: string };
   targetUser?: { _id: string; firstName?: string; lastName?: string; email?: string };
   targetRole?: { _id: string; name?: string; description?: string };
+  targetType?: string;
+  targetName?: string;
+  targetId?: string;
   details?: any;
   createdAt?: string;
 }
@@ -18,6 +21,12 @@ export interface AuditQuery {
   action?: string;
   userId?: string;
   roleId?: string;
+  targetType?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  sortField?: string;
+  sortDir?: string;
   limit?: number;
   skip?: number;
 }
@@ -38,6 +47,12 @@ export class AuditoriaService {
     if (query.action) params = params.set('action', query.action);
     if (query.userId) params = params.set('userId', query.userId);
     if (query.roleId) params = params.set('roleId', query.roleId);
+    if (query.targetType) params = params.set('targetType', query.targetType);
+    if (query.search) params = params.set('search', query.search);
+    if (query.dateFrom) params = params.set('dateFrom', query.dateFrom);
+    if (query.dateTo) params = params.set('dateTo', query.dateTo);
+    if (query.sortField) params = params.set('sortField', query.sortField);
+    if (query.sortDir) params = params.set('sortDir', query.sortDir);
     params = params.set('limit', String(query.limit ?? 50));
     params = params.set('skip', String(query.skip ?? 0));
 

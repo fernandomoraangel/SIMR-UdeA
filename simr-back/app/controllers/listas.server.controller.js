@@ -72,6 +72,7 @@ exports.create = async (req, res, next) => {
 
     const lista = new Lista(listaData);
     await lista.save();
+    await logAudit(req, "lista_creada", "lista", lista._id, lista.nombre_lista);
 
     await lista.populate("usuario_modifico", "username firstName lastName");
 
@@ -168,6 +169,7 @@ exports.addElement = async (req, res, next) => {
     lista.usuario_modifico = req.user._id;
 
     await lista.save();
+    await logAudit(req, "lista_elemento_actualizado", "lista", lista._id, lista.nombre_lista);
     await lista.populate("usuario_modifico", "username firstName lastName");
 
     successResponse(res, "Elemento agregado exitosamente", 200, lista);
@@ -211,7 +213,8 @@ exports.updateElement = async (req, res, next) => {
     lista.usuario_modifico = req.user._id;
 
     await lista.save();
-    await lista.populate("usuario_modifico", "username firstName lastName");
+    await logAudit(req, "lista_elemento_modificado", "lista", lista._id, lista.nombre_lista);
+        await lista.populate("usuario_modifico", "username firstName lastName");
 
     successResponse(res, "Elemento actualizado exitosamente", 200, lista);
   } catch (err) {
@@ -249,7 +252,8 @@ exports.deleteElement = async (req, res, next) => {
     lista.usuario_modifico = req.user._id;
 
     await lista.save();
-    await lista.populate("usuario_modifico", "username firstName lastName");
+    await logAudit(req, "lista_elemento_modificado", "lista", lista._id, lista.nombre_lista);
+        await lista.populate("usuario_modifico", "username firstName lastName");
 
     successResponse(res, "Elemento eliminado exitosamente", 200, lista);
   } catch (err) {

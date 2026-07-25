@@ -106,6 +106,7 @@ exports.create = async (req, res) => {
     ticket.ticketNumber = await SupportTicket.generateTicketNumber();
     const saved = await ticket.save();
     await saved.populate("createdBy", "firstName lastName fullName username email");
+    await logAudit(req, "support_ticket_created", "support_ticket", saved._id, saved.ticketNumber);
     notifyTicketCreated(saved);
     res.json(saved);
   } catch (err) {
@@ -188,6 +189,7 @@ exports.update = async (req, res) => {
       notifyStatusChange(saved, oldStatus, req.user);
     }
 
+    await logAudit(req, "support_ticket_updated", "support_ticket", saved._id, saved.ticketNumber);
     res.json(saved);
   } catch (err) {
     res.status(400).send({ message: getErrorMessage(err) });
@@ -197,6 +199,7 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const ticket = req.supportTicket;
+    await logAudit(req, "support_ticket_deleted", "support_ticket", ticket._id, ticket.ticketNumber);
     await SupportTicket.deleteOne({ _id: ticket._id });
     res.json(ticket);
   } catch (err) {
@@ -254,25 +257,18 @@ exports.addResponse = async (req, res) => {
 exports.supportTicketByID = async (req, res, next, id) => {
   try {
     const ticket = await SupportTicket.findById(id)
-      .populate("createdBy", "firstName lastName fullName username email")
-      .populate("assignedTo", "firstName lastName fullName username")
-      .populate("responses.user", "firstName lastName fullName username");
+      .populate("createdBy", "firstName lastName username email")
+      .populate("assignedTo", "firstName lastName username")
+      .populate("responses.user", "firstName lastName username");
 
     if (!ticket) {
       return next(new Error("Fallo al cargar el ticket " + id));
     }
 
-    // Verificar ownership si no tiene permiso "any"
-    const permissionService = require("../services/permission.service");
-    const canReadAny = await permissionService.hasPermission(req.user, "soporte", "read", "any");
-    const ownerId = ticket.createdBy?._id || ticket.createdBy;
-    if (!canReadAny && String(ownerId) !== String(req.user._id)) {
-      return res.status(403).send({ message: "No autorizado" });
-    }
-
     req.supportTicket = ticket;
     next();
   } catch (err) {
+    console.error("[SupportTicketByID Error]:", err);
     return next(err);
   }
 };

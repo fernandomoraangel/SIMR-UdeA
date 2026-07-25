@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const { logAudit } = require("../services/audit.service");
 const Idioma = mongoose.model('Idioma');
 const fs = require('fs');
 const path = require('path');
@@ -29,6 +30,7 @@ exports.create = async (req, res) => {
     const idioma = new Idioma(req.body);
     idioma.creador = req.user;
     await idioma.save();
+    await logAudit(req, "idioma_created", "idioma", idioma._id, idioma.nombre);
     res.json(idioma);
   } catch (err) {
     return res.status(400).send({ message: getErrorMessage(err) });
@@ -70,6 +72,7 @@ exports.update = async (req, res) => {
     idioma.vinculoRelacionado = req.body.vinculoRelacionado;
     idioma.archivosAdjuntos = req.body.archivosAdjuntos;
     await idioma.save();
+    await logAudit(req, "idioma_updated", "idioma", idioma._id, idioma.nombre);
     res.json(idioma);
   } catch (err) {
     return res.status(400).send({ message: getErrorMessage(err) });
@@ -79,6 +82,7 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const idioma = req.idioma;
+    await logAudit(req, "idioma_deleted", "idioma", idioma._id, idioma.nombre);
     await idioma.deleteOne();
     res.json(idioma);
   } catch (err) {

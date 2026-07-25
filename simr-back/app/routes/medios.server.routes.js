@@ -13,13 +13,13 @@ module.exports = function (app) {
   //Configurar ruta base a 'medios'
   app
     .route('/api/medios')
-    .get(requireAuth, authorize('medio', 'read'), medios.list)
+    .get(medios.list)
     .post(requireAuth, authorize('medio', 'create'), medios.create);
 
   //Configurar las rutas a 'medios' parametrizadas
   app
     .route('/api/medios/:medioId')
-    .get(requireAuth, authorize('medio', 'read'), medios.read)
+    .get(medios.read)
     .put(
       requireAuth,
       authorize('medio', 'update', {

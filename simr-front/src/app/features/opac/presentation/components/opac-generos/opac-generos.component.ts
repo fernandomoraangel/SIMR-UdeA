@@ -14,8 +14,8 @@ import { OpacGeneroResult } from '../../../opac.models';
   template: `
     <div class="opac-page">
       <header class="opac-header">
+        <p class="simr-eyebrow">Catálogo público</p>
         <h1>Géneros</h1>
-        <p class="opac-subtitle">Catálogo público — consulta obras y recursos por género musical</p>
       </header>
 
       <div class="opac-search">

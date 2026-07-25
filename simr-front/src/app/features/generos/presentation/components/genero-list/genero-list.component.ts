@@ -69,7 +69,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
     <div class="generos-list-container">
       <header class="header">
         <div>
-          <p class="simr-eyebrow">Recursos · Géneros musicales</p>
+          <p class="simr-eyebrow">Vocabularios controlados</p>
           <h1>Géneros musicales</h1>
         </div>
         <a mat-raised-button color="primary" routerLink="create">

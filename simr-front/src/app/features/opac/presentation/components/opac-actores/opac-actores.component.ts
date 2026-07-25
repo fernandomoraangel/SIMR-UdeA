@@ -15,8 +15,8 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
   template: `
     <div class="opac-page">
       <header class="opac-header">
+        <p class="simr-eyebrow">Catálogo público</p>
         <h1>Buscador de actores</h1>
-        <p class="opac-subtitle">Catálogo público — consulta actores, sus obras, recursos, ejemplares y proyectos</p>
       </header>
 
       <div class="opac-search">

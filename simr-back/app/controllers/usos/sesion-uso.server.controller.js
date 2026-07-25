@@ -35,6 +35,7 @@ exports.crearSesion = async (req, res) => {
     });
 
     await sesion.save();
+    await logAudit(req, "uso_creado", "usos", sesion._id, "Sesión creada");
 
     res.status(201).json({ success: true, data: sesion });
   } catch (error) {
@@ -58,6 +59,7 @@ exports.cerrarSesion = async (req, res) => {
     sesion.activo = false;
 
     await sesion.save();
+    await logAudit(req, "uso_actualizado", "usos", sesion._id, "Sesión cerrada");
 
     res.json({ success: true, data: sesion });
   } catch (error) {
@@ -141,6 +143,7 @@ exports.eliminarSesion = async (req, res) => {
     if (!sesion) {
       return res.status(404).json({ success: false, message: "Sesión no encontrada" });
     }
+    await logAudit(req, "uso_eliminado", "usos", sesion._id, "Sesión eliminada");
     res.json({ success: true, message: "Sesión eliminada correctamente" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

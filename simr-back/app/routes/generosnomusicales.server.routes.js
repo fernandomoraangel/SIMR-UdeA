@@ -13,11 +13,7 @@ module.exports = function (app) {
   //Configurar ruta base
   app
     .route("/api/generosNoMusicales")
-    .get(
-      requireAuth,
-      authorize("genero_no_musical", "read"),
-      generosNoMusicales.list
-    )
+    .get(generosNoMusicales.list)
     .post(
       requireAuth,
       authorize("genero_no_musical", "create"),
@@ -27,11 +23,7 @@ module.exports = function (app) {
   //Configurar las rutas a 'generos' parametrizadas
   app
     .route("/api/generosNoMusicales/:generoNoMusicalId")
-    .get(
-      requireAuth,
-      authorize("genero_no_musical", "read"),
-      generosNoMusicales.read
-    )
+    .get(generosNoMusicales.read)
     .put(
       requireAuth,
       authorize("genero_no_musical", "update", {

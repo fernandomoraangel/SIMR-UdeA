@@ -12,12 +12,12 @@ const requireAuth = passport.authenticate("jwt", { session: false });
 module.exports = function (app) {
   app
     .route("/api/soporte")
-    .get(requireAuth, authorize("soporte", "read"), tickets.list)
+    .get(tickets.list)
     .post(requireAuth, authorize("soporte", "create"), tickets.create);
 
   app
     .route("/api/soporte/:ticketId")
-    .get(requireAuth, authorize("soporte", "read"), tickets.read)
+    .get(tickets.read)
     .put(
       requireAuth,
       authorize("soporte", "update", {

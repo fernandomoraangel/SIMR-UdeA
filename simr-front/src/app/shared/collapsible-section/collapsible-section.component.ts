@@ -71,12 +71,12 @@ import { MatIconModule } from '@angular/material/icon';
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease, padding 0.3s ease;
-      padding: 0 1.5rem;
+      padding: 0;
     }
     .collapsible-body.open {
       max-height: 2000px;
       overflow: visible;
-      padding: 0 1.5rem 1.25rem;
+      padding: 0 0 1.25rem;
     }
   `],
 })

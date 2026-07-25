@@ -12,12 +12,12 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 module.exports=function(app){
 	//Configurar ruta base
 	app.route('/api/diccionarios')
-	.get(requireAuth, authorize('diccionario', 'read'), diccionarios.list)
+	.get(diccionarios.list)
 	.post(requireAuth, authorize('diccionario', 'create'), diccionarios.create);
 
 	//Configurar las rutas a  parametrizadas
 	app.route('/api/diccionarios/:diccionarioId')
-	.get(requireAuth, authorize('diccionario', 'read'), diccionarios.read)
+	.get(diccionarios.read)
 	.put(
 		requireAuth,
 		authorize('diccionario', 'update', {

@@ -65,8 +65,8 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
     <div class="fondos-list-container">
       <header class="header">
         <div>
-          <p class="simr-eyebrow">Fondos · Fondos documentales</p>
-          <h1>Fondos documentales</h1>
+          <p class="simr-eyebrow">Catalogación</p>
+          <h1>Fondos</h1>
         </div>
         <a mat-raised-button color="primary" routerLink="create">
           <mat-icon>add</mat-icon>

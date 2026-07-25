@@ -14,8 +14,8 @@ import { OpacInstrumentoResult } from '../../../opac.models';
   template: `
     <div class="opac-page">
       <header class="opac-header">
+        <p class="simr-eyebrow">Catálogo público</p>
         <h1>Instrumentos</h1>
-        <p class="opac-subtitle">Catálogo público — consulta obras y recursos por instrumento</p>
       </header>
 
       <div class="opac-search">

@@ -13,8 +13,8 @@ module.exports = function (app) {
   app.get("/api/graph/metadata", graph.getGraphMetadata);
 
   // Ruta para obtener estadísticas del grafo
-  app.route("/api/graph/stats").get(requireAuth, graph.getGraphStats);
+  app.route("/api/graph/stats").get(graph.getGraphStats);
 
   // Ruta principal para obtener datos del grafo
-  app.route("/api/graph/data").get(requireAuth, graph.getGraphData);
+  app.route("/api/graph/data").get(graph.getGraphData);
 };

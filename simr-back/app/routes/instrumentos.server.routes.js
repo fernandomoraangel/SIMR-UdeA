@@ -12,12 +12,12 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 module.exports=function(app){
 	//Configurar ruta base a 'instrumentos'
 	app.route('/api/instrumentos')
-	.get(requireAuth, authorize('instrumento', 'read'), instrumentos.list)
+	.get(instrumentos.list)
 	.post(requireAuth, authorize('instrumento', 'create'), instrumentos.create);
 
 	//Configurar las rutas a 'instrumentos' parametrizadas
 	app.route('/api/instrumentos/:instrumentoId')
-	.get(requireAuth, authorize('instrumento', 'read'), instrumentos.read)
+	.get(instrumentos.read)
 	.put(
 		requireAuth,
 		authorize('instrumento', 'update', {

@@ -40,6 +40,7 @@ export class ListasAdminComponent implements OnInit {
   listas: Lista[] = [];
   selected: Lista | null = null;
   filtro = '';
+  filtroElementos = '';
 
   loading = false;
   error = '';
@@ -102,6 +103,7 @@ export class ListasAdminComponent implements OnInit {
 
   select(lista: Lista): void {
     this.selected = lista;
+    this.filtroElementos = '';
     this.cancelEdit();
     this.newElement = '';
     this.newElementSigla = '';
@@ -110,6 +112,20 @@ export class ListasAdminComponent implements OnInit {
 
   clearFilter(): void {
     this.filtro = '';
+  }
+
+  clearElementFilter(): void {
+    this.filtroElementos = '';
+  }
+
+  get filteredElementIndices(): number[] {
+    if (!this.selected) return [];
+    const f = this.filtroElementos.trim().toLowerCase();
+    const all = this.selected.elementos
+      .map((_, i) => i)
+      .sort((a, b) => this.elementLabel(this.selected!, a).localeCompare(this.elementLabel(this.selected!, b)));
+    if (!f) return all;
+    return all.filter((i) => this.elementLabel(this.selected!, i).toLowerCase().includes(f));
   }
 
   // ===== Elementos =====

@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Fondo = mongoose.model("Fondo");
 
 // Método para el manejo de errores
@@ -40,6 +41,7 @@ exports.create = async (req, res) => {
   try {
     // Intentar salvar la fondo
     const savedFondo = await fondo.save();
+    await logAudit(req, "fondo_created", "fondo", savedFondo._id, savedFondo.nombre);
     // Enviar una representación JSON de la fondo
     res.json(savedFondo);
   } catch (err) {
@@ -84,6 +86,7 @@ exports.update = async (req, res) => {
   try {
     // Intenta salvar
     const updatedFondo = await fondo.save();
+    await logAudit(req, "fondo_updated", "fondo", updatedFondo._id, updatedFondo.nombre);
     res.json(updatedFondo);
   } catch (err) {
     res.status(400).send({
@@ -99,6 +102,7 @@ exports.delete = async (req, res) => {
   try {
     // Usar el método model 'deleteOne' para borrar
     await Fondo.deleteOne({ _id: fondo._id });
+    await logAudit(req, "fondo_deleted", "fondo", fondo._id, fondo.nombre);
     res.json(fondo);
   } catch (err) {
     res.status(400).send({

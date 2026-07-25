@@ -50,7 +50,7 @@ const TABLE_COL_MAP: Record<string, TableColumn> = {
     <div class="diccionarios-list-container">
       <header class="header">
         <div>
-          <p class="simr-eyebrow">Recursos · Diccionario de datos</p>
+          <p class="simr-eyebrow">Vocabularios controlados</p>
           <h1>Diccionario de datos</h1>
         </div>
         <a mat-raised-button color="primary" routerLink="create">

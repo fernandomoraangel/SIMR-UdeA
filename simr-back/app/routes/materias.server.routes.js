@@ -12,12 +12,12 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 module.exports=function(app){
 	//Configurar ruta base a 'materias'
 	app.route('/api/materias')
-	.get(requireAuth, authorize('materia', 'read'), materias.list)
+	.get(materias.list)
 	.post(requireAuth, authorize('materia', 'create'), materias.create);
 
 	//Configurar las rutas a 'materias' parametrizadas
 	app.route('/api/materias/:materiaId')
-	.get(requireAuth, authorize('materia', 'read'), materias.read)
+	.get(materias.read)
 	.put(
 		requireAuth,
 		authorize('materia', 'update', {

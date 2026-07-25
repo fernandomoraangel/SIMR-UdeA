@@ -12,12 +12,12 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 module.exports=function(app){
 	//Configurar ruta base a 'colecciones'
 	app.route('/api/colecciones')
-	.get(requireAuth, authorize('coleccion', 'read'), colecciones.list)
+	.get(colecciones.list)
 	.post(requireAuth, authorize('coleccion', 'create'), colecciones.create);
 
 	//Configurar las rutas a 'colecciones' parametrizadas
 	app.route('/api/colecciones/:coleccionId')
-	.get(requireAuth, authorize('coleccion', 'read'), colecciones.read)
+	.get(colecciones.read)
 	.put(
 		requireAuth,
 		authorize('coleccion', 'update', {

@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Diccionario = mongoose.model("Diccionario");
 
 // Método para el manejo de errores
@@ -38,7 +39,7 @@ exports.create = async (req, res) => {
   // Intentar salvar
   try {
     await diccionario.save();
-    // Enviar una representación JSON del ejemplar
+    await logAudit(req, "diccionario_created", "diccionario", diccionario._id, diccionario.campo);
     res.json(diccionario);
   } catch (err) {
     res.status(400).send({
@@ -84,6 +85,7 @@ exports.update = async (req, res) => {
   // Intenta salvar
   try {
     await diccionario.save();
+    await logAudit(req, "diccionario_updated", "diccionario", diccionario._id, diccionario.campo);
     res.json(diccionario);
   } catch (err) {
     res.status(400).send({
@@ -98,7 +100,7 @@ exports.delete = async (req, res) => {
   const diccionario = req.diccionario;
 
   try {
-    // Usar el método model 'deleteOne' para borrar
+    await logAudit(req, "diccionario_deleted", "diccionario", diccionario._id, diccionario.campo);
     await diccionario.deleteOne();
     res.json(diccionario);
   } catch (err) {

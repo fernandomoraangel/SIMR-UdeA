@@ -14,8 +14,8 @@ import { OpacObra } from '../../../opac.models';
   template: `
     <div class="opac-page">
       <header class="opac-header">
+        <p class="simr-eyebrow">Catálogo público</p>
         <h1>Buscador de obras</h1>
-        <p class="opac-subtitle">Catálogo público — consulta obras musicales, sus recursos y ejemplares</p>
       </header>
 
       <div class="opac-search">

@@ -30,7 +30,10 @@ import { NubeConfigService } from './nube-config.service';
   template: `
     <div class="admin-page">
       <header class="admin-head">
-        <h1 class="admin-title">Configuraci&oacute;n de Nube de Archivos</h1>
+        <div>
+          <p class="simr-eyebrow">Administración</p>
+          <h1 class="admin-title">Configuración de Nube de Archivos</h1>
+        </div>
         <button mat-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Volver</button>
       </header>
 
@@ -38,9 +41,6 @@ import { NubeConfigService } from './nube-config.service';
 
       <mat-card appearance="outlined" *ngIf="!loading">
         <form (ngSubmit)="guardar()" class="form-grid">
-          <p class="simr-eyebrow">
-            Define el tama&ntilde;o m&aacute;ximo permitido para archivos subidos a la nube de archivos (MinIO).
-          </p>
 
           <mat-form-field appearance="outline">
             <mat-label>Tama&ntilde;o m&aacute;ximo (MB)</mat-label>
@@ -70,7 +70,7 @@ import { NubeConfigService } from './nube-config.service';
       .admin-page { max-width: 720px; margin: 0 auto; padding: 28px 24px 48px; }
       .admin-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
       .admin-title { font-family: var(--simr-display); color: var(--simr-tinta); font-size: 1.7rem; margin: 0; }
-      .simr-eyebrow { font-family: var(--simr-body); color: var(--simr-apunte); font-size: 0.88rem; margin: 0 0 18px; }
+
       .form-grid { display: flex; flex-direction: column; gap: 6px; padding: 8px; }
       .form-acciones { margin-top: 12px; }
       .admin-loading { display: flex; justify-content: center; padding: 40px; }

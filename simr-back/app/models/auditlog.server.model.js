@@ -18,6 +18,7 @@ const AuditLogSchema = new Schema(
       type: String,
       required: true,
       enum: [
+        // Roles y permisos
         "role_created",
         "role_updated",
         "role_deleted",
@@ -26,11 +27,96 @@ const AuditLogSchema = new Schema(
         "permission_added",
         "permission_removed",
         "permission_updated",
+        // Usuarios
         "user_created",
         "user_updated",
         "user_deleted",
         "user_role_assigned",
         "user_role_removed",
+        // Obras
+        "obra_created",
+        "obra_updated",
+        "obra_deleted",
+        // Actores
+        "actor_created",
+        "actor_updated",
+        "actor_deleted",
+        // Recursos
+        "recurso_created",
+        "recurso_updated",
+        "recurso_deleted",
+        // Instrumentos
+        "instrumento_created",
+        "instrumento_updated",
+        "instrumento_deleted",
+        // Sistemas
+        "sistema_created",
+        "sistema_updated",
+        "sistema_deleted",
+        // Medios
+        "medio_created",
+        "medio_updated",
+        "medio_deleted",
+        // Géneros musicales
+        "genero_created",
+        "genero_updated",
+        "genero_deleted",
+        // Géneros no musicales
+        "genero_nomusical_created",
+        "genero_nomusical_updated",
+        "genero_nomusical_deleted",
+        // Materias
+        "materia_created",
+        "materia_updated",
+        "materia_deleted",
+        // Fondos
+        "fondo_created",
+        "fondo_updated",
+        "fondo_deleted",
+        // Colecciones
+        "coleccion_created",
+        "coleccion_updated",
+        "coleccion_deleted",
+        // Proyectos
+        "proyecto_created",
+        "proyecto_updated",
+        "proyecto_deleted",
+        // Idiomas
+        "idioma_created",
+        "idioma_updated",
+        "idioma_deleted",
+        // Diccionarios
+        "diccionario_created",
+        "diccionario_updated",
+        "diccionario_deleted",
+        // Ejemplares
+        "ejemplar_created",
+        "ejemplar_updated",
+        "ejemplar_deleted",
+        // Soporte tickets
+        "ticket_created",
+        "ticket_updated",
+        "ticket_deleted",
+        "ticket_response_added",
+        // Usos
+        "uso_created",
+        "uso_updated",
+        "uso_deleted",
+        // Listas de referencia
+        "lista_created",
+        "lista_updated",
+        "lista_deleted",
+        "lista_element_added",
+        "lista_element_updated",
+        "lista_element_deleted",
+        // Nube de archivos
+        "archivo_uploaded",
+        "archivo_deleted",
+        // Reemplazo masivo en BD
+        "db_replace",
+        // Otros
+        "login",
+        "logout",
       ],
     },
     performedBy: {

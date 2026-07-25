@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Materia = mongoose.model("Materia");
 
 // Método para el manejo de errores
@@ -39,7 +40,7 @@ exports.create = async (req, res) => {
   //Intentar salvar la materia
   try {
     await materia.save();
-    // Enviar una representación JSON de la materia
+    await logAudit(req, "materia_created", "materia", materia._id, materia.nombre);
     res.json(materia);
   } catch (err) {
     res.status(400).send({
@@ -91,6 +92,7 @@ exports.update = async (req, res) => {
   // Intenta salvar
   try {
     await materia.save();
+    await logAudit(req, "materia_updated", "materia", materia._id, materia.nombre);
     res.json(materia);
   } catch (err) {
     res.status(400).send({
@@ -106,6 +108,7 @@ exports.delete = async (req, res) => {
 
   try {
     // Usar el método model 'deleteOne' para borrar
+    await logAudit(req, "materia_deleted", "materia", materia._id, materia.nombre);
     await materia.deleteOne();
     res.json(materia);
   } catch (err) {

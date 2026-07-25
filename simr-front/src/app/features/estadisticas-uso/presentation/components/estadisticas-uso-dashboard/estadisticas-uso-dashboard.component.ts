@@ -24,7 +24,7 @@ type Vista = 'resumen' | 'roles' | 'modulos' | 'entidades' | 'usuarios';
     <div class="dashboard">
       <header class="header">
         <div>
-          <p class="simr-eyebrow">Estadísticas de Uso</p>
+          <p class="simr-eyebrow">Utilidades</p>
           <h1>Estadísticas de Uso de la Aplicación</h1>
         </div>
         <button mat-raised-button color="primary" (click)="refreshData()">

@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HttpClient } from '@angular/common/http';
@@ -33,7 +34,7 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
   imports: [
     CommonModule, ReactiveFormsModule,
     MatButtonModule, MatIconModule, MatCardModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule,
     MatProgressBarModule, MatTooltipModule,
     CollapsibleSectionComponent,
     AutocompleteCreateComponent,
@@ -73,37 +74,40 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
               }
             </mat-form-field>
 
-            <p class="subtitulo">Denominación(es) regional-socio-cultural(es)</p>
-            <div class="inline-editor">
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                <mat-label>Denominación</mat-label>
-                <input matInput [formControl]="denominacionControl" placeholder="Ej: Bambuco" />
-              </mat-form-field>
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
-                <mat-label>Fuente de la denominación</mat-label>
-                <input matInput [formControl]="fuenteDenominacionControl" placeholder="Ej: Diccionario de la Música Tradicional Colombiana" />
-              </mat-form-field>
-              <button mat-stroked-button type="button" (click)="addDenominacion()"
-                [disabled]="!denominacionControl.value || !fuenteDenominacionControl.value">
-                <mat-icon>add</mat-icon>
-                Agregar
-              </button>
-            </div>
-            @if (denominacionItems.length > 0) {
-              <div class="items-list">
-                @for (d of denominacionItems; track $index) {
-                  <div class="rel-item">
-                    <span class="rel-nombre">{{ d.denominacionRegional }}</span>
-                    <span class="rel-detalle">{{ d.fuenteDenominacion }}</span>
-                    <button mat-icon-button (click)="removeDenominacion($index)" color="warn" matTooltip="Eliminar" type="button">
-                      <mat-icon>close</mat-icon>
-                    </button>
+            <app-collapsible-section title="Denominación(es) regional-socio-cultural(es)" icon="public" [collapsed]="true">
+              <div class="section-content">
+                <div class="inline-editor">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                    <mat-label>Denominación</mat-label>
+                    <input matInput [formControl]="denominacionControl" placeholder="Ej: Bambuco" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-largo">
+                    <mat-label>Fuente de la denominación</mat-label>
+                    <input matInput [formControl]="fuenteDenominacionControl" placeholder="Ej: Diccionario de la Música Tradicional Colombiana" />
+                  </mat-form-field>
+                  <button mat-stroked-button type="button" (click)="addDenominacion()"
+                    [disabled]="!denominacionControl.value || !fuenteDenominacionControl.value">
+                    <mat-icon>add</mat-icon>
+                    Agregar
+                  </button>
+                </div>
+                @if (denominacionItems.length > 0) {
+                  <div class="items-list">
+                    @for (d of denominacionItems; track $index) {
+                      <div class="rel-item">
+                        <span class="rel-nombre">{{ d.denominacionRegional }}</span>
+                        <span class="rel-detalle">{{ d.fuenteDenominacion }}</span>
+                        <button mat-icon-button (click)="removeDenominacion($index)" color="warn" matTooltip="Eliminar" type="button">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+                    }
                   </div>
+                } @else {
+                  <p class="empty-hint">No hay denominaciones registradas.</p>
                 }
               </div>
-            } @else {
-              <p class="empty-hint">No hay denominaciones registradas.</p>
-            }
+            </app-collapsible-section>
 
             <mat-form-field appearance="outline" class="campo">
               <mat-label>Descripción</mat-label>
@@ -130,45 +134,52 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
               (selectedChange)="onContenedoresChange($event)"
             />
 
-            <p class="subtitulo">Actores</p>
-            <div class="inline-editor">
-              <app-autocomplete-create
-                apiEndpoint="actores"
-                placeholder="Buscar actor..."
-                displayField="fullName"
-                [selected]="actorSelection"
-                (selectedChange)="onActorChange($event)"
-                class="campo-largo"
-              />
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                <mat-label>Rol</mat-label>
-                <mat-select [formControl]="actorRolControl">
-                  @for (r of listaRoles(); track r) {
-                    <mat-option [value]="r">{{ r }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-              <button mat-stroked-button type="button" (click)="addActor()"
-                [disabled]="!actorSelection.length || !actorRolControl.value">
-                <mat-icon>add</mat-icon>
-                Agregar
-              </button>
-            </div>
-            @if (actorItems.length > 0) {
-              <div class="items-list">
-                @for (a of actorItems; track $index) {
-                  <div class="rel-item">
-                    <span class="rel-nombre">{{ getActorNombre(a.id) }}</span>
-                    <span class="rel-detalle">{{ a.rol }}</span>
-                    <button mat-icon-button (click)="removeActor($index)" color="warn" matTooltip="Eliminar" type="button">
-                      <mat-icon>close</mat-icon>
-                    </button>
+            <app-collapsible-section title="Actores" icon="people" [collapsed]="true">
+              <div class="section-content">
+                <div class="inline-editor">
+                  <app-autocomplete-create
+                    apiEndpoint="actores"
+                    placeholder="Buscar actor..."
+                    displayField="fullName"
+                    [selected]="actorSelection"
+                    (selectedChange)="onActorChange($event)"
+                    class="campo-largo"
+                  />
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                    <mat-label>Rol</mat-label>
+                    <input matInput [matAutocomplete]="autoActorRol" [formControl]="actorRolControl" placeholder="Ej: Compositor" />
+                    <mat-autocomplete #autoActorRol="matAutocomplete">
+                      @for (r of filteredRoles(); track r) {
+                        <mat-option [value]="r">{{ r }}</mat-option>
+                      }
+                      @if (filteredRoles().length === 0 && actorRolControl.value?.trim()) {
+                        <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <button mat-stroked-button type="button" (click)="addActor()"
+                    [disabled]="!actorSelection.length || !actorRolControl.value">
+                    <mat-icon>add</mat-icon>
+                    Agregar
+                  </button>
+                </div>
+                @if (actorItems.length > 0) {
+                  <div class="items-list">
+                    @for (a of actorItems; track $index) {
+                      <div class="rel-item">
+                        <span class="rel-nombre">{{ getActorNombre(a.id) }}</span>
+                        <span class="rel-detalle">{{ a.rol }}</span>
+                        <button mat-icon-button (click)="removeActor($index)" color="warn" matTooltip="Eliminar" type="button">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+                    }
                   </div>
+                } @else {
+                  <p class="empty-hint">No hay actores asociados.</p>
                 }
               </div>
-            } @else {
-              <p class="empty-hint">No hay actores asociados.</p>
-            }
+            </app-collapsible-section>
 
             <p class="subtitulo">Géneros-formas-especies (musicales)</p>
             <app-autocomplete-create
@@ -197,54 +208,64 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
               (selectedChange)="onMateriasChange($event)"
             />
 
-            <p class="subtitulo">Medios sonoros-formatos asociados</p>
-            <app-autocomplete-create
-              apiEndpoint="medios"
-              placeholder="Buscar medio sonoro..."
-              displayField="nombre"
-              [selected]="medioItems"
-              (selectedChange)="onMediosChange($event)"
-            />
+            <app-collapsible-section title="Medios sonoros-formatos asociados" icon="mic" [collapsed]="true">
+              <div class="section-content">
+                <app-autocomplete-create
+                  apiEndpoint="medios"
+                  placeholder="Buscar medio sonoro..."
+                  displayField="nombre"
+                  [selected]="medioItems"
+                  (selectedChange)="onMediosChange($event)"
+                />
+              </div>
+            </app-collapsible-section>
 
-            <p class="subtitulo">Sistemas sonoros asociados</p>
-            <div class="inline-editor">
-              <app-autocomplete-create
-                apiEndpoint="sistemas"
-                placeholder="Buscar sistema sonoro..."
-                displayField="nombre"
-                [selected]="sistemaSelection"
-                (selectedChange)="onSistemaChange($event)"
-                class="campo-largo"
-              />
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
-                <mat-label>Centro (tonalidad)</mat-label>
-                <mat-select [formControl]="sistemaCentroControl">
-                  @for (c of listaCentros(); track c) {
-                    <mat-option [value]="c">{{ c }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-              <button mat-stroked-button type="button" (click)="addSistema()"
-                [disabled]="!sistemaSelection.length">
-                <mat-icon>add</mat-icon>
-                Agregar
-              </button>
-            </div>
-            @if (sistemaItems.length > 0) {
-              <div class="items-list">
-                @for (s of sistemaItems; track $index) {
-                  <div class="rel-item">
-                    <span class="rel-nombre">{{ getSistemaNombre(s.id) }}</span>
-                    <span class="rel-detalle">{{ s.centro ? 'Centro: ' + s.centro : '' }}</span>
-                    <button mat-icon-button (click)="removeSistema($index)" color="warn" matTooltip="Eliminar" type="button">
-                      <mat-icon>close</mat-icon>
-                    </button>
+            <app-collapsible-section title="Sistemas sonoros asociados" icon="graphic_eq" [collapsed]="true">
+              <div class="section-content">
+                <div class="inline-editor">
+                  <app-autocomplete-create
+                    apiEndpoint="sistemas"
+                    placeholder="Buscar sistema sonoro..."
+                    displayField="nombre"
+                    [selected]="sistemaSelection"
+                    (selectedChange)="onSistemaChange($event)"
+                    class="campo-largo"
+                  />
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-medio">
+                    <mat-label>Centro (tonalidad)</mat-label>
+                    <input matInput [matAutocomplete]="autoCentro" [formControl]="sistemaCentroControl" placeholder="Ej: C (Do)" />
+                    <mat-autocomplete #autoCentro="matAutocomplete">
+                      @for (c of filteredCentros(); track c) {
+                        <mat-option [value]="c">{{ c }}</mat-option>
+                      }
+                      @if (filteredCentros().length === 0 && sistemaCentroControl.value?.trim()) {
+                        <mat-option disabled><span class="no-result">Sin resultados</span></mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <button mat-stroked-button type="button" (click)="addSistema()"
+                    [disabled]="!sistemaSelection.length">
+                    <mat-icon>add</mat-icon>
+                    Agregar
+                  </button>
+                </div>
+                @if (sistemaItems.length > 0) {
+                  <div class="items-list">
+                    @for (s of sistemaItems; track $index) {
+                      <div class="rel-item">
+                        <span class="rel-nombre">{{ getSistemaNombre(s.id) }}</span>
+                        <span class="rel-detalle">{{ s.centro ? 'Centro: ' + s.centro : '' }}</span>
+                        <button mat-icon-button (click)="removeSistema($index)" color="warn" matTooltip="Eliminar" type="button">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+                    }
                   </div>
+                } @else {
+                  <p class="empty-hint">No hay sistemas sonoros asociados.</p>
                 }
               </div>
-            } @else {
-              <p class="empty-hint">No hay sistemas sonoros asociados.</p>
-            }
+            </app-collapsible-section>
 
             <p class="subtitulo">Idiomas</p>
             <app-autocomplete-create
@@ -457,7 +478,7 @@ import { formatActorName } from '../../../../actores/models/actor.interface';
     .alerta { display: flex; align-items: center; gap: 0.75rem; background: #fbeae6; color: var(--simr-sello-osc); border: 1px solid var(--simr-sello); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; }
     .section-content { padding: 0.5rem 0; }
     .section-content h3 { margin: 0.75rem 0 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--simr-tinta); }
-    .inline-editor { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .inline-editor { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; }
     .campo-largo { flex: 1; min-width: 200px; }
     .campo-medio { width: 220px; }
     .items-list { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -522,7 +543,19 @@ export class ObraFormComponent implements OnInit {
 
   protected listaTipos = signal<string[]>([]);
   protected listaRoles = signal<string[]>([]);
+  protected rolTerm = signal('');
+  protected filteredRoles = computed(() => {
+    const term = this.rolTerm().toLowerCase().trim();
+    const allRoles = this.listaRoles();
+    return term ? allRoles.filter((r) => r.toLowerCase().includes(term)) : allRoles;
+  });
   protected listaCentros = signal<string[]>([]);
+  protected centroTerm = signal('');
+  protected filteredCentros = computed(() => {
+    const term = this.centroTerm().toLowerCase().trim();
+    const all = this.listaCentros();
+    return term ? all.filter((c) => c.toLowerCase().includes(term)) : all;
+  });
   protected listaTiposDeRelacion = signal<string[]>([]);
   protected listaDirecciones = signal<string[]>([]);
   protected listaEtiquetas = signal<string[]>([]);
@@ -559,6 +592,14 @@ export class ObraFormComponent implements OnInit {
       if (obra && this.isEditMode) {
         this.loadObraData(obra);
       }
+    });
+
+    this.actorRolControl.valueChanges.subscribe((val) => {
+      this.rolTerm.set(val || '');
+    });
+
+    this.sistemaCentroControl.valueChanges.subscribe((val) => {
+      this.centroTerm.set(val || '');
     });
   }
 

@@ -8,5 +8,5 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 
 module.exports = function (app) {
   app.route('/api/stats')
-    .get(requireAuth, stats.getAll);
+    .get(stats.getAll);
 };

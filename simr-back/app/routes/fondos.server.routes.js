@@ -12,12 +12,12 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 module.exports=function(app){
 	//Configurar ruta base a 'fondos'
 	app.route('/api/fondos')
-	.get(requireAuth, authorize('fondo', 'read'), fondos.list)
+	.get(fondos.list)
 	.post(requireAuth, authorize('fondo', 'create'), fondos.create);
 
 	//Configurar las rutas a 'fondos' parametrizadas
 	app.route('/api/fondos/:fondoId')
-	.get(requireAuth, authorize('fondo', 'read'), fondos.read)
+	.get(fondos.read)
 	.put(
 		requireAuth,
 		authorize('fondo', 'update', {

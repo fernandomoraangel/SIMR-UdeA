@@ -54,27 +54,29 @@ import { FileBasicInfo, FileDeleteInfo } from '../../../../archivos/models/archi
 
       <mat-card class="actor-form" appearance="outlined">
         <form [formGroup]="actorForm" (ngSubmit)="onSubmit()">
-          <div class="form-section">
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Nombres</mat-label>
-              <input matInput formControlName="nombres" placeholder="Ej: Ludwig van" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Apellidos</mat-label>
-              <input matInput formControlName="apellidos" placeholder="Ej: Beethoven" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Nombre artístico</mat-label>
-              <input matInput formControlName="nombreArtistico" placeholder="Ej: El piano de Beethoven" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="campo">
-              <mat-label>Nombre de reunión</mat-label>
-              <input matInput formControlName="nombreReunion" placeholder="Ej: Beethoven (Ludwig van)" />
-            </mat-form-field>
-            @if (actorForm.errors?.['requiredActorName'] && actorForm.touched) {
-              <p class="error-text">Debe ingresar al menos Nombre y Apellido, Nombre artístico o Nombre de reunión.</p>
-            }
-          </div>
+          <app-collapsible-section title="Nombres" icon="badge" [collapsed]="true">
+            <div class="section-content">
+              <mat-form-field appearance="outline" class="campo">
+                <mat-label>Nombres</mat-label>
+                <input matInput formControlName="nombres" placeholder="Ej: Ludwig van" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="campo">
+                <mat-label>Apellidos</mat-label>
+                <input matInput formControlName="apellidos" placeholder="Ej: Beethoven" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="campo">
+                <mat-label>Nombre artístico</mat-label>
+                <input matInput formControlName="nombreArtistico" placeholder="Ej: El piano de Beethoven" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="campo">
+                <mat-label>Nombre de reunión</mat-label>
+                <input matInput formControlName="nombreReunion" placeholder="Ej: Beethoven (Ludwig van)" />
+              </mat-form-field>
+              @if (actorForm.errors?.['requiredActorName'] && actorForm.touched) {
+                <p class="error-text">Debe ingresar al menos Nombre y Apellido, Nombre artístico o Nombre de reunión.</p>
+              }
+            </div>
+          </app-collapsible-section>
 
           <app-collapsible-section title="Contenedores (actores asociados)" icon="link" [collapsed]="true">
             <div class="section-content">

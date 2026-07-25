@@ -9,7 +9,7 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 module.exports = function (app) {
   app
     .route('/api/idiomas')
-    .get(requireAuth, authorize('idioma', 'read'), idiomas.list)
+    .get(idiomas.list)
     .post(requireAuth, authorize('idioma', 'create'), idiomas.create);
 
   app
@@ -18,7 +18,7 @@ module.exports = function (app) {
 
   app
     .route('/api/idiomas/:idiomaId')
-    .get(requireAuth, authorize('idioma', 'read'), idiomas.read)
+    .get(idiomas.read)
     .put(
       requireAuth,
       authorize('idioma', 'update', {

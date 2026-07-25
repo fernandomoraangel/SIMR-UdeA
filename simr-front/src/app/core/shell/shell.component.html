@@ -13,6 +13,18 @@
 
     <span class="spacer"></span>
 
+    <ng-container *ngFor="let grupo of gruposPublicos">
+      <button mat-button [matMenuTriggerFor]="menu" class="menu-grupo">
+        {{ grupo.label }}
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <a mat-menu-item *ngFor="let item of grupo.items" [routerLink]="item.ruta">
+          {{ item.label }}
+        </a>
+      </mat-menu>
+    </ng-container>
+
     <ng-container *ngIf="isAuthenticated">
       <ng-container *ngFor="let grupo of grupos">
         <button mat-button [matMenuTriggerFor]="menu" class="menu-grupo">
@@ -66,7 +78,7 @@
     <img src="assets/images/logomr.png" alt="" />
   </div>
 
-  <div class="bienvenida" *ngIf="!isAuthenticated">
+  <div class="bienvenida" *ngIf="mostrarBienvenida">
     <div class="bienvenida-interna">
       <p class="simr-eyebrow">Archivo de músicas regionales · Universidad de Antioquia</p>
       <h1 class="bienvenida-titulo">

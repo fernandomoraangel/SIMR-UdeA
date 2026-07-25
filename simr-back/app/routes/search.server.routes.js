@@ -14,11 +14,11 @@ module.exports = function (app) {
   app.get("/api/search/metadata", search.getSearchMetadata);
 
   // Ruta para búsqueda general en todas las entidades
-  app.route("/api/search").get(requireAuth, search.search);
+  app.route("/api/search").get(search.search);
 
   // Ruta para búsqueda en entidad específica
-  app.route("/api/search/:entity").get(requireAuth, search.searchEntity);
+  app.route("/api/search/:entity").get(search.searchEntity);
 
   // Ruta para validar consultas de búsqueda
-  app.route("/api/search/validate").get(requireAuth, search.validateQuery);
+  app.route("/api/search/validate").get(search.validateQuery);
 };

@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Recurso = mongoose.model("Recurso");
 
 // Método para el manejo de errores
@@ -42,7 +43,7 @@ exports.create = async (req, res) => {
   try {
     // Intentar salvar la recurso
     await recurso.save();
-    // Enviar una representación JSON de la recurso
+    await logAudit(req, "recurso_created", "recurso", recurso._id, recurso.titulo);
     res.json(recurso);
   } catch (err) {
     res.status(400).send({
@@ -102,6 +103,7 @@ exports.update = async (req, res) => {
   // Intenta salvar
   try {
     await recurso.save();
+    await logAudit(req, "recurso_updated", "recurso", recurso._id, recurso.titulo);
     res.json(recurso);
   } catch (err) {
     res.status(400).send({
@@ -117,6 +119,7 @@ exports.delete = async (req, res) => {
 
   try {
     // Usar el método model 'deleteOne' para borrar
+    await logAudit(req, "recurso_deleted", "recurso", recurso._id, recurso.titulo);
     await recurso.deleteOne();
     res.json(recurso);
   } catch (err) {

@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Instrumento = mongoose.model("Instrumento");
 
 // Método para el manejo de errores
@@ -31,6 +32,7 @@ exports.create = async (req, res) => {
 
   try {
     const savedInstrumento = await instrumento.save();
+    await logAudit(req, "instrumento_created", "instrumento", savedInstrumento._id, savedInstrumento.nombre);
     res.json(savedInstrumento);
   } catch (err) {
     res.status(400).send({
@@ -73,6 +75,7 @@ exports.update = async (req, res) => {
 
   try {
     const updatedInstrumento = await instrumento.save();
+    await logAudit(req, "instrumento_updated", "instrumento", updatedInstrumento._id, updatedInstrumento.nombre);
     res.json(updatedInstrumento);
   } catch (err) {
     res.status(400).send({
@@ -87,6 +90,7 @@ exports.delete = async (req, res) => {
 
   try {
     await Instrumento.deleteOne({ _id: instrumento._id });
+    await logAudit(req, "instrumento_deleted", "instrumento", instrumento._id, instrumento.nombre);
     res.json(instrumento);
   } catch (err) {
     res.status(400).send({

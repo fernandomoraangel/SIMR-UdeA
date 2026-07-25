@@ -4,19 +4,23 @@ const mongoose = require("mongoose");
 const AuditLog = mongoose.model("AuditLog");
 
 /**
- * Registra un evento de auditoría.
+ * Registra un evento de auditoría de forma genérica para cualquier entidad.
  * @param {Object} req - Request de Express (para extraer ip, userAgent, user).
- * @param {String} action - Acción realizada (ej. "user_deleted", "role_updated").
- * @param {String} targetType - Tipo de objeto afectado (ej. "user", "role").
+ * @param {String} action - Acción realizada (ej. "obra_created", "actor_deleted").
+ * @param {String} targetType - Tipo de objeto afectado (ej. "obra", "actor", "recurso").
  * @param {String|ObjectId} targetId - ID del objeto afectado.
+ * @param {Object} targetName - Nombre descriptivo del objeto afectado (opcional).
  * @param {Object} changes - Detalle opcional de los cambios.
  */
-const logAudit = async (req, action, targetType, targetId, changes) => {
+const logAudit = async (req, action, targetType, targetId, targetName, changes) => {
   try {
     if (!req) return;
 
     const auditData = {
       action,
+      targetType,
+      targetId,
+      targetName: targetName || null,
       ipAddress: req.ip || (req.connection && req.connection.remoteAddress) || "unknown",
       userAgent: (req.get && req.get("User-Agent")) || "unknown",
       success: true,
@@ -24,17 +28,6 @@ const logAudit = async (req, action, targetType, targetId, changes) => {
 
     if (req.user && req.user._id) {
       auditData.performedBy = req.user._id;
-    }
-
-    if (targetType) {
-      if (targetType === "user") {
-        auditData.targetUser = targetId;
-      } else if (targetType === "role") {
-        auditData.targetRole = targetId;
-      } else {
-        auditData.targetType = targetType;
-        auditData.targetId = targetId;
-      }
     }
 
     if (changes) {

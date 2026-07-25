@@ -68,6 +68,7 @@ const ENTIDAD_KEYS: Record<string, string> = {
   template: `
     <div class="visualizador-container">
       <header class="header">
+        <p class="simr-eyebrow">Visualización de datos</p>
         <h1>Visualizador Cartográfico</h1>
       </header>
 

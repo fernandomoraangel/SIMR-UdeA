@@ -15,16 +15,6 @@
   margin: 0;
 }
 
-.simr-eyebrow {
-  font-family: var(--simr-body);
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--simr-tinta);
-  opacity: 0.6;
-  margin: 6px 0 0;
-}
-
 .search-box {
   background: var(--simr-hueso);
   margin-bottom: 18px;

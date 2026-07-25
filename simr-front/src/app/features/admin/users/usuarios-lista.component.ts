@@ -32,8 +32,8 @@ import { UserDetailDialogComponent } from '@shared/user-detail-dialog/user-detai
     <div class="admin-page">
       <header class="admin-head">
         <div>
+          <p class="simr-eyebrow">Administración</p>
           <h1 class="admin-title">Usuarios</h1>
-          <p class="simr-eyebrow">Gestión de cuentas del sistema</p>
         </div>
         <button mat-flat-button color="primary" routerLink="crear">
           <mat-icon>add</mat-icon> Crear usuario
@@ -90,12 +90,7 @@ import { UserDetailDialogComponent } from '@shared/user-detail-dialog/user-detai
       .admin-page { max-width: 1000px; margin: 0 auto; padding: 28px 24px 48px; }
       .admin-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
       .admin-title { font-family: var(--simr-display); color: var(--simr-tinta); font-size: 1.9rem; margin: 0; }
-      .simr-eyebrow { font-family: var(--simr-body); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--simr-tinta); opacity: 0.6; margin: 6px 0 0; }
       .admin-loading { display: flex; justify-content: center; padding: 40px; }
-      .admin-error { color: var(--simr-sello); font-family: var(--simr-body); padding: 14px; }
-      .admin-table { width: 100%; background: var(--simr-hueso); }
-      .chip { display: inline-block; font-family: var(--simr-body); font-size: 0.72rem; background: rgba(200,119,46,0.18); color: var(--simr-tinta); border-radius: 10px; padding: 1px 8px; margin: 0 4px 4px 0; }
-      .empty { font-family: var(--simr-body); color: var(--simr-tinta); opacity: 0.6; padding: 14px; }
     `,
   ],
 })

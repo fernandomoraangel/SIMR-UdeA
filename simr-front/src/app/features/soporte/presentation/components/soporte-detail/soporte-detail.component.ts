@@ -12,6 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { CollapsibleSectionComponent } from '../../../../../shared/collapsible-section/collapsible-section.component';
+import { ArchivoManagerComponent } from '../../../../archivos/archivo-manager/archivo-manager.component';
 import { SoporteService } from '../../../data/soporte.service';
 import { SupportTicket, STATUS_LABELS, PRIORITY_LABELS } from '../../../domain/soporte.interface';
 
@@ -23,6 +25,8 @@ import { SupportTicket, STATUS_LABELS, PRIORITY_LABELS } from '../../../domain/s
     MatCardModule, MatButtonModule, MatIconModule, MatChipsModule,
     MatProgressSpinnerModule, MatFormFieldModule, MatInputModule,
     MatSelectModule, MatSnackBarModule,
+    CollapsibleSectionComponent,
+    ArchivoManagerComponent,
   ],
   template: `
     <div class="page" *ngIf="!loading && ticket">
@@ -45,6 +49,13 @@ import { SupportTicket, STATUS_LABELS, PRIORITY_LABELS } from '../../../domain/s
       <mat-card appearance="outlined" class="desc-card">
         <p class="desc-text">{{ ticket.description }}</p>
       </mat-card>
+
+      <app-collapsible-section title="Archivos adjuntos" icon="attachment" [collapsed]="false" style="margin-bottom: 20px;">
+        <app-archivo-manager
+          [documentId]="ticket._id"
+          collection="soporte"
+        />
+      </app-collapsible-section>
 
       <div class="responses">
         <div *ngFor="let r of ticket.responses" class="response" [class.staff]="r.isStaff">

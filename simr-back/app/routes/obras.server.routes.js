@@ -13,13 +13,13 @@ module.exports = function (app) {
   //Configurar ruta base a 'obras'
   app
     .route("/api/obras")
-    .get(requireAuth, authorize("obra", "read"), obras.list)
+    .get(obras.list)
     .post(requireAuth, authorize("obra", "create"), obras.create);
 
   //Configurar las rutas a 'obras' parametrizadas
   app
     .route("/api/obras/:obraId")
-    .get(requireAuth, authorize("obra", "read"), obras.read)
+    .get(obras.read)
     .put(
       requireAuth,
       authorize("obra", "update", {

@@ -14,8 +14,8 @@ import { OpacRolResult } from '../../../opac.models';
   template: `
     <div class="opac-page">
       <header class="opac-header">
+        <p class="simr-eyebrow">Catálogo público</p>
         <h1>Roles</h1>
-        <p class="opac-subtitle">Catálogo público — consulta actores por su rol en las obras</p>
       </header>
 
       <div class="opac-search">

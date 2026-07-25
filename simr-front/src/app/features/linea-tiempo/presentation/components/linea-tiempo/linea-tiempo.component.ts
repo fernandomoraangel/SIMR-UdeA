@@ -79,8 +79,8 @@ const ENTIDAD_KEYS: Record<string, string> = {
   template: `
     <div class="timeline-visualizador-container">
       <header class="header">
+        <p class="simr-eyebrow">Visualización de datos</p>
         <h1>Visualizador de Línea de Tiempo</h1>
-        <p class="subtitle">Anotaciones cartográfico-temporales de todas las entidades</p>
       </header>
 
       <div class="controls-card">

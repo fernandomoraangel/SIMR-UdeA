@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const Sistema = mongoose.model("Sistema");
 
 
@@ -39,7 +40,7 @@ exports.create = async (req, res) => {
 
   try {
     await sistema.save();
-    // Enviar una representación JSON de la sistema
+    await logAudit(req, "sistema_created", "sistema", sistema._id, sistema.nombre);
     res.json(sistema);
   } catch (err) {
     res.status(400).send({
@@ -90,6 +91,7 @@ exports.update = async (req, res) => {
   try {
     // Intenta salvar
     await sistema.save();
+    await logAudit(req, "sistema_updated", "sistema", sistema._id, sistema.nombre);
     res.json(sistema);
   } catch (err) {
     res.status(400).send({
@@ -104,6 +106,7 @@ exports.delete = async (req, res) => {
   const sistema = req.sistema;
   try {
     // Usar el método model 'deleteOne' para borrar
+    await logAudit(req, "sistema_deleted", "sistema", sistema._id, sistema.nombre);
     await sistema.deleteOne();
     res.json(sistema);
   } catch (err) {

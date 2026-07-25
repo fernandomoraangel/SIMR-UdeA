@@ -6,6 +6,7 @@ import { RolesListaComponent } from './roles/roles-lista.component';
 import { RolesFormComponent } from './roles/roles-form.component';
 import { AuditoriaListaComponent } from './auditoria/auditoria-lista.component';
 import { NubeConfigListaComponent } from './nube-config/nube-config-lista.component';
+import { DbReplaceComponent } from './db-replace/db-replace.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -53,6 +54,12 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'nube-config',
     component: NubeConfigListaComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['admin'] },
+  },
+  {
+    path: 'db-replace',
+    component: DbReplaceComponent,
     canActivate: [RoleGuard],
     data: { roles: ['admin'] },
   },

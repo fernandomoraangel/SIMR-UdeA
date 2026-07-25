@@ -61,7 +61,7 @@ const CARD_DISPLAY_FIELDS = [
     <div class="idiomas-list-container">
       <header class="header">
         <div>
-          <p class="simr-eyebrow">Términos · Idiomas</p>
+          <p class="simr-eyebrow">Vocabularios controlados</p>
           <h1>Idiomas</h1>
         </div>
         <div class="header-actions">

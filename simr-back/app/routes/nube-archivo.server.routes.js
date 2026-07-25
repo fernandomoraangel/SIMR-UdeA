@@ -18,21 +18,21 @@ module.exports = function (app) {
 
   // Listar y subir archivos
   app.route('/api/nube-archivos')
-    .get(requireAuth, authorize('nube', 'read', { checkOwnership: () => true }), ctrl.list)
+    .get(ctrl.list)
     .post(requireAuth, authorize('nube', 'create', { checkOwnership: () => true }), upload.single('file'), ctrl.upload);
 
   // Tags globales
   app.route('/api/nube-archivos/tags')
-    .get(requireAuth, authorize('nube', 'read', { checkOwnership: () => true }), ctrl.allTags);
+    .get(ctrl.allTags);
 
   // Archivo individual
   app.route('/api/nube-archivos/:id')
-    .get(requireAuth, authorize('nube', 'read', { checkOwnership: () => true }), ctrl.read)
+    .get(ctrl.read)
     .delete(requireAuth, authorize('nube', 'delete', { checkOwnership: async (req) => { const doc = await NubeArchivo.findById(req.params.id); return doc && String(doc.uploadedBy) === String(req.user._id); } }), ctrl.remove);
 
   // Descarga
   app.route('/api/nube-archivos/:id/download')
-    .get(requireAuth, authorize('nube', 'read', { checkOwnership: () => true }), ctrl.download);
+    .get(ctrl.download);
 
   // Actualizar tags
   app.route('/api/nube-archivos/:id/tags')

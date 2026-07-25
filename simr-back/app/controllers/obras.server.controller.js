@@ -3,6 +3,7 @@
 // Cargar dependencias
 const mongoose = require("mongoose");
 const Obra = mongoose.model("Obra");
+const { logAudit } = require("../services/audit.service");
 
 // Método para el manejo de errores
 const getErrorMessage = (err) => {
@@ -33,6 +34,7 @@ exports.create = async (req, res) => {
   //Intentar salvar la obra
   try {
     const savedObra = await obra.save();
+    await logAudit(req, "obra_created", "obra", savedObra._id, savedObra.titulo, { titulo: savedObra.titulo });
     res.json(savedObra);
   } catch (err) {
     res.status(400).send({
@@ -87,6 +89,7 @@ exports.update = async (req, res) => {
 
   try {
     const updatedObra = await obra.save();
+    await logAudit(req, "obra_updated", "obra", updatedObra._id, updatedObra.titulo);
     res.json(updatedObra);
   } catch (err) {
     res.status(400).send({
@@ -101,6 +104,7 @@ exports.delete = async (req, res) => {
 
   try {
     await Obra.deleteOne({ _id: obra._id });
+    await logAudit(req, "obra_deleted", "obra", obra._id, obra.titulo);
     res.json(obra);
   } catch (err) {
     res.status(400).send({

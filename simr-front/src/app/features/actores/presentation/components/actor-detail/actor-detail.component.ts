@@ -61,11 +61,22 @@ import { formatActorName } from '../../../models/actor.interface';
             <span class="simr-codigo">ID {{ a._id }}</span>
           </div>
 
-          @if (a.nombreReunion) {
-            <app-collapsible-section title="Nombre de reunión" icon="badge">
-              <p class="desc-text">{{ a.nombreReunion }}</p>
-            </app-collapsible-section>
-          }
+          <app-collapsible-section title="Nombres" icon="badge">
+            <div class="kv-list">
+              @if (a.nombres) {
+                <div class="kv-item"><span class="kv-key">Nombres</span><span class="kv-value">{{ a.nombres }}</span></div>
+              }
+              @if (a.apellidos) {
+                <div class="kv-item"><span class="kv-key">Apellidos</span><span class="kv-value">{{ a.apellidos }}</span></div>
+              }
+              @if (a.nombreArtistico) {
+                <div class="kv-item"><span class="kv-key">Nombre artístico</span><span class="kv-value">{{ a.nombreArtistico }}</span></div>
+              }
+              @if (a.nombreReunion) {
+                <div class="kv-item"><span class="kv-key">Nombre de reunión</span><span class="kv-value">{{ a.nombreReunion }}</span></div>
+              }
+            </div>
+          </app-collapsible-section>
 
           @if (a.contenedor && a.contenedor.length > 0) {
             <app-collapsible-section title="Contenedores (actores asociados)" icon="link">

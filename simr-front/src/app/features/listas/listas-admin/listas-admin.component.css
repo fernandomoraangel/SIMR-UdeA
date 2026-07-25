@@ -15,16 +15,6 @@
   margin: 0;
 }
 
-.simr-eyebrow {
-  font-family: var(--simr-body);
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--simr-tinta);
-  opacity: 0.6;
-  margin: 6px 0 0;
-}
-
 .listas-loading {
   display: flex;
   justify-content: center;
@@ -121,9 +111,9 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(31, 42, 36, 0.1);
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(31, 42, 36, 0.1);
 }
 
 .agregar-input {

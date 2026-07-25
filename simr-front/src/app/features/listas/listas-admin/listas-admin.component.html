@@ -1,8 +1,8 @@
 <div class="listas-page">
   <header class="listas-head">
     <div>
-      <h1 class="listas-title">Listas de referencia</h1>
-      <p class="simr-eyebrow">Datos de catálogo compartidos por todos los módulos</p>
+      <p class="simr-eyebrow">Vocabularios controlados</p>
+      <h1>Listas de referencia</h1>
     </div>
   </header>
 
@@ -64,8 +64,50 @@
         Última modificación: {{ selected.fecha_modificacion | date: 'dd/MM/yyyy HH:mm' }}
       </p>
 
+      <mat-form-field appearance="outline" class="filtro">
+        <mat-label>Filtrar términos</mat-label>
+        <input matInput [(ngModel)]="filtroElementos" />
+        <button
+          mat-icon-button
+          matSuffix
+          *ngIf="filtroElementos"
+          (click)="clearElementFilter()"
+          aria-label="Limpiar"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Agregar elemento -->
+      <div class="agregar" *ngIf="canWrite">
+        <ng-container *ngIf="isNNormalizados; else agregarSimple">
+          <mat-form-field appearance="outline">
+            <mat-label>Sigla</mat-label>
+            <input matInput [(ngModel)]="newElementSigla" (keyup.enter)="addElement()" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Frase</mat-label>
+            <input matInput [(ngModel)]="newElementFrase" (keyup.enter)="addElement()" />
+          </mat-form-field>
+        </ng-container>
+        <ng-template #agregarSimple>
+          <mat-form-field appearance="outline" class="agregar-input">
+            <mat-label>Nuevo elemento</mat-label>
+            <input matInput [(ngModel)]="newElement" (keyup.enter)="addElement()" />
+          </mat-form-field>
+        </ng-template>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="addElement()"
+          [disabled]="isNNormalizados ? !newElementSigla.trim() : !newElement.trim()"
+        >
+          <mat-icon>add</mat-icon> Agregar
+        </button>
+      </div>
+
       <mat-list>
-        <mat-list-item *ngFor="let el of selected.elementos; let i = index">
+        <mat-list-item *ngFor="let i of filteredElementIndices">
           <span matListItemTitle>
             <ng-container *ngIf="editIndex !== i">
               {{ elementLabel(selected, i) }}
@@ -132,37 +174,9 @@
         </mat-list-item>
       </mat-list>
 
-      <p class="empty" *ngIf="selected.elementos.length === 0">
-        Esta lista no tiene elementos.
+      <p class="empty" *ngIf="filteredElementIndices.length === 0">
+        {{ filtroElementos ? 'Ningún término coincide con el filtro.' : 'Esta lista no tiene elementos.' }}
       </p>
-
-      <!-- Agregar elemento -->
-      <div class="agregar" *ngIf="canWrite">
-        <ng-container *ngIf="isNNormalizados; else agregarSimple">
-          <mat-form-field appearance="outline">
-            <mat-label>Sigla</mat-label>
-            <input matInput [(ngModel)]="newElementSigla" (keyup.enter)="addElement()" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Frase</mat-label>
-            <input matInput [(ngModel)]="newElementFrase" (keyup.enter)="addElement()" />
-          </mat-form-field>
-        </ng-container>
-        <ng-template #agregarSimple>
-          <mat-form-field appearance="outline" class="agregar-input">
-            <mat-label>Nuevo elemento</mat-label>
-            <input matInput [(ngModel)]="newElement" (keyup.enter)="addElement()" />
-          </mat-form-field>
-        </ng-template>
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="addElement()"
-          [disabled]="isNNormalizados ? !newElementSigla.trim() : !newElement.trim()"
-        >
-          <mat-icon>add</mat-icon> Agregar
-        </button>
-      </div>
     </mat-card>
   </div>
 </div>

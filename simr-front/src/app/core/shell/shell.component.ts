@@ -29,9 +29,8 @@ export class ShellComponent implements OnInit {
   currentUser: { fullName?: string } | null = null;
   private readonly sesionTracker = inject(SesionTrackerService);
 
-  // Menú definitivo: organizado por categorías funcionales.
-  // Migrados → ruta real; no migrados → /no-implementado/:modulo.
-  grupos: MenuGroup[] = [
+  // Grupos visibles sin autenticación
+  gruposPublicos: MenuGroup[] = [
     {
       label: 'Catálogo público',
       items: [
@@ -46,6 +45,19 @@ export class ShellComponent implements OnInit {
       ],
     },
     {
+      label: 'Visualización de datos',
+      items: [
+        { label: 'Grafo de base de datos', ruta: '/graph' },
+        { label: 'Mapa visualizador', ruta: '/mapa-visualizador' },
+        { label: 'Línea de tiempo', ruta: '/linea-tiempo' },
+        { label: 'Estadísticas', ruta: '/estadisticas' },
+      ],
+    },
+  ];
+
+  // Grupos solo visibles con sesión iniciada
+  grupos: MenuGroup[] = [
+    {
       label: 'Catalogación',
       items: [
         { label: 'Obras', ruta: '/obras' },
@@ -53,7 +65,7 @@ export class ShellComponent implements OnInit {
         { label: 'Recursos', ruta: '/recursos' },
         { label: 'Ejemplares', ruta: '/ejemplares' },
         { label: 'Proyectos', ruta: '/proyectos' },
-        { label: 'Fondos documentales', ruta: '/fondos' },
+        { label: 'Fondos', ruta: '/fondos' },
         { label: 'Colecciones', ruta: '/colecciones' },
       ],
     },
@@ -69,15 +81,6 @@ export class ShellComponent implements OnInit {
         { label: 'Idiomas', ruta: '/idiomas' },
         { label: 'Diccionario', ruta: '/diccionarios' },
         { label: 'Listas', ruta: '/listas' },
-      ],
-    },
-    {
-      label: 'Visualización de datos',
-      items: [
-        { label: 'Grafo de base de datos', ruta: '/graph' },
-        { label: 'Mapa visualizador', ruta: '/mapa-visualizador' },
-        { label: 'Línea de tiempo', ruta: '/linea-tiempo' },
-        { label: 'Estadísticas', ruta: '/estadisticas' },
       ],
     },
     {
@@ -97,6 +100,7 @@ export class ShellComponent implements OnInit {
         { label: 'Gestión de Roles', ruta: '/admin/roles' },
         { label: 'Auditoría del Sistema', ruta: '/admin/auditoria' },
         { label: 'Nube de Archivos', ruta: '/admin/nube-config' },
+        { label: 'Reemplazar en BD', ruta: '/admin/db-replace' },
       ],
   };
 
@@ -125,6 +129,11 @@ export class ShellComponent implements OnInit {
       no ha seleccionado ningún módulo del menú (con o sin sesión). */
   get mostrarMarcaAgua(): boolean {
     return this.router.url === '/';
+  }
+
+  /** Bienvenida solo en la raíz para usuarios anónimos */
+  get mostrarBienvenida(): boolean {
+    return !this.isAuthenticated && this.router.url === '/';
   }
 
   isAdmin(): boolean {

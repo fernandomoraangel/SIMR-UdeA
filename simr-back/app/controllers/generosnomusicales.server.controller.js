@@ -2,6 +2,7 @@
 
 // Cargar dependencias
 const mongoose = require("mongoose");
+const { logAudit } = require("../services/audit.service");
 const GeneroNoMusical = mongoose.model("GeneroNoMusical");
 
 // Método para el manejo de errores
@@ -31,6 +32,7 @@ exports.create = async (req, res) => {
 
   try {
     const savedGeneroNoMusical = await generoNoMusical.save();
+    await logAudit(req, "genero_nomusical_created", "genero_nomusical", savedGeneroNoMusical._id, savedGeneroNoMusical.nombre);
     res.json(savedGeneroNoMusical);
   } catch (err) {
     res.status(400).send({
@@ -76,6 +78,7 @@ exports.update = async (req, res) => {
 
   try {
     const updatedGeneroNoMusical = await generoNoMusical.save();
+    await logAudit(req, "genero_nomusical_updated", "genero_nomusical", updatedGeneroNoMusical._id, updatedGeneroNoMusical.nombre);
     res.json(updatedGeneroNoMusical);
   } catch (err) {
     res.status(400).send({
@@ -89,6 +92,7 @@ exports.delete = async (req, res) => {
   const generoNoMusical = req.generoNoMusical;
   try {
     await GeneroNoMusical.deleteOne({ _id: generoNoMusical._id });
+    await logAudit(req, "genero_nomusical_deleted", "genero_nomusical", generoNoMusical._id, generoNoMusical.nombre);
     res.json(generoNoMusical);
   } catch (err) {
     res.status(400).send({
