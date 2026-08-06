@@ -9,6 +9,7 @@ const NubeArchivoSchema = new Schema({
   size: { type: Number, required: true },
   key: { type: String, required: true, unique: true },
   tags: [{ type: String }],
+  color: { type: String, trim: true },
   uploadedBy: { type: Schema.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

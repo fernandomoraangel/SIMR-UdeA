@@ -38,6 +38,10 @@ export class NubeArchivosService {
     return this.http.put(`${this.api}/${id}/tags`, { tags }, { withCredentials: true });
   }
 
+  updateColor(id: string, color?: string): Observable<any> {
+    return this.http.put(`${this.api}/${id}/color`, { color: color ?? '' }, { withCredentials: true });
+  }
+
   remove(id: string): Observable<any> {
     return this.http.delete(`${this.api}/${id}`, { withCredentials: true });
   }

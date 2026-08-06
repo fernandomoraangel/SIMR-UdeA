@@ -89,6 +89,12 @@ const AuditLogSchema = new Schema(
         "diccionario_created",
         "diccionario_updated",
         "diccionario_deleted",
+        // Importación Excel
+        "import_executed",
+        // Sesiones de uso
+        "uso_creado",
+        "uso_actualizado",
+        "uso_eliminado",
         // Ejemplares
         "ejemplar_created",
         "ejemplar_updated",

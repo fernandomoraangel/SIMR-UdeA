@@ -89,7 +89,6 @@ export class ShellComponent implements OnInit {
         { label: 'Nube de archivos', ruta: '/nube-archivos' },
         { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
         { label: 'Soporte técnico', ruta: '/soporte' },
-        { label: 'Importar Excel', ruta: '/admin/importar-excel' },
       ],
     },
   ];
@@ -102,6 +101,8 @@ export class ShellComponent implements OnInit {
         { label: 'Auditoría del Sistema', ruta: '/admin/auditoria' },
         { label: 'Nube de Archivos', ruta: '/admin/nube-config' },
         { label: 'Reemplazar en BD', ruta: '/admin/db-replace' },
+        { label: 'Importar Excel', ruta: '/admin/importar-excel' },
+        { label: 'Respaldo y Restauración', ruta: '/admin/backup-restore' },
       ],
   };
 

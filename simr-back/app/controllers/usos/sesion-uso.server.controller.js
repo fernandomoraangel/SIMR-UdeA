@@ -1,6 +1,7 @@
 "use strict";
 
 const mongoose = require("mongoose");
+const { logAudit } = require("../../services/audit.service");
 const SesionUso = mongoose.model("SesionUso");
 
 exports.crearSesion = async (req, res) => {

@@ -20,4 +20,12 @@ module.exports = function (app) {
   app
     .route("/api/import/execute")
     .post(requireAuth, isAdmin, importCtrl.execute);
+
+  app
+    .route("/api/import/search-ref")
+    .post(requireAuth, isAdmin, importCtrl.searchRef);
+
+  app
+    .route("/api/import/search-all-refs")
+    .post(requireAuth, isAdmin, importCtrl.searchAllRefs);
 };

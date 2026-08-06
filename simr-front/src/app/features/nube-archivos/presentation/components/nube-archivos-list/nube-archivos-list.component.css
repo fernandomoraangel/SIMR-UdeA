@@ -219,28 +219,6 @@
   font-style: italic;
 }
 
-.nube-tags-edit {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  margin-top: 6px;
-}
-
-.nube-tags-edit input {
-  flex: 1;
-  border: 1px solid var(--simr-sello, #b5432a);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  outline: none;
-}
-
-.nube-tags-edit button {
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-}
-
 .nube-card-actions {
   display: flex;
   flex-direction: column;

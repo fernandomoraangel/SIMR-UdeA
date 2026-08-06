@@ -8,6 +8,7 @@ import { AuditoriaListaComponent } from './auditoria/auditoria-lista.component';
 import { NubeConfigListaComponent } from './nube-config/nube-config-lista.component';
 import { DbReplaceComponent } from './db-replace/db-replace.component';
 import { ImportarExcelComponent } from './importar-excel/importar-excel.component';
+import { BackupRestoreComponent } from './backup-restore/backup-restore.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -67,6 +68,12 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'importar-excel',
     component: ImportarExcelComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['admin'] },
+  },
+  {
+    path: 'backup-restore',
+    component: BackupRestoreComponent,
     canActivate: [RoleGuard],
     data: { roles: ['admin'] },
   },

@@ -62,9 +62,8 @@ var ActorSchema = new Schema({
   },
   apellidos: {
     type: String,
-    required: function() {
-      return !this.nombreArtistico && !this.nombreReunion;
-    }
+    default: "",
+    trim: true,
   },
   nombreArtistico: {
     type: String,

@@ -104,8 +104,16 @@ export class AuthDialogComponent {
     this.router.navigate(['/']);
   }
 
-  private onError(err: string): void {
+  private onError(err: any): void {
     this.isLoading = false;
-    this.errorMessage = err || 'Ocurrió un error. Inténtalo de nuevo.';
+    if (typeof err === 'string') {
+      this.errorMessage = err;
+    } else if (err instanceof Error) {
+      this.errorMessage = err.message || 'Ocurrió un error. Inténtalo de nuevo.';
+    } else if (err.status === 401) {
+      this.errorMessage = 'Usuario o contraseña incorrectos';
+    } else {
+      this.errorMessage = err._authMessage || err.message || 'Error al iniciar sesión';
+    }
   }
 }

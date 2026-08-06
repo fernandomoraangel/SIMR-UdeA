@@ -38,6 +38,10 @@ module.exports = function (app) {
   app.route('/api/nube-archivos/:id/tags')
     .put(requireAuth, authorize('nube', 'update', { checkOwnership: async (req) => { const doc = await NubeArchivo.findById(req.params.id); return doc && String(doc.uploadedBy) === String(req.user._id); } }), ctrl.updateTags);
 
+  // Actualizar color de tarjeta
+  app.route('/api/nube-archivos/:id/color')
+    .put(requireAuth, authorize('nube', 'update', { checkOwnership: async (req) => { const doc = await NubeArchivo.findById(req.params.id); return doc && String(doc.uploadedBy) === String(req.user._id); } }), ctrl.updateColor);
+
   // Configuración de nube (requiere admin)
   const { isAdmin } = require('../../app/middleware/authorize.middleware');
   app.route('/api/nube-archivos/config')

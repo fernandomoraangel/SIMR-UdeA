@@ -415,9 +415,9 @@ export class AuthService {
     return this.authStateSubject.value.user;
   }
 
-  /**
-   * Manejo de errores
-   */
+/**
+     * Manejo de errores
+     */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
 
@@ -449,16 +449,11 @@ export class AuthService {
 
     console.error('❌ Error en AuthService:', errorMessage);
 
-    // Preservar el error original con su status para que los componentes
-    // puedan leer error.status y error.message
-    const enhancedError = new HttpErrorResponse({
-      error: error.error,
-      status: error.status,
-      statusText: error.statusText,
-      url: error.url!,
-      headers: error.headers,
-    });
-    (enhancedError as any)._authMessage = errorMessage;
+    // Crear un nuevo error con mensaje legible
+    const enhancedError: any = new Error(errorMessage);
+    enhancedError.status = error.status;
+    enhancedError._authMessage = errorMessage;
+    enhancedError.originalError = error.error;
     return throwError(() => enhancedError);
   }
 

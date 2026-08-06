@@ -34,7 +34,7 @@ import { PATTERNS, ERROR_MESSAGES } from '../validators/patterns';
           mat-stroked-button
           class="add-btn"
           (click)="addItem()"
-          [disabled]="!newItem?.trim()"
+          [disabled]="!newItem || !newItem.trim()"
           type="button"
         >
           <mat-icon>add</mat-icon>

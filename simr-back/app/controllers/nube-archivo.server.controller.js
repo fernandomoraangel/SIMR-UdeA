@@ -170,6 +170,31 @@ async function updateTags(req, res) {
   }
 }
 
+//* UPDATE COLOR - Actualizar el color de la tarjeta de un archivo
+async function updateColor(req, res) {
+  try {
+    const { color } = req.body;
+    const cleanColor = typeof color === 'string' ? color.trim() : '';
+    if (cleanColor && !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(cleanColor)) {
+      return errorResponse(res, 'color debe ser un color hexadecimal o vacío', 400);
+    }
+
+    const doc = await NubeArchivo.findByIdAndUpdate(
+      req.params.id,
+      { color: cleanColor, updatedAt: new Date() },
+      { new: true }
+    ).populate('uploadedBy', 'username fullName');
+
+    if (!doc) {
+      return errorResponse(res, 'Archivo no encontrado', 404);
+    }
+    successResponse(res, 'Color actualizado', 200, doc);
+  } catch (err) {
+    console.error('[nube-archivo] updateColor error:', err);
+    errorResponse(res, 'Error al actualizar color', 500);
+  }
+}
+
 //* DELETE - Eliminar archivo
 async function remove(req, res) {
   try {
@@ -262,6 +287,7 @@ module.exports = {
   read,
   download,
   updateTags,
+  updateColor,
   remove,
   allTags,
   getConfig,

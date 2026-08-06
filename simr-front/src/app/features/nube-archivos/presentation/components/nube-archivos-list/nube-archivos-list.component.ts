@@ -6,10 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NubeArchivosService } from '../../../data/nube-archivos.service';
 import { NubeArchivo, TagCount } from '../../../models/nube-archivo.interface';
 import { NubeArchivosUploadComponent } from '../nube-archivos-upload/nube-archivos-upload.component';
+import { NubeArchivosTagsDialogComponent } from '../nube-archivos-tags-dialog/nube-archivos-tags-dialog.component';
 import { SweetAlertService } from '@core/services/sweet-alert.service';
 
 @Component({
@@ -26,9 +28,16 @@ import { SweetAlertService } from '@core/services/sweet-alert.service';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatDialogModule,
+    MatMenuModule,
   ],
 })
 export class NubeArchivosListComponent implements OnInit {
+  readonly cardColors: string[] = [
+    '#b5432a', '#c62828', '#ad1457', '#6a1b9a', '#4527a0',
+    '#1565c0', '#00838f', '#00695c', '#2e7d32', '#9e9d24',
+    '#ef6c00', '#e65100', '#5d4037', '#546e7a', '#455a64',
+  ];
+
   files: NubeArchivo[] = [];
   total = 0;
   page = 1;
@@ -39,9 +48,6 @@ export class NubeArchivosListComponent implements OnInit {
   selectedTags: string[] = [];
   availableTags: TagCount[] = [];
   showTagFilter = false;
-
-  editingTagsId: string | null = null;
-  editingTagsValue = '';
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -129,27 +135,36 @@ export class NubeArchivosListComponent implements OnInit {
     document.body.removeChild(a);
   }
 
-  startEditTags(file: NubeArchivo): void {
-    this.editingTagsId = file._id;
-    this.editingTagsValue = file.tags.join(', ');
+  openTagsDialog(file: NubeArchivo): void {
+    const ref = this.dialog.open(NubeArchivosTagsDialogComponent, {
+      width: '480px',
+      disableClose: true,
+      data: { file, availableTags: this.availableTags },
+    });
+    ref.afterClosed().subscribe((result: string[] | undefined) => {
+      if (!result) return;
+      const updated = this.files.find((f) => f._id === file._id);
+      if (updated) updated.tags = result;
+      this.loadTags();
+    });
   }
 
-  saveTags(file: NubeArchivo): void {
-    const tags = this.editingTagsValue.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
-    this.service.updateTags(file._id, tags).subscribe({
-      next: () => {
-        file.tags = tags;
-        this.editingTagsId = null;
-        this.loadTags();
-      },
+  setColor(file: NubeArchivo, color?: string): void {
+    const next = color ? color : undefined;
+    file.color = next;
+    this.service.updateColor(file._id, next).subscribe({
       error: () => {
-        this.sweetAlert.showError('Error', 'No se pudieron actualizar las etiquetas');
+        this.sweetAlert.showError('Error', 'No se pudo cambiar el color');
       },
     });
   }
 
-  cancelEditTags(): void {
-    this.editingTagsId = null;
+  cardStyle(file: NubeArchivo): Record<string, string> {
+    if (!file.color) return {};
+    return {
+      'border-left': `4px solid ${file.color}`,
+      'background': `color-mix(in srgb, ${file.color} 6%, #fff)`,
+    };
   }
 
   confirmDelete(file: NubeArchivo): void {

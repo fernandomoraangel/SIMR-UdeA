@@ -128,8 +128,8 @@ export class HsClassificationService {
   async load(): Promise<void> {
     if (this.taxonomy) return;
     const [tax, univ] = await Promise.all([
-      firstValueFrom(this.http.get<HsTaxonomy>('/angular/assets/data/hs-taxonomy.json')),
-      firstValueFrom(this.http.get<{ version: string; instruments: UniversalInstrument[] }>('/angular/assets/data/hs-universal-instruments.json')),
+      firstValueFrom(this.http.get<HsTaxonomy>('/assets/data/hs-taxonomy.json')),
+      firstValueFrom(this.http.get<{ version: string; instruments: UniversalInstrument[] }>('/assets/data/hs-universal-instruments.json')),
     ]);
     this.taxonomy = tax;
     this.universals = univ.instruments;

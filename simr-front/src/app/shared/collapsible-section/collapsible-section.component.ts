@@ -18,7 +18,9 @@ import { MatIconModule } from '@angular/material/icon';
         <mat-icon class="collapse-arrow">keyboard_arrow_down</mat-icon>
       </button>
       <div class="collapsible-body" [class.open]="!collapsed">
-        <ng-content></ng-content>
+        <div class="collapsible-inner">
+          <ng-content></ng-content>
+        </div>
       </div>
     </div>
   `,
@@ -68,14 +70,17 @@ import { MatIconModule } from '@angular/material/icon';
       transform: rotate(-90deg);
     }
     .collapsible-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
       padding: 0;
     }
+    .collapsible-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
     .collapsible-body.open {
-      max-height: 2000px;
-      overflow: visible;
+      grid-template-rows: 1fr;
       padding: 0 0 1.25rem;
     }
   `],

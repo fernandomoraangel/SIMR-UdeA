@@ -280,7 +280,6 @@ const readListasFile = () => {
         "Digitador (asigna digitaciones a la partitura)",
         "Digitador de partituras",
         "Director",
-        "Director",
         "Editor",
         "Grabación",
         "Guionista",

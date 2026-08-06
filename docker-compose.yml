@@ -68,8 +68,8 @@ services:
     ports:
       - "4200:4200"
     volumes:
-      - ./simr-front:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./simr-front:/app
+      - /app/node_modules
     depends_on:
       - simr-back
     networks:

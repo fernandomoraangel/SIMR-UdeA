@@ -78,7 +78,7 @@
   } @else {
     <div class="nube-grid">
       @for (file of files; track file._id) {
-        <div class="nube-card">
+        <div class="nube-card" [ngStyle]="cardStyle(file)">
           <div class="nube-card-icon">
             <mat-icon>{{ getFileIcon(file.mimetype) }}</mat-icon>
           </div>
@@ -93,35 +93,48 @@
               · {{ file.createdAt | date:'shortDate' }}
             </div>
 
-            @if (editingTagsId === file._id) {
-              <div class="nube-tags-edit">
-                <input
-                  type="text"
-                  [(ngModel)]="editingTagsValue"
-                  (keyup.enter)="saveTags(file)"
-                  placeholder="tag1, tag2, tag3"
-                  (keyup.escape)="cancelEditTags()"
-                />
-                <button mat-icon-button (click)="saveTags(file)" matTooltip="Guardar"><mat-icon>check</mat-icon></button>
-                <button mat-icon-button (click)="cancelEditTags()" matTooltip="Cancelar"><mat-icon>close</mat-icon></button>
-              </div>
-            } @else {
-              <div class="nube-tags" (click)="startEditTags(file)" title="Editar etiquetas">
-                @if (file.tags.length) {
-                  @for (tag of file.tags.slice(0, 3); track tag) {
-                    <span class="tag">{{ tag }}</span>
-                  }
-                  @if (file.tags.length > 3) {
-                    <span class="tag-more">+{{ file.tags.length - 3 }}</span>
-                  }
-                } @else {
-                  <span class="tag-placeholder">Añadir etiquetas…</span>
+            <div class="nube-tags" (click)="openTagsDialog(file)" title="Añadir o editar etiquetas">
+              @if (file.tags.length) {
+                @for (tag of file.tags.slice(0, 3); track tag) {
+                  <span class="tag">{{ tag }}</span>
                 }
-              </div>
-            }
+                @if (file.tags.length > 3) {
+                  <span class="tag-more">+{{ file.tags.length - 3 }}</span>
+                }
+              } @else {
+                <span class="tag-placeholder">Añadir etiquetas…</span>
+              }
+            </div>
           </div>
 
           <div class="nube-card-actions">
+            <button mat-icon-button [matMenuTriggerFor]="colorMenu" matTooltip="Colorear tarjeta">
+              <mat-icon>palette</mat-icon>
+            </button>
+            <mat-menu #colorMenu="matMenu" class="nube-color-menu" xPosition="after">
+              <div class="color-palette">
+                @for (color of cardColors; track color) {
+                  <button
+                    class="color-swatch"
+                    [style.background-color]="color"
+                    [class.active]="file.color === color"
+                    (click)="setColor(file, color)"
+                    [attr.title]="color"
+                  ></button>
+                }
+                <button
+                  class="color-swatch color-swatch-clear"
+                  [class.active]="!file.color"
+                  (click)="setColor(file)"
+                  matTooltip="Quitar color"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </mat-menu>
+            <button mat-icon-button (click)="openTagsDialog(file)" matTooltip="Añadir etiquetas">
+              <mat-icon>label</mat-icon>
+            </button>
             <button mat-icon-button (click)="downloadFile(file)" matTooltip="Descargar">
               <mat-icon>download</mat-icon>
             </button>

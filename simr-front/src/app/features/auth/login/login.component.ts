@@ -88,14 +88,21 @@ export class LoginComponent implements OnInit {
         this.showTest = true;
       },
       error: (error) => {
-        const message =
-          (error as any)._authMessage ||
-          error.message ||
-          'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
-        this.errorMessage = message;
+        const enhancedError = error as any;
+        let message: string;
+
+        if (enhancedError.status === 401) {
+          message = 'Usuario o contraseña incorrectos';
+        } else {
+          message =
+            enhancedError._authMessage ||
+            enhancedError.message ||
+            'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
+        }
+        this.errorMessage = typeof message === 'string' ? message : String(message);
         this.isLoading = false;
 
-        if (error.status === 401) {
+        if (enhancedError.status === 401) {
           this.loginForm.get('password')?.reset();
         }
       },

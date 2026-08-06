@@ -1,0 +1,81 @@
+.tags-dialog {
+  min-width: 440px;
+}
+
+.tags-body {
+  padding: 0 24px 4px;
+}
+
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--simr-tinta);
+  margin-bottom: 12px;
+}
+
+.file-name mat-icon {
+  color: var(--simr-sello, #b5432a);
+  opacity: 0.7;
+}
+
+.file-name span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tags-current {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 32px;
+  padding: 8px 10px;
+  background: #faf8f5;
+  border: 1px solid #e0d8d0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.tag-chip {
+  font-size: 0.8rem;
+  background: #ede7e0;
+  color: var(--simr-tinta);
+}
+
+.tags-empty {
+  font-size: 0.82rem;
+  color: var(--simr-tinta);
+  opacity: 0.45;
+  font-style: italic;
+}
+
+.tags-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.new-tag-field {
+  flex: 1;
+}
+
+.tags-add-row button {
+  flex-shrink: 0;
+}
+
+.tags-hint {
+  font-size: 0.75rem;
+  color: var(--simr-tinta);
+  opacity: 0.55;
+  margin: 8px 0 0;
+}
+
+.tags-error {
+  color: var(--simr-sello, #b5432a);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}

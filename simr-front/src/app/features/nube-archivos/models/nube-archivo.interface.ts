@@ -5,6 +5,7 @@ export interface NubeArchivo {
   size: number;
   key: string;
   tags: string[];
+  color?: string;
   uploadedBy?: { _id: string; username: string; fullName: string };
   createdAt: string;
   updatedAt: string;

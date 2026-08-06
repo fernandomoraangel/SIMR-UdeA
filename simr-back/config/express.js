@@ -199,11 +199,9 @@ module.exports = function () {
   //   require('./middleware/auth').requireRole(['admin'])
   // ], require('./routes/admin'));
 
-  //* Configurar el directorio views
-  app.set("views", "./app/views");
-
-  //* Configurar el motor de plantillas
-  app.set("view engine", "ejs");
+  //* Configurar el directorio views (legacy AngularJS, ya no se usa)
+  // app.set("views", "./app/views");
+  // app.set("view engine", "ejs");
 
   // // Registrar flash
   // app.use(flash());
@@ -309,6 +307,7 @@ require("../app/routes/support-ticket.server.routes.js")(app);
 require("../app/routes/opac.server.routes.js")(app);
 require("../app/routes/utils.server.routes.js")(app);
 require("../app/routes/import.server.routes.js")(app);
+require("../app/routes/backup.server.routes.js")(app);
 
   // Middleware para manejo específico de errores de autenticación
   const { handleAuthError } = require("../app/middleware/authErrorHandler");

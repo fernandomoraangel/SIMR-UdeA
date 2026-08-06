@@ -1,0 +1,61 @@
+<div class="tags-dialog">
+  <h2 mat-dialog-title>Etiquetas del archivo</h2>
+
+  <div class="tags-body">
+    <div class="file-name">
+      <mat-icon>insert_drive_file</mat-icon>
+      <span [title]="file.originalName">{{ file.originalName }}</span>
+    </div>
+
+    <div class="tags-current">
+      @if (tags.length === 0) {
+        <span class="tags-empty">Sin etiquetas</span>
+      } @else {
+        @for (tag of tags; track tag) {
+          <mat-chip (removed)="removeTag(tag)" class="tag-chip">
+            {{ tag }}
+            <button matChipRemove><mat-icon>cancel</mat-icon></button>
+          </mat-chip>
+        }
+      }
+    </div>
+
+    <div class="tags-add-row">
+      <mat-form-field appearance="outline" class="new-tag-field">
+        <mat-label>Nueva etiqueta</mat-label>
+        <input
+          matInput
+          [matAutocomplete]="tagAuto"
+          [(ngModel)]="newTag"
+          (keyup.enter)="addTag()"
+          placeholder="escribe y presiona Enter…"
+        />
+        <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="addTag($event.option.value)">
+          @for (t of tagSuggestions; track t) {
+            <mat-option [value]="t">{{ t }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <button mat-stroked-button (click)="addTag()" matTooltip="Agregar etiqueta">
+        <mat-icon>add</mat-icon> Agregar
+      </button>
+    </div>
+
+    <p class="tags-hint">Las etiquetas existentes se conservan; solo se agregan las nuevas.</p>
+
+    @if (errorMessage) {
+      <div class="tags-error">{{ errorMessage }}</div>
+    }
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button [disabled]="isLoading" (click)="dialogRef.close()">Cancelar</button>
+    <button mat-flat-button color="primary" [disabled]="isLoading" (click)="save()">
+      @if (isLoading) {
+        Guardando…
+      } @else {
+        Guardar
+      }
+    </button>
+  </div>
+</div>

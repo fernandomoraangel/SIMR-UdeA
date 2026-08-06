@@ -103,3 +103,50 @@ h3 {
   --mat-sys-background: var(--simr-papel);
 }
 
+
+/* Color picker de tarjetas - Nube de archivos */
+.nube-color-menu .mat-mdc-menu-content {
+  padding: 8px;
+}
+
+.nube-color-menu .color-palette {
+  display: grid;
+  grid-template-columns: repeat(5, 28px);
+  gap: 6px;
+}
+
+.nube-color-menu .color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  background-clip: padding-box;
+  outline: none;
+}
+
+.nube-color-menu .color-swatch:hover {
+  transform: scale(1.12);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.nube-color-menu .color-swatch.active {
+  border-color: #fff;
+  outline: 2px solid var(--simr-tinta);
+}
+
+.nube-color-menu .color-swatch-clear {
+  background: #fff;
+  border: 1.5px dashed #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nube-color-menu .color-swatch-clear mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #888;
+}
