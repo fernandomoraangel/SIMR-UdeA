@@ -10,8 +10,8 @@ services:
     volumes:
       - /mnt/data/mongodb:/data/db
       - ./init.mongo.js:/docker-entrypoint-initdb.d/init.mongo.js
-    ports:
-      - "127.0.0.1:27017:27017" # Solo accesible localmente (SSH tunnel para Compass); no expuesto a Internet
+    # Sin ports: MongoDB solo es accesible dentro de la red interna.
+    # Acceso para mantenimiento: docker exec -it mongodb_prod mongosh ... o túnel SSH temporal.
     networks:
       - simr-net-prod
     healthcheck:
@@ -31,9 +31,7 @@ services:
     environment:
       MINIO_ROOT_USER: superAdmin
       MINIO_ROOT_PASSWORD: sadmin1990
-    ports:
-      - "127.0.0.1:9000:9000" # API de MinIO - acceso solo local, se llega vía proxy Nginx (/minio-api/)
-      - "127.0.0.1:9001:9001" # Consola de MinIO - acceso solo local, se llega vía proxy Nginx (/minio/)
+    # Sin puertos públicos: API (9000) vía Nginx /minio-api/, Consola (9001) vía /minio/
     networks:
       - simr-net-prod
     healthcheck:
@@ -95,7 +93,9 @@ services:
     container_name: nginx_prod
     restart: unless-stopped
     ports:
-      - "80:80"
+      # Solo se expone HTTPS hacia el exterior (auditoría de Seguridad TI).
+      # El bloque 80 (redirect a 443) vive en nginx.prod.conf pero no se publica
+      # aquí; si el firewall/host publica el 80, descomentar: "80:80"
       - "443:443"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
