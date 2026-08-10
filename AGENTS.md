@@ -29,6 +29,7 @@ Migrar todos los módulos CRUD de AngularJS a Angular 20+ con consistencia visua
 
 ### ✅ Migración completa
 - **Grafo** — migrado con D3.js v7 force-directed graph. Componente standalone con SVG, zoom/pan, drag, tooltip hover, navegación a detalle al click. SignalStore + SignalStore Service. API `/api/graph/*` endpoints existentes en backend. Ruta `/graph` lazy.
+- **Ayuda** — nuevo módulo con **manual interactivo** (`features/ayuda/manual`) que documenta todos los módulos y además incluye: sección "El proyecto SIMR" (qué es, sentido, para quién), glosario de conceptos (catalogación, anotaciones CT, Hornbostel-Sachs, formatos MARC21/Dublin Core, números normalizados…), y dos secciones técnicas actualizadas: "Arquitectura y tecnología" (MEAN + MinIO, stacks front/back, MongoDB, Docker, puesta en marcha) y "Guía para desarrolladores" (patrón CRUD, componentes compartidos, convenciones, Git). Datos en `manual.data.ts` con campo `contenido[]` para párrafos; búsqueda indexa nombre, descripción, contenido, campos y extras; grupos colapsables con CollapsibleSectionComponent. **Acerca de** (`features/ayuda/acerca-de`) lee la versión desde `package.json` (`import pkg from '.../package.json'` requiere `resolveJsonModule` en `tsconfig.app.json`). Menú "Ayuda" en shell (público, siempre último) con `Manual interactivo` y `Acerca de`. Rutas lazy `/ayuda/manual` y `/ayuda/acerca-de` via `ayuda.routes.ts`.
 
 ## Componentes compartidos listos para reusar (sin cambios necesarios)
 

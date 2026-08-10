@@ -19,9 +19,15 @@
         <mat-icon>expand_more</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <a mat-menu-item *ngFor="let item of grupo.items" [routerLink]="item.ruta">
-          {{ item.label }}
-        </a>
+        <ng-container *ngFor="let item of grupo.items">
+          <a mat-menu-item *ngIf="item.href; else itemInterno" [href]="item.href" target="_blank" rel="noopener">
+            <span class="menu-ext-label">{{ item.label }}</span>
+            <mat-icon *ngIf="!item.omitirIcono" class="menu-ext-ico">open_in_new</mat-icon>
+          </a>
+          <ng-template #itemInterno>
+            <a mat-menu-item [routerLink]="item.ruta">{{ item.label }}</a>
+          </ng-template>
+        </ng-container>
       </mat-menu>
     </ng-container>
 
@@ -32,9 +38,15 @@
           <mat-icon>expand_more</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <a mat-menu-item *ngFor="let item of grupo.items" [routerLink]="item.ruta">
-            {{ item.label }}
+          <ng-container *ngFor="let item of grupo.items">
+<a mat-menu-item *ngIf="item.href; else itemInterno" [href]="item.href" target="_blank" rel="noopener">
+            <span class="menu-ext-label">{{ item.label }}</span>
+            <mat-icon *ngIf="!item.omitirIcono" class="menu-ext-ico">open_in_new</mat-icon>
           </a>
+            <ng-template #itemInterno>
+              <a mat-menu-item [routerLink]="item.ruta">{{ item.label }}</a>
+            </ng-template>
+          </ng-container>
         </mat-menu>
       </ng-container>
 
@@ -43,18 +55,30 @@
         <mat-icon>expand_more</mat-icon>
       </button>
       <mat-menu #adminMenu="matMenu">
-        <a mat-menu-item *ngFor="let item of adminGroup.items" [routerLink]="item.ruta">
-          {{ item.label }}
-        </a>
-        <a mat-menu-item href="https://github.com/fernandomoraangel/simr/wiki" target="_blank">
-          Manual de usuario
-        </a>
+        <ng-container *ngFor="let item of adminGroup.items">
+<a mat-menu-item *ngIf="item.href; else itemInterno" [href]="item.href" target="_blank" rel="noopener">
+            <span class="menu-ext-label">{{ item.label }}</span>
+            <mat-icon *ngIf="!item.omitirIcono" class="menu-ext-ico">open_in_new</mat-icon>
+          </a>
+            <ng-template #itemInterno>
+              <a mat-menu-item [routerLink]="item.ruta">{{ item.label }}</a>
+            </ng-template>
+        </ng-container>
         <a mat-menu-item href="https://github.com/fernandomoraangel/simr/issues" target="_blank">
           Reportar novedad
         </a>
-        <button mat-menu-item (click)="acercaDe()">Acerca de</button>
       </mat-menu>
     </ng-container>
+
+    <button mat-button [matMenuTriggerFor]="ayudaMenu" class="menu-grupo">
+      {{ ayudaGroup.label }}
+      <mat-icon>expand_more</mat-icon>
+    </button>
+    <mat-menu #ayudaMenu="matMenu">
+      <a mat-menu-item *ngFor="let item of ayudaGroup.items" [routerLink]="item.ruta">
+        {{ item.label }}
+      </a>
+    </mat-menu>
 
     <button mat-button [matMenuTriggerFor]="userMenu" class="menu-usuario">
       <mat-icon>account_circle</mat-icon>

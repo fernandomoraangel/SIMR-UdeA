@@ -1,0 +1,123 @@
+<div class="page">
+  <header class="page-head">
+    <div>
+      <p class="simr-eyebrow">Ayuda</p>
+      <h1 class="page-title">Manual interactivo</h1>
+    </div>
+  </header>
+
+  <p class="intro">
+    Explora cada módulo del SIMR: cómo funciona, qué campos registra y qué herramientas especiales
+    incluye. Usa el buscador para filtrar por nombre, descripción, campos o características.
+  </p>
+
+<mat-form-field appearance="outline" class="buscador" subscriptSizing="dynamic">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>Buscar en el manual</mat-label>
+    <input
+      matInput
+      [(ngModel)]="busqueda"
+      (ngModelChange)="onBusqueda()"
+      placeholder="Ej.: instrumentos, mapa, importar Excel…"
+    />
+  </mat-form-field>
+
+  <p *ngIf="!gruposFiltrados.length" class="sin-resultados">
+    No hay módulos que coincidan con «{{ busqueda }}» en este manual.
+  </p>
+
+  <section
+    *ngFor="let grupo of gruposFiltrados"
+    class="grupo"
+    [id]="'grupo-' + grupo.id"
+    [attr.data-seccion]="grupo.id"
+  >
+    <app-collapsible-section
+      [title]="grupo.titulo"
+      [icon]="grupo.icono"
+      [collapsed]="colapsado[grupo.id] ?? false"
+      (collapsedChange)="onCollapseChange(grupo.id, $event)"
+    >
+      <p class="grupo-desc">{{ grupo.descripcion }}</p>
+
+      <div class="modulos">
+        <article class="modulo" *ngFor="let m of grupo.modulos">
+          <div class="modulo-cabeza">
+            <h3 class="modulo-nombre">{{ m.nombre }}</h3>
+            <span
+              class="acceso"
+              [ngStyle]="{ '--acceso-color': colorAcceso(m.acceso) }"
+              [matTooltip]="
+                m.acceso === 'publico'
+                  ? 'Disponible sin iniciar sesión'
+                  : m.acceso === 'sesion'
+                  ? 'Requiere sesión iniciada'
+                  : 'Solo rol administrador'
+              "
+            >
+              {{ etiquetaAcceso(m.acceso) }}
+            </span>
+          </div>
+
+          <p class="modulo-desc">{{ m.descripcion }}</p>
+
+          <div class="modulo-contenido" *ngIf="m.contenido?.length">
+            <p class="modulo-parrafo" *ngFor="let p of m.contenido">{{ p }}</p>
+          </div>
+
+          <ng-container *ngIf="m.campos?.length">
+            <p class="modulo-rotulo">Campos principales</p>
+            <div class="modulo-chips">
+              <span class="chip chip-campo" *ngFor="let c of m.campos">{{ c }}</span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="m.extras?.length">
+            <p class="modulo-rotulo">Utilidades</p>
+            <div class="modulo-chips">
+              <span class="chip chip-extra" *ngFor="let e of m.extras">{{ e }}</span>
+            </div>
+          </ng-container>
+
+          <div class="modulo-pie" *ngIf="m.ruta">
+            <a mat-flat-button color="primary" [routerLink]="m.ruta">
+              <mat-icon>open_in_new</mat-icon>
+              Abrir módulo
+            </a>
+          </div>
+        </article>
+      </div>
+    </app-collapsible-section>
+  </section>
+</div>
+
+<nav class="toc" [class.toc-abierto]="tocAbierto" aria-label="Tabla de contenido">
+  <button
+    class="toc-fab"
+    type="button"
+    (click)="tocAbierto = !tocAbierto"
+    [attr.aria-expanded]="tocAbierto"
+    [matTooltip]="tocAbierto ? 'Cerrar tabla de contenido' : 'Tabla de contenido'"
+  >
+    <mat-icon>{{ tocAbierto ? 'close' : 'menu_book' }}</mat-icon>
+  </button>
+
+  <div class="toc-lista">
+    <p class="toc-titulo">Índice</p>
+    <button
+      *ngFor="let grupo of gruposFiltrados"
+      class="toc-item"
+      type="button"
+      [class.activo]="grupo.id === activo"
+      (click)="irAGrupo(grupo.id)"
+      [matTooltip]="grupo.titulo"
+    >
+      <mat-icon class="toc-ico">{{ grupo.icono }}</mat-icon>
+      <span class="toc-texto">{{ grupo.titulo }}</span>
+    </button>
+    <button class="toc-item toc-subir" type="button" (click)="irArriba()">
+      <mat-icon class="toc-ico">arrow_upward</mat-icon>
+      <span class="toc-texto">Subir al inicio</span>
+    </button>
+  </div>
+</nav>

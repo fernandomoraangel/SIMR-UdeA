@@ -191,6 +191,11 @@ const routes: Routes = [
       import('./features/opac/opac.routes').then((r) => r.OPAC_ROUTES),
   },
   {
+    path: 'ayuda',
+    loadChildren: () =>
+      import('./features/ayuda/ayuda.routes').then((r) => r.AYUDA_ROUTES),
+  },
+  {
     path: 'files',
     loadChildren: () =>
       import('./features/archivos/archivos.module').then(

@@ -18,6 +18,7 @@ export const environment = {
   production: false,
   apiUrl: getBaseUrl() + '/api',
   originUrl: getBaseUrl(),
+  minioConsoleUrl: 'http://localhost:9001',
 };
 
 /*

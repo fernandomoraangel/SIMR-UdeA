@@ -6,10 +6,13 @@ import { SweetAlertService } from '@core/services/sweet-alert.service';
 import { AuthDialogService } from '@core/services/auth-dialog.service';
 import { SoundWaveComponent } from '@shared/sound-wave/sound-wave.component';
 import { SesionTrackerService } from '@features/estadisticas-uso/data/sesion-tracker.service';
+import { environment } from '@env/environment';
 
 interface MenuItem {
   label: string;
-  ruta: string;
+  ruta?: string;
+  href?: string;
+  omitirIcono?: boolean;
 }
 
 interface MenuGroup {
@@ -55,6 +58,15 @@ export class ShellComponent implements OnInit {
     },
   ];
 
+  // Grupo fijo del final del menú: siempre visible, sin depender de la sesión
+  ayudaGroup: MenuGroup = {
+    label: 'Ayuda',
+    items: [
+      { label: 'Manual interactivo', ruta: '/ayuda/manual' },
+      { label: 'Acerca de', ruta: '/ayuda/acerca-de' },
+    ],
+  };
+
   // Grupos solo visibles con sesión iniciada
   grupos: MenuGroup[] = [
     {
@@ -89,6 +101,7 @@ export class ShellComponent implements OnInit {
         { label: 'Nube de archivos', ruta: '/nube-archivos' },
         { label: 'Estadísticas de uso', ruta: '/estadisticas-uso' },
         { label: 'Soporte técnico', ruta: '/soporte' },
+        { label: 'Wiki en GitHub', href: 'https://github.com/fernandomoraangel/SIMR-UdeA/wiki', omitirIcono: true },
       ],
     },
   ];
@@ -103,6 +116,7 @@ export class ShellComponent implements OnInit {
         { label: 'Reemplazar en BD', ruta: '/admin/db-replace' },
         { label: 'Importar Excel', ruta: '/admin/importar-excel' },
         { label: 'Respaldo y Restauración', ruta: '/admin/backup-restore' },
+        { label: 'Consola MinIO', href: environment.minioConsoleUrl, omitirIcono: true },
       ],
   };
 
@@ -162,13 +176,5 @@ export class ShellComponent implements OnInit {
         );
       },
     });
-  }
-
-  acercaDe(): void {
-    this.sweetAlertService.showInfoHtml(
-      'SISTEMA DE INFORMACIÓN MUSICAS REGIONALES-SIMR<br />Versión: 1.0<br />Grupo de investigación Músicas Regionales<br />Universidad de Antioquia<br /> Conceptualización: Grupo de Investigación Músicas Regionales<br />Desarrollo: Fernando Mora Ángel<br />2022',
-      'Acerca de',
-      'assets/images/logomr.png'
-    );
   }
 }

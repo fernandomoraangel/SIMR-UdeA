@@ -6,6 +6,18 @@
   position: relative;
 }
 
+.menu-ext-label {
+  flex: 1 1 auto;
+}
+
+.menu-ext-ico {
+  margin-left: 8px;
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: var(--simr-musgo, #51624f);
+}
+
 .shell-bar {
   position: sticky;
   top: 0;
