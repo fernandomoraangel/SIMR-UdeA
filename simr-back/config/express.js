@@ -16,9 +16,8 @@ module.exports = function () {
   const app = express();
 
   //* Confiar en el proxy inverso (Nginx) para X-Forwarded-Proto/-For,
-  //* necesario para que legacyShellGuard construya URLs absolutas
-  //* correctas (https) y para que las cookies "secure" funcionen bien
-  //* detrás de TLS terminado en Nginx.
+  //* necesario para construir URLs absolutas correctas (https) y para que
+  //* las cookies "secure" funcionen bien detrás de TLS terminado en Nginx.
   app.set("trust proxy", 1);
 
   //* Rutas para la API
@@ -267,7 +266,6 @@ module.exports = function () {
   // });
 
   // * Archivos de enrutamiento
-  require("../app/routes/index.server.routes.js")(app);
   require("../app/routes/users.server.routes.js")(app);
   require("../app/routes/obras.server.routes.js")(app);
   require("../app/routes/actores.server.routes.js")(app);

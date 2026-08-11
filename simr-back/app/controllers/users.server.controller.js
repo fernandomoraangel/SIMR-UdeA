@@ -584,40 +584,6 @@ exports.userByID = async (req, res, next, id) => {
   }
 };
 
-//* RENDER LOGIN - Renderizar la página de inicio de sesión
-exports.renderLogin = (req, res, next) => {
-  // Si el usuario no está conectado, renderizar signin, en otro caso redireccionar al usuario
-  if (!req.user) {
-    // Usa el objeto 'response' para renderizar la página
-    // res.render("signin", {
-    res.render("login", {
-      // Reconfigurar la variable title de la página
-      title: "Página de registro",
-      // Configurar la variable del mensaje flash
-      // messages: req.flash("error") || req.flash("info"),
-      messages: ["Credenciales inválidas"],
-    });
-  } else {
-    return res.redirect("/");
-  }
-};
-
-//* RENDER SIGNUP - Controller que renderiza la página signup
-exports.renderSignup = (req, res, next) => {
-  // Si el usuario no está conectado, renderizar la página signin, en otro caso, redireccionar al usuario
-  if (!req.user) {
-    // Usa el objeto 'response' para renderizar la página
-    res.render("signup", {
-      title: "Página de registro",
-      // Configura la variable para el mensaje flash
-      // messages: req.flash("error"),
-      messages: ["Error al registrar usuario"],
-    });
-  } else {
-    return res.redirect("/");
-  }
-};
-
 // Controller para Google OAuth con JWT
 exports.googleCallback = (req, res) => {
   // Después de la autenticación exitosa con Google

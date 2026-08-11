@@ -4,7 +4,6 @@
 // Cargar los módulos necesarios
 const passport = require('passport');
 const users = require('../../app/controllers/users.server.controller');
-const {requireAuth} = require('../../config/auth');
 
 // Define el método routes module
 module.exports = function (app) {
@@ -43,17 +42,9 @@ module.exports = function (app) {
   }));
 
   app.get('/api/auth/google/callback',
-    // passport.authenticate('google', { session: false, failureRedirect: '/signin' }),
-    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+    passport.authenticate('google', { session: false, failureRedirect: '/angular/login' }),
     users.googleCallback
   );
-
-  // Rutas para el frontend (SPA)
-  app.route('/signup')
-    .get(users.renderSignup);
-
-  app.route('/login')
-    .get(users.renderLogin);
 
   // Preferencias de usuario
   app.route('/api/users/preferences')
@@ -77,19 +68,4 @@ module.exports = function (app) {
 
   // Middleware para procesar el parámetro userId
   app.param('userId', users.userByID);
-
-  // Ruta para redirección desde Angular a AngularJS
-  app.route('/redirect-to-legacy')
-    .get(passport.authenticate('jwt', { session: false }), (req, res) => {
-      // El usuario ya está autenticado por JWT. Se usa una redirección
-      // relativa (mismo origen) en vez de una URL absoluta configurada
-      // por variable de entorno: evita que quede mal apuntada (p.ej. a
-      // localhost) si ANGULARJS_APP_URL no está definida, y funciona
-      // igual en cualquier entorno (dev/prod) porque este endpoint ya
-      // vive en el mismo backend que sirve el shell legacy en '/'.
-      const returnTo = typeof req.query.returnTo === 'string' && req.query.returnTo.startsWith('/')
-        ? req.query.returnTo
-        : '/';
-      res.redirect(returnTo);
-    });
 };
