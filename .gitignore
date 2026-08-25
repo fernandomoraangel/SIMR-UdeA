@@ -169,3 +169,8 @@ c.txt
 cookie.txt
 cookie2.txt
 cookies.txt
+
+#========================================
+# [AI TOOLING]
+# Kilo Code local tooling/config (not project code)
+.kilo/
