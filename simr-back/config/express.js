@@ -65,13 +65,24 @@ module.exports = function () {
   // 	next();
   // });
 
-  //* CORS con soporte para cookies
+  //* CORS con soporte para cookies (whitelist de origenes permitidos)
+  //* ALLOWED_ORIGINS es una lista separada por comas definida en .env.production/.env.development.
+  //* Nunca se refleja un origen arbitrario: solo se permite si esta en la whitelist.
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+
   app.use(
     cors({
-      origin:
-        process.env.NODE_ENV === "production"
-          ? process.env.FRONTEND_URL
-          : "http://localhost:4200",
+      origin: (origin, callback) => {
+        // Sin header Origin (curl, llamadas same-origin, health checks) -> permitir
+        if (!origin || allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        // Origen no autorizado: no se agrega Access-Control-Allow-Origin
+        return callback(null, false);
+      },
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
