@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
   );
 
   // URLs que nunca deben tener cookies ni headers de auth
-  private readonly excludedUrls = ['/login', '/signup'];
+  private readonly excludedUrls = ['/login', '/signup', '/2fa/verify'];
 
   // URLs que usan únicamente refresh token desde cookies
   // private readonly refreshOnlyUrls = ['/refresh', '/logout', '/verify'];

@@ -21,6 +21,7 @@ export interface User {
   refreshTokens?: string[];
   fullName?: string;
   roles?: (Role | string)[];
+  twoFactorEnabled?: boolean;
 }
 
 // export interface User {

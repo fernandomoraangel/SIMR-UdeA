@@ -1,0 +1,115 @@
+<div class="seguridad">
+  <header class="seguridad-cabecera">
+    <mat-icon>security</mat-icon>
+    <h1>Seguridad de la cuenta</h1>
+    <p>Doble factor de autenticación con aplicación autenticadora (TOTP).</p>
+  </header>
+
+  <div class="seguridad-alerta" *ngIf="successMessage" role="status">
+    <mat-icon>check_circle</mat-icon>
+    <span>{{ successMessage }}</span>
+  </div>
+  <div class="seguridad-alerta error" *ngIf="errorMessage" role="alert">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Estado: desactivado -->
+  <section *ngIf="!twoFactorEnabled && !setupStarted" class="seguridad-card">
+    <div class="seguridad-card-titulo">
+      <mat-icon>lock_open</mat-icon>
+      <h2>Doble factor desactivado</h2>
+    </div>
+    <p>
+      Si lo activas, cada inicio de sesión pedirá además un código de 6 dígitos
+      generado por tu aplicación autenticadora (Microsoft Authenticator, Google
+      Authenticator, Authy, etc.).
+    </p>
+    <button mat-flat-button color="primary" (click)="iniciarSetup()" [disabled]="isLoading">
+      <mat-icon>add</mat-icon>
+      <span *ngIf="!isLoading">Activar doble factor</span>
+      <span *ngIf="isLoading">Generando…</span>
+    </button>
+  </section>
+
+  <!-- Configuración en curso: mostrar QR + códigos de respaldo + confirmar -->
+  <section *ngIf="!twoFactorEnabled && setupStarted" class="seguridad-card">
+    <div class="seguridad-card-titulo">
+      <mat-icon>qr_code_2</mat-icon>
+      <h2>1 · Escanea el código</h2>
+    </div>
+    <p>
+      Abre tu aplicación autenticadora y escanea este código QR. Si no puedes
+      escanearlo, escribe el secreto manualmente.
+    </p>
+
+    <div class="seguridad-qr">
+      <app-qr-svg [value]="otpauthUri" [size]="220"></app-qr-svg>
+    </div>
+
+    <div class="seguridad-secreto">
+      <span>Secreto:</span>
+      <code>{{ secret }}</code>
+    </div>
+
+    <div class="seguridad-card-titulo">
+      <mat-icon>backup</mat-icon>
+      <h2>2 · Códigos de respaldo</h2>
+    </div>
+    <p class="seguridad-codes-aviso">
+      Guarda estos códigos en un lugar seguro. Cada uno solo puede usarse una
+      vez y te permitirán entrar si pierdes el acceso a tu autenticador. No se
+      volverán a mostrar.
+    </p>
+    <div class="seguridad-codes" *ngIf="showCodes">
+      <div class="seguridad-code" *ngFor="let code of backupCodes">
+        <code>{{ code }}</code>
+      </div>
+    </div>
+
+    <div class="seguridad-card-titulo">
+      <mat-icon>verified</mat-icon>
+      <h2>3 · Confirma con un código</h2>
+    </div>
+    <p>Escribe el código de 6 dígitos que muestra tu autenticador para confirmar el alta.</p>
+
+    <form class="seguridad-form" [formGroup]="enableForm" (ngSubmit)="confirmarActivacion()">
+      <mat-form-field appearance="outline" class="campo">
+        <mat-label>Código de verificación</mat-label>
+        <input matInput formControlName="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+        <mat-icon matSuffix>verified_user</mat-icon>
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit" [disabled]="enableForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Confirmar y activar</span>
+        <span *ngIf="isLoading">Activando…</span>
+      </button>
+    </form>
+
+    <button mat-button color="warn" (click)="iniciarSetup()">Volver a generar (descarta este secreto)</button>
+  </section>
+
+  <!-- Estado: activado -->
+  <section *ngIf="twoFactorEnabled" class="seguridad-card">
+    <div class="seguridad-card-titulo">
+      <mat-icon>verified</mat-icon>
+      <h2>Doble factor activado</h2>
+    </div>
+    <p>
+      Tu cuenta está protegida con doble factor. En cada inicio de sesión se te
+      pedirá un código de tu aplicación autenticadora.
+    </p>
+
+    <form class="seguridad-form" [formGroup]="disableForm" (ngSubmit)="desactivar()">
+      <mat-form-field appearance="outline" class="campo">
+        <mat-label>Introduce un código para desactivar</mat-label>
+        <input matInput formControlName="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+        <mat-icon matSuffix>verified_user</mat-icon>
+      </mat-form-field>
+      <button mat-flat-button color="warn" type="submit" [disabled]="disableForm.invalid || isLoading">
+        <mat-icon>lock</mat-icon>
+        <span *ngIf="!isLoading">Desactivar doble factor</span>
+        <span *ngIf="isLoading">Desactivando…</span>
+      </button>
+    </form>
+  </section>
+</div>

@@ -15,8 +15,10 @@ import { environment } from '@env/environment';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  otpForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  showOtp = false;
 
   showTest = false; // Variable para mostrar el botón de prueba
 
@@ -35,6 +37,10 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+
+    this.otpForm = this.formBuilder.group({
+      code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
     });
   }
 
@@ -82,6 +88,12 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(username, password).subscribe({
       next: (response) => {
+        if (response.data && response.data.requiresTwoFactor) {
+          this.showOtp = true;
+          this.isLoading = false;
+          this.otpForm.reset();
+          return;
+        }
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
         this.goToDestination();
@@ -107,6 +119,42 @@ export class LoginComponent implements OnInit {
         }
       },
     });
+  }
+
+  onOtpSubmit(): void {
+    if (this.otpForm.invalid) {
+      return;
+    }
+    this.isLoading = true;
+    this.errorMessage = '';
+    const { code } = this.otpForm.value;
+    this.authService.verifyTwoFactor(code).subscribe({
+      next: () => {
+        this.goToDestination();
+        this.showTest = true;
+      },
+      error: (error) => {
+        const enhancedError = error as any;
+        if (enhancedError.status === 401) {
+          this.errorMessage = 'El código es incorrecto';
+        } else if (enhancedError.status === 429) {
+          this.errorMessage =
+            'Demasiados intentos fallidos. Vuelve a iniciar sesión.';
+        } else {
+          this.errorMessage =
+            enhancedError._authMessage ||
+            enhancedError.message ||
+            'El código es incorrecto. Inténtalo de nuevo.';
+        }
+        this.isLoading = false;
+      },
+    });
+  }
+
+  volverAlLogin(): void {
+    this.showOtp = false;
+    this.isLoading = false;
+    this.errorMessage = '';
   }
 
   redirectToAngularJS(): void {

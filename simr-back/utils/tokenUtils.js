@@ -35,6 +35,32 @@ const verifyRefreshToken = (token) => {
   }
 };
 
+// Token efímero para el flujo de 2FA (valida únicamente paso "usuario+password").
+// Debe usarse exclusivamente en /api/auth/2fa/verify y expira en pocos minutos.
+const TWO_FACTOR_PENDING_COOKIE = 'pending2fa';
+
+const generatePending2faToken = (userId) => {
+  const expiresSec = parseInt(
+    process.env.TWO_FACTOR_PENDING_EXPIRATION || '300',
+    10
+  ); // 5 minutos por defecto
+  const token = jwt.sign(
+    { id: userId, type: 'pending2fa' },
+    process.env.JWT_SECRET,
+    { expiresIn: expiresSec }
+  );
+  return { token, expiresSec };
+};
+
+const verifyPending2faToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return decoded && decoded.type === 'pending2fa' ? decoded : null;
+  } catch (error) {
+    return null;
+  }
+};
+
 const getTokenExpirationDate = (token) => {
   try {
     const decoded = jwt.decode(token);
@@ -69,4 +95,7 @@ module.exports = {
   verifyRefreshToken,
   getTokenExpirationDate,
   getTokenExpirationInSeconds,
+  generatePending2faToken,
+  verifyPending2faToken,
+  TWO_FACTOR_PENDING_COOKIE,
 };

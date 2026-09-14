@@ -9,6 +9,9 @@ const {
   verifyRefreshToken,
   getTokenExpirationDate,
   getTokenExpirationInSeconds,
+  generatePending2faToken,
+  verifyPending2faToken,
+  TWO_FACTOR_PENDING_COOKIE,
 } = require("../../utils/tokenUtils");
 const {
   successResponse,
@@ -110,6 +113,46 @@ exports.login = (req, res, next) => {
       }
 
       try {
+        // Si el usuario tiene 2FA activo, NO emitir tokens completos aún:
+        // emitir un token efímero "pending2fa" y pedir el código TOTP.
+        if (user.twoFactor && user.twoFactor.enabled) {
+          const safeUser = user.getSafeUser();
+
+          // Si se superaron los intentos fallidos de 2FA, bloquear.
+          if (user.isTwoFactorLocked()) {
+            return errorResponse(
+              res,
+              "Demasiados intentos fallidos de verificación. Intenta de nuevo en unos minutos.",
+              429
+            );
+          }
+
+          const { token, expiresSec } = generatePending2faToken(user._id);
+          const cookiesSaved = cookieHelpers.setPending2faCookie(
+            res,
+            token,
+            expiresSec
+          );
+          if (!cookiesSaved) {
+            console.warn("Hubo problemas configurando la cookie de 2FA");
+          }
+
+          return successResponse(
+            res,
+            "Se requiere verificación de doble factor",
+            200,
+            {
+              requiresTwoFactor: true,
+              user: {
+                id: safeUser.id,
+                username: safeUser.username,
+                email: safeUser.email,
+                fullName: safeUser.fullName,
+              },
+            }
+          );
+        }
+
         // Limpiar refresh tokens expirados
         user.cleanExpiredTokens();
 
@@ -395,7 +438,7 @@ exports.list = async (req, res, next) => {
     // Populate roles para obtener los nombres completos en lugar de solo IDs
     const users = await User.find({})
       .populate("roles", "name displayName description priority")
-      .select("-password"); // No enviar passwords
+      .select("-password -twoFactor.secret -twoFactor.backupCodes"); // No enviar passwords ni secretos 2FA
 
     // Usa el objeto 'response para enviar una respuesta JSON'
     successResponse(
@@ -801,6 +844,272 @@ exports.changePassword = async (req, res) => {
     successResponse(res, "Contraseña cambiada exitosamente", 200);
   } catch (err) {
     console.error("[changePassword] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500);
+  }
+};
+
+//* ============== DOBLE FACTOR DE AUTENTICACIÓN (TOTP) ==============
+
+// Helper: emitir sesión completa (access+refresh) tras validar 2FA
+const issueFullSession = async (res, user) => {
+  user.cleanExpiredTokens();
+
+  const { accessToken, refreshToken, jti } = generateTokens(user._id);
+  user.addRefreshToken({
+    token: refreshToken,
+    jti,
+    expiresAt: getTokenExpirationDate(refreshToken),
+  });
+  await user.save();
+
+  const cookiesSaved = cookieHelpers.setAuthCookies(
+    res,
+    accessToken,
+    refreshToken
+  );
+  if (!cookiesSaved) {
+    console.warn("Hubo problemas configurando las cookies tras 2FA");
+  }
+
+  cookieHelpers.clearPending2faCookie(res);
+
+  const safeUser = user.getSafeUser();
+  const tokenExpiresIn = getTokenExpirationInSeconds(accessToken);
+  return authSuccessResponse(
+    res,
+    "Autenticación exitosa",
+    200,
+    safeUser,
+    tokenExpiresIn
+  );
+};
+
+//* SETUP 2FA - Generar secreto nuevo + códigos de respaldo (usuario autenticado)
+exports.setupTwoFactor = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return errorResponse(res, "Usuario no autenticado", 401);
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return errorResponse(res, "Usuario no encontrado", 404);
+    }
+
+    if (user.twoFactor && user.twoFactor.enabled) {
+      return errorResponse(res, "El doble factor ya está activo", 400);
+    }
+
+    // Generar nuevo secreto y códigos de respaldo (DESCARTANDO uno anterior pendiente)
+    const { secret, otpauthUri, backupCodes } = user.setupTwoFactor("SIMR");
+    await user.save();
+
+    successResponse(
+      res,
+      "Configuración de doble factor iniciada",
+      200,
+      {
+        secret,
+        otpauthUri,
+        backupCodes,
+        // Los códigos de respaldo solo se muestran una vez
+        backupCodesShownOnce: true,
+      }
+    );
+  } catch (err) {
+    console.error("[setupTwoFactor] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500, {
+      error: err.message || "Error interno",
+    });
+  }
+};
+
+//* ENABLE 2FA - Activar 2FA tras validar un código TOTP con el secreto nuevo
+exports.enableTwoFactor = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return errorResponse(res, "Usuario no autenticado", 401);
+    }
+
+    const { code } = req.body;
+    if (!code) {
+      return errorResponse(res, "El código es requerido", 400);
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return errorResponse(res, "Usuario no encontrado", 404);
+    }
+
+    if (!user.twoFactor || !user.twoFactor.secret) {
+      return errorResponse(
+        res,
+        "Debes iniciar la configuración antes de activar el doble factor",
+        400
+      );
+    }
+
+    if (user.twoFactor.enabled) {
+      return errorResponse(res, "El doble factor ya está activo", 400);
+    }
+
+    if (!user.verifyTwoFactorSetupCode(code)) {
+      return errorResponse(res, "El código ingresado es incorrecto", 400);
+    }
+
+    // Código correcto: activar y limpiar intentos previos
+    user.twoFactor.enabled = true;
+    user.twoFactor.verifiedAt = new Date();
+    user.twoFactor.failedAttempts = 0;
+    user.twoFactor.lastFailedAt = undefined;
+    await user.save();
+
+    await logAudit(req, "two_factor_enabled", "user", user._id, null, {
+      username: user.username,
+    });
+
+    successResponse(res, "Doble factor activado exitosamente", 200, {
+      user: user.getSafeUser(),
+    });
+  } catch (err) {
+    console.error("[enableTwoFactor] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500, {
+      error: err.message || "Error interno",
+    });
+  }
+};
+
+//* VERIFY 2FA - Validar código TOTP/respaldo durante el login (usa cookie pending2fa)
+exports.verifyTwoFactor = async (req, res) => {
+  try {
+    // Obtener el token efímero de la cookie
+    const pendingToken = req.cookies ? req.cookies[TWO_FACTOR_PENDING_COOKIE] : null;
+    if (!pendingToken) {
+      return errorResponse(
+        res,
+        "No hay una sesión pendiente de doble factor. Vuelve a iniciar sesión.",
+        401
+      );
+    }
+
+    const decoded = verifyPending2faToken(pendingToken);
+    if (!decoded || !decoded.id) {
+      cookieHelpers.clearPending2faCookie(res);
+      return errorResponse(
+        res,
+        "La sesión de doble factor expiró. Vuelve a iniciar sesión.",
+        401
+      );
+    }
+
+    const user = await User.findById(decoded.id).populate(
+      "roles",
+      "name displayName description priority"
+    );
+    if (!user) {
+      cookieHelpers.clearPending2faCookie(res);
+      return errorResponse(res, "Usuario no encontrado", 404);
+    }
+
+    if (!user.isTwoFactorLocked()) {
+      const { code } = req.body;
+      if (!code) {
+        return errorResponse(res, "El código es requerido", 400);
+      }
+
+      const result = await user.verifyTwoFactorCode(code);
+      if (result) {
+        user.resetTwoFactorFailures();
+        await user.save();
+        await logAudit(req, "two_factor_verified", "user", user._id, null, {
+          username: user.username,
+          method: result,
+        });
+        return issueFullSession(res, user);
+      }
+    }
+
+    // Código inválido o bloqueado
+    user.registerTwoFactorFailure();
+    await user.save();
+    const locked = user.isTwoFactorLocked();
+    return errorResponse(
+      res,
+      locked
+        ? "Demasiados intentos fallidos. Vuelve a iniciar sesión."
+        : "El código ingresado es incorrecto",
+      locked ? 429 : 401
+    );
+  } catch (err) {
+    console.error("[verifyTwoFactor] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500, {
+      error: err.message || "Error interno",
+    });
+  }
+};
+
+//* DISABLE 2FA - Desactivar 2FA validando un código TOTP vigente
+exports.disableTwoFactor = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return errorResponse(res, "Usuario no autenticado", 401);
+    }
+
+    const { code } = req.body;
+    if (!code) {
+      return errorResponse(res, "El código es requerido", 400);
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return errorResponse(res, "Usuario no encontrado", 404);
+    }
+
+    if (!user.twoFactor || !user.twoFactor.enabled) {
+      return errorResponse(res, "El doble factor no está activo", 400);
+    }
+
+    // Validar que conoce un código TOTP vigente (no códigos de respaldo para desactivar)
+    if (!user.verifyTwoFactorSetupCode(code)) {
+      return errorResponse(res, "El código ingresado es incorrecto", 400);
+    }
+
+    // Limpiar la configuración
+    user.twoFactor.enabled = false;
+    user.twoFactor.secret = undefined;
+    user.twoFactor.verifiedAt = undefined;
+    user.twoFactor.backupCodes = [];
+    user.twoFactor.failedAttempts = 0;
+    user.twoFactor.lastFailedAt = undefined;
+    await user.save();
+
+    await logAudit(req, "two_factor_disabled", "user", user._id, null, {
+      username: user.username,
+    });
+
+    successResponse(res, "Doble factor desactivado exitosamente", 200, {
+      user: user.getSafeUser(),
+    });
+  } catch (err) {
+    console.error("[disableTwoFactor] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500, {
+      error: err.message || "Error interno",
+    });
+  }
+};
+
+//* STATUS 2FA - Consultar si el usuario tiene 2FA activo (público, sin exponer secretos)
+exports.twoFactorStatus = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return errorResponse(res, "Usuario no autenticado", 401);
+    }
+    const user = await User.findById(req.user._id).select("twoFactor.enabled");
+    successResponse(res, "Estado del doble factor", 200, {
+      twoFactorEnabled: !!(user && user.twoFactor && user.twoFactor.enabled),
+    });
+  } catch (err) {
+    console.error("[twoFactorStatus] Error:", err);
     errorResponse(res, "Error interno del servidor", 500);
   }
 };

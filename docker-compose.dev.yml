@@ -60,7 +60,7 @@ services:
     container_name: simr-back_dev
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3000" # 3000 del host lo ocupa otro proyecto local (hapj)
       - "9229:9229" # Puerto para debug
     volumes:
       - ./simr-back:/app

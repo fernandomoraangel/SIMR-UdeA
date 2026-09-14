@@ -25,7 +25,19 @@ const routes: Routes = [
   { path: 'signup', component: AuthRouteComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'change-password', component: ChangePasswordComponent },
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'seguridad',
+    loadChildren: () =>
+      import('./features/seguridad/seguridad.routes').then(
+        (r) => r.SEGURIDAD_ROUTES
+      ),
+    canActivate: [AuthGuard],
+  },
   { path: 'listado-tareas', component: ListaTareasComponent },
   // Página temporal para módulos aún no migrados desde AngularJS
   { path: 'no-implementado/:modulo', component: NoImplementadoComponent },

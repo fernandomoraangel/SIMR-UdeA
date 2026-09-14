@@ -31,6 +31,8 @@ import {
   AuthVerifyResponse,
   SignupCredentials,
   SignupResponse,
+  TwoFactorSetupResponse,
+  TwoFactorStatusResponse,
   // LoginCredentials,
   AuthState,
 } from './auth.interface';
@@ -230,6 +232,12 @@ export class AuthService {
       )
       .pipe(
         tap((response) => {
+          // Si el backend pide segundo factor, NO establecer sesión aún:
+          // el cliente debe capturar el código y llamar a verifyTwoFactor.
+          if (response.data && response.data.requiresTwoFactor) {
+            this.updateAuthState({ isLoading: false });
+            return;
+          }
           if (
             response.success &&
             response.data.user &&
@@ -249,6 +257,89 @@ export class AuthService {
           return this.handleError(error);
         })
       );
+  }
+
+  /**
+   * Verificar el código de doble factor (segundo paso del login).
+   * El backend debe tener la cookie efímera "pending2fa" ya emitida por /login.
+   */
+  verifyTwoFactor(code: string): Observable<LoginResponse> {
+    this.updateAuthState({ isLoading: true });
+
+    return this.http
+      .post<LoginResponse>(
+        `${this.API_URL}/2fa/verify`,
+        { code },
+        { withCredentials: true }
+      )
+      .pipe(
+        tap((response) => {
+          if (
+            response.success &&
+            response.data.user &&
+            response.data.tokenInfo
+          ) {
+            this.setAuthState(response.data.user);
+            this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
+          }
+          this.updateAuthState({ isLoading: false });
+        }),
+        catchError((error) => {
+          this.updateAuthState({ isLoading: false });
+          return this.handleError(error);
+        })
+      );
+  }
+
+  /**
+   * Iniciar la configuración de doble factor (genera secreto + código QR + códigos de respaldo).
+   */
+  setupTwoFactor(): Observable<TwoFactorSetupResponse> {
+    return this.http
+      .post<TwoFactorSetupResponse>(
+        `${this.API_URL}/2fa/setup`,
+        {},
+        { withCredentials: true }
+      )
+      .pipe(catchError(this.handleError.bind(this)));
+  }
+
+  /**
+   * Activar doble factor tras validar un primer código TOTP.
+   */
+  enableTwoFactor(code: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(
+        `${this.API_URL}/2fa/enable`,
+        { code },
+        { withCredentials: true }
+      )
+      .pipe(catchError(this.handleError.bind(this)));
+  }
+
+  /**
+   * Desactivar doble factor (requiere un código TOTP vigente).
+   */
+  disableTwoFactor(code: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(
+        `${this.API_URL}/2fa/disable`,
+        { code },
+        { withCredentials: true }
+      )
+      .pipe(catchError(this.handleError.bind(this)));
+  }
+
+  /**
+   * Consultar si el usuario autenticado tiene 2FA activo.
+   */
+  twoFactorStatus(): Observable<TwoFactorStatusResponse> {
+    return this.http
+      .get<TwoFactorStatusResponse>(
+        `${this.API_URL}/2fa/status`,
+        { withCredentials: true }
+      )
+      .pipe(catchError(this.handleError.bind(this)));
   }
 
   /**

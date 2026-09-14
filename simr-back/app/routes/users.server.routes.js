@@ -32,6 +32,27 @@ module.exports = function (app) {
   app.route('/api/auth/change-password')
     .post(users.requiresLogin, users.changePassword);
 
+  // Rutas de doble factor de autenticación (TOTP)
+  // 1. Setup (autenticado): genera secreto + códigos de respaldo
+  app.route('/api/auth/2fa/setup')
+    .post(users.requiresLogin, users.setupTwoFactor);
+
+  // 2. Enable (autenticado): activa tras validar código con el secreto
+  app.route('/api/auth/2fa/enable')
+    .post(users.requiresLogin, users.enableTwoFactor);
+
+  // 3. Verify (público, con cookie pending2fa): emite sesión tras validar el código
+  app.route('/api/auth/2fa/verify')
+    .post(users.verifyTwoFactor);
+
+  // 4. Disable (autenticado): desactiva tras validar código vigente
+  app.route('/api/auth/2fa/disable')
+    .post(users.requiresLogin, users.disableTwoFactor);
+
+  // 5. Status (autenticado): estado del 2FA del usuario actual
+  app.route('/api/auth/2fa/status')
+    .get(users.requiresLogin, users.twoFactorStatus);
+
   // Configurar rutas Google OAuth
   app.get('/api/auth/google', passport.authenticate('google', {
     scope: [

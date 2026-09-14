@@ -43,9 +43,14 @@ export class AuthDialogComponent {
   mode: 'login' | 'signup';
   loginForm: FormGroup;
   signupForm: FormGroup;
+  otpForm: FormGroup;
   isLoading = false;
   errorMessage = '';
   hidePassword = true;
+
+  // Paso de doble factor
+  showOtp = false;
+  loginUserLabel = '';
 
   constructor(
     private fb: FormBuilder,
@@ -59,6 +64,10 @@ export class AuthDialogComponent {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+
+    this.otpForm = this.fb.group({
+      code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
     });
 
     this.signupForm = this.fb.group({
@@ -79,9 +88,46 @@ export class AuthDialogComponent {
     this.errorMessage = '';
     const { username, password } = this.loginForm.value;
     this.authService.login(username, password).subscribe({
-      next: () => this.onSuccess(),
+      next: (response) => {
+        // Diferimos las mutaciones de estado a un microtask para evitar NG0100
+        // (ExpressionChangedAfterItHasBeenChecked) al alternar el paso OTP.
+        Promise.resolve().then(() => {
+          if (response.data && response.data.requiresTwoFactor) {
+            // El backend pidió el código de doble factor: mostrar el paso OTP
+            this.loginUserLabel =
+              (response.data.user?.fullName || response.data.user?.username || username) || username;
+            this.otpForm.reset();
+            this.showOtp = true;
+            this.isLoading = false;
+            return;
+          }
+          this.onSuccess();
+        });
+      },
       error: (err) => this.onError(err),
     });
+  }
+
+  submitOtp(): void {
+    if (this.otpForm.invalid) {
+      this.otpForm.markAllAsTouched();
+      return;
+    }
+    this.isLoading = true;
+    this.errorMessage = '';
+    const { code } = this.otpForm.value;
+    this.authService.verifyTwoFactor(code).subscribe({
+      next: () => {
+        Promise.resolve().then(() => this.onSuccess());
+      },
+      error: (err) => this.onOtpError(err),
+    });
+  }
+
+  backToLogin(): void {
+    this.showOtp = false;
+    this.isLoading = false;
+    this.errorMessage = '';
   }
 
   submitSignup(): void {
@@ -99,9 +145,14 @@ export class AuthDialogComponent {
   }
 
   private onSuccess(): void {
-    this.isLoading = false;
-    this.dialogRef.close('success');
-    this.router.navigate(['/']);
+    // Todo el cambio de estado + cierre se hace en un frame aparte para que
+    // `isLoading` no cambie en medio del pase de detección (NG0100 en el
+    // binding [disabled]="loginForm.invalid || isLoading").
+    setTimeout(() => {
+      this.isLoading = false;
+      this.dialogRef.close('success');
+      this.router.navigate(['/']);
+    });
   }
 
   private onError(err: any): void {
@@ -114,6 +165,18 @@ export class AuthDialogComponent {
       this.errorMessage = 'Usuario o contraseña incorrectos';
     } else {
       this.errorMessage = err._authMessage || err.message || 'Error al iniciar sesión';
+    }
+  }
+
+  private onOtpError(err: any): void {
+    this.isLoading = false;
+    if (err?.status === 401) {
+      this.errorMessage = 'El código es incorrecto';
+    } else if (err?.status === 429) {
+      this.errorMessage = 'Demasiados intentos fallidos. Vuelve a iniciar sesión.';
+      this.showOtp = false;
+    } else {
+      this.errorMessage = err?._authMessage || err?.message || 'El código es incorrecto';
     }
   }
 }

@@ -24,12 +24,7 @@ export interface SignupResponse {
 export interface LoginResponse {
   success: boolean;
   message: string;
-  data: {
-    user?: User;
-    tokenInfo?: {
-      expiresIn: number;
-    };
-  };
+  data: LoginResponseData;
 }
 
 export interface AuthVerifyResponse {
@@ -56,4 +51,33 @@ export interface AuthStateExtended extends AuthState {
 export interface LoginCredentials {
   username: string;
   password: string;
+}
+
+// ---- Doble factor de autenticación (TOTP) ----
+
+export interface TwoFactorSetupResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    secret?: string;
+    otpauthUri?: string;
+    backupCodes?: string[];
+    twoFactorEnabled?: boolean;
+  };
+}
+
+export interface TwoFactorStatusResponse {
+  success: boolean;
+  message: string;
+  data: {
+    twoFactorEnabled: boolean;
+  };
+}
+
+export interface LoginResponseData {
+  user?: User;
+  tokenInfo?: {
+    expiresIn: number;
+  };
+  requiresTwoFactor?: boolean;
 }

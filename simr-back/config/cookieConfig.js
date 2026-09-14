@@ -2,6 +2,8 @@
 const COOKIE_ACCESS_MAX_AGE = parseInt(process.env.JWT_EXPIRATION) * 1000; // Convertir a milisegundos
 const COOKIE_REFRESH_MAX_AGE =
   parseInt(process.env.JWT_REFRESH_EXPIRATION) * 1000; // Convertir a milisegundos
+const COOKIE_PENDING_2FA_MAX_AGE =
+  parseInt(process.env.TWO_FACTOR_PENDING_EXPIRATION || '300') * 1000; // milisegundos
 
 // Configuración base de cookies seguras
 const baseCookieOptions = {
@@ -26,6 +28,12 @@ const cookieConfig = {
   refreshToken: {
     ...baseCookieOptions,
     maxAge: COOKIE_REFRESH_MAX_AGE,
+  },
+
+  // Cookie efímera del flujo de 2FA (guarda el JWT pending2fa)
+  pending2fa: {
+    ...baseCookieOptions,
+    maxAge: COOKIE_PENDING_2FA_MAX_AGE,
   },
 
   clear: {
@@ -67,6 +75,31 @@ const cookieHelpers = {
       return true;
     } catch (error) {
       console.error(`Error limpiando cookie ${cookieName}:`, error);
+      return false;
+    }
+  },
+
+  // Configurar la cookie efímera de 2FA
+  setPending2faCookie: (res, token, maxAgeSeconds) => {
+    try {
+      res.cookie('pending2fa', token, {
+        ...cookieConfig.pending2fa,
+        maxAge: maxAgeSeconds * 1000,
+      });
+      return true;
+    } catch (error) {
+      console.error('Error configurando cookie de 2FA:', error);
+      return false;
+    }
+  },
+
+  // Limpiar la cookie efímera de 2FA
+  clearPending2faCookie: (res) => {
+    try {
+      res.clearCookie('pending2fa', cookieConfig.clear);
+      return true;
+    } catch (error) {
+      console.error('Error limpiando cookie de 2FA:', error);
       return false;
     }
   },

@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '@core/auth/auth.service';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { SweetAlertService } from '@core/services/sweet-alert.service';
@@ -125,31 +126,57 @@ export class ShellComponent implements OnInit {
     private authorizationService: AuthorizationService,
     private sweetAlertService: SweetAlertService,
     private authDialogService: AuthDialogService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    // Estado inicial síncrono para evitar NG0100 (ExpressionChangedAfterItHasBeenChecked)
+    const initial = this.authService.getCurrentAuthState();
+    this.isAuthenticated = initial.isAuthenticated;
+    this.currentUser = initial.user;
+    this.pendingUrl = this.router.url;
+
+    // Actualizaciones de autenticación diferidas fuera del pase de detección de cambio
     this.authService.authState$.subscribe((state) => {
-      this.isAuthenticated = state.isAuthenticated;
-      this.currentUser = state.user;
+      Promise.resolve().then(() => {
+        this.isAuthenticated = state.isAuthenticated;
+        this.currentUser = state.user;
+        this.pendingUrl = this.router.url;
+        this.cdr.markForCheck();
+      });
     });
+
+    // La URL se guarda en un campo (diferido) en vez de evaluarse en vivo en un
+    // getter dentro del template, evitando NG0100 al navegar.
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => {
+        Promise.resolve().then(() => {
+          this.pendingUrl = this.router.url;
+          this.cdr.markForCheck();
+        });
+      });
   }
+
+  /** Ruta actual (campo estable actualizado por eventos de router). */
+  private pendingUrl = this.router?.url ?? '/';
 
   /** El contenido de la ruta se oculta en la home pública (sin sesión) para
       dejar que la bienvenida del shell ocupe el espacio sin un bloque vacío. */
   get mostrarContenido(): boolean {
-    return this.isAuthenticated || this.router.url !== '/';
+    return this.isAuthenticated || this.pendingUrl !== '/';
   }
 
   /** Marca de agua centrada cuando el visitante está en la raíz ('/') y aún
       no ha seleccionado ningún módulo del menú (con o sin sesión). */
   get mostrarMarcaAgua(): boolean {
-    return this.router.url === '/';
+    return this.pendingUrl === '/';
   }
 
   /** Bienvenida solo en la raíz para usuarios anónimos */
   get mostrarBienvenida(): boolean {
-    return !this.isAuthenticated && this.router.url === '/';
+    return !this.isAuthenticated && this.pendingUrl === '/';
   }
 
   isAdmin(): boolean {

@@ -9,7 +9,7 @@
     <p class="simr-eyebrow">Sistema de Información de Músicas Regionales</p>
   </header>
 
-  <mat-tab-group [selectedIndex]="mode === 'signup' ? 1 : 0" class="auth-tabs">
+  <mat-tab-group *ngIf="!showOtp" [selectedIndex]="mode === 'signup' ? 1 : 0" class="auth-tabs">
     <mat-tab label="Iniciar sesión">
       <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
         <mat-form-field appearance="outline" class="campo">
@@ -81,4 +81,35 @@
       </form>
     </mat-tab>
   </mat-tab-group>
+
+  <!-- Paso 2: Verificación de doble factor -->
+  <div class="auth-otp" *ngIf="showOtp">
+    <div class="auth-otp-titulo">
+      <mat-icon>shield</mat-icon>
+      <h3>Verificación en dos pasos</h3>
+    </div>
+    <p class="auth-otp-sub">
+      Introduce el código de 6 dígitos de tu aplicación autenticadora
+      <strong *ngIf="loginUserLabel">({{ loginUserLabel }})</strong>.
+    </p>
+
+    <form class="auth-form" [formGroup]="otpForm" (ngSubmit)="submitOtp()">
+      <mat-form-field appearance="outline" class="campo">
+        <mat-label>Código de verificación</mat-label>
+        <input matInput formControlName="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" class="otp-input" />
+        <mat-icon matSuffix>verified_user</mat-icon>
+      </mat-form-field>
+
+      <div class="auth-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="otpForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Verificar</span>
+        <span *ngIf="isLoading">Verificando…</span>
+      </button>
+    </form>
+
+    <div class="auth-extra-links">
+      <a href="javascript:void(0)" (click)="backToLogin()">Volver al inicio de sesión</a>
+    </div>
+  </div>
 </div>

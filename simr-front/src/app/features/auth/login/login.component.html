@@ -2,6 +2,7 @@
   <div class="container">
     <div><img src="assets/images/logomr.png" alt="Logo" /></div>
 
+    @if (!showOtp) {
     <form class="form-login" [formGroup]="loginForm" (ngSubmit)="onSubmit()" name="loginForm">
       <label>Usuario:</label>
       <input
@@ -29,6 +30,32 @@
         [disabled]="loginForm.invalid || isLoading"
       />
     </form>
+    } @else {
+    <h4>Verificación en dos pasos</h4>
+    <p>Introduce el código de 6 dígitos de tu aplicación autenticadora.</p>
+    <form class="form-login" [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()" name="otpForm">
+      <label>Código de verificación:</label>
+      <input
+        type="text"
+        class="form-control"
+        name="code"
+        formControlName="code"
+        maxlength="6"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+      />
+      @if (errorMessage) {
+      <div class="text-danger" style="margin: 8px 0;">{{ errorMessage }}</div>
+      }
+      <input
+        type="submit"
+        class="btn btn-primary pull-right"
+        value="Verificar"
+        [disabled]="otpForm.invalid || isLoading"
+      />
+    </form>
+    <a href="javascript:void(0)" (click)="volverAlLogin()">Volver al inicio de sesión</a>
+    }
 
     <br />
     <a routerLink="/signup">Registrarse</a>

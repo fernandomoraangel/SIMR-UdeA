@@ -90,6 +90,7 @@
        <button mat-menu-item *ngIf="!isAuthenticated" (click)="abrirLogin()">Iniciar sesión</button>
        <button mat-menu-item *ngIf="!isAuthenticated" (click)="abrirRegistro()">Registrarse</button>
        <button mat-menu-item *ngIf="isAuthenticated" routerLink="/change-password">Cambiar contraseña</button>
+       <button mat-menu-item *ngIf="isAuthenticated" routerLink="/seguridad">Seguridad (doble factor)</button>
        <button mat-menu-item *ngIf="isAuthenticated" (click)="logoutUser()">Terminar sesión</button>
      </mat-menu>
   </mat-toolbar>

@@ -9,8 +9,9 @@ const getBaseUrl = () => {
     // Si estamos en puerto 80 (nginx proxy), usar rutas relativas
     return window.location.origin;
   } else {
-    // Si estamos en otro puerto, usar localhost:3000
-    return 'http://localhost:3000';
+    // Si estamos en otro puerto, usar localhost:3001
+    // (3000 lo ocupa otro proyecto local; simr-back se remapea a 3001)
+    return 'http://localhost:3001';
   }
 };
 
