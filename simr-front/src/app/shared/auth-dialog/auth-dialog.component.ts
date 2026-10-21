@@ -11,6 +11,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { SignupCredentials } from '@core/auth/auth.interface';
 import { SoundWaveComponent } from '@shared/sound-wave/sound-wave.component';
+import { QrSvgComponent } from '@shared/qr-svg/qr-svg.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -35,6 +36,7 @@ export interface AuthDialogData {
     MatIconModule,
     MatTabsModule,
     SoundWaveComponent,
+    QrSvgComponent,
   ],
   templateUrl: './auth-dialog.component.html',
   styleUrl: './auth-dialog.component.css',
@@ -52,6 +54,15 @@ export class AuthDialogComponent {
   showOtp = false;
   loginUserLabel = '';
 
+  // Paso de enrolamiento obligatorio (QR + primer TOTP)
+  showEnrollment = false;
+  enrollForm: FormGroup;
+  enrollOtpauthUri = '';
+  enrollSecret = '';
+  enrollBackupCodes: string[] = [];
+  enrollSetupStarted = false;
+  enrollSetupFailed = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -67,6 +78,10 @@ export class AuthDialogComponent {
     });
 
     this.otpForm = this.fb.group({
+      code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
+    });
+
+    this.enrollForm = this.fb.group({
       code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
     });
 
@@ -101,6 +116,13 @@ export class AuthDialogComponent {
             this.isLoading = false;
             return;
           }
+          if (response.data && response.data.requiresTwoFactorEnrollment) {
+            // Enrolamiento obligatorio: sin sesión hasta validar el primer TOTP
+            this.beginEnrollment(
+              (response.data.user?.fullName || response.data.user?.username || username) || username
+            );
+            return;
+          }
           this.onSuccess();
         });
       },
@@ -126,6 +148,12 @@ export class AuthDialogComponent {
 
   backToLogin(): void {
     this.showOtp = false;
+    this.showEnrollment = false;
+    this.enrollSetupStarted = false;
+    this.enrollSetupFailed = false;
+    this.enrollOtpauthUri = '';
+    this.enrollSecret = '';
+    this.enrollBackupCodes = [];
     this.isLoading = false;
     this.errorMessage = '';
   }
@@ -139,8 +167,91 @@ export class AuthDialogComponent {
     this.errorMessage = '';
     const payload: SignupCredentials = this.signupForm.value;
     this.authService.signup(payload).subscribe({
-      next: () => this.onSuccess(),
+      next: (response) => {
+        Promise.resolve().then(() => {
+          if (response.data?.requiresTwoFactorEnrollment) {
+            this.beginEnrollment(payload.username);
+            return;
+          }
+          this.onSuccess();
+        });
+      },
       error: (err) => this.onError(err),
+    });
+  }
+
+  /**
+   * Inicia el alta obligatoria: pide al backend el secreto TOTP + QR + códigos
+   * de respaldo usando la cookie efímera emitida por login/signup.
+   */
+  beginEnrollment(userLabel: string): void {
+    this.loginUserLabel = userLabel || this.loginUserLabel;
+    this.showOtp = false;
+    this.showEnrollment = true;
+    this.enrollSetupStarted = false;
+    this.enrollSetupFailed = false;
+    this.enrollOtpauthUri = '';
+    this.enrollSecret = '';
+    this.enrollBackupCodes = [];
+    this.enrollForm.reset();
+    this.errorMessage = '';
+    this.isLoading = true;
+
+    this.authService.startTwoFactorEnrollment().subscribe({
+      next: (res) => {
+        Promise.resolve().then(() => {
+          this.enrollSetupStarted = true;
+          this.enrollOtpauthUri = res.data?.otpauthUri || '';
+          this.enrollSecret = res.data?.secret || '';
+          this.enrollBackupCodes = res.data?.backupCodes || [];
+          this.isLoading = false;
+        });
+      },
+      error: (err) => {
+        Promise.resolve().then(() => {
+          this.isLoading = false;
+          this.enrollSetupFailed = true;
+          this.errorMessage =
+            err?.status === 401
+              ? 'La sesión de enrolamiento expiró. Vuelve a iniciar sesión para continuar.'
+              : err?._authMessage ||
+                err?.message ||
+                'No se pudo iniciar la configuración del doble factor.';
+        });
+      },
+    });
+  }
+
+  retryEnrollment(): void {
+    this.beginEnrollment(this.loginUserLabel);
+  }
+
+  submitEnrollment(): void {
+    if (this.enrollForm.invalid) {
+      this.enrollForm.markAllAsTouched();
+      return;
+    }
+    this.isLoading = true;
+    this.errorMessage = '';
+    const { code } = this.enrollForm.value;
+
+    this.authService.completeTwoFactorEnrollment(code).subscribe({
+      next: () => {
+        Promise.resolve().then(() => this.onSuccess());
+      },
+      error: (err) => {
+        Promise.resolve().then(() => {
+          this.isLoading = false;
+          if (err?.status === 401) {
+            this.errorMessage = 'El código es incorrecto. Verifica la hora de tu dispositivo e inténtalo de nuevo.';
+          } else if (err?.status === 429) {
+            this.errorMessage = 'Demasiados intentos fallidos. Vuelve a iniciar sesión en unos minutos.';
+          } else {
+            this.errorMessage =
+              err?._authMessage || err?.message || 'No se pudo confirmar el doble factor.';
+          }
+        });
+      },
     });
   }
 

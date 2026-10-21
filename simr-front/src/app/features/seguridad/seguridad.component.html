@@ -20,7 +20,11 @@
       <mat-icon>lock_open</mat-icon>
       <h2>Doble factor desactivado</h2>
     </div>
-    <p>
+    <p *ngIf="twoFactorRequired">
+      El doble factor es <strong>obligatorio</strong> por política de seguridad.
+      Debes activarlo ahora para poder volver a iniciar sesión.
+    </p>
+    <p *ngIf="!twoFactorRequired">
       Si lo activas, cada inicio de sesión pedirá además un código de 6 dígitos
       generado por tu aplicación autenticadora (Microsoft Authenticator, Google
       Authenticator, Authy, etc.).
@@ -99,7 +103,16 @@
       pedirá un código de tu aplicación autenticadora.
     </p>
 
-    <form class="seguridad-form" [formGroup]="disableForm" (ngSubmit)="desactivar()">
+    <div class="seguridad-nota" *ngIf="twoFactorRequired">
+      <mat-icon>verified_user</mat-icon>
+      <span>
+        El doble factor es <strong>obligatorio</strong> y no puede desactivarse.
+        Si cambias de dispositivo, usa un código de respaldo o solicita al
+        administrador el restablecimiento del segundo factor.
+      </span>
+    </div>
+
+    <form *ngIf="!twoFactorRequired" class="seguridad-form" [formGroup]="disableForm" (ngSubmit)="desactivar()">
       <mat-form-field appearance="outline" class="campo">
         <mat-label>Introduce un código para desactivar</mat-label>
         <input matInput formControlName="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />

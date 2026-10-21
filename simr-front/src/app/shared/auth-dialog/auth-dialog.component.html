@@ -9,7 +9,7 @@
     <p class="simr-eyebrow">Sistema de Información de Músicas Regionales</p>
   </header>
 
-  <mat-tab-group *ngIf="!showOtp" [selectedIndex]="mode === 'signup' ? 1 : 0" class="auth-tabs">
+  <mat-tab-group *ngIf="!showOtp && !showEnrollment" [selectedIndex]="mode === 'signup' ? 1 : 0" class="auth-tabs">
     <mat-tab label="Iniciar sesión">
       <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
         <mat-form-field appearance="outline" class="campo">
@@ -111,5 +111,83 @@
     <div class="auth-extra-links">
       <a href="javascript:void(0)" (click)="backToLogin()">Volver al inicio de sesión</a>
     </div>
+  </div>
+
+  <!-- Paso 3: Enrolamiento obligatorio de doble factor -->
+  <div class="auth-enroll" *ngIf="showEnrollment">
+    <div class="auth-otp-titulo">
+      <mat-icon>shield</mat-icon>
+      <h3>Configura tu doble factor</h3>
+    </div>
+    <p class="auth-otp-sub">
+      Por política de seguridad de la Universidad, el doble factor es
+      <strong>obligatorio</strong>. Debes escanear el código QR y validar tu
+      primer código antes de entrar al sistema.
+      <strong *ngIf="loginUserLabel">({{ loginUserLabel }})</strong>
+    </p>
+
+    <div class="auth-enroll-cargando" *ngIf="isLoading && !enrollSetupStarted && !enrollSetupFailed">
+      <mat-icon>hourglass_top</mat-icon>
+      <span>Generando código QR…</span>
+    </div>
+
+    <div class="auth-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <ng-container *ngIf="enrollSetupFailed">
+      <button mat-flat-button color="primary" class="auth-submit" type="button" (click)="retryEnrollment()">
+        Reintentar
+      </button>
+      <div class="auth-extra-links">
+        <a href="javascript:void(0)" (click)="backToLogin()">Volver al inicio de sesión</a>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="enrollSetupStarted">
+      <div class="auth-enroll-aviso">
+        <mat-icon>info</mat-icon>
+        <span>
+          Este paso no se puede omitir. Sin el código de tu autenticador no se
+          emitirá la sesión.
+        </span>
+      </div>
+
+      <div class="auth-qr">
+        <app-qr-svg [value]="enrollOtpauthUri" [size]="190"></app-qr-svg>
+      </div>
+
+      <p class="auth-enroll-paso">1 · Escanea el QR con Microsoft Authenticator, Google Authenticator o Authy.</p>
+      <p class="auth-enroll-paso">Si no puedes escanearlo, escribe este secreto manualmente:</p>
+      <code class="auth-secret">{{ enrollSecret }}</code>
+
+      <details class="auth-backup" *ngIf="enrollBackupCodes.length">
+        <summary>Códigos de respaldo (guárdalos ahora)</summary>
+        <p>
+          Cada código sirve una sola vez y te permitirá entrar si pierdes el
+          autenticador. No se volverán a mostrar.
+        </p>
+        <div class="auth-backup-codes">
+          <code *ngFor="let code of enrollBackupCodes">{{ code }}</code>
+        </div>
+      </details>
+
+      <p class="auth-enroll-paso">2 · Escribe el código de 6 dígitos que muestra tu autenticador.</p>
+
+      <form class="auth-form" [formGroup]="enrollForm" (ngSubmit)="submitEnrollment()">
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Código de verificación</mat-label>
+          <input matInput formControlName="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" class="otp-input" />
+          <mat-icon matSuffix>verified_user</mat-icon>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="enrollForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Confirmar y entrar</span>
+          <span *ngIf="isLoading">Verificando…</span>
+        </button>
+      </form>
+
+      <div class="auth-extra-links">
+        <a href="javascript:void(0)" (click)="backToLogin()">Volver al inicio de sesión</a>
+      </div>
+    </ng-container>
   </div>
 </div>

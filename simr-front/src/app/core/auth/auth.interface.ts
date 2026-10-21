@@ -18,6 +18,7 @@ export interface SignupResponse {
     tokenInfo?: {
       expiresIn: number;
     };
+    requiresTwoFactorEnrollment?: boolean;
   };
 }
 
@@ -63,6 +64,8 @@ export interface TwoFactorSetupResponse {
     otpauthUri?: string;
     backupCodes?: string[];
     twoFactorEnabled?: boolean;
+    twoFactorRequired?: boolean;
+    backupCodesShownOnce?: boolean;
   };
 }
 
@@ -71,6 +74,9 @@ export interface TwoFactorStatusResponse {
   message: string;
   data: {
     twoFactorEnabled: boolean;
+    twoFactorRequired?: boolean;
+    policy?: 'required' | 'optional';
+    exempt?: boolean;
   };
 }
 
@@ -80,4 +86,7 @@ export interface LoginResponseData {
     expiresIn: number;
   };
   requiresTwoFactor?: boolean;
+  requiresTwoFactorEnrollment?: boolean;
+  twoFactorRequired?: boolean;
+  expiresIn?: number;
 }

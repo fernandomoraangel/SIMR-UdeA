@@ -232,9 +232,13 @@ export class AuthService {
       )
       .pipe(
         tap((response) => {
-          // Si el backend pide segundo factor, NO establecer sesión aún:
-          // el cliente debe capturar el código y llamar a verifyTwoFactor.
-          if (response.data && response.data.requiresTwoFactor) {
+          // Si el backend pide segundo factor o enrolamiento obligatorio, NO
+          // establecer sesión aún: el cliente debe completar el paso pendiente.
+          if (
+            response.data &&
+            (response.data.requiresTwoFactor ||
+              response.data.requiresTwoFactorEnrollment)
+          ) {
             this.updateAuthState({ isLoading: false });
             return;
           }
@@ -278,6 +282,53 @@ export class AuthService {
             response.success &&
             response.data.user &&
             response.data.tokenInfo
+          ) {
+            this.setAuthState(response.data.user);
+            this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);
+          }
+          this.updateAuthState({ isLoading: false });
+        }),
+        catchError((error) => {
+          this.updateAuthState({ isLoading: false });
+          return this.handleError(error);
+        })
+      );
+  }
+
+  /**
+   * Iniciar el enrolamiento obligatorio de doble factor.
+   * Usa la cookie efímera "pending2fa" emitida por /login o /signup
+   * (propósito "enroll"); no requiere sesión completa.
+   */
+  startTwoFactorEnrollment(): Observable<TwoFactorSetupResponse> {
+    return this.http
+      .post<TwoFactorSetupResponse>(
+        `${this.API_URL}/2fa/enroll/setup`,
+        {},
+        { withCredentials: true }
+      )
+      .pipe(catchError(this.handleError.bind(this)));
+  }
+
+  /**
+   * Completar el enrolamiento validando el primer código TOTP.
+   * El backend activa el 2FA y solo entonces emite accessToken/refreshToken.
+   */
+  completeTwoFactorEnrollment(code: string): Observable<LoginResponse> {
+    this.updateAuthState({ isLoading: true });
+
+    return this.http
+      .post<LoginResponse>(
+        `${this.API_URL}/2fa/enroll/complete`,
+        { code },
+        { withCredentials: true }
+      )
+      .pipe(
+        tap((response) => {
+          if (
+            response.success &&
+            response.data?.user &&
+            response.data?.tokenInfo
           ) {
             this.setAuthState(response.data.user);
             this.scheduleTokenRefresh(response.data.tokenInfo.expiresIn);

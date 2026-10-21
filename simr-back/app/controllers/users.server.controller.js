@@ -12,6 +12,8 @@ const {
   generatePending2faToken,
   verifyPending2faToken,
   TWO_FACTOR_PENDING_COOKIE,
+  TWO_FACTOR_PURPOSE_VERIFY,
+  TWO_FACTOR_PURPOSE_ENROLL,
 } = require("../../utils/tokenUtils");
 const {
   successResponse,
@@ -46,6 +48,135 @@ const getErrorMessage = (err) => {
   return message;
 };
 
+//* ============== POLÍTICA DE DOBLE FACTOR (TOTP) ==============
+// El enrolamiento es obligatorio por defecto (mandato CISO). Se puede volver a
+// un modo opcional con TWO_FACTOR_REQUIRED=false, pero en producción debe
+// permanecer en true. TWO_FACTOR_EXEMPT_USERS permite una cuenta de rescate
+// (break-glass) separada por comas, sin la cual nadie podría entrar si se
+// pierde el acceso a todos los autenticadores.
+const TWO_FACTOR_FALSY_VALUES = ["false", "0", "no", "off"];
+
+const isTwoFactorPolicyRequired = () => {
+  const raw = process.env.TWO_FACTOR_REQUIRED;
+  if (raw === undefined || raw === null || raw === "") return true;
+  return !TWO_FACTOR_FALSY_VALUES.includes(String(raw).trim().toLowerCase());
+};
+
+const getTwoFactorExemptUsers = () =>
+  String(process.env.TWO_FACTOR_EXEMPT_USERS || "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+
+const isTwoFactorExempt = (user) => {
+  if (!user) return false;
+  const exempt = getTwoFactorExemptUsers();
+  if (!exempt.length) return false;
+  const identifiers = [user.username, user.email]
+    .filter(Boolean)
+    .map((value) => String(value).trim().toLowerCase());
+  return identifiers.some((identifier) => exempt.includes(identifier));
+};
+
+const isTwoFactorEnabled = (user) =>
+  !!(user && user.twoFactor && user.twoFactor.enabled);
+
+// Un usuario debe enrolarse si la política es obligatoria, no está exento y
+// todavía no tiene el doble factor activo.
+const isTwoFactorEnrollmentRequired = (user) =>
+  isTwoFactorPolicyRequired() && !isTwoFactorExempt(user) && !isTwoFactorEnabled(user);
+
+const getTwoFactorPolicy = () =>
+  isTwoFactorPolicyRequired() ? "required" : "optional";
+
+const toTwoFactorUserPayload = (user) => ({
+  id: user._id,
+  username: user.username,
+  email: user.email,
+  fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+});
+
+// Emite la cookie efímera de enrolamiento (sin accessToken/refreshToken).
+// El usuario NO obtiene sesión hasta completar y validar su primer TOTP.
+const issuePendingEnrollment = (res, user, statusCode = 200) => {
+  cookieHelpers.clearAuthCookies(res);
+
+  const { token, expiresSec } = generatePending2faToken(user._id, {
+    purpose: TWO_FACTOR_PURPOSE_ENROLL,
+  });
+  const cookiesSaved = cookieHelpers.setPending2faCookie(
+    res,
+    token,
+    expiresSec
+  );
+  if (!cookiesSaved) {
+    console.warn("Hubo problemas configurando la cookie de enrolamiento 2FA");
+  }
+
+  return successResponse(
+    res,
+    "Debes configurar el doble factor antes de acceder al sistema",
+    statusCode,
+    {
+      requiresTwoFactorEnrollment: true,
+      twoFactorRequired: true,
+      expiresIn: expiresSec,
+      user: toTwoFactorUserPayload(user),
+    }
+  );
+};
+
+// Valida la cookie pending2fa y devuelve el usuario asociado, comprobando que
+// el token fue emitido para el flujo esperado. Responde el error si no aplica.
+const resolvePendingTwoFactorUser = async (req, res, expectedPurpose) => {
+  const pendingToken = req.cookies
+    ? req.cookies[TWO_FACTOR_PENDING_COOKIE]
+    : null;
+
+  if (!pendingToken) {
+    errorResponse(
+      res,
+      "No hay una sesión pendiente de doble factor. Vuelve a iniciar sesión.",
+      401
+    );
+    return null;
+  }
+
+  const decoded = verifyPending2faToken(pendingToken);
+  if (!decoded || !decoded.id) {
+    cookieHelpers.clearPending2faCookie(res);
+    errorResponse(
+      res,
+      "La sesión de doble factor expiró. Vuelve a iniciar sesión.",
+      401
+    );
+    return null;
+  }
+
+  const purpose = decoded.purpose || TWO_FACTOR_PURPOSE_VERIFY;
+  if (expectedPurpose && purpose !== expectedPurpose) {
+    cookieHelpers.clearPending2faCookie(res);
+    errorResponse(
+      res,
+      "La sesión de doble factor no es válida para esta operación. Vuelve a iniciar sesión.",
+      401
+    );
+    return null;
+  }
+
+  const user = await User.findById(decoded.id).populate(
+    "roles",
+    "name displayName description priority"
+  );
+  if (!user) {
+    cookieHelpers.clearPending2faCookie(res);
+    errorResponse(res, "Usuario no encontrado", 404);
+    return null;
+  }
+
+  return user;
+};
+
 //* SIGNUP - Registro de usuario
 exports.signup = async (req, res, next) => {
   // Si user no esta conectado, crear y hacer login a un nuevo usuario
@@ -54,7 +185,18 @@ exports.signup = async (req, res, next) => {
   }
 
   try {
-    // Crear usuario con tokens
+    // Si la política exige doble factor, primero se crea la cuenta SIN emitir
+    // sesión y se devuelve un token efímero de enrolamiento. El usuario no
+    // obtiene accessToken/refreshToken hasta validar su primer código TOTP.
+    const policyApplies =
+      isTwoFactorPolicyRequired() && !isTwoFactorExempt(req.body);
+
+    if (policyApplies) {
+      const user = await User.createUser(req.body);
+      return issuePendingEnrollment(res, user, 201);
+    }
+
+    // Crear usuario con tokens (modo opcional / usuario exento)
     const { user, tokens } = await User.createUserWithTokens(req.body);
 
     // Configurar cookies seguras
@@ -116,8 +258,6 @@ exports.login = (req, res, next) => {
         // Si el usuario tiene 2FA activo, NO emitir tokens completos aún:
         // emitir un token efímero "pending2fa" y pedir el código TOTP.
         if (user.twoFactor && user.twoFactor.enabled) {
-          const safeUser = user.getSafeUser();
-
           // Si se superaron los intentos fallidos de 2FA, bloquear.
           if (user.isTwoFactorLocked()) {
             return errorResponse(
@@ -127,7 +267,9 @@ exports.login = (req, res, next) => {
             );
           }
 
-          const { token, expiresSec } = generatePending2faToken(user._id);
+          const { token, expiresSec } = generatePending2faToken(user._id, {
+            purpose: TWO_FACTOR_PURPOSE_VERIFY,
+          });
           const cookiesSaved = cookieHelpers.setPending2faCookie(
             res,
             token,
@@ -143,14 +285,16 @@ exports.login = (req, res, next) => {
             200,
             {
               requiresTwoFactor: true,
-              user: {
-                id: safeUser.id,
-                username: safeUser.username,
-                email: safeUser.email,
-                fullName: safeUser.fullName,
-              },
+              user: toTwoFactorUserPayload(user),
             }
           );
+        }
+
+        // Enrolamiento obligatorio: si el usuario aún no tiene 2FA y la
+        // política lo exige, no se emite sesión. Se le envía al alta guiada
+        // (QR + primer TOTP) antes de poder entrar al dashboard.
+        if (isTwoFactorEnrollmentRequired(user)) {
+          return issuePendingEnrollment(res, user, 200);
         }
 
         // Limpiar refresh tokens expirados
@@ -222,6 +366,17 @@ exports.refreshToken = async (req, res) => {
 
     if (!user) {
       return errorResponse(res, "Usuario no encontrado", 401);
+    }
+
+    // Defensa en profundidad: una sesión emitida antes de activar la política
+    // obligatoria no debe poder renovarse indefinidamente sin 2FA.
+    if (isTwoFactorEnrollmentRequired(user)) {
+      cookieHelpers.clearAuthCookies(res);
+      return errorResponse(
+        res,
+        "Debes configurar el doble factor antes de continuar",
+        403
+      );
     }
 
     // Limpiar refresh tokens expirados
@@ -311,6 +466,17 @@ exports.verifyToken = (req, res, next) => {
     if (!user) {
       console.log("Token inválido o no encontrado");
       return errorResponse(res, "Token inválido o expirado", 401);
+    }
+
+    // Defensa en profundidad: sesiones previas a la política obligatoria
+    // dejan de ser válidas si el usuario aún no enroló su TOTP.
+    if (isTwoFactorEnrollmentRequired(user)) {
+      cookieHelpers.clearAuthCookies(res);
+      return errorResponse(
+        res,
+        "Debes configurar el doble factor antes de continuar",
+        401
+      );
     }
 
     try {
@@ -851,7 +1017,11 @@ exports.changePassword = async (req, res) => {
 //* ============== DOBLE FACTOR DE AUTENTICACIÓN (TOTP) ==============
 
 // Helper: emitir sesión completa (access+refresh) tras validar 2FA
-const issueFullSession = async (res, user) => {
+const issueFullSession = async (
+  res,
+  user,
+  message = "Autenticación exitosa"
+) => {
   user.cleanExpiredTokens();
 
   const { accessToken, refreshToken, jti } = generateTokens(user._id);
@@ -877,7 +1047,7 @@ const issueFullSession = async (res, user) => {
   const tokenExpiresIn = getTokenExpirationInSeconds(accessToken);
   return authSuccessResponse(
     res,
-    "Autenticación exitosa",
+    message,
     200,
     safeUser,
     tokenExpiresIn
@@ -979,36 +1149,139 @@ exports.enableTwoFactor = async (req, res) => {
   }
 };
 
+//* SETUP ENROLLMENT 2FA - Alta obligatoria: genera secreto + QR + respaldos
+//* Usa la cookie pending2fa de propósito "enroll" (sin sesión completa).
+//* Se invoca justo después del registro o del primer login sin 2FA.
+exports.setupTwoFactorEnrollment = async (req, res) => {
+  try {
+    const user = await resolvePendingTwoFactorUser(
+      req,
+      res,
+      TWO_FACTOR_PURPOSE_ENROLL
+    );
+    if (!user) return;
+
+    if (isTwoFactorEnabled(user)) {
+      return errorResponse(res, "El doble factor ya está activo", 400);
+    }
+
+    // Generar secreto nuevo (descarta cualquier alta previa no confirmada)
+    const { secret, otpauthUri, backupCodes } = user.setupTwoFactor("SIMR");
+    await user.save();
+
+    return successResponse(
+      res,
+      "Configuración de doble factor iniciada",
+      200,
+      {
+        secret,
+        otpauthUri,
+        backupCodes,
+        // Los códigos de respaldo solo se muestran una vez
+        backupCodesShownOnce: true,
+        twoFactorRequired: isTwoFactorPolicyRequired(),
+      }
+    );
+  } catch (err) {
+    console.error("[setupTwoFactorEnrollment] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500, {
+      error: err.message || "Error interno",
+    });
+  }
+};
+
+//* COMPLETE ENROLLMENT 2FA - Valida el primer TOTP y SOLO ENTONCES emite sesión
+exports.completeTwoFactorEnrollment = async (req, res) => {
+  try {
+    const user = await resolvePendingTwoFactorUser(
+      req,
+      res,
+      TWO_FACTOR_PURPOSE_ENROLL
+    );
+    if (!user) return;
+
+    if (isTwoFactorEnabled(user)) {
+      return errorResponse(res, "El doble factor ya está activo", 400);
+    }
+
+    if (user.isTwoFactorLocked()) {
+      return errorResponse(
+        res,
+        "Demasiados intentos fallidos. Vuelve a iniciar sesión en unos minutos.",
+        429
+      );
+    }
+
+    if (!user.twoFactor || !user.twoFactor.secret) {
+      return errorResponse(
+        res,
+        "Debes iniciar la configuración del doble factor antes de confirmar",
+        400
+      );
+    }
+
+    const { code } = req.body;
+    if (!code) {
+      return errorResponse(res, "El código es requerido", 400);
+    }
+
+    if (!user.verifyTwoFactorSetupCode(code)) {
+      user.registerTwoFactorFailure();
+      await user.save();
+      const locked = user.isTwoFactorLocked();
+      return errorResponse(
+        res,
+        locked
+          ? "Demasiados intentos fallidos. Vuelve a iniciar sesión en unos minutos."
+          : "El código ingresado es incorrecto",
+        locked ? 429 : 401
+      );
+    }
+
+    // Primer código válido: el enrolamiento queda completo
+    user.twoFactor.enabled = true;
+    user.twoFactor.verifiedAt = new Date();
+    user.twoFactor.failedAttempts = 0;
+    user.twoFactor.lastFailedAt = undefined;
+    await user.save();
+
+    // El log de auditoría necesita req.user para registrar performedBy
+    req.user = user;
+    await logAudit(req, "two_factor_enrolled", "user", user._id, null, {
+      username: user.username,
+      policy: getTwoFactorPolicy(),
+      method: "totp",
+    });
+
+    return issueFullSession(
+      res,
+      user,
+      "Doble factor configurado correctamente. Sesión iniciada."
+    );
+  } catch (err) {
+    console.error("[completeTwoFactorEnrollment] Error:", err);
+    errorResponse(res, "Error interno del servidor", 500, {
+      error: err.message || "Error interno",
+    });
+  }
+};
+
 //* VERIFY 2FA - Validar código TOTP/respaldo durante el login (usa cookie pending2fa)
 exports.verifyTwoFactor = async (req, res) => {
   try {
-    // Obtener el token efímero de la cookie
-    const pendingToken = req.cookies ? req.cookies[TWO_FACTOR_PENDING_COOKIE] : null;
-    if (!pendingToken) {
-      return errorResponse(
-        res,
-        "No hay una sesión pendiente de doble factor. Vuelve a iniciar sesión.",
-        401
-      );
-    }
-
-    const decoded = verifyPending2faToken(pendingToken);
-    if (!decoded || !decoded.id) {
-      cookieHelpers.clearPending2faCookie(res);
-      return errorResponse(
-        res,
-        "La sesión de doble factor expiró. Vuelve a iniciar sesión.",
-        401
-      );
-    }
-
-    const user = await User.findById(decoded.id).populate(
-      "roles",
-      "name displayName description priority"
+    const user = await resolvePendingTwoFactorUser(
+      req,
+      res,
+      TWO_FACTOR_PURPOSE_VERIFY
     );
-    if (!user) {
-      cookieHelpers.clearPending2faCookie(res);
-      return errorResponse(res, "Usuario no encontrado", 404);
+    if (!user) return;
+
+    if (!isTwoFactorEnabled(user)) {
+      return errorResponse(
+        res,
+        "El doble factor no está activo para este usuario",
+        400
+      );
     }
 
     if (!user.isTwoFactorLocked()) {
@@ -1065,6 +1338,17 @@ exports.disableTwoFactor = async (req, res) => {
       return errorResponse(res, "Usuario no encontrado", 404);
     }
 
+    // Con política obligatoria, nadie (salvo cuentas exentas de rescate)
+    // puede desactivar el doble factor: hacerlo reabriría el riesgo que el
+    // mandato de la CISO busca cerrar.
+    if (isTwoFactorPolicyRequired() && !isTwoFactorExempt(user)) {
+      return errorResponse(
+        res,
+        "El doble factor es obligatorio y no puede desactivarse. Contacta al administrador del sistema.",
+        403
+      );
+    }
+
     if (!user.twoFactor || !user.twoFactor.enabled) {
       return errorResponse(res, "El doble factor no está activo", 400);
     }
@@ -1104,9 +1388,15 @@ exports.twoFactorStatus = async (req, res) => {
     if (!req.user || !req.user._id) {
       return errorResponse(res, "Usuario no autenticado", 401);
     }
-    const user = await User.findById(req.user._id).select("twoFactor.enabled");
+    const user = await User.findById(req.user._id).select(
+      "username email twoFactor.enabled"
+    );
+    const policy = getTwoFactorPolicy();
     successResponse(res, "Estado del doble factor", 200, {
       twoFactorEnabled: !!(user && user.twoFactor && user.twoFactor.enabled),
+      twoFactorRequired: policy === "required",
+      policy,
+      exempt: isTwoFactorExempt(user),
     });
   } catch (err) {
     console.error("[twoFactorStatus] Error:", err);

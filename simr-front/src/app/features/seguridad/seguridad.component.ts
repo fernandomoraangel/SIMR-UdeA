@@ -38,6 +38,7 @@ import { QrSvgComponent } from '@shared/qr-svg/qr-svg.component';
 })
 export class SeguridadComponent implements OnInit {
   twoFactorEnabled = false;
+  twoFactorRequired = false;
   setupStarted = false;
 
   otpauthUri = '';
@@ -103,6 +104,7 @@ export class SeguridadComponent implements OnInit {
     this.authService.twoFactorStatus().subscribe({
       next: (res) => {
         this.twoFactorEnabled = !!res.data?.twoFactorEnabled;
+        this.twoFactorRequired = !!res.data?.twoFactorRequired;
         this.setupStarted = this.twoFactorEnabled; // si ya está activo, no iniciar setup de nuevo
         this.refrescarVista();
       },

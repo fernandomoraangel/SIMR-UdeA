@@ -45,7 +45,16 @@ module.exports = function (app) {
   app.route('/api/auth/2fa/verify')
     .post(users.verifyTwoFactor);
 
+  // 3.1. Enrolamiento obligatorio (público, con cookie pending2fa de propósito
+  // "enroll"): genera el QR y, tras validar el primer TOTP, emite la sesión.
+  app.route('/api/auth/2fa/enroll/setup')
+    .post(users.setupTwoFactorEnrollment);
+
+  app.route('/api/auth/2fa/enroll/complete')
+    .post(users.completeTwoFactorEnrollment);
+
   // 4. Disable (autenticado): desactiva tras validar código vigente
+  //    (bloqueado cuando la política de doble factor es obligatoria)
   app.route('/api/auth/2fa/disable')
     .post(users.requiresLogin, users.disableTwoFactor);
 

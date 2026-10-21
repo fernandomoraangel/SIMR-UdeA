@@ -94,6 +94,14 @@ export class LoginComponent implements OnInit {
           this.otpForm.reset();
           return;
         }
+        if (response.data && response.data.requiresTwoFactorEnrollment) {
+          // El asistente de enrolamiento vive en el diálogo de autenticación
+          // (/login). Esta vista no se usa en la navegación actual.
+          this.errorMessage =
+            'Debes configurar el doble factor antes de entrar. Vuelve a iniciar sesión para completar el alta.';
+          this.isLoading = false;
+          return;
+        }
         // Inicio de sesión exitoso
         console.log('Sesión iniciada con éxito', response);
         this.goToDestination();

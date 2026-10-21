@@ -36,16 +36,29 @@ const verifyRefreshToken = (token) => {
 };
 
 // Token efímero para el flujo de 2FA (valida únicamente paso "usuario+password").
-// Debe usarse exclusivamente en /api/auth/2fa/verify y expira en pocos minutos.
+// Debe usarse exclusivamente en los endpoints /api/auth/2fa/* y expira en pocos minutos.
+// `purpose` separa ambos flujos para que un token emitido para enrolamiento no
+// pueda usarse para verificar un código de login y viceversa:
+//   - 'verify' : el usuario ya tiene 2FA y debe introducir su código TOTP.
+//   - 'enroll' : el usuario aún no lo tiene y debe darse de alta (obligatorio).
 const TWO_FACTOR_PENDING_COOKIE = 'pending2fa';
+const TWO_FACTOR_PURPOSE_VERIFY = 'verify';
+const TWO_FACTOR_PURPOSE_ENROLL = 'enroll';
 
-const generatePending2faToken = (userId) => {
-  const expiresSec = parseInt(
-    process.env.TWO_FACTOR_PENDING_EXPIRATION || '300',
-    10
-  ); // 5 minutos por defecto
+const generatePending2faToken = (userId, options = {}) => {
+  const {
+    purpose = TWO_FACTOR_PURPOSE_VERIFY,
+    expiresIn,
+  } = options;
+
+  const defaultExpiration =
+    purpose === TWO_FACTOR_PURPOSE_ENROLL
+      ? process.env.TWO_FACTOR_ENROLLMENT_EXPIRATION || '900' // 15 min para escanear el QR
+      : process.env.TWO_FACTOR_PENDING_EXPIRATION || '300'; // 5 min
+
+  const expiresSec = parseInt(expiresIn || defaultExpiration, 10);
   const token = jwt.sign(
-    { id: userId, type: 'pending2fa' },
+    { id: userId, type: 'pending2fa', purpose },
     process.env.JWT_SECRET,
     { expiresIn: expiresSec }
   );
@@ -98,4 +111,6 @@ module.exports = {
   generatePending2faToken,
   verifyPending2faToken,
   TWO_FACTOR_PENDING_COOKIE,
+  TWO_FACTOR_PURPOSE_VERIFY,
+  TWO_FACTOR_PURPOSE_ENROLL,
 };
