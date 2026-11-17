@@ -226,3 +226,58 @@ Con el enrolamiento obligatorio desplegado y verificado (secciones 4.1 a 4.11), 
 - Confirmación de si se desea habilitar una cuenta de rescate institucional y cuál debe ser.
 - Cualquier ajuste al tiempo de bloqueo o al número de intentos fallidos.
 - Requerimientos adicionales de evidencia o de auditoría de los eventos `two_factor_enrolled`.
+
+---
+
+## 8. Addendum — 17/11/2026: corrección de la transición visual del asistente
+
+### 8.1 Síntoma reportado
+
+En la verificación funcional por interfaz web, al registrar una cuenta nueva:
+
+- `POST /api/auth/signup` respondía `201`.
+- Se disparaba automáticamente `POST /api/auth/2fa/enroll/setup` con `200`.
+- **Pero el diálogo no pasaba a la vista del QR**: quedaba en la pestaña de registro con el botón en "Registrando…". Sin excepciones en consola.
+
+### 8.2 Causa raíz
+
+La aplicación corre sobre **Angular 21 en modo *zoneless*** (sin `NgZone`). En este modo, una respuesta HTTP **no dispara detección de cambios** por sí sola; solo la disparan eventos de plantilla, signals o llamadas explícitas a `ChangeDetectorRef`.
+
+`AuthDialogComponent` mantenía su estado en **campos planos** (`showEnrollment`, `isLoading`, `showOtp`, `errorMessage`, etc.) y difería las mutaciones con `Promise.resolve().then(...)` (patrón heredado de la era con Zone). El estado sí cambiaba y por eso la petición de `enroll/setup` salía, pero la vista nunca se volvía a pintar: de ahí el "Registrando…" indefinido.
+
+El mismo defecto afectaba, de forma silenciosa, al **paso OTP del login** (`showOtp`) y a los mensajes de error asíncronos.
+
+### 8.3 Corrección aplicada
+
+En `simr-front/src/app/shared/auth-dialog/auth-dialog.component.ts`:
+
+- Se inyecta `ChangeDetectorRef` y se agrega un helper `refreshView()` que ejecuta `detectChanges()` (con guarda de vista destruida vía `ngOnDestroy`).
+- Se invoca tras **cada** mutación asíncrona: respuesta de login (OTP y enrolamiento), errores, `enroll/setup` (éxito y error), `enroll/complete` (error) y `backToLogin()`.
+- No se cambió la lógica de negocio ni el contrato con el backend.
+
+Commit desplegado: **`155d307`** — `fix(auth): refrescar la vista del dialogo tras respuestas async`.
+
+### 8.4 Evidencia en navegador real (Chrome headless contra `https://172.23.0.97/`)
+
+**Registro + enrolamiento completo:**
+
+```
+POST /api/auth/signup                → 201
+POST /api/auth/2fa/enroll/setup      → 200
+DOM: hasEnroll=true, hasQr=true, hasTabs=false
+     "Configura tu doble factor" + QR + secreto + códigos de respaldo visibles
+POST /api/auth/2fa/enroll/complete   → 200  (código TOTP válido)
+DOM: diálogo cerrado, menú de usuario = "UI Test" (sesión iniciada)
+```
+
+**Login posterior con 2FA:**
+
+```
+POST /api/auth/login                 → 200 (requiresTwoFactor)
+DOM: .auth-otp visible ("Verificación en dos pasos")
+POST /api/auth/2fa/verify            → 200 (código TOTP válido)
+DOM: diálogo cerrado, menú de usuario = "UI Test" (sesión iniciada)
+```
+
+Los usuarios de prueba usados (`uitest*`) fueron eliminados de la base de datos al finalizar.
+
