@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   FormBuilder,
@@ -41,7 +41,7 @@ export interface AuthDialogData {
   templateUrl: './auth-dialog.component.html',
   styleUrl: './auth-dialog.component.css',
 })
-export class AuthDialogComponent {
+export class AuthDialogComponent implements OnDestroy {
   mode: 'login' | 'signup';
   loginForm: FormGroup;
   signupForm: FormGroup;
@@ -63,12 +63,18 @@ export class AuthDialogComponent {
   enrollSetupStarted = false;
   enrollSetupFailed = false;
 
+  // La aplicación corre sin NgZone (zoneless): las respuestas HTTP no
+  // disparan detección de cambios por sí solas, así que este componente
+  // con estado en campos planos debe refrescar su vista explícitamente.
+  private destroyed = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     public dialogRef: MatDialogRef<AuthDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) data: AuthDialogData
+    @Inject(MAT_DIALOG_DATA) data: AuthDialogData,
+    private cdr: ChangeDetectorRef
   ) {
     this.mode = data?.mode ?? 'login';
 
@@ -94,6 +100,17 @@ export class AuthDialogComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroyed = true;
+  }
+
+  /** Fuerza la detección de cambios del diálogo (necesario en modo zoneless). */
+  private refreshView(): void {
+    if (!this.destroyed) {
+      this.cdr.detectChanges();
+    }
+  }
+
   submitLogin(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -114,6 +131,7 @@ export class AuthDialogComponent {
             this.otpForm.reset();
             this.showOtp = true;
             this.isLoading = false;
+            this.refreshView();
             return;
           }
           if (response.data && response.data.requiresTwoFactorEnrollment) {
@@ -156,6 +174,7 @@ export class AuthDialogComponent {
     this.enrollBackupCodes = [];
     this.isLoading = false;
     this.errorMessage = '';
+    this.refreshView();
   }
 
   submitSignup(): void {
@@ -196,6 +215,7 @@ export class AuthDialogComponent {
     this.enrollForm.reset();
     this.errorMessage = '';
     this.isLoading = true;
+    this.refreshView();
 
     this.authService.startTwoFactorEnrollment().subscribe({
       next: (res) => {
@@ -205,6 +225,7 @@ export class AuthDialogComponent {
           this.enrollSecret = res.data?.secret || '';
           this.enrollBackupCodes = res.data?.backupCodes || [];
           this.isLoading = false;
+          this.refreshView();
         });
       },
       error: (err) => {
@@ -217,6 +238,7 @@ export class AuthDialogComponent {
               : err?._authMessage ||
                 err?.message ||
                 'No se pudo iniciar la configuración del doble factor.';
+          this.refreshView();
         });
       },
     });
@@ -250,6 +272,7 @@ export class AuthDialogComponent {
             this.errorMessage =
               err?._authMessage || err?.message || 'No se pudo confirmar el doble factor.';
           }
+          this.refreshView();
         });
       },
     });
@@ -277,6 +300,7 @@ export class AuthDialogComponent {
     } else {
       this.errorMessage = err._authMessage || err.message || 'Error al iniciar sesión';
     }
+    this.refreshView();
   }
 
   private onOtpError(err: any): void {
@@ -289,5 +313,6 @@ export class AuthDialogComponent {
     } else {
       this.errorMessage = err?._authMessage || err?.message || 'El código es incorrecto';
     }
+    this.refreshView();
   }
 }
